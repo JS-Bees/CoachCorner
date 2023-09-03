@@ -28,11 +28,17 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Coach: { // root type
+    firstName: string; // String!
+    id: number; // Int!
+    lastName: string; // String!
+    sport: string; // String!
+  }
   Person: { // root type
-    familyName: string; // ID!
-    givenName: string; // ID!
-    id: string; // ID!
-    surveyResults: string; // ID!
+    familyName: string; // String!
+    givenName: string; // String!
+    id: number; // Int!
+    surveyResults: number; // Int!
   }
   Query: {};
 }
@@ -48,29 +54,43 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  Coach: { // field return type
+    firstName: string; // String!
+    id: number; // Int!
+    lastName: string; // String!
+    sport: string; // String!
+  }
   Person: { // field return type
-    familyName: string; // ID!
-    givenName: string; // ID!
-    id: string; // ID!
-    surveyResults: string; // ID!
+    familyName: string; // String!
+    givenName: string; // String!
+    id: number; // Int!
+    surveyResults: number; // Int!
   }
   Query: { // field return type
+    coaches: NexusGenRootTypes['Coach'][]; // [Coach!]!
     hello: string; // String!
-    hi: string; // String!
+    herro: string; // String!
     people: NexusGenRootTypes['Person'][]; // [Person!]!
   }
 }
 
 export interface NexusGenFieldTypeNames {
+  Coach: { // field return type name
+    firstName: 'String'
+    id: 'Int'
+    lastName: 'String'
+    sport: 'String'
+  }
   Person: { // field return type name
-    familyName: 'ID'
-    givenName: 'ID'
-    id: 'ID'
-    surveyResults: 'ID'
+    familyName: 'String'
+    givenName: 'String'
+    id: 'Int'
+    surveyResults: 'Int'
   }
   Query: { // field return type name
+    coaches: 'Coach'
     hello: 'String'
-    hi: 'String'
+    herro: 'String'
     people: 'Person'
   }
 }

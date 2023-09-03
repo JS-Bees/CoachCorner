@@ -2,15 +2,23 @@
 ### Do not make changes to this file directly
 
 
+type Coach {
+  firstName: String!
+  id: Int!
+  lastName: String!
+  sport: String!
+}
+
 type Person {
-  familyName: ID!
-  givenName: ID!
-  id: ID!
-  surveyResults: ID!
+  familyName: String!
+  givenName: String!
+  id: Int!
+  surveyResults: Int!
 }
 
 type Query {
+  coaches: [Coach!]!
   hello: String!
-  hi: String!
+  herro: String!
   people: [Person!]!
 }
