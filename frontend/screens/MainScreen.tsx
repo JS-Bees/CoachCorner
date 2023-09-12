@@ -2,34 +2,41 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import Menu from "../components/Menu";
 import React from 'react';
 import { IconButton } from 'react-native-paper';
+import SvgComponent from "../components/BackgroundSvg";
 
 const MainScreen = () => {
     return (
-        <View>
-          <Text style={MainScreenStyle.screenTitle}>Coaches</Text>
-            <Text style={MainScreenStyle.sectionTitle}>Coaches Near You</Text>
-            <Text>Zedan fahaito</Text>
-            <IconButton icon="rocket" size={30}/>
-            <Text style={MainScreenStyle.sectionTitle}>Most Popular Coaches</Text>
-            <Text>Patin Blight</Text>
+        <View style={MainScreenStyle.container}>
             <Menu />
+
+            {/* Container for SvgComponent */}
+            <View style={MainScreenStyle.svgContainer}>
+                <SvgComponent> <Menu></Menu></SvgComponent>
+            </View>
         </View>
     )
 }
+
 const MainScreenStyle = StyleSheet.create({
-  container: {
-  padding: 16,
-  marginTop: 24,
-  },
-  sectionTitle: {
-  fontSize: 16,
-  marginTop: 16,
-  },
-  screenTitle: {
-  fontSize: 24,
-  marginTop: 8,
-  fontWeight: 'bold',
-  },
+    container: {
+        flex: 1, // Make the container take up the whole screen
+        backgroundColor: 'white', // Set the background color to white
+        padding: 0,
+        marginTop: 0,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        marginTop: 16,
+    },
+    screenTitle: {
+        fontSize: 24,
+        marginTop: 8,
+        fontWeight: 'bold',
+    },
+    svgContainer: {
+        alignItems: 'center', // Center the content horizontally
+        marginTop: 180 // Adjust the margin-top as needed
+    },
 });
 
 export default MainScreen;
