@@ -7,12 +7,11 @@ import SvgComponent from "../components/BackgroundSvg";
 const MainScreen = () => {
     return (
         <View style={MainScreenStyle.container}>
-
-            {/* Container for SvgComponent */}
             <View style={MainScreenStyle.svgContainer}>
                 <SvgComponent> </SvgComponent>
             </View>
         </View>
+        
     )
 }
 
@@ -20,8 +19,14 @@ const MainScreenStyle = StyleSheet.create({
     container: {
         flex: 1, // Make the container take up the whole screen
         backgroundColor: 'white', // Set the background color to white
-        padding: 0,
-        marginTop: 0,
+    },  
+    svgContainer: {
+        position: 'absolute', // Position the SVG container absolutely
+        bottom: 0, // Place it at the bottom of the screen
+        left: 0, // Align it to the left
+        right: 0, // Align it to the right
+        alignItems: 'center', // Center the content horizontally
+        paddingVertical: 0, //  Add padding for spacing
     },
     sectionTitle: {
         fontSize: 16,
@@ -32,10 +37,5 @@ const MainScreenStyle = StyleSheet.create({
         marginTop: 8,
         fontWeight: 'bold',
     },
-    svgContainer: {
-        alignItems: 'center', // Center the content horizontally
-        marginTop: 240 // Adjust the margin-top as needed
-    },
 });
-
 export default MainScreen;

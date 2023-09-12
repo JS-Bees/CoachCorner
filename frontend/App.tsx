@@ -20,6 +20,7 @@ const RootStack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    
     <NavigationContainer>
       <RootStack.Navigator initialRouteName="MainScreen">
       <RootStack.Screen name="MainScreen" component={MainScreen} />

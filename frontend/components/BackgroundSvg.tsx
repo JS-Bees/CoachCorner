@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react"
 import Svg, { Path } from "react-native-svg"
 
@@ -6,7 +7,7 @@ function SvgComponent(props: any) {
     <Svg
     viewBox="0 0 900 600"
     width={400}
-    height={600}
+    height={250}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
