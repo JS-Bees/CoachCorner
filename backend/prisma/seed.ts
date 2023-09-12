@@ -37,16 +37,19 @@ async function seedDatabase() {
                     firstName: 'Michael',
                     lastName: 'Jordan',
                     sport: 'Basketball',
+                    hobbies: 'dancing',
                 },
                 {
                     firstName: 'Serena',
                     lastName: 'Williams',
                     sport: 'Tennis',
+                    hobbies: 'writing',
                 },
                 {
                     firstName: 'Lionel',
                     lastName: 'Messi',
                     sport: 'Soccer',
+                    hobbies: 'singing',
                 },
             ],
         });

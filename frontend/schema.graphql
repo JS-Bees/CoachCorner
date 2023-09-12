@@ -4,6 +4,7 @@
 
 type Coach {
   firstName: String!
+  hobbies: String!
   id: Int!
   lastName: String!
   sport: String!

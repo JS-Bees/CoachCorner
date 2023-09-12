@@ -30,6 +30,7 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Coach: { // root type
     firstName: string; // String!
+    hobbies: string; // String!
     id: number; // Int!
     lastName: string; // String!
     sport: string; // String!
@@ -56,6 +57,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   Coach: { // field return type
     firstName: string; // String!
+    hobbies: string; // String!
     id: number; // Int!
     lastName: string; // String!
     sport: string; // String!
@@ -77,6 +79,7 @@ export interface NexusGenFieldTypes {
 export interface NexusGenFieldTypeNames {
   Coach: { // field return type name
     firstName: 'String'
+    hobbies: 'String'
     id: 'Int'
     lastName: 'String'
     sport: 'String'

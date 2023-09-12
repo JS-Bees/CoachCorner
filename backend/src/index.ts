@@ -22,7 +22,8 @@ const schema = makeSchema({
     types, // this is imported as `import * from schema.ts`
     outputs: {
         typegen: path.join(__dirname, 'generated/graphql-types.ts'),
-        schema: path.join(__dirname, 'schema.graphql'),
+        schema: path.join(__dirname, '../../frontend/schema.graphql'),
+        // ^ generates the schema.graphql file in the frontend
     },
     plugins: [
         // just for demo that GraphQL is security at field level

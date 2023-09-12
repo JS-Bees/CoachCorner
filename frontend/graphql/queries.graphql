@@ -1,0 +1,11 @@
+# copy paste queries from playground here
+
+query getAllCoaches {
+    coaches {
+        id
+        firstName
+        lastName
+        sport
+        hobbies
+    }
+}
