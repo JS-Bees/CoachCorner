@@ -7,11 +7,10 @@ import SvgComponent from "../components/BackgroundSvg";
 const MainScreen = () => {
     return (
         <View style={MainScreenStyle.container}>
-            <Menu />
 
             {/* Container for SvgComponent */}
             <View style={MainScreenStyle.svgContainer}>
-                <SvgComponent> <Menu></Menu></SvgComponent>
+                <SvgComponent> </SvgComponent>
             </View>
         </View>
     )
@@ -35,7 +34,7 @@ const MainScreenStyle = StyleSheet.create({
     },
     svgContainer: {
         alignItems: 'center', // Center the content horizontally
-        marginTop: 180 // Adjust the margin-top as needed
+        marginTop: 240 // Adjust the margin-top as needed
     },
 });
 
