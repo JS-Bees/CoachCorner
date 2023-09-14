@@ -1,31 +1,29 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import MainScreen from './screens/MainScreen';
-import ProfileScreen from './screens/Profile'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { StyleSheet} from 'react-native';
 import React from 'react';
+import UserDashboard from './screens/UserDashboard';
+import UserProfile from './screens/UserProfile'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 
+
 export type RootStackParams = {
-  MainScreen: any; 
-  Sports: any
-  Profile: any;
+  UserDashboard: any; 
+  UserProfile: any;
   Coach: {
-    name: String;
+    name: string;
   }
 }
 const RootStack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    
     <NavigationContainer>
       <RootStack.Navigator initialRouteName="MainScreen">
-      <RootStack.Screen name="MainScreen" component={MainScreen} />
-      {/* <RootStack.Screen name="Coach" component={CoachScreen} /> */}
-      <RootStack.Screen name="Profile" component={ProfileScreen} />
+      <RootStack.Screen name="UserDashboard" component={UserDashboard} />
+      <RootStack.Screen name="UserProfile" component={UserProfile} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
