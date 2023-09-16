@@ -31,30 +31,91 @@ export type Scalars = {
     Float: { input: number; output: number };
 };
 
+export enum BookingStatus {
+    Cancelled = 'CANCELLED',
+    Completed = 'COMPLETED',
+    Confirmed = 'CONFIRMED',
+    Pending = 'PENDING',
+}
+
 export type Coach = {
     __typename?: 'Coach';
+    email: Scalars['String']['output'];
     firstName: Scalars['String']['output'];
-    hobbies: Scalars['String']['output'];
     id: Scalars['Int']['output'];
     lastName: Scalars['String']['output'];
-    sport: Scalars['String']['output'];
+    sport: Sport;
 };
 
-export type Person = {
-    __typename?: 'Person';
-    familyName: Scalars['String']['output'];
-    givenName: Scalars['String']['output'];
+export type Coachee = {
+    __typename?: 'Coachee';
+    firstName: Scalars['String']['output'];
     id: Scalars['Int']['output'];
-    surveyResults: Scalars['Int']['output'];
+    lastName: Scalars['String']['output'];
 };
+
+export enum Games {
+    Arknights = 'ARKNIGHTS',
+    Azurelane = 'AZURELANE',
+    Callofduty = 'CALLOFDUTY',
+    Candycrush = 'CANDYCRUSH',
+    Clashofclans = 'CLASHOFCLANS',
+    Counterstrike = 'COUNTERSTRIKE',
+    Dota = 'DOTA',
+    Genshinimpact = 'GENSHINIMPACT',
+    Lol = 'LOL',
+    Minecraft = 'MINECRAFT',
+    Mobilelegends = 'MOBILELEGENDS',
+    Overwatch = 'OVERWATCH',
+    Pubg = 'PUBG',
+    Streetfighter = 'STREETFIGHTER',
+    Tekken = 'TEKKEN',
+    Valorant = 'VALORANT',
+}
+
+export enum Hobbies {
+    Baking = 'BAKING',
+    Cooking = 'COOKING',
+    Dancing = 'DANCING',
+    Hiking = 'HIKING',
+    Painting = 'PAINTING',
+    Photography = 'PHOTOGRAPHY',
+    Reading = 'READING',
+    Singing = 'SINGING',
+    Travelling = 'TRAVELLING',
+    Writing = 'WRITING',
+}
+
+export enum MovieGenres {
+    Action = 'ACTION',
+    Adventure = 'ADVENTURE',
+    Anime = 'ANIME',
+    Comedy = 'COMEDY',
+    Documentary = 'DOCUMENTARY',
+    Drama = 'DRAMA',
+    Fantasy = 'FANTASY',
+    Horror = 'HORROR',
+    KDrama = 'KDrama',
+    Musical = 'MUSICAL',
+    Mystery = 'MYSTERY',
+    Romance = 'ROMANCE',
+    Scifi = 'SCIFI',
+    Thriller = 'THRILLER',
+}
 
 export type Query = {
     __typename?: 'Query';
+    coachees: Array<Coachee>;
     coaches: Array<Coach>;
-    hello: Scalars['String']['output'];
-    herro: Scalars['String']['output'];
-    people: Array<Person>;
 };
+
+export enum Sport {
+    Badminton = 'BADMINTON',
+    Basketball = 'BASKETBALL',
+    Soccer = 'SOCCER',
+    Swimming = 'SWIMMING',
+    Volleyball = 'VOLLEYBALL',
+}
 
 export type GetAllCoachesQueryVariables = Exact<{ [key: string]: never }>;
 
@@ -65,8 +126,7 @@ export type GetAllCoachesQuery = {
         id: number;
         firstName: string;
         lastName: string;
-        sport: string;
-        hobbies: string;
+        sport: Sport;
     }>;
 };
 
@@ -101,10 +161,6 @@ export const GetAllCoachesDocument = {
                                 {
                                     kind: 'Field',
                                     name: { kind: 'Name', value: 'sport' },
-                                },
-                                {
-                                    kind: 'Field',
-                                    name: { kind: 'Name', value: 'hobbies' },
                                 },
                             ],
                         },

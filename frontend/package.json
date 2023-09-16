@@ -28,6 +28,8 @@
     "@typescript-eslint/parser": "^6.5.0",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
+    "react-native-config": "^1.5.1",
+    "react-native-dotenv": "^3.4.9",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },

@@ -2,24 +2,85 @@
 ### Do not make changes to this file directly
 
 
-type Coach {
-  firstName: String!
-  hobbies: String!
-  id: Int!
-  lastName: String!
-  sport: String!
+enum BookingStatus {
+  CANCELLED
+  COMPLETED
+  CONFIRMED
+  PENDING
 }
 
-type Person {
-  familyName: String!
-  givenName: String!
+type Coach {
+  email: String!
+  firstName: String!
   id: Int!
-  surveyResults: Int!
+  lastName: String!
+  sport: Sport!
+}
+
+type Coachee {
+  firstName: String!
+  id: Int!
+  lastName: String!
+}
+
+enum Games {
+  ARKNIGHTS
+  AZURELANE
+  CALLOFDUTY
+  CANDYCRUSH
+  CLASHOFCLANS
+  COUNTERSTRIKE
+  DOTA
+  GENSHINIMPACT
+  LOL
+  MINECRAFT
+  MOBILELEGENDS
+  OVERWATCH
+  PUBG
+  STREETFIGHTER
+  TEKKEN
+  VALORANT
+}
+
+enum Hobbies {
+  BAKING
+  COOKING
+  DANCING
+  HIKING
+  PAINTING
+  PHOTOGRAPHY
+  READING
+  SINGING
+  TRAVELLING
+  WRITING
+}
+
+enum MovieGenres {
+  ACTION
+  ADVENTURE
+  ANIME
+  COMEDY
+  DOCUMENTARY
+  DRAMA
+  FANTASY
+  HORROR
+  KDrama
+  MUSICAL
+  MYSTERY
+  ROMANCE
+  SCIFI
+  THRILLER
 }
 
 type Query {
+  coachees: [Coachee!]!
   coaches: [Coach!]!
-  hello: String!
-  herro: String!
-  people: [Person!]!
+}
+
+enum Sport {
+  BADMINTON
+  BASKETBALL
+  SOCCER
+  SWIMMING
+  VOLLEYBALL
 }

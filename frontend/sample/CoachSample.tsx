@@ -34,6 +34,7 @@ export default function CoachSample(): JSX.Element | null {
             {data.coaches.map((coach) => (
                 <React.Fragment key={coach.id}>
                     <Text style={styles.coach}>{coach.firstName}</Text>
+                    <Text style={styles.coach}>{coach.sport}</Text>
                 </React.Fragment>
             ))}
         </>

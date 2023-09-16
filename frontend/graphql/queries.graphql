@@ -6,6 +6,5 @@ query getAllCoaches {
         firstName
         lastName
         sport
-        hobbies
     }
 }
