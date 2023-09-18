@@ -7,9 +7,167 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Person {
-  id Int @id @default(autoincrement())
-  givenName String
-  familyName String
-  surveyResults Int @default(0)
+generator nexus {
+  provider = "nexus-prisma"
 }
+
+
+enum Sport {
+    BADMINTON
+    BASKETBALL
+    SOCCER
+    SWIMMING
+    VOLLEYBALL
+}
+
+enum MovieGenres {
+    ACTION
+    ANIME
+    ADVENTURE
+    COMEDY
+    DRAMA
+    FANTASY
+    KDrama
+    SCIFI
+    HORROR
+    MYSTERY
+    THRILLER
+    ROMANCE
+    DOCUMENTARY
+    MUSICAL
+}
+
+enum Hobbies {
+    BAKING
+    COOKING
+    DANCING
+    HIKING
+    PAINTING
+    PHOTOGRAPHY
+    READING
+    SINGING
+    TRAVELLING
+    WRITING
+}
+
+enum Games {
+    ARKNIGHTS
+    AZURELANE
+    CALLOFDUTY
+    CANDYCRUSH
+    CLASHOFCLANS
+    COUNTERSTRIKE
+    DOTA
+    GENSHINIMPACT
+    LOL
+    MINECRAFT
+    MOBILELEGENDS
+    OVERWATCH
+    PUBG
+    STREETFIGHTER
+    TEKKEN
+    VALORANT
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+
+model Coachee {
+  id                  Int      @id @default(autoincrement())
+  address             String
+  birthday            DateTime
+  email               String   @unique 
+  firstName           String
+  lastName            String
+  password            String
+
+  games               Games[]
+  hobbies             Hobbies[]
+  moviesGenres        MovieGenres[] 
+
+  affiliations        String? 
+  bio                 String?  
+  profilePicture      String?     
+
+  coachingRelationships CoachingRelationship[]
+
+  active              Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+
+model Coach {
+  id                  Int      @id @default(autoincrement())
+  birthday            DateTime   
+  email               String   @unique 
+  firstName           String
+  lastName            String
+  password            String
+  workplaceAddress    String
+  
+  sport               Sport
+  games               Games[]
+  hobbies             Hobbies[]
+  moviesGenres        MovieGenres[]
+
+  affiliations        String? 
+  bio                 String?  
+  profilePicture      String?     
+
+  coachingRelationships CoachingRelationship[]
+
+  active              Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+
+model CoachingRelationship {
+  id            Int      @id @default(autoincrement())
+  coach         Coach    @relation(fields: [coachId], references: [id])
+  coachId       Int
+  coachee       Coachee  @relation(fields: [coacheeId], references: [id])
+  coacheeId     Int
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BookingSlot {
+  id            Int       @id @default(autoincrement())
+  bookingId     Int
+  booking       Booking   @relation(fields: [bookingId], references: [id])
+  date          DateTime
+  startTime     DateTime
+  endTime       DateTime
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+
+model Booking {
+  id                Int          @id @default(autoincrement())
+  bookingSlots      BookingSlot[]
+  coach             Coach @relation(fields: [coachId], references: [id])
+  coachId           Int
+  coachName         String
+  coachee           Coachee @relation(fields: [coacheeId], references: [id])
+  coacheeId         Int
+  coacheeName       String
+  serviceType       String
+  status            BookingStatus
+
+  additionalNotes   String?
+
+  active            Boolean   @default(true)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+

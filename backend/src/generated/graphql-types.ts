@@ -17,6 +17,11 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  BookingStatus: "CANCELLED" | "COMPLETED" | "CONFIRMED" | "PENDING"
+  Games: "ARKNIGHTS" | "AZURELANE" | "CALLOFDUTY" | "CANDYCRUSH" | "CLASHOFCLANS" | "COUNTERSTRIKE" | "DOTA" | "GENSHINIMPACT" | "LOL" | "MINECRAFT" | "MOBILELEGENDS" | "OVERWATCH" | "PUBG" | "STREETFIGHTER" | "TEKKEN" | "VALORANT"
+  Hobbies: "BAKING" | "COOKING" | "DANCING" | "HIKING" | "PAINTING" | "PHOTOGRAPHY" | "READING" | "SINGING" | "TRAVELLING" | "WRITING"
+  MovieGenres: "ACTION" | "ADVENTURE" | "ANIME" | "COMEDY" | "DOCUMENTARY" | "DRAMA" | "FANTASY" | "HORROR" | "KDRAMA" | "MUSICAL" | "MYSTERY" | "ROMANCE" | "SCIFI" | "THRILLER"
+  Sport: "BADMINTON" | "BASKETBALL" | "SOCCER" | "SWIMMING" | "VOLLEYBALL"
 }
 
 export interface NexusGenScalars {
@@ -28,11 +33,17 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
-  Person: { // root type
-    familyName: string; // ID!
-    givenName: string; // ID!
-    id: string; // ID!
-    surveyResults: string; // ID!
+  Coach: { // root type
+    email: string; // String!
+    firstName: string; // String!
+    id: number; // Int!
+    lastName: string; // String!
+    sport: NexusGenEnums['Sport']; // Sport!
+  }
+  Coachee: { // root type
+    firstName: string; // String!
+    id: number; // Int!
+    lastName: string; // String!
   }
   Query: {};
 }
@@ -45,33 +56,43 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
-  Person: { // field return type
-    familyName: string; // ID!
-    givenName: string; // ID!
-    id: string; // ID!
-    surveyResults: string; // ID!
+  Coach: { // field return type
+    email: string; // String!
+    firstName: string; // String!
+    id: number; // Int!
+    lastName: string; // String!
+    sport: NexusGenEnums['Sport']; // Sport!
+  }
+  Coachee: { // field return type
+    firstName: string; // String!
+    id: number; // Int!
+    lastName: string; // String!
   }
   Query: { // field return type
-    hello: string; // String!
-    hi: string; // String!
-    people: NexusGenRootTypes['Person'][]; // [Person!]!
+    coachees: NexusGenRootTypes['Coachee'][]; // [Coachee!]!
+    coaches: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
 }
 
 export interface NexusGenFieldTypeNames {
-  Person: { // field return type name
-    familyName: 'ID'
-    givenName: 'ID'
-    id: 'ID'
-    surveyResults: 'ID'
+  Coach: { // field return type name
+    email: 'String'
+    firstName: 'String'
+    id: 'Int'
+    lastName: 'String'
+    sport: 'Sport'
+  }
+  Coachee: { // field return type name
+    firstName: 'String'
+    id: 'Int'
+    lastName: 'String'
   }
   Query: { // field return type name
-    hello: 'String'
-    hi: 'String'
-    people: 'Person'
+    coachees: 'Coachee'
+    coaches: 'Coach'
   }
 }
 
@@ -88,7 +109,7 @@ export type NexusGenObjectNames = keyof NexusGenObjects;
 
 export type NexusGenInputNames = never;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

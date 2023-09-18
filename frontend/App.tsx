@@ -1,40 +1,40 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import MainScreen from './screens/MainScreen';
-import ProfileScreen from './screens/Profile'
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
+// import the CoachSample
+import CoachSample from './sample/CoachSample';
 
+// for urql
+import {
+    Client,
+    Provider as UrqlProvider,
+    cacheExchange,
+    fetchExchange,
+} from 'urql';
 
-export type RootStackParams = {
-  MainScreen: any; 
-  Sports: any
-  Profile: any;
-  Coach: {
-    name: String;
-  }
-}
-const RootStack = createNativeStackNavigator();
+const client = new Client({
+    // url: 'http://localhost:5050/graphql',
+    url: 'http://192.168.1.3:5050/graphql', // replace with actual IP address, change to .env file
+    exchanges: [cacheExchange, fetchExchange],
+});
 
-export default function App() {
-  return (
-    <NavigationContainer>
-      <RootStack.Navigator initialRouteName="MainScreen">
-      <RootStack.Screen name="MainScreen" component={MainScreen} />
-      {/* <RootStack.Screen name="Coach" component={CoachScreen} /> */}
-      <RootStack.Screen name="Profile" component={ProfileScreen} />
-      </RootStack.Navigator>
-    </NavigationContainer>
-  );
-}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
+
+export default function App() {
+    return (
+        <UrqlProvider value={client}>
+            <View style={styles.container}>
+                <Text>Open up App.tsx to start working on your appzzz!</Text>
+                <CoachSample />
+                <StatusBar style="auto" />
+            </View>
+        </UrqlProvider>
+    );
+}
