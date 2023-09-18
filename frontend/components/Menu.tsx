@@ -8,6 +8,7 @@ import { Card, Button } from 'react-native-paper';
 const Menu = () => {
     const navigation 
     = useNavigation<NativeStackNavigationProp<RootStackParams>>()
+    
   return (
     <View style={styles.container}>
       <Card>
