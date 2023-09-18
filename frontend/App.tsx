@@ -13,9 +13,10 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.3:5050/graphql', // replace with actual IP address, change to .env file, why does this work
+    url: 'http://192.168.1.3:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
+
 
 const styles = StyleSheet.create({
     container: {
