@@ -1,7 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from 'react';
+import UserDashboard from './screens/UserDashboard';
+import UserProfile from './screens/UserProfile'
+import CoachDashboard from './screens/CoachDashboard';
+import Appointments from './screens/Appointments';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 // import the CoachSample
 import CoachSample from './sample/CoachSample';
+
 
 // for urql
 import {
@@ -17,24 +25,34 @@ const client = new Client({
     exchanges: [cacheExchange, fetchExchange],
 });
 
+export type RootStackParams = {
+  UserDashboard: any; 
+  UserProfile: any;
+  CoachDashboard: any;
+  Appointments: any;
+}
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
+
+const RootStack = createNativeStackNavigator();
 
 export default function App() {
-    return (
-        <UrqlProvider value={client}>
-            <View style={styles.container}>
-                <Text>Open up App.tsx to start working on your appzzz!</Text>
-                <CoachSample />
-                <StatusBar style="auto" />
-            </View>
-        </UrqlProvider>
-    );
+
+  return (
+     <UrqlProvider value={client}>
+        <NavigationContainer>
+          <RootStack.Navigator initialRouteName="CoachDashboard">
+          <RootStack.Screen name="UserDashboard" component={UserDashboard} />
+          <RootStack.Screen name="CoachDashboard" component={CoachDashboard} />
+          <RootStack.Screen name="UserProfile" component={UserProfile} />
+          <RootStack.Screen name="Appointments" component={Appointments} />
+          </RootStack.Navigator>
+        </NavigationContainer>
+      </UrqlProvider>
+    
+  );
 }
+
+
+
+
+
