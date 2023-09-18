@@ -1,14 +1,14 @@
 import React from "react"
 import {View, StyleSheet,TextInput, TextInputProps} from 'react-native'
 
-interface CustomInputProps extends TextInputProps {
+interface InputSignUpPages extends TextInputProps {
     value: string
     setValue: (value: string) => void
     placeholder: string
 }
 
 
-const CustomInput: React.FC<CustomInputProps> = ({value, setValue, placeholder, secureTextEntry,}) => {
+const InputSignUpPages: React.FC<InputSignUpPages> = ({value, setValue, placeholder, secureTextEntry,}) => {
     return (
         <View style = {styles.container}>
             <TextInput 
@@ -19,6 +19,8 @@ const CustomInput: React.FC<CustomInputProps> = ({value, setValue, placeholder, 
             secureTextEntry={secureTextEntry}
             placeholderTextColor='#a19e9e'/>
         </View>
+
+        
     )
 }
 
@@ -45,10 +47,10 @@ const styles = StyleSheet.create({
     
 
     input: {
-        marginLeft: 40,
+        marginLeft: 10,
         textAlignVertical: "center",
         color: '#a19e9e',
     },
 })
 
-export default CustomInput;
+export default InputSignUpPages;

@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Dimensions, Image} from "react-native";
 import React, { useState } from 'react';
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import SVGComponent from '../../components/backgroundSVG2';
 import BottomComponent from "../../components/BottomSvg";
 import CustomInput from "../../components/CustomeInput";
