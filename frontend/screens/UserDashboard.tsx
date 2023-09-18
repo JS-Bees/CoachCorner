@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Dimensions, Image, Platform, TouchableOpacity} from "react-native";
 import React from 'react';
 import { Button } from 'react-native-paper';
-import SvgComponent from "../components/BackgroundSvg";
+import BottomComponent from "../components/BottomSvg";
 import { RootStackParams } from '../App';
 import {useNavigation} from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -81,9 +81,7 @@ const UserDashboard = () => {
                     onPress={() => console.log('Pressed')}>Find Coach</Button>
                 </View>
             </View>
-            <View style={UserDashboardStyle.svgContainer}>
-                <SvgComponent> </SvgComponent>
-            </View>
+            <BottomComponent style= {UserDashboardStyle.bottomSVG}/>
         </View>
     )
 }
@@ -194,17 +192,24 @@ const UserDashboardStyle = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    svgContainer: {
+    // svgContainer: {
+    //     position: 'absolute',
+    //     bottom: 0,
+    //     left: 0,
+    //     right: 0,
+    //     alignItems: 'center',
+    //     zIndex: -1, // Set a lower z-index to put it behind mini-containers
+    //     width: '100%', // Expand to full width
+    //     height: '35%', // Set the height as a percentage of the screen height
+    //     padding: 0,
+    //     margin: 0,
+    // },
+    bottomSVG: {
+        justifyContent: 'flex-end', 
         position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        zIndex: -1, // Set a lower z-index to put it behind mini-containers
-        width: '100%', // Expand to full width
-        height: '35%', // Set the height as a percentage of the screen height
-        padding: 0,
-        margin: 0,
+        width: (width),
+        height: (height),
+        zIndex: 0,
     },
 });
 

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Dimensions, Image} from "react-native";
 import React, { useState } from 'react';
-import SVGComponent from '../../components/backgroundSVG2';
+import SVGComponent from '../../components/BackgroundSVG2';
 import BottomComponent from "../../components/BottomSvg";
 import CustomInput from "../../components/CustomeInput";
 import LogInButton from "../../components/CustomButton";
@@ -53,7 +53,8 @@ const LogIn = () => {
        </View>
 
        <View style = {Log_In_Style.button}>
-       <LogInButton text="Login" onPress={onLogInPressed}/>      
+       <LogInButton text="Login" onPress={() => {onLogInPressed(); 
+                                                 navigation.navigate('UserDashboard');}} />      
        </View>
 
         <View style={Log_In_Style.noMargin}>
@@ -82,15 +83,16 @@ const Log_In_Style = StyleSheet.create({
     },
 
     button: {
-        marginTop:90,
+        marginTop:60,
         flex: 1,
         justifyContent: "center",
         alignItems: 'center',
     },
 
     noMargin: {
-        marginTop: 25,
+        marginTop: 20,
         marginBottom: 400,
+
     },
     
     CoachIcon: {
