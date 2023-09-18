@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import UserDashboard from './screens/UserDashboard';
+import LogInPage from './screens/Authentication/LogIn';
 import UserProfile from './screens/UserProfile'
 import CoachDashboard from './screens/CoachDashboard';
 import Appointments from './screens/Appointments';
@@ -40,17 +41,18 @@ export default function App() {
   return (
      <UrqlProvider value={client}>
         <NavigationContainer>
-          <RootStack.Navigator initialRouteName="CoachDashboard">
+          <RootStack.Navigator initialRouteName="LogIn">
           <RootStack.Screen name="UserDashboard" component={UserDashboard} />
           <RootStack.Screen name="CoachDashboard" component={CoachDashboard} />
           <RootStack.Screen name="UserProfile" component={UserProfile} />
           <RootStack.Screen name="Appointments" component={Appointments} />
+          <RootStack.Screen name="LogIn" component={LogInPage} />
           </RootStack.Navigator>
         </NavigationContainer>
-      </UrqlProvider>
-    
+      </UrqlProvider>    
   );
 }
+
 
 
 
