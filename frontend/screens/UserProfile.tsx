@@ -8,9 +8,6 @@ import {
   Platform,
   TouchableOpacity,
   TextInput,
-  Keyboard,
-
-  ScrollView,
 } from 'react-native';
 import SvgComponent from '../components/BackgroundSvg';
 import { Button } from 'react-native-paper';
