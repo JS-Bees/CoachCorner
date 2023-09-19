@@ -1,14 +1,24 @@
-import React from "react"
-import {View, StyleSheet,TextInput, TextInputProps} from 'react-native'
+import React, { useState }from "react"
+import {View, StyleSheet,TextInput, TextInputProps,TouchableOpacity} from 'react-native'
+import { FontAwesome } from '@expo/vector-icons';
 
 interface CustomInputProps extends TextInputProps {
     value: string
     setValue: (value: string) => void
     placeholder: string
+    secureTextEntry?: boolean;
 }
 
 
 const CustomInput: React.FC<CustomInputProps> = ({value, setValue, placeholder, secureTextEntry,}) => {
+    
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
+  
+    
     return (
         <View style = {styles.container}>
             <TextInput 
@@ -16,8 +26,26 @@ const CustomInput: React.FC<CustomInputProps> = ({value, setValue, placeholder, 
             onChangeText={setValue}
             placeholder={placeholder} 
                         style={styles.input}
-            secureTextEntry={secureTextEntry}
+            secureTextEntry={!showPassword && secureTextEntry}
             placeholderTextColor='#a19e9e'/>
+
+            {secureTextEntry && (
+                <TouchableOpacity onPress={togglePasswordVisibility} style={styles.toggleButton}>
+                <FontAwesome
+                 name={showPassword ? 'eye' : 'eye-slash'}
+                 size={20}
+                 color='#a19e9e'
+                />
+                </TouchableOpacity>
+      )}
+
+            
+
+
+
+
+
+
         </View>
     )
 }
@@ -42,13 +70,17 @@ const styles = StyleSheet.create({
         borderColor: '#e8e8e8',
     },
 
-    
-
     input: {
         marginLeft: 40,
         textAlignVertical: "center",
         color: '#a19e9e',
     },
+
+    toggleButton: {
+        position:"absolute",
+        right: 10,
+        padding: 10,
+    }
 })
 
 export default CustomInput;

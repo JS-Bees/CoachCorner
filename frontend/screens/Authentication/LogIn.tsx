@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 
+
 const { width, height } = Dimensions.get('window');
 const onLogInPressed = () => {
     console.warn("Logged in")
@@ -45,7 +46,8 @@ const LogIn = () => {
             <CustomInput placeholder="Email" 
                          value={Email} 
                          setValue={setEmail} />
-            <CustomInput placeholder="Password" 
+            <CustomInput
+                        placeholder="Password" 
                          value={Password} 
                          setValue={setPassword}
                          secureTextEntry/>
@@ -54,11 +56,12 @@ const LogIn = () => {
 
        <View style = {Log_In_Style.button}>
        <LogInButton text="Login" onPress={() => {onLogInPressed(); 
-                                                 navigation.navigate('UserDashboard');}} />      
+                                                 navigation.navigate('UserDashboard');}} />          
        </View>
 
         <View style={Log_In_Style.noMargin}>
-        <LogInButton onPress={onSignInPressed} text="Don't have an account? Sign up here!" type = "TERTIARY"/> 
+        <LogInButton text="Don't have an account? Sign up here!" type = "TERTIARY" onPress={() => {onSignInPressed(); 
+                                                 navigation.navigate('SignUp');}} />    
         </View>
 
         </View>
@@ -83,16 +86,15 @@ const Log_In_Style = StyleSheet.create({
     },
 
     button: {
-        marginTop:60,
+        marginTop: height*0.10,
         flex: 1,
         justifyContent: "center",
         alignItems: 'center',
     },
 
     noMargin: {
-        marginTop: 20,
+        marginTop: 25,
         marginBottom: 400,
-
     },
     
     CoachIcon: {
@@ -145,4 +147,3 @@ const Log_In_Style = StyleSheet.create({
 })
 
 export default LogIn;
-

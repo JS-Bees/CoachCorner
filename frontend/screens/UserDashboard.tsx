@@ -5,6 +5,7 @@ import BottomComponent from "../components/BottomSvg";
 import { RootStackParams } from '../App';
 import {useNavigation} from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Draggable from 'react-native-draggable';
 import {useFonts} from 'expo-font'
 
 const { width, height } = Dimensions.get('window');
