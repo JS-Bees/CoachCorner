@@ -5,8 +5,23 @@
 
 
 import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
-
-
+import type { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
+  }
+}
 
 
 declare global {
@@ -14,6 +29,29 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CreateCoachInput: { // input type
+    birthday: NexusGenScalars['DateTime']; // DateTime!
+    email: string; // String!
+    firstName: string; // String!
+    games: NexusGenEnums['Games'][]; // [Games!]!
+    hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
+    lastName: string; // String!
+    moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
+    password: string; // String!
+    sport: NexusGenEnums['Sport']; // Sport!
+    workplaceAddress: string; // String!
+  }
+  CreateCoacheeInput: { // input type
+    address: string; // String!
+    birthday: NexusGenScalars['DateTime']; // DateTime!
+    email: string; // String!
+    firstName: string; // String!
+    games: NexusGenEnums['Games'][]; // [Games!]!
+    hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
+    lastName: string; // String!
+    moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
+    password: string; // String!
+  }
 }
 
 export interface NexusGenEnums {
@@ -30,21 +68,36 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  DateTime: any
 }
 
 export interface NexusGenObjects {
   Coach: { // root type
+    birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
+    games: NexusGenEnums['Games'][]; // [Games!]!
+    hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     id: number; // Int!
     lastName: string; // String!
+    moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
+    password: string; // String!
     sport: NexusGenEnums['Sport']; // Sport!
+    workplaceAddress: string; // String!
   }
   Coachee: { // root type
+    address: string; // String!
+    birthday: NexusGenScalars['DateTime']; // DateTime!
+    email: string; // String!
     firstName: string; // String!
+    games: NexusGenEnums['Games'][]; // [Games!]!
+    hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     id: number; // Int!
     lastName: string; // String!
+    moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
+    password: string; // String!
   }
+  Mutation: {};
   Query: {};
 }
 
@@ -60,43 +113,99 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 
 export interface NexusGenFieldTypes {
   Coach: { // field return type
+    birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
+    games: NexusGenEnums['Games'][]; // [Games!]!
+    hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     id: number; // Int!
     lastName: string; // String!
+    moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
+    password: string; // String!
     sport: NexusGenEnums['Sport']; // Sport!
+    workplaceAddress: string; // String!
   }
   Coachee: { // field return type
+    address: string; // String!
+    birthday: NexusGenScalars['DateTime']; // DateTime!
+    email: string; // String!
     firstName: string; // String!
+    games: NexusGenEnums['Games'][]; // [Games!]!
+    hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     id: number; // Int!
     lastName: string; // String!
+    moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
+    password: string; // String!
+  }
+  Mutation: { // field return type
+    createCoach: NexusGenRootTypes['Coach'] | null; // Coach
+    createCoachee: NexusGenRootTypes['Coachee'] | null; // Coachee
   }
   Query: { // field return type
-    coachees: NexusGenRootTypes['Coachee'][]; // [Coachee!]!
-    coaches: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    coachees: Array<NexusGenRootTypes['Coachee'] | null> | null; // [Coachee]
+    coaches: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
+    findCoachByEmailAndPassword: NexusGenRootTypes['Coach'] | null; // Coach
+    findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee'] | null; // Coachee
   }
 }
 
 export interface NexusGenFieldTypeNames {
   Coach: { // field return type name
+    birthday: 'DateTime'
     email: 'String'
     firstName: 'String'
+    games: 'Games'
+    hobbies: 'Hobbies'
     id: 'Int'
     lastName: 'String'
+    moviesGenres: 'MovieGenres'
+    password: 'String'
     sport: 'Sport'
+    workplaceAddress: 'String'
   }
   Coachee: { // field return type name
+    address: 'String'
+    birthday: 'DateTime'
+    email: 'String'
     firstName: 'String'
+    games: 'Games'
+    hobbies: 'Hobbies'
     id: 'Int'
     lastName: 'String'
+    moviesGenres: 'MovieGenres'
+    password: 'String'
+  }
+  Mutation: { // field return type name
+    createCoach: 'Coach'
+    createCoachee: 'Coachee'
   }
   Query: { // field return type name
     coachees: 'Coachee'
     coaches: 'Coach'
+    findCoachByEmailAndPassword: 'Coach'
+    findCoacheeByEmailAndPassword: 'Coachee'
   }
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    createCoach: { // args
+      input: NexusGenInputs['CreateCoachInput']; // CreateCoachInput!
+    }
+    createCoachee: { // args
+      input: NexusGenInputs['CreateCoacheeInput']; // CreateCoacheeInput!
+    }
+  }
+  Query: {
+    findCoachByEmailAndPassword: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+    findCoacheeByEmailAndPassword: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
@@ -107,7 +216,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
 export type NexusGenEnumNames = keyof NexusGenEnums;
 

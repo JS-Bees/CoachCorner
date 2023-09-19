@@ -40,6 +40,7 @@ const RootStack = createNativeStackNavigator();
 
 export default function App() {
 
+
   return (
      <UrqlProvider value={client}>
         <NavigationContainer>
@@ -54,6 +55,7 @@ export default function App() {
         </NavigationContainer>
       </UrqlProvider>    
   );
+
 }
 
 
