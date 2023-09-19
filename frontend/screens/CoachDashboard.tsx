@@ -9,11 +9,11 @@ import {useFonts} from 'expo-font'
 
 const { width, height } = Dimensions.get('window');
 
-const UserDashboard = () => {
+
+const CoachDashboard = () => {
     const navigation 
     = useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
-    
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold':require('./../assets/fonts/Blinker-SemiBold.ttf'),
         'Blinker-Light':require('./../assets/fonts/Blinker-Light.ttf'),
@@ -22,73 +22,73 @@ const UserDashboard = () => {
       if(!fontsloaded) {
         return null;
       }
-    
+
     return (
-        <View style={UserDashboardStyle.container}>
-        <View style={UserDashboardStyle.backgroundContainer}></View>
-        <View style={UserDashboardStyle.topContainer}>
-          <View style={[UserDashboardStyle.topMiniContainer]}>
-            <View style={UserDashboardStyle.profileImageContainer}>
+        <View style={CoachDashboardStyle.container}>
+        <View style={CoachDashboardStyle.backgroundContainer}></View>
+        <View style={CoachDashboardStyle.topContainer}>
+          <View style={[CoachDashboardStyle.topMiniContainer]}>
+            <View style={CoachDashboardStyle.profileImageContainer}>
               <Image
                 source={require('../assets/User.png')} // Add your profile image source here
-                style={UserDashboardStyle.profileImage}/>
+                style={CoachDashboardStyle.profileImage}/>
             </View>
-            <View style={UserDashboardStyle.nameAndGreetingsContainer}>
-                <Text style={UserDashboardStyle.greetings}>Welcome Back!</Text>
-                <Text style={[UserDashboardStyle.name, {paddingRight: '50%'}]}>John Doe</Text>
+            <View style={CoachDashboardStyle.nameAndGreetingsContainer}>
+                <Text style={CoachDashboardStyle.greetings}>Welcome Back!</Text>
+                <Text style={[CoachDashboardStyle.name, {paddingRight: '50%'}]}>John Doe</Text>
             </View>
         </View>
         </View>
-            <View style={UserDashboardStyle.middleContainer}>
-                <View style={UserDashboardStyle.row}>
-                <View style={[UserDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={UserDashboardStyle.imageLabel}>
-                        My Coaches</Text>
-                        <Image source={require('../assets/Coach.png')} style={[UserDashboardStyle.imageStyle]} />
+            <View style={CoachDashboardStyle.middleContainer}>
+                <View style={CoachDashboardStyle.row}>
+                <View style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}>
+                    <View style={CoachDashboardStyle.nestedMiniContainer}>
+                    <Text style={CoachDashboardStyle.imageLabel}>
+                        My Clients</Text>
+                        <Image source={require('../assets/Client.png')} style={[CoachDashboardStyle.imageStyle]} />
                     </View>
                 </View>
                 <TouchableOpacity
-                    style={[UserDashboardStyle.miniContainer, { backgroundColor: '#F2E9FB' }]}
+                    style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#F2E9FB' }]}
                     onPress={() => navigation.navigate('Appointments')}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={UserDashboardStyle.imageLabel}>Appointments</Text>
-                    <Image source={require('../assets/Appointment.png')} style={UserDashboardStyle.imageStyle} />
+                    <View style={CoachDashboardStyle.nestedMiniContainer}>
+                    <Text style={CoachDashboardStyle.imageLabel}>Appointments</Text>
+                    <Image source={require('../assets/Appointment.png')} style={CoachDashboardStyle.imageStyle} />
                     </View>
                 </TouchableOpacity>
                 </View>
-                <View style={UserDashboardStyle.row}>
-                <View style={[UserDashboardStyle.miniContainer,  { backgroundColor: '#D8C7F9', marginVertical: 20 }]}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={{fontSize: 14, fontFamily: 'Blinker-SemiBold', color: '#483B5F',}}>
+                <View style={CoachDashboardStyle.row}>
+                <View style={[CoachDashboardStyle.miniContainer,  { backgroundColor: '#D8C7F9', marginVertical: 20 }]}>
+                    <View style={CoachDashboardStyle.nestedMiniContainer}>
+                    <Text style={[CoachDashboardStyle.imageLabel, {fontSize: 14}]}>
                         Personal Progress</Text>
-                        <Image source={require('../assets/Progress.png')} style={[UserDashboardStyle.imageStyle]} />
+                        <Image source={require('../assets/Progress.png')} style={[CoachDashboardStyle.imageStyle]} />
                     </View>
                 </View>
                 <TouchableOpacity
-                    style={[UserDashboardStyle.miniContainer, { backgroundColor: '#D2CBDF' }]}
+                    style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#D2CBDF' }]}
                     onPress={() => navigation.navigate('UserProfile')}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={UserDashboardStyle.imageLabel}>My Profile</Text>
-                    <Image source={require('../assets/Profile.png')} style={UserDashboardStyle.imageStyle} />
+                    <View style={CoachDashboardStyle.nestedMiniContainer}>
+                    <Text style={CoachDashboardStyle.imageLabel}>My Profile</Text>
+                    <Image source={require('../assets/Profile.png')} style={CoachDashboardStyle.imageStyle} />
                     </View>
                 </TouchableOpacity>
             </View>
-            <View style={UserDashboardStyle.buttonContainer}>
+            <View style={CoachDashboardStyle.buttonContainer}>
             <Button mode="contained"  
                     style={{ backgroundColor: '#A378F2' , width: 270,  justifyContent: 'center', alignItems: 'center'  }} 
-                    labelStyle={{ color: 'white', fontFamily: 'Blinker-SemiBold',fontSize: 22 }}
+                    labelStyle={{ color: 'white', fontFamily: 'Blinker-SemiBold',fontSize: 20 }}
                     onPress={() => console.log('Pressed')}>Find Coach</Button>
                 </View>
             </View>
-            <View style={UserDashboardStyle.svgContainer}>
+            <View style={CoachDashboardStyle.svgContainer}>
                 <SvgComponent> </SvgComponent>
             </View>
         </View>
     )
 }
 
-const UserDashboardStyle = StyleSheet.create({
+const CoachDashboardStyle = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
@@ -148,6 +148,7 @@ const UserDashboardStyle = StyleSheet.create({
         color: 'white',
     },
     name: {
+        fontFamily: 'Blinker-Light',
         color: 'white',
     },
     profileImage: {
@@ -183,6 +184,7 @@ const UserDashboardStyle = StyleSheet.create({
         fontFamily: 'Blinker-SemiBold',
         fontSize: 15,
         color: '#483B5F',
+        marginBottom: 10,
     },
     imageStyle: {
         width: 65,
@@ -208,4 +210,4 @@ const UserDashboardStyle = StyleSheet.create({
     },
 });
 
-export default UserDashboard;
+export default CoachDashboard;
