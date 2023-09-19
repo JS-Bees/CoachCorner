@@ -9,6 +9,7 @@ import {useNavigation} from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 
+
 const { width, height } = Dimensions.get('window');
 const onLogInPressed = () => {
     console.warn("Logged in")
@@ -45,7 +46,8 @@ const LogIn = () => {
             <CustomInput placeholder="Email" 
                          value={Email} 
                          setValue={setEmail} />
-            <CustomInput placeholder="Password" 
+            <CustomInput
+                        placeholder="Password" 
                          value={Password} 
                          setValue={setPassword}
                          secureTextEntry/>
