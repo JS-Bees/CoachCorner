@@ -42,7 +42,6 @@ const SignUp = () => {
     }
   };
 
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
