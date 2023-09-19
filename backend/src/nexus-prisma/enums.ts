@@ -20,7 +20,7 @@ export const MovieGenresEnum = enumType({
         COMEDY: 'COMEDY',
         DRAMA: 'DRAMA',
         FANTASY: 'FANTASY',
-        KDrama: 'KDRAMA',
+        KDRAMA: 'KDRAMA',
         SCIFI: 'SCIFI',
         HORROR: 'HORROR',
         MYSTERY: 'MYSTERY',

@@ -27,7 +27,7 @@ enum MovieGenres {
     COMEDY
     DRAMA
     FANTASY
-    KDrama
+    KDRAMA
     SCIFI
     HORROR
     MYSTERY
@@ -94,6 +94,7 @@ model Coachee {
   bio                 String?  
   profilePicture      String?     
 
+  bookings            Booking[]
   coachingRelationships CoachingRelationship[]
 
   active              Boolean   @default(true)
@@ -120,6 +121,7 @@ model Coach {
   bio                 String?  
   profilePicture      String?     
 
+  bookings              Booking[] 
   coachingRelationships CoachingRelationship[]
 
   active              Boolean   @default(true)
@@ -155,11 +157,11 @@ model BookingSlot {
 model Booking {
   id                Int          @id @default(autoincrement())
   bookingSlots      BookingSlot[]
-  coach             Coach @relation(fields: [coachId], references: [id])
+  coach             Coach        @relation(fields: [coachId], references: [id])
   coachId           Int
-  coachName         String
-  coachee           Coachee @relation(fields: [coacheeId], references: [id])
+  coachee           Coachee      @relation(fields: [coacheeId], references: [id])
   coacheeId         Int
+  coachName         String
   coacheeName       String
   serviceType       String
   status            BookingStatus
@@ -170,4 +172,5 @@ model Booking {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 }
+
 

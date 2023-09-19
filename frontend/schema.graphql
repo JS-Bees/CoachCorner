@@ -10,18 +10,61 @@ enum BookingStatus {
 }
 
 type Coach {
+  birthday: DateTime!
   email: String!
   firstName: String!
+  games: [Games!]!
+  hobbies: [Hobbies!]!
   id: Int!
   lastName: String!
+  moviesGenres: [MovieGenres!]!
+  password: String!
   sport: Sport!
+  workplaceAddress: String!
 }
 
 type Coachee {
+  address: String!
+  birthday: DateTime!
+  email: String!
   firstName: String!
+  games: [Games!]!
+  hobbies: [Hobbies!]!
   id: Int!
   lastName: String!
+  moviesGenres: [MovieGenres!]!
+  password: String!
 }
+
+input CreateCoachInput {
+  birthday: DateTime!
+  email: String!
+  firstName: String!
+  games: [Games!]!
+  hobbies: [Hobbies!]!
+  lastName: String!
+  moviesGenres: [MovieGenres!]!
+  password: String!
+  sport: Sport!
+  workplaceAddress: String!
+}
+
+input CreateCoacheeInput {
+  address: String!
+  birthday: DateTime!
+  email: String!
+  firstName: String!
+  games: [Games!]!
+  hobbies: [Hobbies!]!
+  lastName: String!
+  moviesGenres: [MovieGenres!]!
+  password: String!
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
 
 enum Games {
   ARKNIGHTS
@@ -64,7 +107,7 @@ enum MovieGenres {
   DRAMA
   FANTASY
   HORROR
-  KDrama
+  KDRAMA
   MUSICAL
   MYSTERY
   ROMANCE
@@ -72,9 +115,16 @@ enum MovieGenres {
   THRILLER
 }
 
+type Mutation {
+  createCoach(input: CreateCoachInput!): Coach
+  createCoachee(input: CreateCoacheeInput!): Coachee
+}
+
 type Query {
-  coachees: [Coachee!]!
-  coaches: [Coach!]!
+  coachees: [Coachee]
+  coaches: [Coach]
+  findCoachByEmailAndPassword(email: String!, password: String!): Coach
+  findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee
 }
 
 enum Sport {

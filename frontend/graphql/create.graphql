@@ -1,0 +1,59 @@
+mutation createCoachee(
+    $firstName: String!
+    $lastName: String!
+    $address: String!
+    $birthday: DateTime!
+    $email: String!
+    $password: String!
+    $games: [Games!]!
+    $hobbies: [Hobbies!]!
+    $moviesGenres: [MovieGenres!]!
+) {
+    createCoachee(
+        input: {
+            firstName: $firstName
+            lastName: $lastName
+            address: $address
+            birthday: $birthday
+            email: $email
+            password: $password
+            games: $games
+            hobbies: $hobbies
+            moviesGenres: $moviesGenres
+        }
+    ) {
+        id
+        email
+    }
+}
+
+mutation createCoach(
+    $firstName: String!
+    $lastName: String!
+    $birthday: DateTime!
+    $email: String!
+    $password: String!
+    $workplaceAddress: String!
+    $sport: Sport!
+    $games: [Games!]!
+    $hobbies: [Hobbies!]!
+    $moviesGenres: [MovieGenres!]!
+) {
+    createCoach(
+        input: {
+            firstName: $firstName
+            lastName: $lastName
+            birthday: $birthday
+            email: $email
+            password: $password
+            workplaceAddress: $workplaceAddress
+            sport: $sport
+            games: $games
+            hobbies: $hobbies
+            moviesGenres: $moviesGenres
+        }
+    ) {
+        id
+        email
+    }
+}
