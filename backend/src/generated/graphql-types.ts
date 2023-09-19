@@ -138,12 +138,14 @@ export interface NexusGenFieldTypes {
     password: string; // String!
   }
   Mutation: { // field return type
-    createCoach: NexusGenRootTypes['Coach']; // Coach!
-    createCoachee: NexusGenRootTypes['Coachee']; // Coachee!
+    createCoach: NexusGenRootTypes['Coach'] | null; // Coach
+    createCoachee: NexusGenRootTypes['Coachee'] | null; // Coachee
   }
   Query: { // field return type
-    coachees: NexusGenRootTypes['Coachee'][]; // [Coachee!]!
-    coaches: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    coachees: Array<NexusGenRootTypes['Coachee'] | null> | null; // [Coachee]
+    coaches: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
+    findCoachByEmailAndPassword: NexusGenRootTypes['Coach'] | null; // Coach
+    findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee'] | null; // Coachee
   }
 }
 
@@ -180,6 +182,8 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     coachees: 'Coachee'
     coaches: 'Coach'
+    findCoachByEmailAndPassword: 'Coach'
+    findCoacheeByEmailAndPassword: 'Coachee'
   }
 }
 
@@ -190,6 +194,16 @@ export interface NexusGenArgTypes {
     }
     createCoachee: { // args
       input: NexusGenInputs['CreateCoacheeInput']; // CreateCoacheeInput!
+    }
+  }
+  Query: {
+    findCoachByEmailAndPassword: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+    findCoacheeByEmailAndPassword: { // args
+      email: string; // String!
+      password: string; // String!
     }
   }
 }

@@ -116,13 +116,15 @@ enum MovieGenres {
 }
 
 type Mutation {
-  createCoach(input: CreateCoachInput!): Coach!
-  createCoachee(input: CreateCoacheeInput!): Coachee!
+  createCoach(input: CreateCoachInput!): Coach
+  createCoachee(input: CreateCoacheeInput!): Coachee
 }
 
 type Query {
-  coachees: [Coachee!]!
-  coaches: [Coach!]!
+  coachees: [Coachee]
+  coaches: [Coach]
+  findCoachByEmailAndPassword(email: String!, password: String!): Coach
+  findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee
 }
 
 enum Sport {

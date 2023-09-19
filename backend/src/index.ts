@@ -7,6 +7,7 @@ import * as enums from './nexus-prisma/enums';
 import * as objectTypes from './nexus-prisma/objectTypes';
 import * as inputTypes from './nexus-prisma/inputTypes';
 import * as queries from './nexus-prisma/queries/queries';
+import * as filteredQueries from './nexus-prisma/queries/filteredQueries';
 import * as createMutation from './nexus-prisma/mutations/createMutations';
 
 import './generated/graphql-types'; // import types as side-effect
@@ -26,9 +27,16 @@ const schema = makeSchema({
     nonNullDefaults: {
         // defaults to non-nullable (e.g. Person!)
         input: true,
-        output: true,
+        output: false, // Changed the output to allow nullable types for null error messages
     },
-    types: [enums, objectTypes, inputTypes, queries, createMutation],
+    types: [
+        enums,
+        objectTypes,
+        inputTypes,
+        queries,
+        filteredQueries,
+        createMutation,
+    ],
     outputs: {
         typegen: path.join(__dirname, 'generated/graphql-types.ts'),
         schema: path.join(__dirname, '../../frontend/schema.graphql'),
