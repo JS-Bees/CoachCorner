@@ -13,8 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    'query getAllCoaches {\n  coaches {\n    id\n    firstName\n    lastName\n    sport\n  }\n}':
-        types.GetAllCoachesDocument,
+    "mutation createCoachee($firstName: String!, $lastName: String!, $address: String!, $birthday: DateTime!, $email: String!, $password: String!, $games: [Games!]!, $hobbies: [Hobbies!]!, $moviesGenres: [MovieGenres!]!) {\n  createCoachee(\n    input: {firstName: $firstName, lastName: $lastName, address: $address, birthday: $birthday, email: $email, password: $password, games: $games, hobbies: $hobbies, moviesGenres: $moviesGenres}\n  ) {\n    id\n    email\n  }\n}\n\nmutation createCoach($firstName: String!, $lastName: String!, $birthday: DateTime!, $email: String!, $password: String!, $workplaceAddress: String!, $sport: Sport!, $games: [Games!]!, $hobbies: [Hobbies!]!, $moviesGenres: [MovieGenres!]!) {\n  createCoach(\n    input: {firstName: $firstName, lastName: $lastName, birthday: $birthday, email: $email, password: $password, workplaceAddress: $workplaceAddress, sport: $sport, games: $games, hobbies: $hobbies, moviesGenres: $moviesGenres}\n  ) {\n    id\n    email\n  }\n}": types.CreateCoacheeDocument,
+    "query getAllCoaches {\n  coaches {\n    id\n    firstName\n    lastName\n    sport\n  }\n}": types.GetAllCoachesDocument,
 };
 
 /**
@@ -34,13 +34,14 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(
-    source: 'query getAllCoaches {\n  coaches {\n    id\n    firstName\n    lastName\n    sport\n  }\n}',
-): (typeof documents)['query getAllCoaches {\n  coaches {\n    id\n    firstName\n    lastName\n    sport\n  }\n}'];
+export function graphql(source: "mutation createCoachee($firstName: String!, $lastName: String!, $address: String!, $birthday: DateTime!, $email: String!, $password: String!, $games: [Games!]!, $hobbies: [Hobbies!]!, $moviesGenres: [MovieGenres!]!) {\n  createCoachee(\n    input: {firstName: $firstName, lastName: $lastName, address: $address, birthday: $birthday, email: $email, password: $password, games: $games, hobbies: $hobbies, moviesGenres: $moviesGenres}\n  ) {\n    id\n    email\n  }\n}\n\nmutation createCoach($firstName: String!, $lastName: String!, $birthday: DateTime!, $email: String!, $password: String!, $workplaceAddress: String!, $sport: Sport!, $games: [Games!]!, $hobbies: [Hobbies!]!, $moviesGenres: [MovieGenres!]!) {\n  createCoach(\n    input: {firstName: $firstName, lastName: $lastName, birthday: $birthday, email: $email, password: $password, workplaceAddress: $workplaceAddress, sport: $sport, games: $games, hobbies: $hobbies, moviesGenres: $moviesGenres}\n  ) {\n    id\n    email\n  }\n}"): (typeof documents)["mutation createCoachee($firstName: String!, $lastName: String!, $address: String!, $birthday: DateTime!, $email: String!, $password: String!, $games: [Games!]!, $hobbies: [Hobbies!]!, $moviesGenres: [MovieGenres!]!) {\n  createCoachee(\n    input: {firstName: $firstName, lastName: $lastName, address: $address, birthday: $birthday, email: $email, password: $password, games: $games, hobbies: $hobbies, moviesGenres: $moviesGenres}\n  ) {\n    id\n    email\n  }\n}\n\nmutation createCoach($firstName: String!, $lastName: String!, $birthday: DateTime!, $email: String!, $password: String!, $workplaceAddress: String!, $sport: Sport!, $games: [Games!]!, $hobbies: [Hobbies!]!, $moviesGenres: [MovieGenres!]!) {\n  createCoach(\n    input: {firstName: $firstName, lastName: $lastName, birthday: $birthday, email: $email, password: $password, workplaceAddress: $workplaceAddress, sport: $sport, games: $games, hobbies: $hobbies, moviesGenres: $moviesGenres}\n  ) {\n    id\n    email\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query getAllCoaches {\n  coaches {\n    id\n    firstName\n    lastName\n    sport\n  }\n}"): (typeof documents)["query getAllCoaches {\n  coaches {\n    id\n    firstName\n    lastName\n    sport\n  }\n}"];
 
 export function graphql(source: string) {
-    return (documents as any)[source] ?? {};
+  return (documents as any)[source] ?? {};
 }
 
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> =
-    TDocumentNode extends DocumentNode<infer TType, any> ? TType : never;
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;

@@ -13,7 +13,7 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.3:5050/graphql', // replace with actual IP address, change to .env file, why does this work
+    url: 'http://192.168.1.2:5050/graphql', // replace with actual IP address, change to .env file, why does this work
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -30,7 +30,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <View style={styles.container}>
-                <Text>Open up App.tsx to start working on your appzzz!</Text>
+                <Text>Open up App.tsx to start working on your appz!</Text>
                 <CoachSample />
                 <StatusBar style="auto" />
             </View>
