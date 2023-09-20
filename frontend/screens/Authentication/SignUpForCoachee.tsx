@@ -3,10 +3,9 @@ import { ScrollView, View, Text, StyleSheet, TextInput, Pressable, Platform } fr
 import DateTimePicker from "@react-native-community/datetimepicker";
 import InputSignUpPages from "../../components/InputSignUpPages";
 import LogInButton from "../../components/CustomButton";
+import { useMutation } from 'urql'; // Import the Urql hook for mutations
+import { CreateCoacheeDocument, Games, Hobbies, MovieGenres } from '../../generated-gql/graphql';
 
-// import { RootStackParams } from "../../App";
-// import { useNavigation } from '@react-navigation/core';
-// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const SignUp = () => {
   const [First_Name, setFirst_Name] = useState('');
@@ -18,13 +17,13 @@ const SignUp = () => {
   const [City, setCity] = useState('');
   const [Postal, setPostal] = useState('');
   const [dateOfBirth, setDateofBirth] = useState('');
+  const [selectedGames, setSelectedGames] = useState<Games[]>([]);
+  const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
+  const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
+  const [signUpResinputult, SignUp] = useMutation(CreateCoacheeDocument);
 
   const [date, setdate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
-
-  const onSignUpPressed = () => {
-    console.warn("Account Created");
-  }
 
   const toggleDatePicker = () => {
     setShowPicker(!showPicker);
@@ -42,6 +41,49 @@ const SignUp = () => {
       toggleDatePicker();
     }
   };
+
+  const setInitialSelectedValues = () => {
+    setSelectedGames([Games.Dota]);
+    setSelectedHobbies([Hobbies.Baking]);
+    setSelectedMovieGenres([MovieGenres.Action]);
+  };
+
+  const onSignUpPressed = async () => {
+    try {
+      setInitialSelectedValues(); // Move the state updates here
+
+      const { data, error } = await SignUp({
+          firstName: First_Name,
+          lastName: Last_Name,
+          address: StreetAdd,
+          birthday: new Date(),
+          email: Email,
+          password: Password,
+          games: selectedGames,
+          hobbies: selectedHobbies,
+          moviesGenres: selectedMovieGenres,
+      });
+
+      if (error) {
+        console.error(error);
+        // Handle errors (e.g., show an error message)
+        console.log(First_Name)
+        console.log(Last_Name)
+        console.log(new Date())
+        console.log(Password)
+        console.log(selectedGames)
+        console.log(selectedHobbies)
+        console.log(selectedMovieGenres)
+      } else {
+        // Handle the data response from your GraphQL server (e.g., show a success message)
+        console.log(data);
+      }
+    } catch (err) {
+      console.error(err);
+      // Handle errors (e.g., show an error message)
+    }
+  };
+  
 
 
   return (

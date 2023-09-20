@@ -3,11 +3,6 @@ import { GetAllCoachesDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import { Text, StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
-    coach: {
-        fontWeight: '700',
-    },
-});
 
 export default function CoachSample(): JSX.Element | null {
     const [result] = useQuery({
@@ -40,3 +35,9 @@ export default function CoachSample(): JSX.Element | null {
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    coach: {
+        fontWeight: '700',
+    },
+});
