@@ -32,5 +32,3 @@ export const coaches = queryField('coaches', {
 //         return db.coach.findMany();
 //     },
 // });
-
-// ~~~~~~~ FILTERED QUERIES ~~~~~~~
