@@ -1,15 +1,16 @@
 import { View, Text, StyleSheet, Dimensions, Image, Platform, TouchableOpacity} from "react-native";
 import React from 'react';
 import { Button } from 'react-native-paper';
-import SvgComponent from "../components/BackgroundSvg";
+import BottomComponent from "../components/BottomSvg";
 import { RootStackParams } from '../App';
 import {useNavigation} from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import {useFonts} from 'expo-font'
 
 const { width, height } = Dimensions.get('window');
 
-const UserDashboard = () => {
+const CoacheeDashboard = () => {
     const navigation 
     = useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
@@ -24,71 +25,71 @@ const UserDashboard = () => {
       }
     
     return (
-        <View style={UserDashboardStyle.container}>
-        <View style={UserDashboardStyle.backgroundContainer}></View>
-        <View style={UserDashboardStyle.topContainer}>
-          <View style={[UserDashboardStyle.topMiniContainer]}>
-            <View style={UserDashboardStyle.profileImageContainer}>
+        <View style={CoacheeDashboardStyle.container}>
+        <View style={CoacheeDashboardStyle.backgroundContainer}></View>
+        <View style={CoacheeDashboardStyle.topContainer}>
+          <View style={[CoacheeDashboardStyle.topMiniContainer]}>
+            <View style={CoacheeDashboardStyle.profileImageContainer}>
               <Image
                 source={require('../assets/User.png')} // Add your profile image source here
-                style={UserDashboardStyle.profileImage}/>
+                style={CoacheeDashboardStyle.profileImage}/>
             </View>
-            <View style={UserDashboardStyle.nameAndGreetingsContainer}>
-                <Text style={UserDashboardStyle.greetings}>Welcome Back!</Text>
-                <Text style={[UserDashboardStyle.name, {paddingRight: '50%'}]}>John Doe</Text>
+            <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
+                <Text style={CoacheeDashboardStyle.greetings}>Welcome Back!</Text>
+                <Text style={[CoacheeDashboardStyle.name, {paddingRight: '50%'}]}>John Doe</Text>
             </View>
         </View>
         </View>
-            <View style={UserDashboardStyle.middleContainer}>
-                <View style={UserDashboardStyle.row}>
-                <View style={[UserDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={UserDashboardStyle.imageLabel}>
+            <View style={CoacheeDashboardStyle.middleContainer}>
+                <View style={CoacheeDashboardStyle.row}>
+                <TouchableOpacity 
+                style={[CoacheeDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}
+                onPress={() => navigation.navigate('MyCoaches')}>
+                    <View style={CoacheeDashboardStyle.nestedMiniContainer}>
+                    <Text style={CoacheeDashboardStyle.imageLabel}>
                         My Coaches</Text>
-                        <Image source={require('../assets/Coach.png')} style={[UserDashboardStyle.imageStyle]} />
+                        <Image source={require('../assets/Coach.png')} style={[CoacheeDashboardStyle.imageStyle]} />
                     </View>
-                </View>
+                    </TouchableOpacity>
                 <TouchableOpacity
-                    style={[UserDashboardStyle.miniContainer, { backgroundColor: '#F2E9FB' }]}
+                    style={[CoacheeDashboardStyle.miniContainer, { backgroundColor: '#F2E9FB' }]}
                     onPress={() => navigation.navigate('Appointments')}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={UserDashboardStyle.imageLabel}>Appointments</Text>
-                    <Image source={require('../assets/Appointment.png')} style={UserDashboardStyle.imageStyle} />
+                    <View style={CoacheeDashboardStyle.nestedMiniContainer}>
+                    <Text style={CoacheeDashboardStyle.imageLabel}>Appointments</Text>
+                    <Image source={require('../assets/Appointment.png')} style={CoacheeDashboardStyle.imageStyle} />
                     </View>
                 </TouchableOpacity>
                 </View>
-                <View style={UserDashboardStyle.row}>
-                <View style={[UserDashboardStyle.miniContainer,  { backgroundColor: '#D8C7F9', marginVertical: 20 }]}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
+                <View style={CoacheeDashboardStyle.row}>
+                <View style={[CoacheeDashboardStyle.miniContainer,  { backgroundColor: '#D8C7F9', marginVertical: 20 }]}>
+                    <View style={CoacheeDashboardStyle.nestedMiniContainer}>
                     <Text style={{fontSize: 14, fontFamily: 'Blinker-SemiBold', color: '#483B5F',}}>
                         Personal Progress</Text>
-                        <Image source={require('../assets/Progress.png')} style={[UserDashboardStyle.imageStyle]} />
+                        <Image source={require('../assets/Progress.png')} style={[CoacheeDashboardStyle.imageStyle]} />
                     </View>
                 </View>
                 <TouchableOpacity
-                    style={[UserDashboardStyle.miniContainer, { backgroundColor: '#D2CBDF' }]}
+                    style={[CoacheeDashboardStyle.miniContainer, { backgroundColor: '#D2CBDF' }]}
                     onPress={() => navigation.navigate('UserProfile')}>
-                    <View style={UserDashboardStyle.nestedMiniContainer}>
-                    <Text style={UserDashboardStyle.imageLabel}>My Profile</Text>
-                    <Image source={require('../assets/Profile.png')} style={UserDashboardStyle.imageStyle} />
+                    <View style={CoacheeDashboardStyle.nestedMiniContainer}>
+                    <Text style={CoacheeDashboardStyle.imageLabel}>My Profile</Text>
+                    <Image source={require('../assets/Profile.png')} style={CoacheeDashboardStyle.imageStyle} />
                     </View>
                 </TouchableOpacity>
             </View>
-            <View style={UserDashboardStyle.buttonContainer}>
+            <View style={CoacheeDashboardStyle.buttonContainer}>
             <Button mode="contained"  
                     style={{ backgroundColor: '#A378F2' , width: 270,  justifyContent: 'center', alignItems: 'center'  }} 
                     labelStyle={{ color: 'white', fontFamily: 'Blinker-SemiBold',fontSize: 22 }}
                     onPress={() => console.log('Pressed')}>Find Coach</Button>
                 </View>
             </View>
-            <View style={UserDashboardStyle.svgContainer}>
-                <SvgComponent> </SvgComponent>
-            </View>
+            <BottomComponent style= {CoacheeDashboardStyle.bottomSVG}/>
         </View>
     )
 }
 
-const UserDashboardStyle = StyleSheet.create({
+const CoacheeDashboardStyle = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
@@ -194,18 +195,25 @@ const UserDashboardStyle = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    svgContainer: {
+    // svgContainer: {
+    //     position: 'absolute',
+    //     bottom: 0,
+    //     left: 0,
+    //     right: 0,
+    //     alignItems: 'center',
+    //     zIndex: -1, // Set a lower z-index to put it behind mini-containers
+    //     width: '100%', // Expand to full width
+    //     height: '35%', // Set the height as a percentage of the screen height
+    //     padding: 0,
+    //     margin: 0,
+    // },
+    bottomSVG: {
+        justifyContent: 'flex-end', 
         position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        zIndex: -1, // Set a lower z-index to put it behind mini-containers
-        width: '100%', // Expand to full width
-        height: '35%', // Set the height as a percentage of the screen height
-        padding: 0,
-        margin: 0,
+        width: (width),
+        height: (height),
+        zIndex: 0,
     },
 });
 
-export default UserDashboard;
+export default CoacheeDashboard;

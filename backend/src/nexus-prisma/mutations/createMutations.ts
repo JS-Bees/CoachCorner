@@ -4,28 +4,6 @@ import bcrypt from 'bcrypt';
 import { CreateCoacheeInput, CreateCoachInput } from '../inputTypes';
 import { Coachee, Coach } from '../objectTypes';
 
-// export const createCoachee = mutationField('createCoachee', {
-//     type: Coachee,
-//     args: {
-//         input: nonNull(arg({ type: CreateCoacheeInput })),
-//     },
-//     resolve: (_, { input }, context: Context) =>
-//         context.db.coachee.create({
-//             data: input,
-//         }),
-// });
-
-// export const createCoach = mutationField('createCoach', {
-//     type: Coach,
-//     args: {
-//         input: nonNull(arg({ type: CreateCoachInput })),
-//     },
-//     resolve: (_, { input }, context: Context) =>
-//         context.db.coach.create({
-//             data: input,
-//         }),
-// });
-
 export const createCoachee = mutationField('createCoachee', {
     type: Coachee,
     args: {

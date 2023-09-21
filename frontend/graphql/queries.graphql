@@ -12,6 +12,7 @@ query getAllCoaches {
         moviesGenres
         sport
         workplaceAddress
+        isCoach
     }
 }
 
@@ -26,6 +27,7 @@ query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
         hobbies
         lastName
         moviesGenres
+        isCoach
     }
 }
 
@@ -41,5 +43,37 @@ query FindCoachByEmailAndPassword($email: String!, $password: String!) {
         moviesGenres
         sport
         workplaceAddress
+        isCoach
+    }
+}
+
+query FindCoacheeByID($userID: Int!) {
+    findCoacheeByID(userID: $userID) {
+        id
+        address
+        birthday
+        email
+        firstName
+        games
+        hobbies
+        lastName
+        moviesGenres
+        isCoach
+    }
+}
+
+query FindCoachByID($userID: Int!) {
+    findCoachByID(userID: $userID) {
+        id
+        birthday
+        email
+        firstName
+        games
+        hobbies
+        lastName
+        moviesGenres
+        sport
+        workplaceAddress
+        isCoach
     }
 }
