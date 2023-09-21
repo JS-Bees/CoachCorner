@@ -189,8 +189,8 @@ export enum MovieGenres {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createCoach?: Maybe<Coach>;
-  createCoachee?: Maybe<Coachee>;
+  createCoach: Coach;
+  createCoachee: Coachee;
 };
 
 
@@ -205,10 +205,12 @@ export type MutationCreateCoacheeArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  coachees?: Maybe<Array<Maybe<Coachee>>>;
-  coaches?: Maybe<Array<Maybe<Coach>>>;
-  findCoachByEmailAndPassword?: Maybe<Coach>;
-  findCoacheeByEmailAndPassword?: Maybe<Coachee>;
+  coachees: Array<Coachee>;
+  coaches: Array<Coach>;
+  findCoachByEmailAndPassword: Coach;
+  findCoachByID: Coach;
+  findCoacheeByEmailAndPassword: Coachee;
+  findCoacheeByID: Coachee;
 };
 
 
@@ -218,9 +220,19 @@ export type QueryFindCoachByEmailAndPasswordArgs = {
 };
 
 
+export type QueryFindCoachByIdArgs = {
+  userID: Scalars['Int']['input'];
+};
+
+
 export type QueryFindCoacheeByEmailAndPasswordArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+
+export type QueryFindCoacheeByIdArgs = {
+  userID: Scalars['Int']['input'];
 };
 
 export enum Sport {
@@ -244,7 +256,7 @@ export type CreateCoacheeMutationVariables = Exact<{
 }>;
 
 
-export type CreateCoacheeMutation = { __typename?: 'Mutation', createCoachee?: { __typename?: 'Coachee', id: number, email: string } | null };
+export type CreateCoacheeMutation = { __typename?: 'Mutation', createCoachee: { __typename?: 'Coachee', id: number, email: string } };
 
 export type CreateCoachMutationVariables = Exact<{
   firstName: Scalars['String']['input'];
@@ -260,12 +272,12 @@ export type CreateCoachMutationVariables = Exact<{
 }>;
 
 
-export type CreateCoachMutation = { __typename?: 'Mutation', createCoach?: { __typename?: 'Coach', id: number, email: string } | null };
+export type CreateCoachMutation = { __typename?: 'Mutation', createCoach: { __typename?: 'Coach', id: number, email: string } };
 
 export type GetAllCoachesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllCoachesQuery = { __typename?: 'Query', coaches?: Array<{ __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean } | null> | null };
+export type GetAllCoachesQuery = { __typename?: 'Query', coaches: Array<{ __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean }> };
 
 export type FindCoacheeByEmailAndPasswordQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -273,7 +285,7 @@ export type FindCoacheeByEmailAndPasswordQueryVariables = Exact<{
 }>;
 
 
-export type FindCoacheeByEmailAndPasswordQuery = { __typename?: 'Query', findCoacheeByEmailAndPassword?: { __typename?: 'Coachee', id: number, address: string, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, isCoach: boolean } | null };
+export type FindCoacheeByEmailAndPasswordQuery = { __typename?: 'Query', findCoacheeByEmailAndPassword: { __typename?: 'Coachee', id: number, address: string, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, isCoach: boolean } };
 
 export type FindCoachByEmailAndPasswordQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -281,7 +293,21 @@ export type FindCoachByEmailAndPasswordQueryVariables = Exact<{
 }>;
 
 
-export type FindCoachByEmailAndPasswordQuery = { __typename?: 'Query', findCoachByEmailAndPassword?: { __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean } | null };
+export type FindCoachByEmailAndPasswordQuery = { __typename?: 'Query', findCoachByEmailAndPassword: { __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean } };
+
+export type FindCoacheeByIdQueryVariables = Exact<{
+  userID: Scalars['Int']['input'];
+}>;
+
+
+export type FindCoacheeByIdQuery = { __typename?: 'Query', findCoacheeByID: { __typename?: 'Coachee', id: number, address: string, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, isCoach: boolean } };
+
+export type FindCoachByIdQueryVariables = Exact<{
+  userID: Scalars['Int']['input'];
+}>;
+
+
+export type FindCoachByIdQuery = { __typename?: 'Query', findCoachByID: { __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean } };
 
 
 export const CreateCoacheeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createCoachee"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"birthday"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"games"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Games"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"hobbies"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Hobbies"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"moviesGenres"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"MovieGenres"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCoachee"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"firstName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"lastName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"birthday"},"value":{"kind":"Variable","name":{"kind":"Name","value":"birthday"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"games"},"value":{"kind":"Variable","name":{"kind":"Name","value":"games"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"hobbies"},"value":{"kind":"Variable","name":{"kind":"Name","value":"hobbies"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"moviesGenres"},"value":{"kind":"Variable","name":{"kind":"Name","value":"moviesGenres"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CreateCoacheeMutation, CreateCoacheeMutationVariables>;
@@ -289,3 +315,5 @@ export const CreateCoachDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const GetAllCoachesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAllCoaches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coaches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"birthday"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"games"}},{"kind":"Field","name":{"kind":"Name","value":"hobbies"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"moviesGenres"}},{"kind":"Field","name":{"kind":"Name","value":"sport"}},{"kind":"Field","name":{"kind":"Name","value":"workplaceAddress"}},{"kind":"Field","name":{"kind":"Name","value":"isCoach"}}]}}]}}]} as unknown as DocumentNode<GetAllCoachesQuery, GetAllCoachesQueryVariables>;
 export const FindCoacheeByEmailAndPasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindCoacheeByEmailAndPassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findCoacheeByEmailAndPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"birthday"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"games"}},{"kind":"Field","name":{"kind":"Name","value":"hobbies"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"moviesGenres"}},{"kind":"Field","name":{"kind":"Name","value":"isCoach"}}]}}]}}]} as unknown as DocumentNode<FindCoacheeByEmailAndPasswordQuery, FindCoacheeByEmailAndPasswordQueryVariables>;
 export const FindCoachByEmailAndPasswordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindCoachByEmailAndPassword"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findCoachByEmailAndPassword"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"birthday"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"games"}},{"kind":"Field","name":{"kind":"Name","value":"hobbies"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"moviesGenres"}},{"kind":"Field","name":{"kind":"Name","value":"sport"}},{"kind":"Field","name":{"kind":"Name","value":"workplaceAddress"}},{"kind":"Field","name":{"kind":"Name","value":"isCoach"}}]}}]}}]} as unknown as DocumentNode<FindCoachByEmailAndPasswordQuery, FindCoachByEmailAndPasswordQueryVariables>;
+export const FindCoacheeByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindCoacheeByID"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findCoacheeByID"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"birthday"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"games"}},{"kind":"Field","name":{"kind":"Name","value":"hobbies"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"moviesGenres"}},{"kind":"Field","name":{"kind":"Name","value":"isCoach"}}]}}]}}]} as unknown as DocumentNode<FindCoacheeByIdQuery, FindCoacheeByIdQueryVariables>;
+export const FindCoachByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindCoachByID"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findCoachByID"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"birthday"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"games"}},{"kind":"Field","name":{"kind":"Name","value":"hobbies"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"moviesGenres"}},{"kind":"Field","name":{"kind":"Name","value":"sport"}},{"kind":"Field","name":{"kind":"Name","value":"workplaceAddress"}},{"kind":"Field","name":{"kind":"Name","value":"isCoach"}}]}}]}}]} as unknown as DocumentNode<FindCoachByIdQuery, FindCoachByIdQueryVariables>;

@@ -27,7 +27,7 @@ const schema = makeSchema({
     nonNullDefaults: {
         // defaults to non-nullable (e.g. Person!)
         input: true,
-        output: false, // Changed the output to allow nullable types for null error messages
+        output: true,
     },
     types: [
         enums,
