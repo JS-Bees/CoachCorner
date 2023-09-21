@@ -10,6 +10,8 @@
   "scripts": {
     "start:app": "echo 'Starting backend' && cd ./backend && npm start && echo 'Starting frontend' && cd ./frontend && npm start",
     "lintFrontend": "cd frontend && npm run lint",
-    "lintBackend": "cd backend && npm run lint"
+    "lintBackend": "cd backend && npm run lint",
+    "installDepBackend": "npm --prefix ./backend run installDep",
+    "installDepFrontend": "npm --prefix ./frontend run installDep"
   }
 }

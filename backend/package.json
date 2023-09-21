@@ -9,7 +9,8 @@
         "prismaGenerate": "npx prisma generate",
         "dbPushReset": "npx prisma db push --force-reset",
         "seed": "npx prisma db seed",
-        "lint": "eslint src --fix"
+        "lint": "eslint src --fix",
+        "installDep": "npm install --force"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
