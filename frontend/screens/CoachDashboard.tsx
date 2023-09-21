@@ -41,13 +41,15 @@ const CoachDashboard = () => {
         </View>
             <View style={CoachDashboardStyle.middleContainer}>
                 <View style={CoachDashboardStyle.row}>
-                <View style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}>
+                <TouchableOpacity 
+                    style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}
+                    onPress={() => navigation.navigate('MyClients')}>
                     <View style={CoachDashboardStyle.nestedMiniContainer}>
                     <Text style={CoachDashboardStyle.imageLabel}>
                         My Clients</Text>
                         <Image source={require('../assets/Client.png')} style={[CoachDashboardStyle.imageStyle]} />
                     </View>
-                </View>
+                    </TouchableOpacity>
                 <TouchableOpacity
                     style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#F2E9FB' }]}
                     onPress={() => navigation.navigate('Appointments')}>

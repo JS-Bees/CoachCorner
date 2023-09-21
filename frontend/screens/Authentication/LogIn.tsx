@@ -8,7 +8,8 @@ import { RootStackParams } from "../../App";
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from 'urql'; // Import the Urql hook for queries
-import { GetAllCoachesDocument } from "../../generated-gql/graphql";
+import { FindCoachByEmailAndPasswordDocument, FindCoacheeByEmailAndPasswordDocument } from "../../generated-gql/graphql";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,43 +18,61 @@ const LogIn = () => {
   const [Password, setPassword] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
+
+  const storeToken = async (token) => {
+    try {
+      await AsyncStorage.setItem('userToken', token); // Store the token with a key ('userToken' in this case)
+    } catch (error) {
+      console.error('Error storing token:', error);
+    }
+  };
+
   // Use the GetAllCoachesDocument query to check if the email exists
-  const [result] = useQuery({
-    query: GetAllCoachesDocument,
+  const [coachResult] = useQuery({
+    query: FindCoachByEmailAndPasswordDocument,
     variables: {
-      // Pass the email as a variable to the query
       email: Email,
+      password: Password,
     },
   });
 
-  const { data, fetching, error } = result;
+  const [coacheeResult] = useQuery({
+    query: FindCoacheeByEmailAndPasswordDocument,
+    variables: {
+      email: Email,
+      password: Password,
+    },
+  });
 
-  const onLogInPressed = async () => {
-    try {
-      // Check if fetching is true, indicating that the query is still loading
-      if (fetching) {
-        console.log("Loading...");
-        return;
-      }
+  const coachData = coachResult.data;
+  const coacheeData = coacheeResult.data;
+  // const coachError = coachResult.error;
+  // const coacheeError = coacheeResult.error;
+  // const coachFetching = coachResult.fetching;
+  // const coacheeFetching = coacheeResult.fetching;
 
-      if (error) {
-        console.error(error);
-        // Handle query errors (e.g., display an error message to the user)
-        return;
-      }
-
-      // If the query returns data, it means the email exists in the backend
-      if (data && data.length > 0) {
-        // Email exists, you can proceed with password validation or other login logic
-        // Once the login is successful, navigate to the user dashboard or another relevant screen
-        navigation.navigate('UserDashboard');
+  const onLogInPressed = () => {
+    let token = null; // Initialize the token variable
+  
+    if ((coachData && coachData.findCoachByEmailAndPassword) || (coacheeData && coacheeData.findCoacheeByEmailAndPassword)) {
+      if (coachData && coachData.findCoachByEmailAndPassword) {
+        // Email and password match a coach, and the user is a coach
+        const userId = coachData.findCoachByEmailAndPassword.id;
+        token = userId.toString(); // Customize the token format
+        storeToken(token); // Store the token
+        navigation.navigate('CoachDashboard');
+        console.log('Successfully logged in as a coach :)', 'Token:', token);
       } else {
-        // Email doesn't exist, show an error message to the user
-        console.error('Email does not exist');
+        // Email and password match a coachee, but the user is not a coach
+        const userId = coacheeData.findCoacheeByEmailAndPassword.id;
+        token = userId.toString(); // Customize the token format
+        storeToken(token); // Store the token
+        navigation.navigate('CoacheeDashboard');
+        console.log('Successfully logged in as a coachee :)', 'Token:', token);
       }
-    } catch (err) {
-      console.error(err);
-      // Handle unexpected errors (e.g., network issues).
+    } else {
+      // Email and password do not match, or data is null, show an error message
+      console.error('Email and password do not match');
     }
   };
 

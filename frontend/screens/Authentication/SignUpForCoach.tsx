@@ -5,9 +5,13 @@ import InputSignUpPages from "../../components/InputSignUpPages";
 import LogInButton from "../../components/CustomButton";
 import { useMutation } from 'urql'; // Import the Urql hook for mutations
 import { CreateCoachDocument, Sport ,Games, Hobbies, MovieGenres } from '../../generated-gql/graphql';
+import { RootStackParams } from "../../App";
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+const SignUpForCoach= () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
-const SignUpForCoachee = () => {
   const [First_Name, setFirst_Name] = useState('');
   const [Last_Name, setLast_Name] = useState('');
   const [Email, setEmail] = useState('');
@@ -17,11 +21,11 @@ const SignUpForCoachee = () => {
   const [City, setCity] = useState('');
   const [Postal, setPostal] = useState('');
   const [dateOfBirth, setDateofBirth] = useState('');
-  const [selectedSport, setSelectedSport] = useState<Sport[]>([Sport]);
+  const [selectedSport, setSelectedSport] = useState<Sport[]>([]);
   const [selectedGames, setSelectedGames] = useState<Games[]>([]);
   const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
   const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
-  const [signUpResinputult, SignUpForCoachee] = useMutation(CreateCoachDocument);
+  const [signUpResinputult, SignUpForCoach] = useMutation(CreateCoachDocument);
 
   const [date, setdate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -30,6 +34,7 @@ const SignUpForCoachee = () => {
     setShowPicker(!showPicker);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChange = ({ type }: any, selectedDate: any) => {
     if (type == 'set') {
       const currentDate = selectedDate;
@@ -54,14 +59,14 @@ const SignUpForCoachee = () => {
     try {
       setInitialSelectedValues(); // Move the state updates here
 
-      const { data, error } = await SignUpForCoachee({
+      const { data, error } = await SignUpForCoach({
           firstName: First_Name,
           lastName: Last_Name,
-          birthday: new Date(),
+          birthday: date,
           email: Email,
           password: Password,
           workplaceAddress: StreetAdd,
-          sport: selectedSport,
+          sport: selectedSport[0],
           games: selectedGames,
           hobbies: selectedHobbies,
           moviesGenres: selectedMovieGenres,
@@ -72,7 +77,7 @@ const SignUpForCoachee = () => {
         // Handle errors (e.g., show an error message)
         console.log(First_Name)
         console.log(Last_Name)
-        console.log(new Date())
+        console.log(date)
         console.log(Password)
         console.log(selectedSport)
         console.log(selectedGames)
@@ -81,6 +86,7 @@ const SignUpForCoachee = () => {
       } else {
         // Handle the data response from your GraphQL server (e.g., show a success message)
         console.log(data);
+        navigation.navigate('LogIn')
       }
     } catch (err) {
       console.error(err);
@@ -240,4 +246,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUpForCoachee;
+export default SignUpForCoach;

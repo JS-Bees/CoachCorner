@@ -265,7 +265,9 @@ export type CreateCoachMutation = { __typename?: 'Mutation', createCoach?: { __t
 export type GetAllCoachesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllCoachesQuery = { __typename?: 'Query', coaches?: Array<{ __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean } | null> | null };
+export type GetAllCoachesQuery = {
+  length: number; __typename?: 'Query', coaches?: Array<{ __typename?: 'Coach', id: number, birthday: any, email: string, firstName: string, games: Array<Games>, hobbies: Array<Hobbies>, lastName: string, moviesGenres: Array<MovieGenres>, sport: Sport, workplaceAddress: string, isCoach: boolean } | null> | null 
+};
 
 export type FindCoacheeByEmailAndPasswordQueryVariables = Exact<{
   email: Scalars['String']['input'];

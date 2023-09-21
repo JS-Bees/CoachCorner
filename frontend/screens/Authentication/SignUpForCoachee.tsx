@@ -5,9 +5,13 @@ import InputSignUpPages from "../../components/InputSignUpPages";
 import LogInButton from "../../components/CustomButton";
 import { useMutation } from 'urql'; // Import the Urql hook for mutations
 import { CreateCoacheeDocument, Games, Hobbies, MovieGenres } from '../../generated-gql/graphql';
+import { RootStackParams } from "../../App";
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-
-const SignUp = () => {
+const SignUpForCoachee = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  
   const [First_Name, setFirst_Name] = useState('');
   const [Last_Name, setLast_Name] = useState('');
   const [Email, setEmail] = useState('');
@@ -20,7 +24,7 @@ const SignUp = () => {
   const [selectedGames, setSelectedGames] = useState<Games[]>([]);
   const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
   const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
-  const [signUpResinputult, SignUp] = useMutation(CreateCoacheeDocument);
+  const [signUpResult, SignUpForCoachee] = useMutation(CreateCoacheeDocument);
 
   const [date, setdate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -29,6 +33,7 @@ const SignUp = () => {
     setShowPicker(!showPicker);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChange = ({ type }: any, selectedDate: any) => {
     if (type == 'set') {
       const currentDate = selectedDate;
@@ -52,11 +57,11 @@ const SignUp = () => {
     try {
       setInitialSelectedValues(); // Move the state updates here
 
-      const { data, error } = await SignUp({
+      const { data, error } = await SignUpForCoachee({
           firstName: First_Name,
           lastName: Last_Name,
           address: StreetAdd,
-          birthday: new Date(),
+          birthday: date,
           email: Email,
           password: Password,
           games: selectedGames,
@@ -69,7 +74,7 @@ const SignUp = () => {
         // Handle errors (e.g., show an error message)
         console.log(First_Name)
         console.log(Last_Name)
-        console.log(new Date())
+        console.log(date)
         console.log(Password)
         console.log(selectedGames)
         console.log(selectedHobbies)
@@ -77,6 +82,7 @@ const SignUp = () => {
       } else {
         // Handle the data response from your GraphQL server (e.g., show a success message)
         console.log(data);
+        navigation.navigate('LogIn')
       }
     } catch (err) {
       console.error(err);
@@ -236,4 +242,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUp;
+export default SignUpForCoachee;

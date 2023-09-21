@@ -16,24 +16,24 @@ const SignUpA = () => {
 
   
   return (
-    <View style={Log_In_Style.container}>
-      <SVGComponent style={Log_In_Style.svgContainer} />
-      <BottomComponent style={Log_In_Style.bottomSVG} />
+    <View style={signUpA.container}>
+      <SVGComponent style={signUpA.svgContainer} />
+      <BottomComponent style={signUpA.bottomSVG} />
 
-      <View style={Log_In_Style.iconContainer}>
+      <View style={signUpA.iconContainer}>
         <Image source={require('../Authentication/Icons/CoachIcon.png')}
-          style={Log_In_Style.CoachIcon} />
-        <Text style={Log_In_Style.textStyle}>
+          style={signUpA.CoachIcon} />
+        <Text style={signUpA.textStyle}>
           What is your role in sports?
         </Text>
       </View>
 
 
-      <View style={Log_In_Style.button}>
+      <View style={signUpA.button}>
       <LogInButton text="I want to coach" onPress={() => navigation.navigate('SignUpCoach')} />
       </View>
 
-      <View style={Log_In_Style.noMargin}>
+      <View style={signUpA.noMargin}>
       <LogInButton text="I want to train" onPress={() => navigation.navigate('SignUpCoachee')} />
       </View>
 
@@ -41,7 +41,7 @@ const SignUpA = () => {
   );
 };
 
-const Log_In_Style = StyleSheet.create({
+const signUpA = StyleSheet.create({
 
     container: {
         flex: 1,
