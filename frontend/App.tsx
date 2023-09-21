@@ -1,7 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-// import the CoachSample
-import CoachSample from './sample/CoachSample';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from 'react';
+import CoacheeDashboard from '././screens/CoacheeDashboard';
+import LogInPage from './screens/Authentication/LogIn';
+import SignUpA from './screens/Authentication/SignUpA';
+import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
+import SignUpCoach from './screens/Authentication/SignUpForCoach';
+import UserProfile from './screens/UserProfile'
+import CoachDashboard from './screens/CoachDashboard';
+import Appointments from './screens/Appointments';
+import MyClients from './screens/MyClients';
+import MyCoaches from './screens/MyCoaches';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
+
 
 // for urql
 import {
@@ -11,29 +24,54 @@ import {
     fetchExchange,
 } from 'urql';
 
+
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.2:5050/graphql', // replace with actual IP address, change to .env file, why does this work
+    url: 'http://192.168.254.142:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
+export type RootStackParams = {
+  LogIn: any;
+  SignUpA: any;
+  SignUpCoachee: any;
+  SignUpCoach: any;
+  CoacheeDashboard: any; 
+  UserProfile: any;
+  CoachDashboard: any;
+  Appointments: any;
+  MyClients: any;
+  MyCoaches: any;
+  CoachSample: any;
+}
+
+
+const RootStack = createNativeStackNavigator();
 
 export default function App() {
-    return (
-        <UrqlProvider value={client}>
-            <View style={styles.container}>
-                <Text>Open up App.tsx to start working on your appz!</Text>
-                <CoachSample />
-                <StatusBar style="auto" />
-            </View>
-        </UrqlProvider>
-    );
+
+  return (
+     <UrqlProvider value={client}>
+        <NavigationContainer>
+          <RootStack.Navigator initialRouteName="LogIn">
+          <RootStack.Screen name="LogIn" component={LogInPage} />
+          <RootStack.Screen name="SignUpA" component={SignUpA} />
+          <RootStack.Screen name="SignUpCoachee" component={SignUpCoachee} />
+          <RootStack.Screen name="SignUpCoach" component={SignUpCoach} />
+          <RootStack.Screen name="CoacheeDashboard" component={CoacheeDashboard} />
+          <RootStack.Screen name="CoachDashboard" component={CoachDashboard} />
+          <RootStack.Screen name="UserProfile" component={UserProfile} />
+          <RootStack.Screen name="Appointments" component={Appointments} />
+          <RootStack.Screen name="MyClients" component={MyClients} />
+          <RootStack.Screen name="MyCoaches" component={MyCoaches} />
+          </RootStack.Navigator>
+        </NavigationContainer>
+      </UrqlProvider>    
+  );
 }
+
+
+
+
+
+
