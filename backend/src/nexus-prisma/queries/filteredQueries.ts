@@ -1,4 +1,4 @@
-import { queryField, nonNull, stringArg } from 'nexus';
+import { queryField, nonNull, stringArg, intArg } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import { Coachee, Coach } from '../objectTypes';
@@ -25,11 +25,12 @@ export const findCoachByEmailAndPassword = queryField(
                 );
                 if (passwordMatch) {
                     return coach;
+                } else {
+                    throw new Error('Incorrect password.');
                 }
+            } else {
+                throw new Error('User not found.');
             }
-
-            // If no coach is found or passwords don't match, return an error message
-            return null;
         },
     },
 );
@@ -56,11 +57,50 @@ export const findCoacheeByEmailAndPassword = queryField(
                 );
                 if (passwordMatch) {
                     return coachee;
+                } else {
+                    throw new Error('Incorrect password.');
                 }
+            } else {
+                throw new Error('User not found.');
             }
-
-            // If no coachee is found or passwords don't match, return an error message
-            return null;
         },
     },
 );
+
+export const findCoachByID = queryField('findCoachByID', {
+    type: Coach,
+    args: {
+        userID: nonNull(intArg()), // Changed the argument to intArg for ID
+    },
+    resolve: async (_, { userID }, context: Context) => {
+        // Search for a Coach by ID
+        const coach = await context.db.coach.findUnique({
+            where: { id: userID }, // Assuming the field name is 'id' in the database
+        });
+
+        if (coach) {
+            return coach;
+        } else {
+            throw new Error(`Coach with ID ${userID} does not exist.`);
+        }
+    },
+});
+
+export const findCoacheeByID = queryField('findCoacheeByID', {
+    type: Coachee,
+    args: {
+        userID: nonNull(intArg()), // Changed the argument to intArg for ID
+    },
+    resolve: async (_, { userID }, context: Context) => {
+        // Search for a Coachee by ID
+        const coachee = await context.db.coachee.findUnique({
+            where: { id: userID }, // Assuming the field name is 'id' in the database
+        });
+
+        if (coachee) {
+            return coachee;
+        } else {
+            throw new Error(`Coachee with ID ${userID} does not exist.`);
+        }
+    },
+});

@@ -46,3 +46,34 @@ query FindCoachByEmailAndPassword($email: String!, $password: String!) {
         isCoach
     }
 }
+
+query FindCoacheeByID($userID: Int!) {
+    findCoacheeByID(userID: $userID) {
+        id
+        address
+        birthday
+        email
+        firstName
+        games
+        hobbies
+        lastName
+        moviesGenres
+        isCoach
+    }
+}
+
+query FindCoachByID($userID: Int!) {
+    findCoachByID(userID: $userID) {
+        id
+        birthday
+        email
+        firstName
+        games
+        hobbies
+        lastName
+        moviesGenres
+        sport
+        workplaceAddress
+        isCoach
+    }
+}
