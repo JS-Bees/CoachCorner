@@ -62,7 +62,7 @@ const SignUpForCoachee = () => {
           lastName: Last_Name,
           address: StreetAdd,
           birthday: date,
-          email: Email,
+          email: Email.toLowerCase(),
           password: Password,
           games: selectedGames,
           hobbies: selectedHobbies,

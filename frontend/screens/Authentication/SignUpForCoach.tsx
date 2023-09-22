@@ -63,7 +63,7 @@ const SignUpForCoach= () => {
           firstName: First_Name,
           lastName: Last_Name,
           birthday: date,
-          email: Email,
+          email: Email.toLowerCase(),
           password: Password,
           workplaceAddress: StreetAdd,
           sport: selectedSport[0],
