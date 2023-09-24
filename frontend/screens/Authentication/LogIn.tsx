@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
 import React, { useState } from 'react';
-import SVGComponent from '../../components/BackgroundSVG2';
+import SVGComponent from "../../components/UpperSVG";
 import BottomComponent from "../../components/BottomSvg";
 import CustomInput from "../../components/CustomeInput";
 import LogInButton from "../../components/CustomButton";
