@@ -2,14 +2,10 @@
 import React from 'react';
 import UserDashboard from './screens/UserDashboard';
 import LogInPage from './screens/Authentication/LogIn';
-<<<<<<< HEAD
 import SignUP from './screens/Authentication/SignUp';
-=======
-import UserProfile from './screens/UserProfile'
-import CoachDashboard from './screens/CoachDashboard';
-import Appointments from './screens/Appointments';
->>>>>>> acbb26e9d1d352c475ec22d9a47e1a523d8dd983
 import { NavigationContainer } from '@react-navigation/native';
+import CoacheeProfile  from './screens/Profiles/CoacheeProfile';
+import CoachProfile from './screens/Profiles/CoachProfile';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 // import the CoachSample
@@ -43,28 +39,15 @@ const RootStack = createNativeStackNavigator();
 export default function App() {
 
   return (
-<<<<<<< HEAD
     <NavigationContainer>
-      <RootStack.Navigator initialRouteName="SignUp">
+      <RootStack.Navigator initialRouteName="CoachProfile">
       <RootStack.Screen name="UserDashboard" component={UserDashboard} />
-      <RootStack.Screen name="UserProfile" component={UserProfile} />
       <RootStack.Screen name="LogIn" component={LogInPage} />
+      <RootStack.Screen name="CoacheeProfile" component={CoacheeProfile} />
+      <RootStack.Screen name="CoachProfile" component={CoachProfile} />
       <RootStack.Screen name="SignUp" component={SignUP} />
       </RootStack.Navigator>
     </NavigationContainer>
-=======
-     <UrqlProvider value={client}>
-        <NavigationContainer>
-          <RootStack.Navigator initialRouteName="LogIn">
-          <RootStack.Screen name="UserDashboard" component={UserDashboard} />
-          <RootStack.Screen name="CoachDashboard" component={CoachDashboard} />
-          <RootStack.Screen name="UserProfile" component={UserProfile} />
-          <RootStack.Screen name="Appointments" component={Appointments} />
-          <RootStack.Screen name="LogIn" component={LogInPage} />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </UrqlProvider>    
->>>>>>> acbb26e9d1d352c475ec22d9a47e1a523d8dd983
   );
 }
 

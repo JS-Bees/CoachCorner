@@ -8,7 +8,7 @@ import BottomComponent from '../../components/BottomSvg';
 const { width, height } = Dimensions.get('window');
 
 
-const CoacheeProfile = () => {
+const CoachProfile = () => {
 
 
  
@@ -53,7 +53,7 @@ const CoacheeProfile = () => {
       <ProfileSvg style={styles.svg} />
       <BottomComponent style={styles.bottomSVG}></BottomComponent>
 
-      <Text style={styles.normalText}> John Doe </Text>
+      <Text style={styles.normalText}> Noelle de Cruz </Text>
 
       <TextInput
             style={styles.mantraTextInput}
@@ -99,7 +99,7 @@ const CoacheeProfile = () => {
       </View>
       
       
-      <Text style={styles.address}> Address </Text>
+      <Text style={styles.address}> Workplace Address </Text>
       <View>
         <ScrollView
          style = {styles.addressScrollInput}>   
@@ -306,4 +306,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default CoacheeProfile;
+export default CoachProfile;
