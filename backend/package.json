@@ -8,7 +8,9 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "prismaGenerate": "npx prisma generate",
         "dbPushReset": "npx prisma db push --force-reset",
-        "seed": "npx prisma db seed"
+        "seed": "npx prisma db seed",
+        "lint": "eslint src",
+        "installDep": "npm install --force"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
@@ -26,7 +28,9 @@
     },
     "dependencies": {
         "@prisma/client": "^5.2.0",
+        "@types/bcrypt": "^5.0.0",
         "apollo-server-express": "^3.12.0",
+        "bcrypt": "^5.1.1",
         "dataloader": "^2.2.2",
         "dotenv": "^16.3.1",
         "graphql": "^16.8.0",

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Dimensions, Image, Platform, TouchableOpacity} from "react-native";
 import React from 'react';
 import { Button } from 'react-native-paper';
-import SvgComponent from "../components/BackgroundSvg";
+import BottomComponent from "../components/BottomSvg";
 import { RootStackParams } from '../App';
 import {useNavigation} from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,13 +41,15 @@ const CoachDashboard = () => {
         </View>
             <View style={CoachDashboardStyle.middleContainer}>
                 <View style={CoachDashboardStyle.row}>
-                <View style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}>
+                <TouchableOpacity 
+                    style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#DED2EA', marginVertical: 20 }]}
+                    onPress={() => navigation.navigate('MyClients')}>
                     <View style={CoachDashboardStyle.nestedMiniContainer}>
                     <Text style={CoachDashboardStyle.imageLabel}>
                         My Clients</Text>
                         <Image source={require('../assets/Client.png')} style={[CoachDashboardStyle.imageStyle]} />
                     </View>
-                </View>
+                    </TouchableOpacity>
                 <TouchableOpacity
                     style={[CoachDashboardStyle.miniContainer, { backgroundColor: '#F2E9FB' }]}
                     onPress={() => navigation.navigate('Appointments')}>
@@ -80,10 +82,8 @@ const CoachDashboard = () => {
                     labelStyle={{ color: 'white', fontFamily: 'Blinker-SemiBold',fontSize: 20 }}
                     onPress={() => console.log('Pressed')}>Find Coach</Button>
                 </View>
-            </View>
-            <View style={CoachDashboardStyle.svgContainer}>
-                <SvgComponent> </SvgComponent>
-            </View>
+            </View>     
+            <BottomComponent style= {CoachDashboardStyle.bottomSVG}/>
         </View>
     )
 }
@@ -196,17 +196,24 @@ const CoachDashboardStyle = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    svgContainer: {
+    // svgContainer: {
+    //     position: 'absolute',
+    //     bottom: 0,
+    //     left: 0,
+    //     right: 0,
+    //     alignItems: 'center',
+    //     zIndex: -1, // Set a lower z-index to put it behind mini-containers
+    //     width: '100%', // Expand to full width
+    //     height: '35%', // Set the height as a percentage of the screen height
+    //     padding: 0,
+    //     margin: 0,
+    // },
+    bottomSVG: {
+        justifyContent: 'flex-end', 
         position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        zIndex: -1, // Set a lower z-index to put it behind mini-containers
-        width: '100%', // Expand to full width
-        height: '35%', // Set the height as a percentage of the screen height
-        padding: 0,
-        margin: 0,
+        width: (width),
+        height: (height),
+        zIndex: 0,
     },
 });
 

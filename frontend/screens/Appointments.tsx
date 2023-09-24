@@ -68,10 +68,10 @@ const Appointments = () => {
         <Text style={CoachApppointmentStyle.appointmentLabel}>Upcoming Appointments</Text>
       <DataTable>
         <DataTable.Header>
-          <DataTable.Title>name</DataTable.Title>
-          <DataTable.Title numeric>date</DataTable.Title>
-          <DataTable.Title numeric>time</DataTable.Title>
-          <DataTable.Title numeric>details</DataTable.Title>
+          <DataTable.Title>Name</DataTable.Title>
+          <DataTable.Title numeric>Date</DataTable.Title>
+          <DataTable.Title numeric>Time</DataTable.Title>
+          <DataTable.Title numeric>Details</DataTable.Title>
         </DataTable.Header>
 
         {items.slice(from, to).map((item) => (

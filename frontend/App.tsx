@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import UserDashboard from './screens/UserDashboard';
+import CoacheeDashboard from '././screens/CoacheeDashboard';
 import LogInPage from './screens/Authentication/LogIn';
 import SignUP from './screens/Authentication/SignUp';
 import { NavigationContainer } from '@react-navigation/native';
 import CoacheeProfile  from './screens/Profiles/CoacheeProfile';
 import CoachProfile from './screens/Profiles/CoachProfile';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
-// import the CoachSample
-import CoachSample from './sample/CoachSample';
+
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 
 // for urql
@@ -20,17 +19,25 @@ import {
     fetchExchange,
 } from 'urql';
 
+
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.3:5050/graphql', // replace with actual IP address, change to .env file
+    url: 'http://192.168.254.142:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 
 export type RootStackParams = {
-  UserDashboard: any; 
+  LogIn: any;
+  SignUpA: any;
+  SignUpCoachee: any;
+  SignUpCoach: any;
+  CoacheeDashboard: any; 
   UserProfile: any;
   CoachDashboard: any;
   Appointments: any;
+  MyClients: any;
+  MyCoaches: any;
+  CoachSample: any;
 }
 
 
