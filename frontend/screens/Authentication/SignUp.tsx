@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -29,6 +30,7 @@ const SignUp = () => {
     setShowPicker(!showPicker);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChange = ({ type }: any, selectedDate: any) => {
     if (type == 'set') {
       const currentDate = selectedDate;

@@ -3,13 +3,17 @@ import { View, StyleSheet, Image, Dimensions, Text, ScrollView} from 'react-nati
 import { TextInput, IconButton } from 'react-native-paper';
 import ProfileSvg from '../../components/ProfileSvg';
 import BottomComponent from '../../components/BottomSvg';
+import LogInButton from "../../components/CustomButton";
 
 
 const { width, height } = Dimensions.get('window');
 
 
-const CoachProfile = () => {
+const CoacheeProfile = () => {
 
+  const onLogOutPressed = () => {
+    console.log('Logged out');
+  }
 
  
   const [mantra, setMantra] = React.useState(" A mantra goes here ")
@@ -52,6 +56,10 @@ const CoachProfile = () => {
     <View style={styles.container}>
       <ProfileSvg style={styles.svg} />
       <BottomComponent style={styles.bottomSVG}></BottomComponent>
+      <View style={styles.logOut}>
+        <LogInButton text="Logout" type="QUARTERNARY" onPress={onLogOutPressed}/>
+      </View>
+      <Text style={styles.text}> Profile </Text>
 
       <Text style={styles.normalText}> Noelle de Cruz </Text>
 
@@ -99,7 +107,7 @@ const CoachProfile = () => {
       </View>
       
       
-      <Text style={styles.address}> Workplace Address </Text>
+      <Text style={styles.address}> Address </Text>
       <View>
         <ScrollView
          style = {styles.addressScrollInput}>   
@@ -140,7 +148,7 @@ const imageSize = 100;
 const styles = StyleSheet.create({
 
   scrollView: {
-    top: 165,
+    top: 100,
     width: '95%',
   },
   container: {
@@ -153,13 +161,24 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
 
+  text: {
+    color: 'white',
+    fontSize: 20,
+    top: -5,
+    fontFamily: 'Roboto',
+  },
+
+  logOut: {
+    left: width * 0.4
+  },
+
   mantraTextInput: {
     paddingHorizontal: 50,
     paddingVertical: 1,
     backgroundColor: 'transparent',
     alignItems: 'center',
     width: 300,
-    top: 180,
+    top: 100,
     fontWeight: '700',
     fontFamily: 'Roboto',
     color: '#717171',
@@ -256,7 +275,7 @@ const styles = StyleSheet.create({
 
 
   normalText: {
-    top: 200,
+    top: 120,
     fontSize: 25,
     alignItems: 'center',
     fontWeight: '700',
@@ -306,4 +325,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default CoachProfile;
+export default CoacheeProfile;

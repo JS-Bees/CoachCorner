@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import CoacheeDashboard from '././screens/CoacheeDashboard';
 import LogInPage from './screens/Authentication/LogIn';
 import SignUP from './screens/Authentication/SignUp';
 import { NavigationContainer } from '@react-navigation/native';
@@ -48,7 +47,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <RootStack.Navigator initialRouteName="CoachProfile">
-      <RootStack.Screen name="UserDashboard" component={UserDashboard} />
+      {/* <RootStack.Screen name="UserDashboard" component={UserDashboard} /> */}
       <RootStack.Screen name="LogIn" component={LogInPage} />
       <RootStack.Screen name="CoacheeProfile" component={CoacheeProfile} />
       <RootStack.Screen name="CoachProfile" component={CoachProfile} />
