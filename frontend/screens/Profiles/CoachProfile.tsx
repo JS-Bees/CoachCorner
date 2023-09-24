@@ -20,11 +20,13 @@ const CoacheeProfile = () => {
   const [bio, setBio] = React.useState("Add your bio here...")
   const [affliation, setAffiliate] = React.useState("Add your affiliates")
   const [address, setAddres] = React.useState("Your address goes here...")
+  const [age, setAge] = React.useState('Age')
 
   const [isEditing, setIsEditing] = useState(false);
   const [scrollEnabled, setScrollable] = useState(false);
 
   const scrollViewRef = useRef(null); // Create a ref for ScrollView
+  
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
@@ -89,28 +91,39 @@ const CoacheeProfile = () => {
           />
         </ScrollView>
       </View>
-      
-      <Text style={styles.affliate}> Affiliates </Text>
-      <View>
-        <ScrollView
-         style = {styles.affiliateScrollInput}>   
-        <TextInput
-          scrollEnabled = {scrollEnabled}
-          style = {styles.bioInput}
-          multiline
-          value={affliation}
-          onChangeText={affliation => setAffiliate(affliation)}
+
+
+     <View style ={styles.row}>
+     <Text style={styles.age}> Experience </Text>
+     <View>
+      <TextInput
+          style = {styles.ageInput}
+          value={age}
+          onChangeText={age => setAge(age)}
           editable={isEditing}
-          underlineColor='white'
-          />
-        </ScrollView>
-      </View>
-      
-      
+          underlineColor='white'/>        
+     </View>
+
+     <Text style={styles.affliate}> Affiliations </Text>
+     <View>
+      <ScrollView
+          style = {styles.affiliateScrollInput}>  
+        <TextInput
+            style = {styles.affliateTextInput}
+            scrollEnabled = {scrollEnabled}
+            multiline
+            value={affliation}
+            onChangeText={affliation => setAffiliate(affliation)}
+            editable={isEditing}
+            underlineColor='white'/>
+      </ScrollView>
+     </View>
+     </View>
       <Text style={styles.address}> Address </Text>
       <View>
         <ScrollView
-         style = {styles.addressScrollInput}>   
+         style = {styles.addressScrollInput}
+         scrollEnabled={true}>   
         <TextInput
           scrollEnabled = {scrollEnabled}
           style = {styles.bioInput}
@@ -172,6 +185,11 @@ const styles = StyleSheet.create({
     left: width * 0.4
   },
 
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+
   mantraTextInput: {
     paddingHorizontal: 50,
     paddingVertical: 1,
@@ -195,13 +213,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  affiliateScrollInput: {
+  ageInput: {
+    paddingHorizontal: 1,
     backgroundColor: 'white',
     borderRadius: 10,
-    width: '90%',
-    height: 70,
-    top: -330,
-    right: 20,
+    width: 90,
+    top: -170,
+    right: 215,
     position: 'absolute',
     fontSize: 16,
     
@@ -229,7 +247,7 @@ const styles = StyleSheet.create({
     height: 327,
   },
 
-  affliate: {
+  age: {
     top: -30,
     fontSize: 16,
     fontFamily: 'Roboto',
@@ -239,17 +257,35 @@ const styles = StyleSheet.create({
     height: 327,
   },
 
+  affliate: {
+    top: -30,
+    fontSize: 16,
+    fontFamily: 'Roboto',
+    color: '#636363',
+    textAlign: 'left',
+    width: 320,
+    left: -190,
+    height: 327,
+
+  },
+
   bioInput: {
     backgroundColor: 'white',
     borderRadius:10,
     width: '100%',
   },
 
-  affiliateTextInput: {
+  affliateTextInput:{
+    backgroundColor: "white",
+    height: 60,
+  },
+
+  affiliateScrollInput: {
     backgroundColor: 'white',
     borderRadius: 10,
-    width: '85%',
-    top: 410,
+    width: 220,
+    right: 285,
+    top: -170,
     position: 'absolute',
     fontSize: 16
   },
