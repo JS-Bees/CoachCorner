@@ -105,6 +105,7 @@ export interface NexusGenObjects {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
+    mantra?: string | null; // String
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
     profilePicture?: string | null; // String
@@ -126,6 +127,7 @@ export interface NexusGenObjects {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
+    mantra?: string | null; // String
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
     profilePicture?: string | null; // String
@@ -192,6 +194,7 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
+    mantra: string | null; // String
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
     profilePicture: string | null; // String
@@ -215,6 +218,7 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
+    mantra: string | null; // String
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
     profilePicture: string | null; // String
@@ -240,6 +244,7 @@ export interface NexusGenFieldTypes {
     findCoachByID: NexusGenRootTypes['Coach']; // Coach!
     findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee']; // Coachee!
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
+    findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
 }
 
@@ -283,6 +288,7 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     isCoach: 'Boolean'
     lastName: 'String'
+    mantra: 'String'
     moviesGenres: 'MovieGenres'
     password: 'String'
     profilePicture: 'String'
@@ -306,6 +312,7 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     isCoach: 'Boolean'
     lastName: 'String'
+    mantra: 'String'
     moviesGenres: 'MovieGenres'
     password: 'String'
     profilePicture: 'String'
@@ -331,6 +338,7 @@ export interface NexusGenFieldTypeNames {
     findCoachByID: 'Coach'
     findCoacheeByEmailAndPassword: 'Coachee'
     findCoacheeByID: 'Coachee'
+    findCoachesBySport: 'Coach'
   }
 }
 
@@ -357,6 +365,9 @@ export interface NexusGenArgTypes {
     }
     findCoacheeByID: { // args
       userID: number; // Int!
+    }
+    findCoachesBySport: { // args
+      sport: NexusGenEnums['Sport']; // Sport!
     }
   }
 }

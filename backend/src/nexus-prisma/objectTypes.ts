@@ -20,6 +20,7 @@ export const Coachee = objectType({
         t.field(gqlTypes.Coachee.hobbies);
         t.field(gqlTypes.Coachee.affiliations);
         t.field(gqlTypes.Coachee.bio);
+        t.field(gqlTypes.Coachee.mantra);
         t.field(gqlTypes.Coachee.profilePicture);
         // t.field(gqlTypes.Coachee.bookings);
         t.list.field('bookings', {
@@ -62,6 +63,7 @@ export const Coach = objectType({
         t.field(gqlTypes.Coach.hobbies);
         t.field(gqlTypes.Coach.affiliations);
         t.field(gqlTypes.Coach.bio);
+        t.field(gqlTypes.Coach.mantra);
         t.field(gqlTypes.Coach.profilePicture);
         // t.field(gqlTypes.Coach.bookings);
         t.list.field('bookings', {

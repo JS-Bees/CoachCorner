@@ -50,6 +50,7 @@ type Coach {
   id: Int!
   isCoach: Boolean!
   lastName: String!
+  mantra: String
   moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String
@@ -74,6 +75,7 @@ type Coachee {
   id: Int!
   isCoach: Boolean!
   lastName: String!
+  mantra: String
   moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String
@@ -181,6 +183,7 @@ type Query {
   findCoachByID(userID: Int!): Coach!
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
   findCoacheeByID(userID: Int!): Coachee!
+  findCoachesBySport(sport: Sport!): [Coach!]!
 }
 
 enum Sport {
