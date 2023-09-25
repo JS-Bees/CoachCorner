@@ -1,7 +1,7 @@
 import { objectType } from 'nexus';
 import * as gqlTypes from 'nexus-prisma';
 import { DateTime } from 'nexus-prisma/scalars';
-// import { Context } from './context';
+import { Context } from './context';
 
 export const custom = DateTime; // this is for the dateTime fields in all files
 
@@ -21,8 +21,24 @@ export const Coachee = objectType({
         t.field(gqlTypes.Coachee.affiliations);
         t.field(gqlTypes.Coachee.bio);
         t.field(gqlTypes.Coachee.profilePicture);
-        t.field(gqlTypes.Coachee.bookings);
-        t.field(gqlTypes.Coachee.coachingRelationships);
+        // t.field(gqlTypes.Coachee.bookings);
+        t.list.field('bookings', {
+            type: 'Booking',
+            resolve: (coachee, _args, ctx) => {
+                return ctx.db.booking.findMany({
+                    where: { coacheeId: coachee.id },
+                });
+            },
+        });
+        // t.field(gqlTypes.Coachee.coachingRelationships);
+        t.list.field('coachingRelationships', {
+            type: 'CoachingRelationship',
+            resolve: (coachee, _args, ctx: Context) => {
+                return ctx.db.coachingRelationship.findMany({
+                    where: { coacheeId: coachee.id },
+                });
+            },
+        });
         t.field(gqlTypes.Coachee.isCoach);
         t.field(gqlTypes.Coachee.active);
         t.field(gqlTypes.Coachee.createdAt);
@@ -47,8 +63,24 @@ export const Coach = objectType({
         t.field(gqlTypes.Coach.affiliations);
         t.field(gqlTypes.Coach.bio);
         t.field(gqlTypes.Coach.profilePicture);
-        t.field(gqlTypes.Coach.bookings);
-        t.field(gqlTypes.Coach.coachingRelationships);
+        // t.field(gqlTypes.Coach.bookings);
+        t.list.field('bookings', {
+            type: 'Booking',
+            resolve: (coach, _args, ctx) => {
+                return ctx.db.booking.findMany({
+                    where: { coachId: coach.id },
+                });
+            },
+        });
+        // t.field(gqlTypes.Coach.coachingRelationships);
+        t.list.field('coachingRelationships', {
+            type: 'CoachingRelationship',
+            resolve: (coach, _args, ctx: Context) => {
+                return ctx.db.coachingRelationship.findMany({
+                    where: { coachId: coach.id },
+                });
+            },
+        });
         t.field(gqlTypes.Coach.isCoach);
         t.field(gqlTypes.Coach.active);
         t.field(gqlTypes.Coach.createdAt);
@@ -60,12 +92,28 @@ export const CoachingRelationship = objectType({
     name: 'CoachingRelationship',
     definition(t) {
         t.field(gqlTypes.CoachingRelationship.id);
-        t.field(gqlTypes.CoachingRelationship.coach);
         t.field(gqlTypes.CoachingRelationship.coachId);
-        t.field(gqlTypes.CoachingRelationship.coachee);
         t.field(gqlTypes.CoachingRelationship.coacheeId);
         t.field(gqlTypes.CoachingRelationship.createdAt);
         t.field(gqlTypes.CoachingRelationship.updatedAt);
+        // t.field(gqlTypes.CoachingRelationship.coach);
+        t.field('coach', {
+            type: 'Coach',
+            resolve: (relationship, _args, ctx) => {
+                return ctx.db.coach.findUnique({
+                    where: { id: relationship.coachId },
+                });
+            },
+        });
+        // t.field(gqlTypes.CoachingRelationship.coachee);
+        t.field('coachee', {
+            type: 'Coachee',
+            resolve: (relationship, _args, ctx) => {
+                return ctx.db.coachee.findUnique({
+                    where: { id: relationship.coacheeId },
+                });
+            },
+        });
     },
 });
 
@@ -87,13 +135,35 @@ export const Booking = objectType({
     name: 'Booking',
     definition(t) {
         t.field(gqlTypes.Booking.id);
-        t.field(gqlTypes.Booking.bookingSlots);
-        t.field(gqlTypes.Booking.coach);
+        // t.field(gqlTypes.Booking.bookingSlots);
+        t.list.field('bookingSlots', {
+            type: 'BookingSlot',
+            resolve: (booking, _args, ctx: Context) => {
+                return ctx.db.bookingSlot.findMany({
+                    where: { bookingId: booking.id },
+                });
+            },
+        });
+        // t.field(gqlTypes.Booking.coach);
+        t.field('coach', {
+            type: 'Coach',
+            resolve: (booking, _args, ctx) => {
+                return ctx.db.coach.findUnique({
+                    where: { id: booking.coachId },
+                });
+            },
+        });
         t.field(gqlTypes.Booking.coachId);
-        t.field(gqlTypes.Booking.coachee);
+        // t.field(gqlTypes.Booking.coachee);
+        t.field('coachee', {
+            type: 'Coachee',
+            resolve: (booking, _args, ctx) => {
+                return ctx.db.coachee.findUnique({
+                    where: { id: booking.coacheeId },
+                });
+            },
+        });
         t.field(gqlTypes.Booking.coacheeId);
-        t.field(gqlTypes.Booking.coachName);
-        t.field(gqlTypes.Booking.coacheeName);
         t.field(gqlTypes.Booking.serviceType);
         t.field(gqlTypes.Booking.status);
         t.field(gqlTypes.Booking.additionalNotes);

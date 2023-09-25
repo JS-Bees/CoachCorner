@@ -76,9 +76,7 @@ export interface NexusGenObjects {
     active: boolean; // Boolean!
     additionalNotes?: string | null; // String
     coachId: number; // Int!
-    coachName: string; // String!
     coacheeId: number; // Int!
-    coacheeName: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
     serviceType: string; // String!
@@ -161,10 +159,8 @@ export interface NexusGenFieldTypes {
     bookingSlots: NexusGenRootTypes['BookingSlot'][]; // [BookingSlot!]!
     coach: NexusGenRootTypes['Coach']; // Coach!
     coachId: number; // Int!
-    coachName: string; // String!
     coachee: NexusGenRootTypes['Coachee']; // Coachee!
     coacheeId: number; // Int!
-    coacheeName: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
     serviceType: string; // String!
@@ -254,10 +250,8 @@ export interface NexusGenFieldTypeNames {
     bookingSlots: 'BookingSlot'
     coach: 'Coach'
     coachId: 'Int'
-    coachName: 'String'
     coachee: 'Coachee'
     coacheeId: 'Int'
-    coacheeName: 'String'
     createdAt: 'DateTime'
     id: 'Int'
     serviceType: 'String'

@@ -91,7 +91,8 @@ model Coachee {
   moviesGenres        MovieGenres[] 
 
   affiliations        String? 
-  bio                 String?  
+  bio                 String?
+  mantra              String?    
   profilePicture      String?     
 
   bookings            Booking[]
@@ -119,7 +120,8 @@ model Coach {
   moviesGenres        MovieGenres[]
 
   affiliations        String? 
-  bio                 String?  
+  bio                 String?
+  mantra              String?  
   profilePicture      String?     
 
   bookings              Booking[] 
@@ -163,8 +165,6 @@ model Booking {
   coachId           Int
   coachee           Coachee      @relation(fields: [coacheeId], references: [id])
   coacheeId         Int
-  coachName         String
-  coacheeName       String
   serviceType       String
   status            BookingStatus
 
