@@ -156,7 +156,7 @@ const CoacheeDashboard = () => {
                             CoacheeDashboardStyle.miniContainer,
                             { backgroundColor: '#D2CBDF' },
                         ]}
-                        onPress={() => navigation.navigate('UserProfile')}
+                        onPress={() => navigation.navigate('CoacheeProfile')}
                     >
                         <View style={CoacheeDashboardStyle.nestedMiniContainer}>
                             <Text style={CoacheeDashboardStyle.imageLabel}>
@@ -200,6 +200,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     backgroundContainer: {
+        paddingTop: 140,
         borderRadius: 35, // Adjust the value for the desired curve
         position: 'absolute',
         backgroundColor: '#DED2EA', // Color for the background container

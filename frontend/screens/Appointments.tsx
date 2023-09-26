@@ -109,13 +109,13 @@ const Appointments = () => {
         </View>
       </Modal>
 
-        <DataTable.Pagination
+        {/* <DataTable.Pagination
           page={page}
           numberOfPages={Math.ceil(items.length)}
           onPageChange={(page) => setPage(page)}
           label={`${from + 1} of ${items.length}`}
           showFastPaginationControls
-        />
+        /> */}
       </DataTable>
       
 
@@ -131,13 +131,13 @@ const CoachApppointmentStyle = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
     },  
-
     appointmentLabel: {
+
         color: '#915BC7',
         fontFamily: 'Blinker-SemiBold',
         fontSize: 25,
         textAlign: 'center', // Center the text horizontally
-        marginTop: '5%',
+        marginTop: '15%',
         marginBottom: '5%',
         flex: 0.1, // Vertically center the text within its container
       },

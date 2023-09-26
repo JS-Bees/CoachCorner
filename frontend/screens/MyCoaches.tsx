@@ -50,17 +50,21 @@ const MyCoaches = () => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const from = page;
-    const to = Math.min((page + 1) * items.length, items.length);
+    
 
     const toggleModal = (item: any) => {
         setSelectedItem(item);
         setModalVisible(!isModalVisible);
     };
 
+    const itemsPerPage = 4; // Number of items to display per page
+
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+
+    const from = page * itemsPerPage;
+    const to = (page + 1) * itemsPerPage;
 
     return (
         <View style={MyCoachStyle.container}>
@@ -128,9 +132,9 @@ const MyCoaches = () => {
 
                 <DataTable.Pagination
                     page={page}
-                    numberOfPages={Math.ceil(filteredItems.length)}
+                    numberOfPages={Math.ceil(filteredItems.length / itemsPerPage)}
                     onPageChange={(page) => setPage(page)}
-                    label={`${from + 1} of ${filteredItems.length}`}
+                    label={`${from + 1}-${to} of ${filteredItems.length}`}
                     showFastPaginationControls
                 />
             </DataTable>
@@ -144,7 +148,7 @@ const MyCoachStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     labelContainer: {
-        marginTop: 20, // Adjust the margin as needed
+        marginTop: '15%', // Adjust the margin as needed
         alignItems: 'center', // Center the label horizontally
     },
 
@@ -186,7 +190,7 @@ const MyCoachStyle = StyleSheet.create({
     // Style for the Searchbar component
     searchBar: {
         backgroundColor: '#F3F3F3', // Background color
-        borderRadius: 5, // Border radius for rounded corners
+        borderRadius: 10, // Border radius for rounded corners
     },
 
     // Style for the input field of the Searchbar

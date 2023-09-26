@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -25,19 +25,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 const LogIn = () => {
-    const [Email, setEmail] = useState('');
-    const [Password, setPassword] = useState('');
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
+    const [Email, setEmail] = useState('');
+    const [Password, setPassword] = useState('');
     const [isModalVisible, setModalVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+
+    // Clear the email and password state variables when navigating away from the page
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('blur', () => {
+            setEmail('');
+            setPassword('');
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
 
-    const storeToken = async (token) => {
+    const storeToken = async (token: string) => {
         try {
             await AsyncStorage.setItem('userToken', token);
         } catch (error) {
@@ -230,8 +240,6 @@ const Log_In_Style = StyleSheet.create({
     bottomSVG: {
         justifyContent: 'flex-end',
         position: 'absolute',
-        width: width,
-        height: height,
         zIndex: 0,
     },
     modalContainer: {

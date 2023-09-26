@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    marginTop: 3,
+    marginTop: '10%',
     padding: 10,
   },
   AdressContainer: {
