@@ -11,7 +11,7 @@ function BottomComponent (props: any) {
         <Svg 
         viewBox="0 0 360 252"
         width={width}
-        height={height * 1.5}
+        height={height * 1.7}
         xmlns="http://www.w3.org/2000/svg"
         {...props}
         >
