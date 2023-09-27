@@ -22,6 +22,7 @@ import {
 } from '../../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const { width, height } = Dimensions.get('window');
 
 const LogIn = () => {

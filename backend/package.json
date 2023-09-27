@@ -8,7 +8,9 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "prismaGenerate": "npx prisma generate",
         "dbPushReset": "npx prisma db push --force-reset",
-        "seed": "npx prisma db seed"
+        "seed": "npx prisma db seed",
+        "lint": "eslint src",
+        "installDep": "npm install --force"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
