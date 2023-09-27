@@ -40,6 +40,15 @@ export const Coachee = objectType({
                 });
             },
         });
+        // t.field(gqlTypes.Coachee.reviews);
+        t.list.field('reviews', {
+            type: 'Review',
+            resolve: (coachee, _args, ctx) => {
+                return ctx.db.review.findMany({
+                    where: { coacheeId: coachee.id },
+                });
+            },
+        });
         t.field(gqlTypes.Coachee.isCoach);
         t.field(gqlTypes.Coachee.active);
         t.field(gqlTypes.Coachee.createdAt);
@@ -83,6 +92,15 @@ export const Coach = objectType({
                 });
             },
         });
+        // t.field(gqlTypes.Coach.reviews);
+        t.list.field('reviews', {
+            type: 'Review',
+            resolve: (coach, _args, ctx) => {
+                return ctx.db.review.findMany({
+                    where: { coachId: coach.id },
+                });
+            },
+        });
         t.field(gqlTypes.Coach.isCoach);
         t.field(gqlTypes.Coach.active);
         t.field(gqlTypes.Coach.createdAt);
@@ -96,6 +114,7 @@ export const CoachingRelationship = objectType({
         t.field(gqlTypes.CoachingRelationship.id);
         t.field(gqlTypes.CoachingRelationship.coachId);
         t.field(gqlTypes.CoachingRelationship.coacheeId);
+        t.field(gqlTypes.CoachingRelationship.active);
         t.field(gqlTypes.CoachingRelationship.createdAt);
         t.field(gqlTypes.CoachingRelationship.updatedAt);
         // t.field(gqlTypes.CoachingRelationship.coach);
@@ -124,10 +143,20 @@ export const BookingSlot = objectType({
     definition(t) {
         t.field(gqlTypes.BookingSlot.id);
         t.field(gqlTypes.BookingSlot.bookingId);
-        t.field(gqlTypes.BookingSlot.booking);
+        // t.field(gqlTypes.BookingSlot.booking);
+        t.field('booking', {
+            type: 'Booking',
+            resolve: (bookingSlot, _args, ctx) => {
+                return ctx.db.booking.findUnique({
+                    where: { id: bookingSlot.bookingId },
+                });
+            },
+        });
+        // ^IDK if this works test by running query in playground (if bookingSlots can return booking objects), seems like it works
         t.field(gqlTypes.BookingSlot.date);
         t.field(gqlTypes.BookingSlot.startTime);
         t.field(gqlTypes.BookingSlot.endTime);
+        t.field(gqlTypes.BookingSlot.active);
         t.field(gqlTypes.BookingSlot.createdAt);
         t.field(gqlTypes.BookingSlot.updatedAt);
     },
@@ -172,5 +201,37 @@ export const Booking = objectType({
         t.field(gqlTypes.Booking.active);
         t.field(gqlTypes.Booking.createdAt);
         t.field(gqlTypes.Booking.updatedAt);
+    },
+});
+
+export const Review = objectType({
+    name: 'Review',
+    definition(t) {
+        t.field(gqlTypes.Review.id);
+        t.field(gqlTypes.Review.starRating);
+        t.field(gqlTypes.Review.comment);
+        t.field(gqlTypes.Review.coacheeId);
+        t.field(gqlTypes.Review.coachId);
+        // t.field(gqlTypes.Review.coach);
+        t.field('coach', {
+            type: 'Coach',
+            resolve: (review, _args, ctx) => {
+                return ctx.db.coach.findUnique({
+                    where: { id: review.coachId },
+                });
+            },
+        });
+        // t.field(gqlTypes.Review.coachee);
+        t.field('coachee', {
+            type: 'Coachee',
+            resolve: (review, _args, ctx) => {
+                return ctx.db.coachee.findUnique({
+                    where: { id: review.coacheeId },
+                });
+            },
+        });
+        t.field(gqlTypes.Review.active);
+        t.field(gqlTypes.Review.createdAt);
+        t.field(gqlTypes.Review.updatedAt);
     },
 });

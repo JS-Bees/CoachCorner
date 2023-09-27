@@ -97,6 +97,7 @@ model Coachee {
 
   bookings            Booking[]
   coachingRelationships CoachingRelationship[]
+  reviews             Review[] 
 
   isCoach             Boolean   @default(false) 
   active              Boolean   @default(true)
@@ -126,6 +127,7 @@ model Coach {
 
   bookings              Booking[] 
   coachingRelationships CoachingRelationship[]
+  reviews               Review[] 
 
   isCoach             Boolean   @default(true)
   active              Boolean   @default(true)
@@ -141,6 +143,7 @@ model CoachingRelationship {
   coachee       Coachee  @relation(fields: [coacheeId], references: [id])
   coacheeId     Int
 
+  active        Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -153,6 +156,7 @@ model BookingSlot {
   startTime     DateTime
   endTime       DateTime
 
+  active        Boolean      @default(true)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
@@ -170,9 +174,23 @@ model Booking {
 
   additionalNotes   String?
 
-  active            Boolean   @default(true)
+  active            Boolean      @default(true)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+}
+
+model Review {
+  id                Int       @id @default(autoincrement())
+  starRating        Int      
+  comment           String
+  coach             Coach     @relation(fields: [coachId], references: [id])
+  coachId           Int
+  coachee           Coachee   @relation(fields: [coacheeId], references: [id])
+  coacheeId         Int
+
+  active            Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 

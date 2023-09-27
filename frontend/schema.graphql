@@ -18,6 +18,7 @@ type Booking {
 }
 
 type BookingSlot {
+  active: Boolean!
   booking: Booking!
   bookingId: Int!
   createdAt: DateTime!
@@ -54,6 +55,7 @@ type Coach {
   moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String
+  reviews: [Review!]!
   sport: Sport!
   updatedAt: DateTime!
   workplaceAddress: String!
@@ -79,10 +81,12 @@ type Coachee {
   moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String
+  reviews: [Review!]!
   updatedAt: DateTime!
 }
 
 type CoachingRelationship {
+  active: Boolean!
   coach: Coach!
   coachId: Int!
   coachee: Coachee!
@@ -184,6 +188,19 @@ type Query {
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
   findCoacheeByID(userID: Int!): Coachee!
   findCoachesBySport(sport: Sport!): [Coach!]!
+}
+
+type Review {
+  active: Boolean!
+  coach: Coach!
+  coachId: Int!
+  coachee: Coachee!
+  coacheeId: Int!
+  comment: String!
+  createdAt: DateTime!
+  id: Int!
+  starRating: Int!
+  updatedAt: DateTime!
 }
 
 enum Sport {

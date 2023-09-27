@@ -84,6 +84,7 @@ export interface NexusGenObjects {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   BookingSlot: { // root type
+    active: boolean; // Boolean!
     bookingId: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     date: NexusGenScalars['DateTime']; // DateTime!
@@ -134,6 +135,7 @@ export interface NexusGenObjects {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoachingRelationship: { // root type
+    active: boolean; // Boolean!
     coachId: number; // Int!
     coacheeId: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -142,6 +144,16 @@ export interface NexusGenObjects {
   }
   Mutation: {};
   Query: {};
+  Review: { // root type
+    active: boolean; // Boolean!
+    coachId: number; // Int!
+    coacheeId: number; // Int!
+    comment: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    starRating: number; // Int!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
 }
 
 export interface NexusGenInterfaces {
@@ -170,6 +182,7 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   BookingSlot: { // field return type
+    active: boolean; // Boolean!
     booking: NexusGenRootTypes['Booking']; // Booking!
     bookingId: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -198,6 +211,7 @@ export interface NexusGenFieldTypes {
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
     profilePicture: string | null; // String
+    reviews: NexusGenRootTypes['Review'][]; // [Review!]!
     sport: NexusGenEnums['Sport']; // Sport!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     workplaceAddress: string; // String!
@@ -222,9 +236,11 @@ export interface NexusGenFieldTypes {
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
     profilePicture: string | null; // String
+    reviews: NexusGenRootTypes['Review'][]; // [Review!]!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoachingRelationship: { // field return type
+    active: boolean; // Boolean!
     coach: NexusGenRootTypes['Coach']; // Coach!
     coachId: number; // Int!
     coachee: NexusGenRootTypes['Coachee']; // Coachee!
@@ -246,6 +262,18 @@ export interface NexusGenFieldTypes {
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
     findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
+  Review: { // field return type
+    active: boolean; // Boolean!
+    coach: NexusGenRootTypes['Coach']; // Coach!
+    coachId: number; // Int!
+    coachee: NexusGenRootTypes['Coachee']; // Coachee!
+    coacheeId: number; // Int!
+    comment: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    starRating: number; // Int!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
 }
 
 export interface NexusGenFieldTypeNames {
@@ -264,6 +292,7 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   BookingSlot: { // field return type name
+    active: 'Boolean'
     booking: 'Booking'
     bookingId: 'Int'
     createdAt: 'DateTime'
@@ -292,6 +321,7 @@ export interface NexusGenFieldTypeNames {
     moviesGenres: 'MovieGenres'
     password: 'String'
     profilePicture: 'String'
+    reviews: 'Review'
     sport: 'Sport'
     updatedAt: 'DateTime'
     workplaceAddress: 'String'
@@ -316,9 +346,11 @@ export interface NexusGenFieldTypeNames {
     moviesGenres: 'MovieGenres'
     password: 'String'
     profilePicture: 'String'
+    reviews: 'Review'
     updatedAt: 'DateTime'
   }
   CoachingRelationship: { // field return type name
+    active: 'Boolean'
     coach: 'Coach'
     coachId: 'Int'
     coachee: 'Coachee'
@@ -339,6 +371,18 @@ export interface NexusGenFieldTypeNames {
     findCoacheeByEmailAndPassword: 'Coachee'
     findCoacheeByID: 'Coachee'
     findCoachesBySport: 'Coach'
+  }
+  Review: { // field return type name
+    active: 'Boolean'
+    coach: 'Coach'
+    coachId: 'Int'
+    coachee: 'Coachee'
+    coacheeId: 'Int'
+    comment: 'String'
+    createdAt: 'DateTime'
+    id: 'Int'
+    starRating: 'Int'
+    updatedAt: 'DateTime'
   }
 }
 

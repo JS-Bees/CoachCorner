@@ -185,6 +185,12 @@ async function seedDatabase() {
                     serviceType: 'Soccer Coaching',
                     status: 'PENDING',
                 },
+                {
+                    coachId: 2, // Coach with ID 2
+                    coacheeId: 1, // Coachee with ID 1
+                    serviceType: 'Volleyball Coaching Again',
+                    status: 'PENDING',
+                },
             ],
         });
 
@@ -245,6 +251,48 @@ async function seedDatabase() {
                     startTime: new Date('2023-10-21T15:00:00'),
                     endTime: new Date('2023-10-21T16:00:00'),
                 },
+                {
+                    bookingId: 4, // Booking with ID 4
+                    date: new Date('2023-11-04'),
+                    startTime: new Date('2023-11-04T13:00:00'),
+                    endTime: new Date('2023-11-04T14:00:00'),
+                },
+                {
+                    bookingId: 4, // Booking with ID 4
+                    date: new Date('2023-11-05'),
+                    startTime: new Date('2023-11-05T16:00:00'),
+                    endTime: new Date('2023-11-05T17:00:00'),
+                },
+            ],
+        });
+
+        // Create reviews
+        await db.review.createMany({
+            data: [
+                {
+                    starRating: 5,
+                    comment: 'Great coaching!',
+                    coachId: 2, // Coach with ID 2
+                    coacheeId: 1, // Coachee with ID 1
+                },
+                {
+                    starRating: 4,
+                    comment: 'Good experience.',
+                    coachId: 2, // Coach with ID 2
+                    coacheeId: 2, // Coachee with ID 2
+                },
+                {
+                    starRating: 5,
+                    comment: 'Looking forward to more sessions.',
+                    coachId: 3, // Coach with ID 3
+                    coacheeId: 5, // Coachee with ID 5
+                },
+                {
+                    starRating: 4,
+                    comment: 'Enjoyed the second coaching session.',
+                    coachId: 2, // Coach with ID 2
+                    coacheeId: 1, // Coachee with ID 1
+                },
             ],
         });
 
@@ -290,6 +338,18 @@ async function seedDatabase() {
             },
         });
 
+        await db.booking.update({
+            where: { id: 4 },
+            data: {
+                bookingSlots: {
+                    connect: [
+                        { id: 10 }, // Booking Slot with ID 10
+                        { id: 11 }, // Booking Slot with ID 11
+                    ],
+                },
+            },
+        });
+
         // Connect bookings to coaches
         await db.coach.update({
             where: { id: 2 }, // Coach with ID 2
@@ -298,6 +358,7 @@ async function seedDatabase() {
                     connect: [
                         { id: 1 }, // Booking with ID 1
                         { id: 2 }, // Booking with ID 2
+                        { id: 4 }, // Booking with ID 4
                     ],
                 },
             },
@@ -343,6 +404,17 @@ async function seedDatabase() {
                 bookings: {
                     connect: [
                         { id: 3 }, // Booking with ID 3
+                    ],
+                },
+            },
+        });
+
+        await db.coachee.update({
+            where: { id: 1 }, // Coachee with ID 1
+            data: {
+                bookings: {
+                    connect: [
+                        { id: 4 }, // Booking with ID 4
                     ],
                 },
             },
