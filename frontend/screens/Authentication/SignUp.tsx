@@ -1,31 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
-import {
-    ScrollView,
-    View,
-    Text,
-    StyleSheet,
-    TextInput,
-    Pressable,
-    Platform,
-} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import InputSignUpPages from '../../components/InputSignUpPages';
-import LogInButton from '../../components/CustomButton';
-import { useMutation } from 'urql'; // Import the Urql hook for mutations
-import {
-    CreateCoachDocument,
-    Sport,
-    Games,
-    Hobbies,
-    MovieGenres,
-} from '../../generated-gql/graphql';
-import { RootStackParams } from '../../App';
+import { ScrollView, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import InputSignUpPages from "../../components/InputSignUpPages";
+import LogInButton from "../../components/CustomButton";
+import { RootStackParams } from "../../App";
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const SignUpForCoach= () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
-
+const SignUp = () => {
   const [First_Name, setFirst_Name] = useState('');
   const [Last_Name, setLast_Name] = useState('');
   const [Email, setEmail] = useState('');
@@ -35,14 +18,13 @@ const SignUpForCoach= () => {
   const [City, setCity] = useState('');
   const [Postal, setPostal] = useState('');
   const [dateOfBirth, setDateofBirth] = useState('');
-  const [selectedSport, setSelectedSport] = useState<Sport[]>([]);
-  const [selectedGames, setSelectedGames] = useState<Games[]>([]);
-  const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
-  const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
-  const [signUpResinputult, SignUpForCoach] = useMutation(CreateCoachDocument);
 
   const [date, setdate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+
+  const onSignUpPressed = () => {
+    console.warn("Account Created");
+  }
 
   const toggleDatePicker = () => {
     setShowPicker(!showPicker);
@@ -61,53 +43,6 @@ const SignUpForCoach= () => {
       toggleDatePicker();
     }
   };
-
-  const setInitialSelectedValues = () => {
-    setSelectedSport([Sport.Soccer]);
-    setSelectedGames([Games.Dota]);
-    setSelectedHobbies([Hobbies.Baking]);
-    setSelectedMovieGenres([MovieGenres.Action]);
-  };
-
-  const onSignUpPressed = async () => {
-    try {
-      setInitialSelectedValues(); // Move the state updates here
-
-      const { data, error } = await SignUpForCoach({
-          firstName: First_Name,
-          lastName: Last_Name,
-          birthday: date,
-          email: Email.toLowerCase(),
-          password: Password,
-          workplaceAddress: StreetAdd,
-          sport: selectedSport[0],
-          games: selectedGames,
-          hobbies: selectedHobbies,
-          moviesGenres: selectedMovieGenres,
-      });
-
-      if (error) {
-        console.error(error);
-        // Handle errors (e.g., show an error message)
-        console.log(First_Name)
-        console.log(Last_Name)
-        console.log(date)
-        console.log(Password)
-        console.log(selectedSport)
-        console.log(selectedGames)
-        console.log(selectedHobbies)
-        console.log(selectedMovieGenres)
-      } else {
-        // Handle the data response from your GraphQL server (e.g., show a success message)
-        console.log(data);
-        navigation.navigate('LogIn')
-      }
-    } catch (err) {
-      console.error(err);
-      // Handle errors (e.g., show an error message)
-    }
-  };
-  
 
 
   return (
@@ -217,7 +152,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    marginTop: '10%',
+    marginTop: 3,
     padding: 10,
   },
   AdressContainer: {
@@ -240,6 +175,24 @@ const styles = StyleSheet.create({
       width: 0,
       height: 3,
     },
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginVertical: 5,
+    shadowRadius: 6,
+    elevation: 6,
+    shadowOpacity: 5,
+    borderColor: '#e8e8e8',
+  },
+  birthdayText: {
+    color: '#a19e9e',
+  },
+  textStyle: {
+    fontSize: 24,
+    fontWeight: "900",
+    fontFamily: "Roboto",
+    color: "#915bc7",
+    textAlign: "left"
+  },
 });
 
-export default SignUpForCoach;
+export default SignUp;

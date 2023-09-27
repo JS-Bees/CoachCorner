@@ -77,3 +77,29 @@ query FindCoachByID($userID: Int!) {
         isCoach
     }
 }
+
+query FindCoachesBySport($sport: Sport!) {
+    findCoachesBySport(sport: $sport) {
+        id
+        firstName
+        sport
+        email
+        lastName
+        birthday
+        password
+        workplaceAddress
+        games
+        hobbies
+        moviesGenres
+        affiliations
+        bio
+        mantra
+        profilePicture
+        coachingRelationships {
+            id
+            coacheeId
+        }
+        isCoach
+        active
+    }
+}
