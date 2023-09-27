@@ -12,6 +12,9 @@ import CoachProfile from './screens/Profile/CoachProfile';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import { NavigationContainer } from '@react-navigation/native';
+import CoacheeProfile  from './screens/Profiles/CoacheeProfile';
+import CoachProfile from './screens/Profiles/CoachProfile';
+import SearchList from './screens/SearchList/SearchList';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
@@ -48,6 +51,8 @@ export type RootStackParams = {
 const RootStack = createNativeStackNavigator();
 
 export default function App() {
+<!--       <RootStack.Navigator initialRouteName="ResultsList"> -->
+<!--       <RootStack.Screen name="ResultsList" component={SearchList} /> -->
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>

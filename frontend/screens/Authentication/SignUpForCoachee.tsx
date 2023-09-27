@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, TextInput, Pressable, Platform } from 'react-native';
-import DateTimePicker from "@react-native-community/datetimepicker";
-import InputSignUpPages from "../../components/InputSignUpPages";
-import LogInButton from "../../components/CustomButton";
+import {
+    ScrollView,
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    Pressable,
+    Platform,
+} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import InputSignUpPages from '../../components/InputSignUpPages';
+import LogInButton from '../../components/CustomButton';
 import { useMutation } from 'urql'; // Import the Urql hook for mutations
-import { CreateCoacheeDocument, Games, Hobbies, MovieGenres } from '../../generated-gql/graphql';
-import { RootStackParams } from "../../App";
+import {
+    CreateCoacheeDocument,
+    Games,
+    Hobbies,
+    MovieGenres,
+} from '../../generated-gql/graphql';
+import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -222,24 +235,6 @@ const styles = StyleSheet.create({
       width: 0,
       height: 3,
     },
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginVertical: 5,
-    shadowRadius: 6,
-    elevation: 6,
-    shadowOpacity: 5,
-    borderColor: '#e8e8e8',
-  },
-  birthdayText: {
-    color: '#a19e9e',
-  },
-  textStyle: {
-    fontSize: 24,
-    fontWeight: "900",
-    fontFamily: "Roboto",
-    color: "#915bc7",
-    textAlign: "left"
-  },
 });
 
 export default SignUpForCoachee;

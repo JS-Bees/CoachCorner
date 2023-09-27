@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Dimensions, Image } from "react-native";
 import React from 'react';
-import SVGComponent from '../../components/BackgroundSVG2';
+import SVGComponent from "../../components/UpperSVG";
 import BottomComponent from "../../components/BottomSvg";
 import LogInButton from "../../components/CustomButton";
 import { RootStackParams } from "../../App";
