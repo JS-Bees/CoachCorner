@@ -91,11 +91,13 @@ model Coachee {
   moviesGenres        MovieGenres[] 
 
   affiliations        String? 
-  bio                 String?  
+  bio                 String?
+  mantra              String?    
   profilePicture      String?     
 
   bookings            Booking[]
   coachingRelationships CoachingRelationship[]
+  reviews             Review[] 
 
   isCoach             Boolean   @default(false) 
   active              Boolean   @default(true)
@@ -119,11 +121,13 @@ model Coach {
   moviesGenres        MovieGenres[]
 
   affiliations        String? 
-  bio                 String?  
+  bio                 String?
+  mantra              String?  
   profilePicture      String?     
 
   bookings              Booking[] 
   coachingRelationships CoachingRelationship[]
+  reviews               Review[] 
 
   isCoach             Boolean   @default(true)
   active              Boolean   @default(true)
@@ -139,6 +143,7 @@ model CoachingRelationship {
   coachee       Coachee  @relation(fields: [coacheeId], references: [id])
   coacheeId     Int
 
+  active        Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -151,6 +156,7 @@ model BookingSlot {
   startTime     DateTime
   endTime       DateTime
 
+  active        Boolean      @default(true)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 }
@@ -163,16 +169,28 @@ model Booking {
   coachId           Int
   coachee           Coachee      @relation(fields: [coacheeId], references: [id])
   coacheeId         Int
-  coachName         String
-  coacheeName       String
   serviceType       String
   status            BookingStatus
 
   additionalNotes   String?
 
-  active            Boolean   @default(true)
+  active            Boolean      @default(true)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+}
+
+model Review {
+  id                Int       @id @default(autoincrement())
+  starRating        Int      
+  comment           String
+  coach             Coach     @relation(fields: [coachId], references: [id])
+  coachId           Int
+  coachee           Coachee   @relation(fields: [coacheeId], references: [id])
+  coacheeId         Int
+
+  active            Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 
