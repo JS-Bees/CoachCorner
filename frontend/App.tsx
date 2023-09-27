@@ -5,6 +5,7 @@ import SignUP from './screens/Authentication/SignUp';
 import { NavigationContainer } from '@react-navigation/native';
 import CoacheeProfile  from './screens/Profiles/CoacheeProfile';
 import CoachProfile from './screens/Profiles/CoachProfile';
+import SearchList from './screens/SearchList/SearchList';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
@@ -46,11 +47,12 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <RootStack.Navigator initialRouteName="CoachProfile">
+      <RootStack.Navigator initialRouteName="ResultsList">
       {/* <RootStack.Screen name="UserDashboard" component={UserDashboard} /> */}
       <RootStack.Screen name="LogIn" component={LogInPage} />
       <RootStack.Screen name="CoacheeProfile" component={CoacheeProfile} />
       <RootStack.Screen name="CoachProfile" component={CoachProfile} />
+      <RootStack.Screen name="ResultsList" component={SearchList} />
       <RootStack.Screen name="SignUp" component={SignUP} />
       </RootStack.Navigator>
     </NavigationContainer>

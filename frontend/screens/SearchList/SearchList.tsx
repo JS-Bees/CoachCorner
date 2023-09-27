@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'; 
 import { ScrollView, TextInput, Dimensions } from 'react-native'
-import { StyleSheet, Text, View,} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity} from 'react-native'
 import BottomComponent from '../../components/BottomSvg';
 import ListItemComponent from '../../components/ListItem';
+import DraggableBottomSheet from '../../components/BottomSheet/BottomSheet';
 
 const { width, height } = Dimensions.get('window');
 
 const SearchList  = () => {
 
-
+    const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+    const toggleBottomSheet = () => {
+        setIsBottomSheetVisible(!isBottomSheetVisible)
+    }
 
 
 
@@ -54,9 +58,7 @@ const SearchList  = () => {
             title: "Example",
             subtitle: "Subtitle for Item 3",
         },
-        
     ]
-
 
 
 
@@ -80,10 +82,15 @@ const SearchList  = () => {
         
             <ScrollView style={style.scrollContainer}>
             {list.map((item, i) => (
-                <ListItemComponent key = {i} data={item} />
+                <TouchableOpacity key={i} onPress={toggleBottomSheet}>
+                    <ListItemComponent data={item}/>
+                </TouchableOpacity>
             ) )}
             </ScrollView>
 
+            {isBottomSheetVisible && (
+                <DraggableBottomSheet onClose = {() => setIsBottomSheetVisible(false)}/>
+            )}
         
         </View>
     )

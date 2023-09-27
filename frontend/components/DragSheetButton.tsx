@@ -1,7 +1,7 @@
 import React from 'react'
 import {Pressable, Text, StyleSheet } from 'react-native'
 
-const LogInButton = ({onPress, text, type = "PRIMARY"}) => {
+const DragSheetButton = ({onPress, text, type = "PRIMARY"}) => {
     return (
         <Pressable onPress={onPress} style={[styles.container, styles[`container_${type}`]]}>
             <Text style={[styles.text, styles[`text_${type}`]]}>{text}</Text>
@@ -14,9 +14,9 @@ const styles = StyleSheet.create( {
         paddingHorizontal: 10,
         paddingVertical: 10,
         alignItems: 'center',
-        height: 40,
+        height:40,
         borderRadius: 100,
-        width: 300,
+        width: 200,
     },
 
     container_PRIMARY: {
@@ -52,4 +52,4 @@ const styles = StyleSheet.create( {
 
 })
 
-export default LogInButton
+export default DragSheetButton
