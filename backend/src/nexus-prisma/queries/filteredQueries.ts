@@ -1,7 +1,8 @@
-import { queryField, nonNull, stringArg, intArg } from 'nexus';
+import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import { Coachee, Coach } from '../objectTypes';
+import { SportEnum } from '../enums';
 
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
@@ -102,5 +103,22 @@ export const findCoacheeByID = queryField('findCoacheeByID', {
         } else {
             throw new Error(`Coachee with ID ${userID} does not exist.`);
         }
+    },
+});
+
+export const findCoachesBySport = queryField('findCoachesBySport', {
+    type: list(Coach), // Return a list of coaches
+    args: {
+        sport: SportEnum,
+    },
+    resolve: async (_, { sport }, context: Context) => {
+        // Search for coaches who are associated with the specified sport
+        const coaches = await context.db.coach.findMany({
+            where: {
+                sport: sport,
+            },
+        });
+
+        return coaches;
     },
 });
