@@ -14,7 +14,7 @@ const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.5;
 
 const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
-const DRAG_THRESHOLD = 100;
+const DRAG_THRESHOLD = height * 0.05;
 
 interface DraggableBottomSheetProps {
 
@@ -140,10 +140,6 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose }) 
      <DragSheetButton text={"See My Reviews"} type='TERTIARY' onPress={onSeePressed}/>
      </View>
      
-    
-      
-
-
       </Animated.View>
     </View>
   );
@@ -151,13 +147,14 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose }) 
 
 const styles = StyleSheet.create({
   container: {
+    flex: 0.1,
+    marginRight: 'auto',
     
   },
 
   bottomSheet: {
     position: 'absolute',
     width: '100%',
-    right: -196,
     height: BOTTOM_SHEET_MAX_HEIGHT,
     bottom: BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT,
     ...Platform.select({
@@ -177,28 +174,26 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
   },
   draggableArea: {
-    width: 500,
-    height: 50,
-    backgroundColor: "#DED2EA",
+    height: height * 0.05,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
   dragHandle: {
-    width: 100,
+    width: width * 0.2,
     height: 6,
-    backgroundColor: 'white',
+    backgroundColor: 'grey',
     borderRadius: 10,
   },
  
   imageContainer: {
-    top: -215,
+    top: -height * 0.25,
     paddingVertical: 20,
     left: 30,
   },
 
   row: {
-    top: -70,
+    top: -height * 0.10,
     left: 110,
     alignItems: 'flex-start'
   },
@@ -211,7 +206,7 @@ const styles = StyleSheet.create({
   },
 
   textSport: {
-    left: 4,
+    left: width * 0.04,
     fontFamily: 'Roboto',
     fontSize: 15,
     fontWeight: '600',
@@ -220,9 +215,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    top: -65,
-    left: 100
-    
+    top: -height * 0.09,
+   paddingHorizontal: 110,
   },
 
   scrollViewContainer: {
