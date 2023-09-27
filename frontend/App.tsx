@@ -42,7 +42,6 @@ export type RootStackParams = {
     CoachProfile: any;
     MyClients: any;
     MyCoaches: any;
-    CoachSample: any;
 };
 
 const RootStack = createNativeStackNavigator();
