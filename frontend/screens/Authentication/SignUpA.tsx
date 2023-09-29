@@ -1,16 +1,9 @@
 import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import React from 'react';
-<<<<<<< HEAD
-import SVGComponent from '../../components/BackgroundSVG2';
-import BottomComponent from '../../components/BottomSvg';
-import LogInButton from '../../components/CustomButton';
-import { RootStackParams } from '../../App';
-=======
 import SVGComponent from "../../components/UpperSVG";
 import BottomComponent from "../../components/BottomSvg";
 import LogInButton from "../../components/CustomButton";
 import { RootStackParams } from "../../App";
->>>>>>> cb33cf432b498bfec8499ddfaba3bd7a0cf8ad3c
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 

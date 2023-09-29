@@ -1,20 +1,23 @@
-import React from 'react'
-import {Pressable, Text, StyleSheet } from 'react-native'
+import React from 'react';
+import { Pressable, Text, StyleSheet } from 'react-native';
 
-const DragSheetButton = ({onPress, text, type = "PRIMARY"}) => {
+const DragSheetButton = ({ onPress, text, type = 'PRIMARY' }) => {
     return (
-        <Pressable onPress={onPress} style={[styles.container, styles[`container_${type}`]]}>
+        <Pressable
+            onPress={onPress}
+            style={[styles.container, styles[`container_${type}`]]}
+        >
             <Text style={[styles.text, styles[`text_${type}`]]}>{text}</Text>
         </Pressable>
-    )
-}
+    );
+};
 
-const styles = StyleSheet.create( {
+const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 10,
         paddingVertical: 10,
         alignItems: 'center',
-        height:40,
+        height: 40,
         borderRadius: 100,
         width: 200,
     },
@@ -23,33 +26,24 @@ const styles = StyleSheet.create( {
         backgroundColor: '#6441a4',
     },
 
-    container_TERTIARY: {
-
-    },
-    
-
- 
+    container_TERTIARY: {},
     text: {
-        fontWeight: "bold",
+        fontWeight: 'bold',
         color: 'white',
-        fontFamily: 'Roboto'
+        fontFamily: 'Roboto',
     },
 
     text_TERTIARY: {
-        color: 'grey'
+        color: 'grey',
     },
 
     text_SECONDARY: {
-        color: '#a19e9e'
+        color: '#a19e9e',
     },
 
     text_QUARTERNARY: {
-        color: 'white'
+        color: 'white',
     },
+});
 
-    
-
-
-})
-
-export default DragSheetButton
+export default DragSheetButton;

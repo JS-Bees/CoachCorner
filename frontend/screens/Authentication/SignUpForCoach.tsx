@@ -11,7 +11,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/InputSignUpPages';
 import LogInButton from '../../components/CustomButton';
-import { useMutation } from 'urql'; // Import the Urql hook for mutations
+import { useMutation } from 'urql';
 import {
     CreateCoachDocument,
     Sport,
@@ -39,20 +39,23 @@ const SignUpForCoach = () => {
     const [selectedSport, setSelectedSport] = useState<Sport[]>([]);
     const [selectedGames, setSelectedGames] = useState<Games[]>([]);
     const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
-    const [selectedMovieGenres, setSelectedMovieGenres] = useState<
-        MovieGenres[]
-    >([]);
+    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
     const [signUpResinputult, SignUpForCoach] =
         useMutation(CreateCoachDocument);
 
     const [date, setdate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const toggleModal = () => {
+        setShowModal(!showModal);
+    };
+
     const onChange = ({ type }: any, selectedDate: any) => {
         if (type == 'set') {
             const currentDate = selectedDate;
@@ -75,7 +78,7 @@ const SignUpForCoach = () => {
 
     const onSignUpPressed = async () => {
         try {
-            setInitialSelectedValues(); // Move the state updates here
+            setInitialSelectedValues();
 
             const { data, error } = await SignUpForCoach({
                 firstName: First_Name,
@@ -92,23 +95,22 @@ const SignUpForCoach = () => {
 
             if (error) {
                 console.error(error);
-                // Handle errors (e.g., show an error message)
-                console.log(First_Name);
-                console.log(Last_Name);
-                console.log(date);
-                console.log(Password);
-                console.log(selectedSport);
-                console.log(selectedGames);
-                console.log(selectedHobbies);
-                console.log(selectedMovieGenres);
             } else {
-                // Handle the data response from your GraphQL server (e.g., show a success message)
-                console.log(data);
-                navigation.navigate('LogIn');
+                setSuccessMessage('Signed up successfully!');
+                toggleModal();
+                // Clear form fields
+                setFirst_Name('');
+                setLast_Name('');
+                setEmail('');
+                setPassword('');
+                setRepeat_Password('');
+                setStreetAddress('');
+                setCity('');
+                setPostal('');
+                setDateofBirth('');
             }
         } catch (err) {
             console.error(err);
-            // Handle errors (e.g., show an error message)
         }
     };
 
@@ -149,7 +151,7 @@ const SignUpForCoach = () => {
                         value={Repeat_Password}
                         setValue={setRepeat_Password}
                         secureTextEntry
-                        passwordToMatch={Password} // Compare with Password
+                        passwordToMatch={Password}
                     />
                 </View>
 
@@ -202,6 +204,23 @@ const SignUpForCoach = () => {
                     <LogInButton text="Sign Up" onPress={onSignUpPressed} />
                 </View>
             </View>
+
+            {showModal && (
+                <View style={styles.modal}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.successText}>{successMessage}</Text>
+                        <Pressable
+                            style={styles.modalButton}
+                            onPress={() => {
+                                toggleModal();
+                                navigation.navigate('LogIn');
+                            }}
+                        >
+                            <Text style={styles.modalButtonText}>OK</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            )}
         </ScrollView>
     );
 };
@@ -268,6 +287,41 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto',
         color: '#915bc7',
         textAlign: 'left',
+    },
+    // Modal styles
+    modal: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+    },
+    successText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: 'center',
+        color: '#915bc7', // Change the font color to light green
+    },
+    modalButton: {
+        backgroundColor: '#A378F2', // Change the background color to purple
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    modalButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 

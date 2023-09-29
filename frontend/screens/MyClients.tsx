@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
+import { RootStackParams } from '../App';
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 
 const MyClients = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [page, setPage] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>(''); // Add state for search query
+
+    const goBack = () => {
+        navigation.goBack();
+      };
 
     const [items] = useState([
         {
@@ -69,10 +79,12 @@ const MyClients = () => {
     return (
         <View style={MyClientsStyle.container}>
             <View style={MyClientsStyle.labelContainer}>
+                <TouchableOpacity>
+                    <Ionicons name="arrow-back" size={30} style={MyClientsStyle.icon} onPress={goBack} />
+                </TouchableOpacity>
                 <Text style={MyClientsStyle.appointmentLabel}>My Clients</Text>
             </View>
-
-            {/* Add Searchbar */}
+            {/* Searchbar */}
             <View style={MyClientsStyle.searchBarContainer}>
                 <Searchbar
                     placeholder="Search clients"
@@ -151,10 +163,15 @@ const MyClientsStyle = StyleSheet.create({
         marginTop: '15%', // Adjust the margin as needed
         alignItems: 'center', // Center the label horizontally
     },
-
+    icon: {
+        left: '-40%',
+        color: '#915bc7',
+    },
     appointmentLabel: {
+        top: '-10%',
         color: '#915BC7',
-        fontFamily: 'Blinker-Light',
+        fontFamily: 'Roboto',
+        fontWeight: '700',
         fontSize: 30,
         textAlign: 'center',
     },

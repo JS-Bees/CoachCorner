@@ -183,7 +183,7 @@ const CoacheeDashboard = () => {
                             fontFamily: 'Blinker-SemiBold',
                             fontSize: 22,
                         }}
-                        onPress={() => console.log('Pressed')}
+                        onPress={() => navigation.navigate('SearchList')}
                     >
                         Find Coach
                     </Button>

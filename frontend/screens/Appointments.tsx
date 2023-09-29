@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import SvgComponent from '../components/BackgroundSvg';
 import { DataTable, Button, IconButton } from 'react-native-paper';
 import { Octicons } from '@expo/vector-icons'; // Import FontAwesome icons
+import { Ionicons } from '@expo/vector-icons';
+import { RootStackParams } from '../App';
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Appointments = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [page, setPage] = useState<number>(0);
-    const [showFinishedAppointments, setShowFinishedAppointments] =
-        useState(false);
+    const [showFinishedAppointments, setShowFinishedAppointments] = useState(false);
     const [appointmentLabel, setAppointmentLabel] = useState('Upcoming Appointments');
+
+    const goBack = () => {
+        navigation.goBack();
+      };
 
     const [items] = useState([
         {
@@ -83,6 +91,9 @@ const Appointments = () => {
     return (
         <View style={CoachAppointmentStyle.container}>
             <View style={CoachAppointmentStyle.headerContainer}>
+                <TouchableOpacity>
+                    <Ionicons name="arrow-back" size={30} style={CoachAppointmentStyle.icon} onPress={goBack} />
+                </TouchableOpacity>
                 <Text style={CoachAppointmentStyle.appointmentLabel}>
                     {appointmentLabel}
                 </Text>
@@ -229,10 +240,17 @@ const CoachAppointmentStyle = StyleSheet.create({
         marginTop: '15%',
         paddingHorizontal: 20, // Added paddingHorizontal to center the labels
     },
+    icon: {
+        top: '-30%',
+        left: '-35%',
+        color: '#915bc7',
+    },
     appointmentLabel: {
+
         color: '#915BC7',
-        fontFamily: 'Blinker-SemiBold',
-        fontSize: 25,
+        fontFamily: 'Roboto',
+        fontWeight: '700',
+        fontSize: 20,
     },
     svgContainer: {
         position: 'absolute',

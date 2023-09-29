@@ -239,13 +239,13 @@ const styles = StyleSheet.create({
 
     text: {
         color: 'white',
-        fontSize: 20,
-        top: -5,
+        fontSize: 30,
+        top: '-5%',
         fontFamily: 'Roboto',
     },
 
     logOut: {
-        paddingTop: '5%',
+        paddingTop: '10%',
         left: width * 0.4,
     },
 
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         alignItems: 'center',
         width: 300,
-        top: 100,
+        top: '8%',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
@@ -300,8 +300,10 @@ const styles = StyleSheet.create({
     },
 
     bio: {
-        top: 180,
+        top: '18%',
+        left: '3%',
         fontSize: 16,
+        fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#636363',
         textAlign: 'left',
@@ -310,9 +312,11 @@ const styles = StyleSheet.create({
     },
 
     age: {
-        top: -30,
+        top: '-11%',
+        left: '3%',
         fontSize: 16,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -320,9 +324,10 @@ const styles = StyleSheet.create({
     },
 
     affliate: {
-        top: -30,
+        top: '-11%',
         fontSize: 16,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -352,9 +357,11 @@ const styles = StyleSheet.create({
     },
 
     address: {
-        top: -245,
+        top: '-26%',
+        left: '3%',
         fontSize: 16,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -371,7 +378,7 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: 120,
+        top: '10%',
         fontSize: 25,
         alignItems: 'center',
         fontWeight: '700',
