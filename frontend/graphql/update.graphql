@@ -1,5 +1,19 @@
-mutation UpdateCoacheeProfile($id: Int!, $input: UpdateCoacheeProfileInput!) {
-    updateCoacheeProfile(id: $id, input: $input) {
+mutation UpdateCoacheeProfile(
+    $id: Int!
+    $address: String!
+    $affiliations: String
+    $bio: String
+    $mantra: String
+) {
+    updateCoacheeProfile(
+        id: $id
+        input: {
+            address: $address
+            affiliations: $affiliations
+            bio: $bio
+            mantra: $mantra
+        }
+    ) {
         address
         affiliations
         bio
@@ -7,8 +21,22 @@ mutation UpdateCoacheeProfile($id: Int!, $input: UpdateCoacheeProfileInput!) {
     }
 }
 
-mutation UpdateCoachProfile($id: Int!, $input: UpdateCoachProfileInput!) {
-    updateCoachProfile(id: $id, input: $input) {
+mutation UpdateCoachProfile(
+    $id: Int!
+    $workplaceAddress: String!
+    $affiliations: String
+    $bio: String
+    $mantra: String
+) {
+    updateCoachProfile(
+        id: $id
+        input: {
+            workplaceAddress: $workplaceAddress
+            affiliations: $affiliations
+            bio: $bio
+            mantra: $mantra
+        }
+    ) {
         workplaceAddress
         affiliations
         bio
@@ -16,12 +44,14 @@ mutation UpdateCoachProfile($id: Int!, $input: UpdateCoachProfileInput!) {
     }
 }
 
-# haven't tested
 mutation UpdateMessagingStartedCoachingRelationship(
     $id: Int!
-    $input: MessagingStartedInput!
+    $messagingStarted: Boolean!
 ) {
-    updateMessagingStartedCoachingRelationship(id: $id, input: $input) {
+    updateMessagingStartedCoachingRelationship(
+        id: $id
+        input: { messagingStarted: $messagingStarted }
+    ) {
         id
         coachId
         coacheeId
