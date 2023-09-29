@@ -1,0 +1,32 @@
+mutation UpdateCoacheeProfile($id: Int!, $input: UpdateCoacheeProfileInput!) {
+    updateCoacheeProfile(id: $id, input: $input) {
+        address
+        affiliations
+        bio
+        mantra
+    }
+}
+
+mutation UpdateCoachProfile($id: Int!, $input: UpdateCoachProfileInput!) {
+    updateCoachProfile(id: $id, input: $input) {
+        workplaceAddress
+        affiliations
+        bio
+        mantra
+    }
+}
+
+# haven't tested
+mutation UpdateMessagingStartedCoachingRelationship(
+    $id: Int!
+    $input: MessagingStartedInput!
+) {
+    updateMessagingStartedCoachingRelationship(id: $id, input: $input) {
+        id
+        coachId
+        coacheeId
+        messagingStarted
+        active
+        updatedAt
+    }
+}

@@ -9,6 +9,7 @@ import * as inputTypes from './nexus-prisma/inputTypes';
 import * as queries from './nexus-prisma/queries/queries';
 import * as filteredQueries from './nexus-prisma/queries/filteredQueries';
 import * as createMutation from './nexus-prisma/mutations/createMutations';
+import * as updateMutation from './nexus-prisma/mutations/updateMutations';
 
 import './generated/graphql-types'; // import types as side-effect
 // .d.ts files can only be "auto-imported" if they have no exports 🤮
@@ -36,6 +37,7 @@ const schema = makeSchema({
         queries,
         filteredQueries,
         createMutation,
+        updateMutation,
     ],
     outputs: {
         typegen: path.join(__dirname, 'generated/graphql-types.ts'),

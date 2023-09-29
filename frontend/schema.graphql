@@ -93,7 +93,22 @@ type CoachingRelationship {
   coacheeId: Int!
   createdAt: DateTime!
   id: Int!
+  messagingStarted: Boolean!
   updatedAt: DateTime!
+}
+
+input CreateBookingInput {
+  additionalNotes: String
+  coachId: Int!
+  coacheeId: Int!
+  serviceType: String!
+  status: BookingStatus!
+}
+
+input CreateBookingSlotInput {
+  date: DateTime!
+  endTime: DateTime!
+  startTime: DateTime!
 }
 
 input CreateCoachInput {
@@ -119,6 +134,11 @@ input CreateCoacheeInput {
   lastName: String!
   moviesGenres: [MovieGenres!]!
   password: String!
+}
+
+input CreateCoachingRelationshipInput {
+  coachId: Int!
+  coacheeId: Int!
 }
 
 """
@@ -158,6 +178,10 @@ enum Hobbies {
   WRITING
 }
 
+input MessagingStartedInput {
+  messagingStarted: Boolean!
+}
+
 enum MovieGenres {
   ACTION
   ADVENTURE
@@ -178,6 +202,10 @@ enum MovieGenres {
 type Mutation {
   createCoach(input: CreateCoachInput!): Coach!
   createCoachee(input: CreateCoacheeInput!): Coachee!
+  createCoachingRelationship(input: CreateCoachingRelationshipInput!): CoachingRelationship!
+  updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
+  updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
+  updateMessagingStartedCoachingRelationship(id: Int!, input: MessagingStartedInput!): CoachingRelationship!
 }
 
 type Query {
@@ -209,4 +237,18 @@ enum Sport {
   SOCCER
   SWIMMING
   VOLLEYBALL
+}
+
+input UpdateCoachProfileInput {
+  affiliations: String
+  bio: String
+  mantra: String
+  workplaceAddress: String!
+}
+
+input UpdateCoacheeProfileInput {
+  address: String!
+  affiliations: String
+  bio: String
+  mantra: String
 }
