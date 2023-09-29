@@ -170,25 +170,6 @@ const CoachDashboard = () => {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View style={CoachDashboardStyle.buttonContainer}>
-                    <Button
-                        mode="contained"
-                        style={{
-                            backgroundColor: '#A378F2',
-                            width: 270,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                        labelStyle={{
-                            color: 'white',
-                            fontFamily: 'Blinker-SemiBold',
-                            fontSize: 20,
-                        }}
-                        onPress={() => console.log('Pressed')}
-                    >
-                        Find Coach
-                    </Button>
-                </View>
             </View>
             <BottomComponent style={CoachDashboardStyle.bottomSVG} />
         </View>
@@ -198,7 +179,7 @@ const CoachDashboard = () => {
 const CoachDashboardStyle = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#F6F6F6',
     },
     backgroundContainer: {
         paddingTop: 140,

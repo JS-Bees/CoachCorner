@@ -75,7 +75,7 @@ const MyCoaches = () => {
             {/* Add Searchbar */}
             <View style={MyCoachStyle.searchBarContainer}>
                 <Searchbar
-                    placeholder="Search clients"
+                    placeholder="Search coaches"
                     onChangeText={(query) => setSearchQuery(query)}
                     value={searchQuery}
                     style={MyCoachStyle.searchBar}

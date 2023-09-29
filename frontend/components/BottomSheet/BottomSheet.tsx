@@ -62,11 +62,10 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose }) 
       direction === 'down' ? MAX_DOWNWARD_TRANSLATE_Y : MAX_UPWARD_TRANSLATE_Y;
     Animated.spring(animatedValue, {
       toValue: lastGestureDy.current,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start(() => {
       // Detect if the bottom sheet is fully open or closed
       setIsBottomSheetOpen(lastGestureDy.current === MAX_DOWNWARD_TRANSLATE_Y);
-      setIsShowOverlay(lastGestureDy.current === MAX_UPWARD_TRANSLATE_Y)
       // Call the onClose prop when the sheet is closed
       if (lastGestureDy.current === MAX_DOWNWARD_TRANSLATE_Y) {
         onClose();

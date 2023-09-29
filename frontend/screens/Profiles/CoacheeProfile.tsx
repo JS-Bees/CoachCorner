@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
   },
 
   logOut: {
+    top: '4%',
     left: width * 0.4
   },
 

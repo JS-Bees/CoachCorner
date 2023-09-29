@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import LogInPage from './screens/Authentication/LogIn';
 import SignUpA from './screens/Authentication/SignUpA';
@@ -6,9 +5,8 @@ import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
 import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
+import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
 import Appointments from './screens/Appointments';
-import CoacheeProfile from './screens/Profile/CoacheeProfile';
-import CoachProfile from './screens/Profile/CoachProfile';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,7 +27,7 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.8:5050/graphql', // replace with actual IP address, change to .env file
+    url: 'http://192.168.1.4:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -45,18 +43,17 @@ export type RootStackParams = {
     CoachProfile: any;
     MyClients: any;
     MyCoaches: any;
-    CoachSample: any;
 };
 
 const RootStack = createNativeStackNavigator();
 
 export default function App() {
-<!--       <RootStack.Navigator initialRouteName="ResultsList"> -->
-<!--       <RootStack.Screen name="ResultsList" component={SearchList} /> -->
+    <><RootStack.Navigator initialRouteName="ResultsList" />
+    <RootStack.Screen name="ResultsList" component={SearchList} /></> 
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn" >
+                <RootStack.Navigator initialRouteName="CoachBookingDrawer" >
                     <RootStack.Screen 
                         name="LogIn" 
                         component={LogInPage} 
@@ -105,10 +102,14 @@ export default function App() {
                         component={MyClients}   
                         options={{headerShown: false}}
                     />
-                        
                     <RootStack.Screen 
                         name="MyCoaches" 
                         component={MyCoaches} 
+                        options={{headerShown: false}}
+                    />
+                    <RootStack.Screen 
+                        name="CoachBookingDrawer" 
+                        component={CoachBookingDrawer} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>

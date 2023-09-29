@@ -240,6 +240,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 3,
     },
+  }
 });
 
 export default SignUpForCoach;
