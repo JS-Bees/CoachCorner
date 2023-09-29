@@ -114,6 +114,7 @@ export const CoachingRelationship = objectType({
         t.field(gqlTypes.CoachingRelationship.id);
         t.field(gqlTypes.CoachingRelationship.coachId);
         t.field(gqlTypes.CoachingRelationship.coacheeId);
+        t.field(gqlTypes.CoachingRelationship.messagingStarted);
         t.field(gqlTypes.CoachingRelationship.active);
         t.field(gqlTypes.CoachingRelationship.createdAt);
         t.field(gqlTypes.CoachingRelationship.updatedAt);
