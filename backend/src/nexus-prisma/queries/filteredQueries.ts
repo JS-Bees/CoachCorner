@@ -1,7 +1,7 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
-import { Coachee, Coach } from '../objectTypes';
+import { Coachee, Coach, Booking } from '../objectTypes';
 import { SportEnum } from '../enums';
 
 export const findCoachByEmailAndPassword = queryField(
@@ -120,5 +120,24 @@ export const findCoachesBySport = queryField('findCoachesBySport', {
         });
 
         return coaches;
+    },
+});
+
+export const findBookingByID = queryField('findBookingByID', {
+    type: Booking,
+    args: {
+        bookingID: nonNull(intArg()),
+    },
+    resolve: async (_, { bookingID }, context: Context) => {
+        // Search for a Booking by ID
+        const booking = await context.db.booking.findUnique({
+            where: { id: bookingID },
+        });
+
+        if (booking) {
+            return booking;
+        } else {
+            throw new Error(`Booking with ID ${bookingID} does not exist.`);
+        }
     },
 });

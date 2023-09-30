@@ -200,6 +200,7 @@ enum MovieGenres {
 }
 
 type Mutation {
+  createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking!
   createCoach(input: CreateCoachInput!): Coach!
   createCoachee(input: CreateCoacheeInput!): Coachee!
   createCoachingRelationship(input: CreateCoachingRelationshipInput!): CoachingRelationship!
@@ -211,6 +212,7 @@ type Mutation {
 type Query {
   coachees: [Coachee!]!
   coaches: [Coach!]!
+  findBookingByID(bookingID: Int!): Booking!
   findCoachByEmailAndPassword(email: String!, password: String!): Coach!
   findCoachByID(userID: Int!): Coach!
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
