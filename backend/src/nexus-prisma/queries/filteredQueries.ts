@@ -122,3 +122,30 @@ export const findCoachesBySport = queryField('findCoachesBySport', {
         return coaches;
     },
 });
+
+export const findUnaddedCoachesBySport = queryField(
+    'findUnaddedCoachesBySport',
+    {
+        type: list(Coach), // Return a list of available coaches
+        args: {
+            sport: SportEnum, // Required sport argument
+            coacheeID: nonNull(intArg()), // Required coacheeID argument
+        },
+        resolve: async (_, { sport, coacheeID }, context: Context) => {
+            // Search for coaches who are associated with the specified sport
+            // and do not have a coaching relationship with the given coacheeID
+            const coaches = await context.db.coach.findMany({
+                where: {
+                    sport: sport,
+                    coachingRelationships: {
+                        none: {
+                            coacheeId: coacheeID,
+                        },
+                    },
+                },
+            });
+
+            return coaches;
+        },
+    },
+);
