@@ -7,7 +7,7 @@ import {
     Text,
     ScrollView,
 } from 'react-native';
-import { TextInput, IconButton } from 'react-native-paper';
+import { TextInput, IconButton, Button } from 'react-native-paper';
 import ProfileSvg from '../../components/ProfileSvg';
 import BottomComponent from '../../components/BottomSvg';
 import LogInButton from '../../components/CustomButton';
@@ -17,6 +17,8 @@ import { FindCoacheeByIdDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UpdateCoacheeProfileDocument } from '../../generated-gql/graphql';
+import { useMutation } from 'urql';
 
 const { width, height } = Dimensions.get('window');
 
@@ -70,11 +72,11 @@ const CoacheeProfile = () => {
         }
     };
 
-    const [mantra, setMantra] = React.useState(' A mantra goes here ');
-    const [bio, setBio] = React.useState('Add your bio here...');
-    const [affliation, setAffiliate] = React.useState('Add your affiliates');
-    const [address, setAddres] = React.useState('Your address goes here...');
-    const [age, setAge] = React.useState('Age');
+    const [mantra, setMantra] = React.useState<string | undefined | null>(coachData?.findCoacheeByID.mantra);
+    const [bio, setBio] = React.useState<string | undefined| null>(coachData?.findCoacheeByID.bio);
+    const [affliation, setAffiliate] = React.useState<string | undefined| null>(coachData?.findCoacheeByID.affiliations);
+    const [address, setAddres] = React.useState<string | undefined>(coachData?.findCoacheeByID.address);
+    const [age, setAge] = React.useState<string | undefined>('');
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -92,6 +94,7 @@ const CoacheeProfile = () => {
         }
     };
 
+
     useEffect(() => {
         if (scrollViewRef.current) {
             if (isEditing) {
@@ -108,6 +111,26 @@ const CoacheeProfile = () => {
     useEffect(() => {
         setScrollable(isEditing);
     }, [isEditing]);
+
+console.log(mantra)
+const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument)
+const handleSaveButton = async () => {
+
+    return await executeMutation(
+        {id: parseInt(userToken), address: address, affiliations: affliation, mantra: mantra, bio: bio,
+        }).then((res) => {
+            if(res) {
+                setIsEditing(false)
+                return res.data
+            }
+            
+        }).catch((e) => {
+            console.log("sheeesh error" , e)
+        })
+
+    
+
+}
 
     return (
         <View style={styles.container}>
@@ -128,7 +151,8 @@ const CoacheeProfile = () => {
 
             <TextInput
                 style={styles.mantraTextInput}
-                value={mantra}
+                placeholder='Enter mantra'
+                value={mantra === null ? '' : mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
                 underlineColor="transparent"
@@ -146,7 +170,8 @@ const CoacheeProfile = () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
-                            value={bio}
+                            placeholder='Enter bio'
+                            value={bio === null ? '' : bio}
                             onChangeText={(bio) => setBio(bio)}
                             editable={isEditing}
                             underlineColor="white"
@@ -160,6 +185,7 @@ const CoacheeProfile = () => {
                         <TextInput
                             style={styles.ageInput}
                             value={age}
+                            placeholder='Enter age'
                             onChangeText={(age) => setAge(age)}
                             editable={isEditing}
                             underlineColor="white"
@@ -173,9 +199,10 @@ const CoacheeProfile = () => {
                                 style={styles.affliateTextInput}
                                 scrollEnabled={scrollEnabled}
                                 multiline
-                                value={affliation}
-                                onChangeText={(affliation) =>
-                                    setAffiliate(affliation)
+                                placeholder='Enter affiliation'
+                                value={affliation === null ? '' : affliation}
+                                onChangeText={(affiliation) =>
+                                    setAffiliate(affiliation)
                                 }
                                 editable={isEditing}
                                 underlineColor="white"
@@ -193,8 +220,10 @@ const CoacheeProfile = () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
-                            value={coachData?.findCoacheeByID.address}
+                            placeholder='Enter address'
+                            value={address ?? coachData?.findCoacheeByID.address}
                             onChangeText={(address) => setAddres(address)}
+                            
                             editable={isEditing}
                             underlineColor="white"
                         />
@@ -204,7 +233,7 @@ const CoacheeProfile = () => {
 
             <View style={styles.iconContainer}>
                 <IconButton
-                    icon={isEditing ? 'pencil' : 'pencil-off'}
+                    icon={isEditing ? '' : 'pencil'}
                     onPress={toggleEditing}
                     iconColor="#60488A"
                 />
@@ -216,6 +245,8 @@ const CoacheeProfile = () => {
                     style={styles.image}
                 />
             </View>
+            {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
+            
         </View>
     );
 };
@@ -259,11 +290,12 @@ const styles = StyleSheet.create({
         paddingVertical: 1,
         backgroundColor: 'transparent',
         alignItems: 'center',
-        width: 300,
+        width: 500,
         top: '8%',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
+        fontSize: 15,
     },
 
     bioScrollInput: {
