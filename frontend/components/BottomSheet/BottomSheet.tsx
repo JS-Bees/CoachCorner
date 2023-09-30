@@ -4,6 +4,9 @@ import { TextInput } from 'react-native-paper';
 import SVGComponent from '../UpperSVG';
 import DragSheetButton from '../DragSheetButton';
 import { ListItemProps } from '../ListItem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CreateCoachingRelationshipDocument } from '../../generated-gql/graphql';
+import { useMutation } from 'urql'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -22,8 +25,35 @@ interface DraggableBottomSheetProps {
 }
 
 const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, coachData }) => {
-  const onAddPressed = () => {
-    console.log('Added to Coach')
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  const [, createCoachingRelationship] = useMutation(CreateCoachingRelationshipDocument); // Initialize the mutation
+
+  const onAddPressed = async () => {
+    try {
+      const coacheeId = await AsyncStorage.getItem('userToken');
+      
+      if (coacheeId) {
+        const variables = {
+          coachId: coachData.id,
+          coacheeId: parseInt(coacheeId),
+        };
+
+        const { data, error } = await createCoachingRelationship(variables);
+
+        if (data) {
+          // Handle success, e.g., show a success message
+          console.log('Added to Coach:', data);
+        } else if (error) {
+          // Handle error, e.g., show an error message
+          console.error('Error adding coach:', error);
+        }
+      } else {
+        console.error('coacheeId not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('Error adding coach:', error);
+    }
   }
 
   const onSeePressed = () => {
@@ -31,8 +61,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
   }
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
+  
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,

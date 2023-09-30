@@ -59,8 +59,13 @@ query FindCoacheeByID($userID: Int!) {
         lastName
         moviesGenres
         isCoach
+	    coachingRelationships {coach {
+            firstName
+            lastName
+            sport
+        }}
     }
-}
+} 
 
 query FindCoachByID($userID: Int!) {
     findCoachByID(userID: $userID) {

@@ -40,8 +40,7 @@ const SignUpForCoach = () => {
     const [selectedGames, setSelectedGames] = useState<Games[]>([]);
     const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
     const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
-    const [signUpResinputult, SignUpForCoach] =
-        useMutation(CreateCoachDocument);
+    const [, SignUpForCoach] = useMutation(CreateCoachDocument);
 
     const [date, setdate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);

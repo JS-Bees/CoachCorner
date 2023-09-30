@@ -38,7 +38,7 @@ const SignUpForCoachee = () => {
     const [selectedGames, setSelectedGames] = useState<Games[]>([]);
     const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
     const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
-    const [signUpResult, SignUpForCoachee] = useMutation(CreateCoacheeDocument);
+    const [, SignUpForCoachee] = useMutation(CreateCoacheeDocument);
 
     const [date, setdate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
@@ -93,6 +93,7 @@ const SignUpForCoachee = () => {
             } else {
                 setSuccessMessage('Signed up successfully!');
                 toggleModal();
+                
                 // Clear form fields
                 setFirst_Name('');
                 setLast_Name('');

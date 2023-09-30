@@ -8,6 +8,7 @@ export interface ListItemProps {
         firstName: string;
         lastName: string;
         sport: string;
+        id: string;
     };
     onPress?: () => void;
 }

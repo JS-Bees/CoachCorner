@@ -20,6 +20,7 @@ import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
+
 const CoacheeDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -30,6 +31,7 @@ const CoacheeDashboard = () => {
     });
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
 
     useEffect(() => {
         const fetchUserToken = async () => {
