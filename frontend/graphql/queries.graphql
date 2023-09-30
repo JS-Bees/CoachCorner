@@ -62,13 +62,15 @@ query FindCoacheeByID($userID: Int!) {
         mantra
         moviesGenres
         isCoach
-	    coachingRelationships {coach {
-            firstName
-            lastName
-            sport
-        }}
+        coachingRelationships {
+            coach {
+                firstName
+                lastName
+                sport
+            }
+        }
     }
-} 
+}
 
 query FindCoachByID($userID: Int!) {
     findCoachByID(userID: $userID) {
@@ -109,5 +111,18 @@ query FindCoachesBySport($sport: Sport!) {
         }
         isCoach
         active
+    }
+}
+
+query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
+    findUnaddedCoachesBySport(sport: $sport, coacheeID: $coacheeID) {
+        id
+        firstName
+        lastName
+        email
+        sport
+        coachingRelationships {
+            coacheeId
+        }
     }
 }
