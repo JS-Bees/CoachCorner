@@ -79,7 +79,6 @@ export const createCoachingRelationship = mutationField(
     },
 );
 
-// HAVEN'T TESTED
 export const createBooking = mutationField('createBooking', {
     type: Booking,
     args: {
@@ -90,59 +89,21 @@ export const createBooking = mutationField('createBooking', {
         // Create the booking in your database
         const booking = await context.db.booking.create({
             data: {
-                coacheeId: input.coacheeId,
-                coachId: input.coachId,
-                serviceType: input.serviceType,
-                status: input.status,
-                additionalNotes: input.additionalNotes,
-                // Other relevant fields from input
-            },
-        });
-
-        // Create booking slots based on user input using a for loop
-        const bookingSlots = [];
-
-        for (const slotInput of slotsInput) {
-            const createdSlot = await context.db.bookingSlot.create({
-                data: {
-                    bookingId: booking.id,
-                    date: slotInput.date,
-                    startTime: slotInput.startTime,
-                    endTime: slotInput.endTime,
-                    // Other relevant fields from slotInput
-                },
-            });
-            bookingSlots.push(createdSlot);
-        }
-
-        // Update the booking object with the associated booking slots in the database
-        await context.db.booking.update({
-            where: { id: booking.id },
-            data: {
+                ...input,
                 bookingSlots: {
-                    connect: bookingSlots.map((slot) => ({ id: slot.id })),
+                    create: slotsInput,
                 },
             },
-        });
-
-        // Fetch the updated booking with booking slots
-        const updatedBooking = await context.db.booking.findUnique({
-            where: { id: booking.id },
             include: {
                 bookingSlots: true,
             },
         });
 
-        if (!updatedBooking) {
-            // Handle the case where the booking couldn't be retrieved
-            throw new Error('Booking not found.');
-        }
-
-        return updatedBooking;
+        return booking;
     },
 });
 
-// HAVEN'T TESTED
+// // HAVEN'T TESTED
 // export const createBooking = mutationField('createBooking', {
 //     type: Booking,
 //     args: {
@@ -162,21 +123,21 @@ export const createBooking = mutationField('createBooking', {
 //             },
 //         });
 
-//         // Create booking slots based on user input
-//         const bookingSlots = await Promise.all(
-//             slotsInput.map(async (slotInput) => {
-//                 const createdSlot = await context.db.bookingSlot.create({
-//                     data: {
-//                         bookingId: booking.id,
-//                         date: slotInput.date,
-//                         startTime: slotInput.startTime,
-//                         endTime: slotInput.endTime,
-//                         // Other relevant fields from slotInput
-//                     },
-//                 });
-//                 return createdSlot;
-//             }),
-//         );
+//         // Create booking slots based on user input using a for loop
+//         const bookingSlots = [];
+
+//         for (const slotInput of slotsInput) {
+//             const createdSlot = await context.db.bookingSlot.create({
+//                 data: {
+//                     bookingId: booking.id,
+//                     date: slotInput.date,
+//                     startTime: slotInput.startTime,
+//                     endTime: slotInput.endTime,
+//                     // Other relevant fields from slotInput
+//                 },
+//             });
+//             bookingSlots.push(createdSlot);
+//         }
 
 //         // Update the booking object with the associated booking slots in the database
 //         await context.db.booking.update({
@@ -195,6 +156,11 @@ export const createBooking = mutationField('createBooking', {
 //                 bookingSlots: true,
 //             },
 //         });
+
+//         if (!updatedBooking) {
+//             // Handle the case where the booking couldn't be retrieved
+//             throw new Error('Booking not found.');
+//         }
 
 //         return updatedBooking;
 //     },
