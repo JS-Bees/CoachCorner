@@ -6,7 +6,6 @@ import DragSheetButton from '../DragSheetButton';
 import { ListItemProps } from '../ListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CreateCoachingRelationshipDocument } from '../../generated-gql/graphql';
-import { CompareCoachIdDocument } from '../../generated-gql/graphql';
 import { useMutation } from 'urql'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -153,17 +152,17 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
       <ScrollView style={styles.scrollViewContainer}>
       <Text style={styles.textSport}> Bio </Text>
       <TextInput style={styles.textInput}
-        underlineColor='transparent'
+        // underlineColor='transparent'
         editable={false}/>
 
       <Text style={styles.textSport}> Workplace Address </Text>
       <TextInput style={styles.textInput}
-        underlineColor='transparent'
+        // underlineColor='transparent'
         value={coachData.workplaceAddress}
         editable={false}/>
       <Text style={styles.textSport}> Affiliates </Text>
       <TextInput style={styles.textInput}
-        underlineColor='transparent'
+        // underlineColor='transparent'
         editable={false}/>
 
       </ScrollView>

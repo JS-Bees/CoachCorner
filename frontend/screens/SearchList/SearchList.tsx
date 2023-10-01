@@ -19,7 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import your GraphQL client and query here
 import { useQuery } from 'urql';
-import { FindUnaddedCoachesBySportDocument, FindCoachesBySportDocument } from '../../generated-gql/graphql';
+import { FindUnaddedCoachesBySportDocument} from '../../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 

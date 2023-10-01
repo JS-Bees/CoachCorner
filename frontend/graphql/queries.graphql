@@ -121,6 +121,9 @@ query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
         lastName
         email
         sport
+        bio
+        workplaceAddress
+        affiliations
         coachingRelationships {
             coacheeId
         }
