@@ -14,6 +14,7 @@ import LogInButton from '../../components/CustomButton';
 import { useMutation } from 'urql';
 import {
     CreateCoacheeDocument,
+    Sport,
     Games,
     Hobbies,
     MovieGenres,
@@ -21,6 +22,7 @@ import {
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RadioButton } from 'react-native-paper';
 
 const SignUpForCoachee = () => {
     const navigation =
@@ -33,12 +35,12 @@ const SignUpForCoachee = () => {
     const [Repeat_Password, setRepeat_Password] = useState('');
     const [StreetAdd, setStreetAddress] = useState('');
     const [City, setCity] = useState('');
-    const [Postal, setPostal] = useState('');
+    const [Postal, setPostal] = useState('5800');
     const [dateOfBirth, setDateofBirth] = useState('');
-    const [selectedGames, setSelectedGames] = useState<Games[]>([]);
-    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
-    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
-    const [, SignUpForCoachee] = useMutation(CreateCoacheeDocument);
+    const [selectedGames, setSelectedGames] = useState<Games[]>([Games.Dota]);
+    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([Hobbies.Baking]);
+    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([MovieGenres.Action]);
+    const [, SignUpForCoach] = useMutation(CreateCoacheeDocument);
 
     const [date, setdate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
@@ -66,23 +68,35 @@ const SignUpForCoachee = () => {
         }
     };
 
-    const setInitialSelectedValues = () => {
-        setSelectedGames([Games.Dota]);
-        setSelectedHobbies([Hobbies.Baking]);
-        setSelectedMovieGenres([MovieGenres.Action]);
-    };
+    // const setInitialSelectedValues = () => {
+    //     setSelectedSport([Sport.Soccer]);
+    //     setSelectedGames([Games.Dota]);
+    //     setSelectedHobbies([Hobbies.Baking]);
+    //     setSelectedMovieGenres([MovieGenres.Action]);
+    // };
 
     const onSignUpPressed = async () => {
         try {
-            setInitialSelectedValues();
+            // Log the data before making the API call
+            console.log("Signing up with data:", {
+            firstName: First_Name,
+            lastName: Last_Name,
+            birthday: date,
+            email: Email.toLowerCase(),
+            password: Password,
+            address: StreetAdd,
+            games: selectedGames,
+            hobbies: selectedHobbies,
+            moviesGenres: selectedMovieGenres,
+        });
 
-            const { data, error } = await SignUpForCoachee({
+            const { data, error } = await SignUpForCoach({
                 firstName: First_Name,
                 lastName: Last_Name,
-                address: StreetAdd,
                 birthday: date,
                 email: Email.toLowerCase(),
                 password: Password,
+                address: StreetAdd,
                 games: selectedGames,
                 hobbies: selectedHobbies,
                 moviesGenres: selectedMovieGenres,
@@ -93,7 +107,6 @@ const SignUpForCoachee = () => {
             } else {
                 setSuccessMessage('Signed up successfully!');
                 toggleModal();
-                
                 // Clear form fields
                 setFirst_Name('');
                 setLast_Name('');
@@ -108,6 +121,7 @@ const SignUpForCoachee = () => {
         } catch (err) {
             console.error(err);
         }
+        console.log()
     };
 
     return (
@@ -176,7 +190,7 @@ const SignUpForCoachee = () => {
                     )}
                 </View>
 
-                <View style={styles.AddressContainer}>
+                <View style={styles.AdressContainer}>
                     <Text style={styles.birthdayText}>Address Information</Text>
 
                     <InputSignUpPages
@@ -194,9 +208,89 @@ const SignUpForCoachee = () => {
                         value={Postal}
                         setValue={setPostal}
                     />
+                    <Text style={styles.choiceContainer}>Select Game:</Text>
+                        <View style={styles.radioContainer}>
+                            <View style={styles.radioButton}>
+                                <Text style={{ color: '#a19e9e' }}>Dota</Text>
+                                <RadioButton
+                                value={Sport.Soccer}
+                                status={selectedGames[0] === Games.Dota ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedGames([Games.Dota])}
+                                />
+                        </View>
+                        <View style={styles.radioButton}>
+                        <Text style={{ color: '#a19e9e' }}>LOL</Text>
+                            <RadioButton
+                                value={Games.Lol}
+                                status={selectedGames[0] === Games.Lol ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedGames([Games.Lol])}
+                                />
+                        </View>
+                        <View style={styles.radioButton}>
+                        <Text style={{ color: '#a19e9e' }}>PUBG</Text>
+                            <RadioButton
+                                value={Games.Pubg}
+                                status={selectedGames[0] === Games.Pubg ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedGames([Games.Pubg])}
+                                />
+                        </View>
+                    </View>
+                    <Text style={styles.choiceContainer}>Select Hobbie:</Text>
+                        <View style={styles.radioContainer}>
+                            <View style={styles.radioButton}>
+                                <Text style={{ color: '#a19e9e' }}>Reading</Text>
+                                <RadioButton
+                                value={Hobbies.Reading}
+                                status={selectedHobbies[0] === Hobbies.Reading ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedHobbies([Hobbies.Reading])}
+                                />
+                        </View>
+                        <View style={styles.radioButton}>
+                        <Text style={{ color: '#a19e9e' }}>Singing</Text>
+                            <RadioButton
+                                 value={Hobbies.Singing}
+                                 status={selectedHobbies[0] === Hobbies.Singing ? 'checked' : 'unchecked'}
+                                 onPress={() => setSelectedHobbies([Hobbies.Singing])}
+                                 />
+                        </View>
+                        <View style={styles.radioButton}>
+                        <Text style={{ color: '#a19e9e' }}>Writing</Text>
+                            <RadioButton
+                                value={Hobbies.Writing}
+                                status={selectedHobbies[0] === Hobbies.Writing ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedHobbies([Hobbies.Writing])}
+                                />
+                        </View>
+                    </View>
+                    <Text style={styles.choiceContainer}>Select Movie Genre:</Text>
+                        <View style={styles.radioContainer}>
+                            <View style={styles.radioButton}>
+                                <Text style={{ color: '#a19e9e' }}>Action</Text>
+                                <RadioButton
+                                value={MovieGenres.Action}
+                                status={selectedMovieGenres[0] === MovieGenres.Action ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedMovieGenres([MovieGenres.Action])}
+                                />
+                        </View>
+                        <View style={styles.radioButton}>
+                        <Text style={{ color: '#a19e9e' }}>Comedy</Text>
+                            <RadioButton
+                                value={MovieGenres.Comedy}
+                                status={selectedMovieGenres[0] === MovieGenres.Comedy ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedMovieGenres([MovieGenres.Comedy])}
+                                />
+                        </View>
+                        <View style={styles.radioButton}>
+                        <Text style={{ color: '#a19e9e' }}>Horror</Text>
+                            <RadioButton
+                                value={MovieGenres.Horror}
+                                status={selectedMovieGenres[0] === MovieGenres.Horror ? 'checked' : 'unchecked'}
+                                onPress={() => setSelectedMovieGenres([MovieGenres.Horror])}
+                                />
+                        </View>
+                    </View>
                 </View>
-
-                <View style={styles.button}>
+                    <View style={styles.button}>
                     <LogInButton text="Sign Up" onPress={onSignUpPressed} />
                 </View>
             </View>
@@ -216,7 +310,10 @@ const SignUpForCoachee = () => {
                         </Pressable>
                     </View>
                 </View>
+                
             )}
+                
+            
         </ScrollView>
     );
 };
@@ -246,7 +343,7 @@ const styles = StyleSheet.create({
         marginTop: '10%',
         padding: 10,
     },
-    AddressContainer: {
+    AdressContainer: {
         marginTop: 30,
         marginLeft: 25,
         justifyContent: 'flex-start',
@@ -254,6 +351,12 @@ const styles = StyleSheet.create({
     birthdayContainer: {
         marginTop: 10,
         marginLeft: 25,
+        justifyContent: 'flex-start',
+    },
+    choiceContainer: {
+        color: '#a19e9e',
+        marginTop: '10%',
+        marginLeft: '1%',
         justifyContent: 'flex-start',
     },
     birthdayBorder: {
@@ -306,10 +409,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
         textAlign: 'center',
-        color: '#915bc7',
+        color: '#915bc7', // Change the font color to light green
     },
     modalButton: {
-        backgroundColor: '#A378F2',
+        backgroundColor: '#A378F2', // Change the background color to purple
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
@@ -318,6 +421,15 @@ const styles = StyleSheet.create({
     modalButtonText: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    radioContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
+    },
+    radioButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
 });
 

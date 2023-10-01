@@ -47,7 +47,6 @@ const SignUpForCoach = () => {
     const [showPicker, setShowPicker] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-    const [checked, setChecked] = React.useState('first');
 
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
@@ -212,7 +211,7 @@ const SignUpForCoach = () => {
                         value={Postal}
                         setValue={setPostal}
                     />
-                    <Text style={styles.choiceContainer}>Select Sport:</Text>
+                    <Text style={styles.choiceContainer}>Select Sport to coach:</Text>
                         <View style={styles.radioContainer}>
                             <View style={styles.radioButton}>
                                 <Text style={{ color: '#a19e9e' }}>Soccer</Text>

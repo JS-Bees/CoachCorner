@@ -43,14 +43,14 @@ const CoacheeProfile = () => {
 
     // Define a function to fetch coachee data by userID (token)
     const useFetchCoacheeByUserID = (userID: any) => {
-        const [coachResult] = useQuery({
+        const [coacheeResult] = useQuery({
             query: FindCoacheeByIdDocument, // Use the Coachee query document
             variables: {
                 userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
             },
         });
 
-        return coachResult;
+        return coacheeResult;
     };
 
     // Example usage of the query function
