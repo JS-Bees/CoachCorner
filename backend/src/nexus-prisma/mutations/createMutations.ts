@@ -1,23 +1,20 @@
-import {
-    mutationField,
-    nonNull,
-    arg,
-    // list
-} from 'nexus';
+import { mutationField, nonNull, arg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import {
-    // CreateBookingInput,
-    // CreateBookingSlotInput,
+    CreateBookingInput,
+    CreateBookingSlotInput,
     CreateCoacheeInput,
     CreateCoachingRelationshipInput,
     CreateCoachInput,
+    CreateReviewInput,
 } from '../inputTypes';
 import {
     Coachee,
     Coach,
     CoachingRelationship,
-    // Booking
+    Booking,
+    Review,
 } from '../objectTypes';
 
 export const createCoachee = mutationField('createCoachee', {
@@ -89,7 +86,50 @@ export const createCoachingRelationship = mutationField(
     },
 );
 
-// HAVEN'T TESTED
+export const createBooking = mutationField('createBooking', {
+    type: Booking,
+    args: {
+        input: nonNull(arg({ type: CreateBookingInput })),
+        slotsInput: nonNull(list(nonNull(CreateBookingSlotInput))),
+    },
+    resolve: async (_, { input, slotsInput }, context: Context) => {
+        // Create the booking in your database
+        const booking = await context.db.booking.create({
+            data: {
+                ...input,
+                bookingSlots: {
+                    create: slotsInput,
+                },
+            },
+            include: {
+                bookingSlots: true,
+            },
+        });
+
+        return booking;
+    },
+});
+
+export const createReview = mutationField('createReview', {
+    type: Review,
+    args: {
+        input: nonNull(arg({ type: CreateReviewInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        const createdReview = await context.db.review.create({
+            data: {
+                starRating: input.starRating,
+                comment: input.comment,
+                coacheeId: input.coacheeId,
+                coachId: input.coachId,
+            },
+        });
+
+        return createdReview;
+    },
+});
+
+// // HAVEN'T TESTED
 // export const createBooking = mutationField('createBooking', {
 //     type: Booking,
 //     args: {
@@ -109,21 +149,21 @@ export const createCoachingRelationship = mutationField(
 //             },
 //         });
 
-//         // Create booking slots based on user input
-//         const bookingSlots = await Promise.all(
-//             slotsInput.map(async (slotInput) => {
-//                 const createdSlot = await context.db.bookingSlot.create({
-//                     data: {
-//                         bookingId: booking.id,
-//                         date: slotInput.date,
-//                         startTime: slotInput.startTime,
-//                         endTime: slotInput.endTime,
-//                         // Other relevant fields from slotInput
-//                     },
-//                 });
-//                 return createdSlot;
-//             }),
-//         );
+//         // Create booking slots based on user input using a for loop
+//         const bookingSlots = [];
+
+//         for (const slotInput of slotsInput) {
+//             const createdSlot = await context.db.bookingSlot.create({
+//                 data: {
+//                     bookingId: booking.id,
+//                     date: slotInput.date,
+//                     startTime: slotInput.startTime,
+//                     endTime: slotInput.endTime,
+//                     // Other relevant fields from slotInput
+//                 },
+//             });
+//             bookingSlots.push(createdSlot);
+//         }
 
 //         // Update the booking object with the associated booking slots in the database
 //         await context.db.booking.update({
@@ -142,6 +182,11 @@ export const createCoachingRelationship = mutationField(
 //                 bookingSlots: true,
 //             },
 //         });
+
+//         if (!updatedBooking) {
+//             // Handle the case where the booking couldn't be retrieved
+//             throw new Error('Booking not found.');
+//         }
 
 //         return updatedBooking;
 //     },

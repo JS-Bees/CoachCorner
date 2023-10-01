@@ -60,3 +60,12 @@ mutation UpdateMessagingStartedCoachingRelationship(
         updatedAt
     }
 }
+
+mutation UpdateBookingStatus($id: Int!, $status: BookingStatus!) {
+    updateBookingStatus(id: $id, input: { status: $status }) {
+        id
+        status
+    }
+}
+
+

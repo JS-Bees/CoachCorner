@@ -68,8 +68,17 @@ export interface NexusGenInputs {
     coachId: number; // Int!
     coacheeId: number; // Int!
   }
+  CreateReviewInput: { // input type
+    coachId: number; // Int!
+    coacheeId: number; // Int!
+    comment: string; // String!
+    starRating: number; // Int!
+  }
   MessagingStartedInput: { // input type
     messagingStarted: boolean; // Boolean!
+  }
+  UpdateBookingStatusInput: { // input type
+    status: NexusGenEnums['BookingStatus']; // BookingStatus!
   }
   UpdateCoachProfileInput: { // input type
     affiliations?: string | null; // String
@@ -283,9 +292,12 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Mutation: { // field return type
+    createBooking: NexusGenRootTypes['Booking']; // Booking!
     createCoach: NexusGenRootTypes['Coach']; // Coach!
     createCoachee: NexusGenRootTypes['Coachee']; // Coachee!
     createCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
+    createReview: NexusGenRootTypes['Review']; // Review!
+    updateBookingStatus: NexusGenRootTypes['Booking']; // Booking!
     updateCoachProfile: NexusGenRootTypes['Coach']; // Coach!
     updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
     updateMessagingStartedCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
@@ -293,6 +305,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     coachees: NexusGenRootTypes['Coachee'][]; // [Coachee!]!
     coaches: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findBookingByID: NexusGenRootTypes['Booking']; // Booking!
     findCoachByEmailAndPassword: NexusGenRootTypes['Coach']; // Coach!
     findCoachByID: NexusGenRootTypes['Coach']; // Coach!
     findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee']; // Coachee!
@@ -399,9 +412,12 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   Mutation: { // field return type name
+    createBooking: 'Booking'
     createCoach: 'Coach'
     createCoachee: 'Coachee'
     createCoachingRelationship: 'CoachingRelationship'
+    createReview: 'Review'
+    updateBookingStatus: 'Booking'
     updateCoachProfile: 'Coach'
     updateCoacheeProfile: 'Coachee'
     updateMessagingStartedCoachingRelationship: 'CoachingRelationship'
@@ -409,6 +425,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     coachees: 'Coachee'
     coaches: 'Coach'
+    findBookingByID: 'Booking'
     findCoachByEmailAndPassword: 'Coach'
     findCoachByID: 'Coach'
     findCoacheeByEmailAndPassword: 'Coachee'
@@ -432,6 +449,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createBooking: { // args
+      input: NexusGenInputs['CreateBookingInput']; // CreateBookingInput!
+      slotsInput: NexusGenInputs['CreateBookingSlotInput'][]; // [CreateBookingSlotInput!]!
+    }
     createCoach: { // args
       input: NexusGenInputs['CreateCoachInput']; // CreateCoachInput!
     }
@@ -440,6 +461,13 @@ export interface NexusGenArgTypes {
     }
     createCoachingRelationship: { // args
       input: NexusGenInputs['CreateCoachingRelationshipInput']; // CreateCoachingRelationshipInput!
+    }
+    createReview: { // args
+      input: NexusGenInputs['CreateReviewInput']; // CreateReviewInput!
+    }
+    updateBookingStatus: { // args
+      id: number; // Int!
+      input: NexusGenInputs['UpdateBookingStatusInput']; // UpdateBookingStatusInput!
     }
     updateCoachProfile: { // args
       id: number; // Int!
@@ -455,6 +483,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    findBookingByID: { // args
+      bookingID: number; // Int!
+    }
     findCoachByEmailAndPassword: { // args
       email: string; // String!
       password: string; // String!

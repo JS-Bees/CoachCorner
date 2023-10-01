@@ -73,3 +73,46 @@ mutation CreateCoachingRelationship($coachId: Int!, $coacheeId: Int!) {
         createdAt
     }
 }
+
+mutation CreateBooking(
+    $input: CreateBookingInput!
+    $slotsInput: [CreateBookingSlotInput!]!
+) {
+    createBooking(input: $input, slotsInput: $slotsInput) {
+        id
+        coacheeId
+        coachId
+        serviceType
+        status
+        additionalNotes
+        bookingSlots {
+            id
+            bookingId
+            date
+            startTime
+            endTime
+        }
+    }
+}
+
+mutation CreateReview(
+    $starRating: Int!
+    $comment: String!
+    $coachId: Int!
+    $coacheeId: Int!
+) {
+    createReview(
+        input: {
+            starRating: $starRating
+            comment: $comment
+            coachId: $coachId
+            coacheeId: $coacheeId
+        }
+    ) {
+        id
+        starRating
+        comment
+        coachId
+        coacheeId
+    }
+}

@@ -141,6 +141,13 @@ input CreateCoachingRelationshipInput {
   coacheeId: Int!
 }
 
+input CreateReviewInput {
+  coachId: Int!
+  coacheeId: Int!
+  comment: String!
+  starRating: Int!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -200,9 +207,12 @@ enum MovieGenres {
 }
 
 type Mutation {
+  createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking!
   createCoach(input: CreateCoachInput!): Coach!
   createCoachee(input: CreateCoacheeInput!): Coachee!
   createCoachingRelationship(input: CreateCoachingRelationshipInput!): CoachingRelationship!
+  createReview(input: CreateReviewInput!): Review!
+  updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
   updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
   updateMessagingStartedCoachingRelationship(id: Int!, input: MessagingStartedInput!): CoachingRelationship!
@@ -211,6 +221,7 @@ type Mutation {
 type Query {
   coachees: [Coachee!]!
   coaches: [Coach!]!
+  findBookingByID(bookingID: Int!): Booking!
   findCoachByEmailAndPassword(email: String!, password: String!): Coach!
   findCoachByID(userID: Int!): Coach!
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
@@ -238,6 +249,10 @@ enum Sport {
   SOCCER
   SWIMMING
   VOLLEYBALL
+}
+
+input UpdateBookingStatusInput {
+  status: BookingStatus!
 }
 
 input UpdateCoachProfileInput {

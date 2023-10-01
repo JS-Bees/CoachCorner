@@ -114,6 +114,25 @@ query FindCoachesBySport($sport: Sport!) {
     }
 }
 
+
+query FindBookingByID($bookingID: Int!) {
+    findBookingByID(bookingID: $bookingID) {
+        id
+        coacheeId
+        coachId
+        serviceType
+        status
+        additionalNotes
+        bookingSlots {
+            id
+            bookingId
+            date
+            startTime
+            endTime
+        }
+     }
+}
+
 query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
     findUnaddedCoachesBySport(sport: $sport, coacheeID: $coacheeID) {
         id

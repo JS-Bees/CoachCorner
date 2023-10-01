@@ -1,8 +1,9 @@
 import { mutationField, nonNull, arg } from 'nexus';
 import { Context } from '../context';
-import { Coachee, Coach, CoachingRelationship } from '../objectTypes';
+import { Coachee, Coach, CoachingRelationship, Booking } from '../objectTypes';
 import {
     MessagingStartedInput,
+    UpdateBookingStatusInput,
     UpdateCoacheeProfileInput,
     UpdateCoachProfileInput,
 } from '../inputTypes';
@@ -92,3 +93,29 @@ export const updateMessagingStartedCoachingRelationship = mutationField(
         },
     },
 );
+
+export const updateBookingStatus = mutationField('updateBookingStatus', {
+    type: Booking,
+    args: {
+        id: nonNull(arg({ type: 'Int' })),
+        input: nonNull(arg({ type: UpdateBookingStatusInput })),
+    },
+    resolve: async (_, { id, input }, context: Context) => {
+        // Check if the booking with the given ID exists
+        const existingBooking = await context.db.booking.findUnique({
+            where: { id },
+        });
+
+        if (!existingBooking) {
+            throw new Error(`Booking with ID ${id} not found.`);
+        }
+
+        // Update the booking status
+        const updatedBooking = await context.db.booking.update({
+            where: { id },
+            data: { status: input.status },
+        });
+
+        return updatedBooking;
+    },
+});
