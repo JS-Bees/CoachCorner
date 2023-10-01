@@ -71,6 +71,9 @@ export interface NexusGenInputs {
   MessagingStartedInput: { // input type
     messagingStarted: boolean; // Boolean!
   }
+  UpdateBookingStatusInput: { // input type
+    status: NexusGenEnums['BookingStatus']; // BookingStatus!
+  }
   UpdateCoachProfileInput: { // input type
     affiliations?: string | null; // String
     bio?: string | null; // String
@@ -287,6 +290,7 @@ export interface NexusGenFieldTypes {
     createCoach: NexusGenRootTypes['Coach']; // Coach!
     createCoachee: NexusGenRootTypes['Coachee']; // Coachee!
     createCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
+    updateBookingStatus: NexusGenRootTypes['Booking']; // Booking!
     updateCoachProfile: NexusGenRootTypes['Coach']; // Coach!
     updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
     updateMessagingStartedCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
@@ -404,6 +408,7 @@ export interface NexusGenFieldTypeNames {
     createCoach: 'Coach'
     createCoachee: 'Coachee'
     createCoachingRelationship: 'CoachingRelationship'
+    updateBookingStatus: 'Booking'
     updateCoachProfile: 'Coach'
     updateCoacheeProfile: 'Coachee'
     updateMessagingStartedCoachingRelationship: 'CoachingRelationship'
@@ -446,6 +451,10 @@ export interface NexusGenArgTypes {
     }
     createCoachingRelationship: { // args
       input: NexusGenInputs['CreateCoachingRelationshipInput']; // CreateCoachingRelationshipInput!
+    }
+    updateBookingStatus: { // args
+      id: number; // Int!
+      input: NexusGenInputs['UpdateBookingStatusInput']; // UpdateBookingStatusInput!
     }
     updateCoachProfile: { // args
       id: number; // Int!

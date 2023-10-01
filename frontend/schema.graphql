@@ -204,6 +204,7 @@ type Mutation {
   createCoach(input: CreateCoachInput!): Coach!
   createCoachee(input: CreateCoacheeInput!): Coachee!
   createCoachingRelationship(input: CreateCoachingRelationshipInput!): CoachingRelationship!
+  updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
   updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
   updateMessagingStartedCoachingRelationship(id: Int!, input: MessagingStartedInput!): CoachingRelationship!
@@ -239,6 +240,10 @@ enum Sport {
   SOCCER
   SWIMMING
   VOLLEYBALL
+}
+
+input UpdateBookingStatusInput {
+  status: BookingStatus!
 }
 
 input UpdateCoachProfileInput {

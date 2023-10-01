@@ -69,7 +69,6 @@ export const MessagingStartedInput = inputObjectType({
     },
 });
 
-// HAVEN'T TESTED
 export const CreateBookingInput = inputObjectType({
     name: 'CreateBookingInput',
     definition(t) {
@@ -87,5 +86,12 @@ export const CreateBookingSlotInput = inputObjectType({
         t.field(gqlTypes.BookingSlot.date);
         t.field(gqlTypes.BookingSlot.startTime);
         t.field(gqlTypes.BookingSlot.endTime);
+    },
+});
+
+export const UpdateBookingStatusInput = inputObjectType({
+    name: 'UpdateBookingStatusInput',
+    definition(t) {
+        t.field(gqlTypes.Booking.status);
     },
 });
