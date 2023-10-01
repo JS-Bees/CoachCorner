@@ -7,8 +7,15 @@ import {
     CreateCoacheeInput,
     CreateCoachingRelationshipInput,
     CreateCoachInput,
+    CreateReviewInput,
 } from '../inputTypes';
-import { Coachee, Coach, CoachingRelationship, Booking } from '../objectTypes';
+import {
+    Coachee,
+    Coach,
+    CoachingRelationship,
+    Booking,
+    Review,
+} from '../objectTypes';
 
 export const createCoachee = mutationField('createCoachee', {
     type: Coachee,
@@ -100,6 +107,25 @@ export const createBooking = mutationField('createBooking', {
         });
 
         return booking;
+    },
+});
+
+export const createReview = mutationField('createReview', {
+    type: Review,
+    args: {
+        input: nonNull(arg({ type: CreateReviewInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        const createdReview = await context.db.review.create({
+            data: {
+                starRating: input.starRating,
+                comment: input.comment,
+                coacheeId: input.coacheeId,
+                coachId: input.coachId,
+            },
+        });
+
+        return createdReview;
     },
 });
 

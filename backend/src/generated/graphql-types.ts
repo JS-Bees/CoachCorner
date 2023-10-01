@@ -68,6 +68,12 @@ export interface NexusGenInputs {
     coachId: number; // Int!
     coacheeId: number; // Int!
   }
+  CreateReviewInput: { // input type
+    coachId: number; // Int!
+    coacheeId: number; // Int!
+    comment: string; // String!
+    starRating: number; // Int!
+  }
   MessagingStartedInput: { // input type
     messagingStarted: boolean; // Boolean!
   }
@@ -290,6 +296,7 @@ export interface NexusGenFieldTypes {
     createCoach: NexusGenRootTypes['Coach']; // Coach!
     createCoachee: NexusGenRootTypes['Coachee']; // Coachee!
     createCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
+    createReview: NexusGenRootTypes['Review']; // Review!
     updateBookingStatus: NexusGenRootTypes['Booking']; // Booking!
     updateCoachProfile: NexusGenRootTypes['Coach']; // Coach!
     updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
@@ -408,6 +415,7 @@ export interface NexusGenFieldTypeNames {
     createCoach: 'Coach'
     createCoachee: 'Coachee'
     createCoachingRelationship: 'CoachingRelationship'
+    createReview: 'Review'
     updateBookingStatus: 'Booking'
     updateCoachProfile: 'Coach'
     updateCoacheeProfile: 'Coachee'
@@ -451,6 +459,9 @@ export interface NexusGenArgTypes {
     }
     createCoachingRelationship: { // args
       input: NexusGenInputs['CreateCoachingRelationshipInput']; // CreateCoachingRelationshipInput!
+    }
+    createReview: { // args
+      input: NexusGenInputs['CreateReviewInput']; // CreateReviewInput!
     }
     updateBookingStatus: { // args
       id: number; // Int!

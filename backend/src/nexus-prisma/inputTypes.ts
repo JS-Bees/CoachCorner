@@ -95,3 +95,13 @@ export const UpdateBookingStatusInput = inputObjectType({
         t.field(gqlTypes.Booking.status);
     },
 });
+
+export const CreateReviewInput = inputObjectType({
+    name: 'CreateReviewInput',
+    definition(t) {
+        t.field(gqlTypes.Review.starRating);
+        t.field(gqlTypes.Review.comment);
+        t.field(gqlTypes.Review.coachId);
+        t.field(gqlTypes.Review.coacheeId);
+    },
+});

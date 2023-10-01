@@ -91,3 +91,25 @@ mutation CreateBooking(
         }
     }
 }
+
+mutation CreateReview(
+    $starRating: Int!
+    $comment: String!
+    $coachId: Int!
+    $coacheeId: Int!
+) {
+    createReview(
+        input: {
+            starRating: $starRating
+            comment: $comment
+            coachId: $coachId
+            coacheeId: $coacheeId
+        }
+    ) {
+        id
+        starRating
+        comment
+        coachId
+        coacheeId
+    }
+}
