@@ -36,10 +36,10 @@ const SignUpForCoach = () => {
     const [City, setCity] = useState('');
     const [Postal, setPostal] = useState('');
     const [dateOfBirth, setDateofBirth] = useState('');
-    const [selectedSport, setSelectedSport] = useState<Sport[]>([]);
-    const [selectedGames, setSelectedGames] = useState<Games[]>([]);
-    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
-    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
+    const [selectedSport, setSelectedSport] = useState<Sport[]>([Sport.Soccer]);
+    const [selectedGames, setSelectedGames] = useState<Games[]>([Games.Dota]);
+    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([Hobbies.Baking]);
+    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([MovieGenres.Action]);
     const [, SignUpForCoach] = useMutation(CreateCoachDocument);
 
     const [date, setdate] = useState(new Date());
@@ -68,16 +68,16 @@ const SignUpForCoach = () => {
         }
     };
 
-    const setInitialSelectedValues = () => {
-        setSelectedSport([Sport.Soccer]);
-        setSelectedGames([Games.Dota]);
-        setSelectedHobbies([Hobbies.Baking]);
-        setSelectedMovieGenres([MovieGenres.Action]);
-    };
+    // const setInitialSelectedValues = () => {
+    //     setSelectedSport([Sport.Soccer]);
+    //     setSelectedGames([Games.Dota]);
+    //     setSelectedHobbies([Hobbies.Baking]);
+    //     setSelectedMovieGenres([MovieGenres.Action]);
+    // };
 
     const onSignUpPressed = async () => {
         try {
-            setInitialSelectedValues();
+            // setInitialSelectedValues();
 
             const { data, error } = await SignUpForCoach({
                 firstName: First_Name,

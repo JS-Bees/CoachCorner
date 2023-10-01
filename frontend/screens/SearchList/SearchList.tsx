@@ -15,10 +15,11 @@ import DraggableBottomSheet from '../../components/BottomSheet/BottomSheet';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import your GraphQL client and query here
 import { useQuery } from 'urql';
-import { FindCoachesBySportDocument } from '../../generated-gql/graphql';
+import { FindUnaddedCoachesBySportDocument, FindCoachesBySportDocument } from '../../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,14 +33,32 @@ const SearchList = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+  useEffect(() => {
+      const fetchUserToken = async () => {
+          try {
+              const token = await AsyncStorage.getItem('userToken');
+              setUserToken(token);
+          } catch (error) {
+              console.error('Error fetching token:', error);
+          }
+      };
+
+      fetchUserToken();
+  }, []);
+
+  const [searchQuery, setSearchQuery] = useState(''); 
   const [filteredCoaches, setFilteredCoaches] = useState([]);
   const [showClearButton, setShowClearButton] = useState(false);
 
   // Replace with your GraphQL query execution
   const [result] = useQuery({
-    query: FindCoachesBySportDocument,
-    variables: { sport: searchQuery },
+    query: FindUnaddedCoachesBySportDocument,
+    variables: { sport: searchQuery , coacheeID: parseInt(userToken)},
+    requestPolicy: 'cache-and-network'
+    // query: FindCoachesBySportDocument,
+    // variables: { sport: searchQuery },
   });
 
   const { data, fetching, error } = result;
@@ -47,7 +66,7 @@ const SearchList = () => {
   useEffect(() => {
     if (!fetching && !error && data) {
       // Ensure that the response structure matches your data shape
-      setFilteredCoaches(data.findCoachesBySport);
+      setFilteredCoaches(data.findUnaddedCoachesBySport);
     }
   }, [fetching, error, data, searchQuery]);
 

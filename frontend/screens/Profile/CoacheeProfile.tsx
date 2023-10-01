@@ -72,11 +72,11 @@ const CoacheeProfile = () => {
         }
     };
 
-    const [mantra, setMantra] = React.useState<string | undefined | null>(coachData?.findCoacheeByID.mantra);
-    const [bio, setBio] = React.useState<string | undefined| null>(coachData?.findCoacheeByID.bio);
-    const [affliation, setAffiliate] = React.useState<string | undefined| null>(coachData?.findCoacheeByID.affiliations);
-    const [address, setAddres] = React.useState<string | undefined>(coachData?.findCoacheeByID.address);
-    const [age, setAge] = React.useState<string | undefined>('');
+    const [mantra, setMantra] = React.useState('');
+    const [bio, setBio] = React.useState('');
+    const [affliation, setAffiliate] = React.useState('');
+    const [address, setAddres] = React.useState(coachData?.findCoacheeByID.address);
+    const [age, setAge] = React.useState('');
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -112,7 +112,6 @@ const CoacheeProfile = () => {
         setScrollable(isEditing);
     }, [isEditing]);
 
-console.log(mantra)
 const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument)
 const handleSaveButton = async () => {
 
@@ -123,7 +122,6 @@ const handleSaveButton = async () => {
                 setIsEditing(false)
                 return res.data
             }
-            
         }).catch((e) => {
             console.log("sheeesh error" , e)
         })
@@ -152,7 +150,7 @@ const handleSaveButton = async () => {
             <TextInput
                 style={styles.mantraTextInput}
                 placeholder='Enter mantra'
-                value={mantra === null ? '' : mantra}
+                value={mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
                 underlineColor="transparent"
@@ -171,7 +169,7 @@ const handleSaveButton = async () => {
                             style={styles.bioInput}
                             multiline
                             placeholder='Enter bio'
-                            value={bio === null ? '' : bio}
+                            value={bio}
                             onChangeText={(bio) => setBio(bio)}
                             editable={isEditing}
                             underlineColor="white"
@@ -200,7 +198,7 @@ const handleSaveButton = async () => {
                                 scrollEnabled={scrollEnabled}
                                 multiline
                                 placeholder='Enter affiliation'
-                                value={affliation === null ? '' : affliation}
+                                value={affliation}
                                 onChangeText={(affiliation) =>
                                     setAffiliate(affiliation)
                                 }

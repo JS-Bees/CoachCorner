@@ -6,6 +6,7 @@ import DragSheetButton from '../DragSheetButton';
 import { ListItemProps } from '../ListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CreateCoachingRelationshipDocument } from '../../generated-gql/graphql';
+import { CompareCoachIdDocument } from '../../generated-gql/graphql';
 import { useMutation } from 'urql'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -32,7 +33,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
   const onAddPressed = async () => {
     try {
       const coacheeId = await AsyncStorage.getItem('userToken');
-      
+
       if (coacheeId) {
         const variables = {
           coachId: coachData.id,
@@ -44,6 +45,9 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
         if (data) {
           // Handle success, e.g., show a success message
           console.log('Added to Coach:', data);
+          // Close the bottom sheet
+          setIsBottomSheetOpen(false);
+          onClose();
         } else if (error) {
           // Handle error, e.g., show an error message
           console.error('Error adding coach:', error);
@@ -54,7 +58,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
     } catch (error) {
       console.error('Error adding coach:', error);
     }
-  }
+  };
 
   const onSeePressed = () => {
     console.log('Pressed')
@@ -286,3 +290,4 @@ const styles = StyleSheet.create({
 });
 
 export default DraggableBottomSheet;
+
