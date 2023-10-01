@@ -26,6 +26,7 @@ const styles = StyleSheet.create( {
     container_TERTIARY: {
 
     },
+    
 
  
     text: {
@@ -40,7 +41,13 @@ const styles = StyleSheet.create( {
 
     text_SECONDARY: {
         color: '#a19e9e'
-    }
+    },
+
+    text_QUARTERNARY: {
+        color: 'white'
+    },
+
+    
 
 
 })

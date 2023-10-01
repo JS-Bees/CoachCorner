@@ -57,8 +57,18 @@ query FindCoacheeByID($userID: Int!) {
         games
         hobbies
         lastName
+        affiliations
+        bio
+        mantra
         moviesGenres
         isCoach
+        coachingRelationships {
+            coach {
+                firstName
+                lastName
+                sport
+            }
+        }
     }
 }
 
@@ -104,6 +114,7 @@ query FindCoachesBySport($sport: Sport!) {
     }
 }
 
+
 query FindBookingByID($bookingID: Int!) {
     findBookingByID(bookingID: $bookingID) {
         id
@@ -118,6 +129,22 @@ query FindBookingByID($bookingID: Int!) {
             date
             startTime
             endTime
+        }
+     }
+}
+
+query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
+    findUnaddedCoachesBySport(sport: $sport, coacheeID: $coacheeID) {
+        id
+        firstName
+        lastName
+        email
+        sport
+        bio
+        workplaceAddress
+        affiliations
+        coachingRelationships {
+            coacheeId
         }
     }
 }

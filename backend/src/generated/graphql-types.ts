@@ -311,6 +311,7 @@ export interface NexusGenFieldTypes {
     findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee']; // Coachee!
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
     findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findUnaddedCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
   Review: { // field return type
     active: boolean; // Boolean!
@@ -430,6 +431,7 @@ export interface NexusGenFieldTypeNames {
     findCoacheeByEmailAndPassword: 'Coachee'
     findCoacheeByID: 'Coachee'
     findCoachesBySport: 'Coach'
+    findUnaddedCoachesBySport: 'Coach'
   }
   Review: { // field return type name
     active: 'Boolean'
@@ -499,6 +501,10 @@ export interface NexusGenArgTypes {
       userID: number; // Int!
     }
     findCoachesBySport: { // args
+      sport: NexusGenEnums['Sport']; // Sport!
+    }
+    findUnaddedCoachesBySport: { // args
+      coacheeID: number; // Int!
       sport: NexusGenEnums['Sport']; // Sport!
     }
   }

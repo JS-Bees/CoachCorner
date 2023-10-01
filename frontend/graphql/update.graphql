@@ -67,3 +67,5 @@ mutation UpdateBookingStatus($id: Int!, $status: BookingStatus!) {
         status
     }
 }
+
+

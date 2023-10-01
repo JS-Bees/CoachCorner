@@ -60,7 +60,10 @@ mutation createCoach(
 
 mutation CreateCoachingRelationship($coachId: Int!, $coacheeId: Int!) {
     createCoachingRelationship(
-        input: { coachId: $coachId, coacheeId: $coacheeId }
+        input: {
+            coachId: $coachId
+            coacheeId: $coacheeId
+        }
     ) {
         id
         coachId
