@@ -263,7 +263,7 @@ const Log_In_Style = StyleSheet.create({
     },
     closeButton: {
         fontSize: 16,
-        color: 'blue',
+        color: 'purple',
     },
 });
 

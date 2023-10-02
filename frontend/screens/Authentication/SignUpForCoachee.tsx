@@ -84,6 +84,11 @@ const SignUpForCoachee = () => {
         }
     };
 
+    function containsInteger(First_Name, Last_Name) {
+        const regex = /\d/;
+        return regex.test(First_Name) || regex.test(Last_Name);
+    }
+
     const onSignUpPressed = async () => {
         try {
             // Validate the input fields
@@ -106,7 +111,15 @@ const SignUpForCoachee = () => {
                 return; // Return early to prevent further execution
             }
 
-            // Additional validation checks can be added here as needed
+            
+            // Check for integers in First_Name and Last_Name
+         if (containsInteger(First_Name, Last_Name)) {
+            setErrorMessage('First Name and Last Name cannot contain integers.');
+            setErrorModalVisible(true);
+            return; // Return early if validation fails
+        }
+
+      
 
             // Log the data before making the API call
             console.log("Signing up with data:", {
@@ -241,32 +254,32 @@ const SignUpForCoachee = () => {
                         value={Postal}
                         setValue={setPostal}
                     />
-                    <Text style={styles.choiceContainer}>Select Game:</Text>
+                    <Text style={styles.choiceContainer}>Select Games:</Text>
                     <View style={styles.checkboxContainer}>
+                    <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>PUBG</Text>
+                            <Checkbox
+                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
+                            />
+                        </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Dota</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>Dota</Text>
                             <Checkbox
                                 status={selectedGames.includes(Games.Dota) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Games.Dota, selectedGames, setSelectedGames)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>LOL</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 27 }}>LOL</Text>
                             <Checkbox
                                 status={selectedGames.includes(Games.Lol) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Games.Lol, selectedGames, setSelectedGames)}
                             />
                         </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>PUBG</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
-                            />
-                        </View>
                     </View>
 
-                    <Text style={styles.choiceContainer}>Select Hobbie:</Text>
+                    <Text style={styles.choiceContainer}>Select Hobbies:</Text>
                     <View style={styles.checkboxContainer}>
                         <View style={styles.checkbox}>
                             <Text style={{ color: '#a19e9e' }}>Reading</Text>
@@ -276,14 +289,14 @@ const SignUpForCoachee = () => {
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Singing</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: -1 }}>Singing</Text>
                             <Checkbox
                                 status={selectedHobbies.includes(Hobbies.Singing) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Hobbies.Singing, selectedHobbies, setSelectedHobbies)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Writing</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 7 }}>Writing</Text>
                             <Checkbox
                                 status={selectedHobbies.includes(Hobbies.Writing) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Hobbies.Writing, selectedHobbies, setSelectedHobbies)}
@@ -291,24 +304,24 @@ const SignUpForCoachee = () => {
                         </View>
                     </View>
 
-                    <Text style={styles.choiceContainer}>Select Movie Genre:</Text>
+                    <Text style={styles.choiceContainer}>Select Movie Genres:</Text>
                     <View style={styles.checkboxContainer}>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Action</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Action</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Action) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Action, selectedMovieGenres, setSelectedMovieGenres)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Comedy</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: -7 }}>Comedy</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Comedy) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Comedy, selectedMovieGenres, setSelectedMovieGenres)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Horror</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Horror</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Horror) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Horror, selectedMovieGenres, setSelectedMovieGenres)}
@@ -394,7 +407,7 @@ const styles = StyleSheet.create({
     },
     choiceContainer: {
         color: '#a19e9e',
-        marginTop: '10%',
+        marginTop: '7%',
         marginLeft: '1%',
         justifyContent: 'flex-start',
     },
@@ -510,78 +523,3 @@ export default SignUpForCoachee;
 
 
 
-
-
-
-
-
-
-
-
-// const onSignUpPressed = async () => {
-//     try {
-//         // Check if any of the required fields are missing
-//         if (!First_Name || !Last_Name || !date || !Email || !Password || !StreetAdd || selectedGames.length === 0 || selectedHobbies.length === 0 || selectedMovieGenres.length === 0) {
-//             console.error('Please fill in all required fields.');
-//             return;
-//         }
-
-//         // Check if First_Name and Last_Name contain only letters (no digits or special characters)
-//         const nameRegex = /^[a-zA-Z]+$/;
-
-//         if (!nameRegex.test(First_Name) || !nameRegex.test(Last_Name)) {
-//             // Display an error message if the names contain invalid characters
-//             console.error('First Name and Last Name should contain only letters.');
-//             return;
-//         }
-
-//         // Limit First_Name and Last_Name to a maximum of 10 characters
-//         const maxNameLength = 10;
-//         const truncatedFirst_Name = First_Name.slice(0, maxNameLength);
-//         const truncatedLast_Name = Last_Name.slice(0, maxNameLength);
-
-//         // Log the data before making the API call
-//         console.log("Signing up with data:", {
-//             firstName: truncatedFirst_Name,
-//             lastName: truncatedLast_Name,
-//             birthday: date,
-//             email: Email.toLowerCase(),
-//             password: Password,
-//             address: StreetAdd,
-//             games: selectedGames,
-//             hobbies: selectedHobbies,
-//             moviesGenres: selectedMovieGenres,
-//         });
-
-//         const { data, error } = await SignUpForCoach({
-//             firstName: truncatedFirst_Name,
-//             lastName: truncatedLast_Name,
-//             birthday: date,
-//             email: Email.toLowerCase(),
-//             password: Password,
-//             address: StreetAdd,
-//             games: selectedGames,
-//             hobbies: selectedHobbies,
-//             moviesGenres: selectedMovieGenres,
-//         });
-
-//         if (error) {
-//             console.error(error);
-//         } else {
-//             setSuccessMessage('Signed up successfully!');
-//             toggleModal();
-//             // Clear form fields
-//             setFirst_Name('');
-//             setLast_Name('');
-//             setEmail('');
-//             setPassword('');
-//             setRepeat_Password('');
-//             setStreetAddress('');
-//             setCity('');
-//             setPostal('');
-//             setDateofBirth('');
-//         }
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };

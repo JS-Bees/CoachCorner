@@ -85,6 +85,12 @@ const SignUpForCoach = () => {
         }
     };
 
+    function containsInteger(First_Name, Last_Name) {
+        const regex = /\d/;
+        return regex.test(First_Name) || regex.test(Last_Name);
+    }
+
+
     const onSignUpPressed = async () => {
         try {
             // Validate the input fields
@@ -108,7 +114,13 @@ const SignUpForCoach = () => {
                 return; // Return early to prevent further execution
             }
 
-            // Additional validation checks can be added here as needed
+               // Check for integers in First_Name and Last_Name
+            if (containsInteger(First_Name, Last_Name)) {
+                setErrorMessage('First Name and Last Name cannot contain integers.');
+                setErrorModalVisible(true);
+                return; // Return early if validation fails
+            }
+
 
             // Log the data before making the API call
             console.log("Signing up with data:", {
@@ -272,31 +284,32 @@ const SignUpForCoach = () => {
                             />
                         </View>
                     </View>
-                    <Text style={styles.choiceContainer}>Select Game:</Text>
+                    <Text style={styles.choiceContainer}>Select Games:</Text>
                     <View style={styles.checkboxContainer}>
+                    <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>PUBG</Text>
+                            <Checkbox
+                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
+                            />
+                        </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Dota</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>Dota</Text>
                             <Checkbox
                                 status={selectedGames.includes(Games.Dota) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Games.Dota, selectedGames, setSelectedGames)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>LOL</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 27 }}>LOL</Text>
                             <Checkbox
                                 status={selectedGames.includes(Games.Lol) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Games.Lol, selectedGames, setSelectedGames)}
                             />
                         </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>PUBG</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
-                            />
-                        </View>
                     </View>
-                    <Text style={styles.choiceContainer}>Select Hobbie:</Text>
+
+                    <Text style={styles.choiceContainer}>Select Hobbies:</Text>
                     <View style={styles.checkboxContainer}>
                         <View style={styles.checkbox}>
                             <Text style={{ color: '#a19e9e' }}>Reading</Text>
@@ -306,38 +319,39 @@ const SignUpForCoach = () => {
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Singing</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: -1 }}>Singing</Text>
                             <Checkbox
                                 status={selectedHobbies.includes(Hobbies.Singing) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Hobbies.Singing, selectedHobbies, setSelectedHobbies)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Writing</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 7 }}>Writing</Text>
                             <Checkbox
                                 status={selectedHobbies.includes(Hobbies.Writing) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Hobbies.Writing, selectedHobbies, setSelectedHobbies)}
                             />
                         </View>
                     </View>
-                    <Text style={styles.choiceContainer}>Select Movie Genre:</Text>
+
+                    <Text style={styles.choiceContainer}>Select Movie Genres:</Text>
                     <View style={styles.checkboxContainer}>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Action</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Action</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Action) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Action, selectedMovieGenres, setSelectedMovieGenres)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Comedy</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: -7 }}>Comedy</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Comedy) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Comedy, selectedMovieGenres, setSelectedMovieGenres)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Horror</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Horror</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Horror) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Horror, selectedMovieGenres, setSelectedMovieGenres)}
@@ -423,7 +437,7 @@ const styles = StyleSheet.create({
     },
     choiceContainer: {
         color: '#a19e9e',
-        marginTop: '10%',
+        marginTop: '7%',
         marginLeft: '1%',
         justifyContent: 'flex-start',
     },

@@ -22,7 +22,11 @@ const DRAG_THRESHOLD = 100;
 interface DraggableBottomSheetProps {
   onClose: () => void;
   coachData: ListItemProps['data'];
+
+  
 }
+
+
 
 const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, coachData }) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -44,6 +48,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
         if (data) {
           // Handle success, e.g., show a success message
           console.log('Added to Coach:', data);
+        
           // Close the bottom sheet
           setIsBottomSheetOpen(false);
           onClose();

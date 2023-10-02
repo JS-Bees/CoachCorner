@@ -81,10 +81,16 @@ query FindCoachByID($userID: Int!) {
         games
         hobbies
         lastName
-        moviesGenres
         sport
+        moviesGenres
         workplaceAddress
         isCoach
+        coachingRelationships {
+            coachee {
+                firstName
+                lastName
+            }
+        }
     }
 }
 
