@@ -1,0 +1,71 @@
+mutation UpdateCoacheeProfile(
+    $id: Int!
+    $address: String!
+    $affiliations: String
+    $bio: String
+    $mantra: String
+) {
+    updateCoacheeProfile(
+        id: $id
+        input: {
+            address: $address
+            affiliations: $affiliations
+            bio: $bio
+            mantra: $mantra
+        }
+    ) {
+        address
+        affiliations
+        bio
+        mantra
+    }
+}
+
+mutation UpdateCoachProfile(
+    $id: Int!
+    $workplaceAddress: String!
+    $affiliations: String
+    $bio: String
+    $mantra: String
+) {
+    updateCoachProfile(
+        id: $id
+        input: {
+            workplaceAddress: $workplaceAddress
+            affiliations: $affiliations
+            bio: $bio
+            mantra: $mantra
+        }
+    ) {
+        workplaceAddress
+        affiliations
+        bio
+        mantra
+    }
+}
+
+mutation UpdateMessagingStartedCoachingRelationship(
+    $id: Int!
+    $messagingStarted: Boolean!
+) {
+    updateMessagingStartedCoachingRelationship(
+        id: $id
+        input: { messagingStarted: $messagingStarted }
+    ) {
+        id
+        coachId
+        coacheeId
+        messagingStarted
+        active
+        updatedAt
+    }
+}
+
+mutation UpdateBookingStatus($id: Int!, $status: BookingStatus!) {
+    updateBookingStatus(id: $id, input: { status: $status }) {
+        id
+        status
+    }
+}
+
+

@@ -7,7 +7,7 @@ import {
     Text,
     ScrollView,
 } from 'react-native';
-import { TextInput, IconButton } from 'react-native-paper';
+import { TextInput, IconButton, Button } from 'react-native-paper';
 import ProfileSvg from '../../components/ProfileSvg';
 import BottomComponent from '../../components/BottomSvg';
 import LogInButton from '../../components/CustomButton';
@@ -17,10 +17,12 @@ import { FindCoachByIdDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UpdateCoachProfileDocument } from '../../generated-gql/graphql';
+import { useMutation } from 'urql';
 
 const { width, height } = Dimensions.get('window');
 
-const CoacheeProfile = () => {
+const CoachProfile = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -70,11 +72,11 @@ const CoacheeProfile = () => {
         }
     };
 
-    const [mantra, setMantra] = React.useState(' A mantra goes here ');
-    const [bio, setBio] = React.useState('Add your bio here...');
-    const [affliation, setAffiliate] = React.useState('Add your affiliates');
-    const [address, setAddres] = React.useState('Your address goes here...');
-    const [age, setAge] = React.useState('Age');
+    const [mantra, setMantra] = React.useState('');
+    const [bio, setBio] = React.useState('');
+    const [affliation, setAffiliate] = React.useState('');
+    const [address, setAddres] = React.useState(coachData?.findCoachByID.workplaceAddress);
+    const [age, setAge] = React.useState('');
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -92,6 +94,7 @@ const CoacheeProfile = () => {
         }
     };
 
+
     useEffect(() => {
         if (scrollViewRef.current) {
             if (isEditing) {
@@ -108,6 +111,24 @@ const CoacheeProfile = () => {
     useEffect(() => {
         setScrollable(isEditing);
     }, [isEditing]);
+
+const [, executeMutation] = useMutation(UpdateCoachProfileDocument)
+const handleSaveButton = async () => {
+
+    return await executeMutation(
+        {id: parseInt(userToken), workplaceAddress: address, affiliations: affliation, mantra: mantra, bio: bio,
+        }).then((res) => {
+            if(res) {
+                setIsEditing(false)
+                return res.data
+            }
+        }).catch((e) => {
+            console.log("sheeesh error" , e)
+        })
+
+    
+
+}
 
     return (
         <View style={styles.container}>
@@ -128,6 +149,7 @@ const CoacheeProfile = () => {
 
             <TextInput
                 style={styles.mantraTextInput}
+                placeholder='Enter mantra'
                 value={mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
@@ -146,6 +168,7 @@ const CoacheeProfile = () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
+                            placeholder='Enter bio'
                             value={bio}
                             onChangeText={(bio) => setBio(bio)}
                             editable={isEditing}
@@ -155,11 +178,12 @@ const CoacheeProfile = () => {
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.age}> Experience </Text>
+                    <Text style={styles.age}> Age </Text>
                     <View>
                         <TextInput
                             style={styles.ageInput}
                             value={age}
+                            placeholder='Enter age'
                             onChangeText={(age) => setAge(age)}
                             editable={isEditing}
                             underlineColor="white"
@@ -173,9 +197,10 @@ const CoacheeProfile = () => {
                                 style={styles.affliateTextInput}
                                 scrollEnabled={scrollEnabled}
                                 multiline
+                                placeholder='Enter affiliation'
                                 value={affliation}
-                                onChangeText={(affliation) =>
-                                    setAffiliate(affliation)
+                                onChangeText={(affiliation) =>
+                                    setAffiliate(affiliation)
                                 }
                                 editable={isEditing}
                                 underlineColor="white"
@@ -193,8 +218,10 @@ const CoacheeProfile = () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
-                            value={coachData?.findCoachByID.workplaceAddress}
+                            placeholder='Enter address'
+                            value={address ?? coachData?.findCoachByID.workplaceAddress}
                             onChangeText={(address) => setAddres(address)}
+                            
                             editable={isEditing}
                             underlineColor="white"
                         />
@@ -204,7 +231,7 @@ const CoacheeProfile = () => {
 
             <View style={styles.iconContainer}>
                 <IconButton
-                    icon={isEditing ? 'pencil' : 'pencil-off'}
+                    icon={isEditing ? '' : 'pencil'}
                     onPress={toggleEditing}
                     iconColor="#60488A"
                 />
@@ -216,6 +243,8 @@ const CoacheeProfile = () => {
                     style={styles.image}
                 />
             </View>
+            {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
+            
         </View>
     );
 };
@@ -239,13 +268,13 @@ const styles = StyleSheet.create({
 
     text: {
         color: 'white',
-        fontSize: 20,
-        top: -5,
+        fontSize: 30,
+        top: '-5%',
         fontFamily: 'Roboto',
     },
 
     logOut: {
-        paddingTop: '5%',
+        paddingTop: '10%',
         left: width * 0.4,
     },
 
@@ -259,11 +288,12 @@ const styles = StyleSheet.create({
         paddingVertical: 1,
         backgroundColor: 'transparent',
         alignItems: 'center',
-        width: 300,
-        top: 100,
+        width: 500,
+        top: '8%',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
+        fontSize: 15,
     },
 
     bioScrollInput: {
@@ -300,8 +330,10 @@ const styles = StyleSheet.create({
     },
 
     bio: {
-        top: 180,
+        top: '18%',
+        left: '3%',
         fontSize: 16,
+        fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#636363',
         textAlign: 'left',
@@ -310,9 +342,11 @@ const styles = StyleSheet.create({
     },
 
     age: {
-        top: -30,
+        top: '-11%',
+        left: '3%',
         fontSize: 16,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -320,9 +354,10 @@ const styles = StyleSheet.create({
     },
 
     affliate: {
-        top: -30,
+        top: '-11%',
         fontSize: 16,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -352,9 +387,11 @@ const styles = StyleSheet.create({
     },
 
     address: {
-        top: -245,
+        top: '-26%',
+        left: '3%',
         fontSize: 16,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -371,7 +408,7 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: 120,
+        top: '10%',
         fontSize: 25,
         alignItems: 'center',
         fontWeight: '700',
@@ -419,4 +456,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CoacheeProfile;
+export default CoachProfile;

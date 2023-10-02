@@ -3,16 +3,16 @@ import LogInPage from './screens/Authentication/LogIn';
 import SignUpA from './screens/Authentication/SignUpA';
 import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
+import CoachProfile from './screens/Profile/CoachProfile';
+import CoacheeProfile from './screens/Profile/CoacheeProfile';
 import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
 import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
 import Appointments from './screens/Appointments';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
-import { NavigationContainer } from '@react-navigation/native';
-import CoacheeProfile  from './screens/Profiles/CoacheeProfile';
-import CoachProfile from './screens/Profiles/CoachProfile';
 import SearchList from './screens/SearchList/SearchList';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
@@ -43,13 +43,12 @@ export type RootStackParams = {
     CoachProfile: any;
     MyClients: any;
     MyCoaches: any;
+    SearchList: any;
 };
 
 const RootStack = createNativeStackNavigator();
 
 export default function App() {
-    <><RootStack.Navigator initialRouteName="ResultsList" />
-    <RootStack.Screen name="ResultsList" component={SearchList} /></> 
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
@@ -57,11 +56,13 @@ export default function App() {
                     <RootStack.Screen 
                         name="LogIn" 
                         component={LogInPage} 
-                        options={{headerShown: false}}/>
+                        options={{headerShown: false}}
+                    />
                     <RootStack.Screen 
                         name="SignUpA" 
                         component={SignUpA} 
-                        options={{headerShown: false}}/>
+                        options={{headerShown: false}}
+                    />
                     <RootStack.Screen
                         name="SignUpCoachee"
                         component={SignUpCoachee}
@@ -108,8 +109,8 @@ export default function App() {
                         options={{headerShown: false}}
                     />
                     <RootStack.Screen 
-                        name="CoachBookingDrawer" 
-                        component={CoachBookingDrawer} 
+                        name="SearchList" 
+                        component={SearchList} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>

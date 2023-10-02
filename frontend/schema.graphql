@@ -93,7 +93,22 @@ type CoachingRelationship {
   coacheeId: Int!
   createdAt: DateTime!
   id: Int!
+  messagingStarted: Boolean!
   updatedAt: DateTime!
+}
+
+input CreateBookingInput {
+  additionalNotes: String
+  coachId: Int!
+  coacheeId: Int!
+  serviceType: String!
+  status: BookingStatus!
+}
+
+input CreateBookingSlotInput {
+  date: DateTime!
+  endTime: DateTime!
+  startTime: DateTime!
 }
 
 input CreateCoachInput {
@@ -119,6 +134,18 @@ input CreateCoacheeInput {
   lastName: String!
   moviesGenres: [MovieGenres!]!
   password: String!
+}
+
+input CreateCoachingRelationshipInput {
+  coachId: Int!
+  coacheeId: Int!
+}
+
+input CreateReviewInput {
+  coachId: Int!
+  coacheeId: Int!
+  comment: String!
+  starRating: Int!
 }
 
 """
@@ -158,6 +185,10 @@ enum Hobbies {
   WRITING
 }
 
+input MessagingStartedInput {
+  messagingStarted: Boolean!
+}
+
 enum MovieGenres {
   ACTION
   ADVENTURE
@@ -176,18 +207,27 @@ enum MovieGenres {
 }
 
 type Mutation {
+  createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking!
   createCoach(input: CreateCoachInput!): Coach!
   createCoachee(input: CreateCoacheeInput!): Coachee!
+  createCoachingRelationship(input: CreateCoachingRelationshipInput!): CoachingRelationship!
+  createReview(input: CreateReviewInput!): Review!
+  updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
+  updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
+  updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
+  updateMessagingStartedCoachingRelationship(id: Int!, input: MessagingStartedInput!): CoachingRelationship!
 }
 
 type Query {
   coachees: [Coachee!]!
   coaches: [Coach!]!
+  findBookingByID(bookingID: Int!): Booking!
   findCoachByEmailAndPassword(email: String!, password: String!): Coach!
   findCoachByID(userID: Int!): Coach!
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
   findCoacheeByID(userID: Int!): Coachee!
   findCoachesBySport(sport: Sport!): [Coach!]!
+  findUnaddedCoachesBySport(coacheeID: Int!, sport: Sport!): [Coach!]!
 }
 
 type Review {
@@ -209,4 +249,22 @@ enum Sport {
   SOCCER
   SWIMMING
   VOLLEYBALL
+}
+
+input UpdateBookingStatusInput {
+  status: BookingStatus!
+}
+
+input UpdateCoachProfileInput {
+  affiliations: String
+  bio: String
+  mantra: String
+  workplaceAddress: String!
+}
+
+input UpdateCoacheeProfileInput {
+  address: String!
+  affiliations: String
+  bio: String
+  mantra: String
 }

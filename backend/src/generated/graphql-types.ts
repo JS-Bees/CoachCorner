@@ -29,6 +29,18 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CreateBookingInput: { // input type
+    additionalNotes?: string | null; // String
+    coachId: number; // Int!
+    coacheeId: number; // Int!
+    serviceType: string; // String!
+    status: NexusGenEnums['BookingStatus']; // BookingStatus!
+  }
+  CreateBookingSlotInput: { // input type
+    date: NexusGenScalars['DateTime']; // DateTime!
+    endTime: NexusGenScalars['DateTime']; // DateTime!
+    startTime: NexusGenScalars['DateTime']; // DateTime!
+  }
   CreateCoachInput: { // input type
     birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -51,6 +63,34 @@ export interface NexusGenInputs {
     lastName: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
+  }
+  CreateCoachingRelationshipInput: { // input type
+    coachId: number; // Int!
+    coacheeId: number; // Int!
+  }
+  CreateReviewInput: { // input type
+    coachId: number; // Int!
+    coacheeId: number; // Int!
+    comment: string; // String!
+    starRating: number; // Int!
+  }
+  MessagingStartedInput: { // input type
+    messagingStarted: boolean; // Boolean!
+  }
+  UpdateBookingStatusInput: { // input type
+    status: NexusGenEnums['BookingStatus']; // BookingStatus!
+  }
+  UpdateCoachProfileInput: { // input type
+    affiliations?: string | null; // String
+    bio?: string | null; // String
+    mantra?: string | null; // String
+    workplaceAddress: string; // String!
+  }
+  UpdateCoacheeProfileInput: { // input type
+    address: string; // String!
+    affiliations?: string | null; // String
+    bio?: string | null; // String
+    mantra?: string | null; // String
   }
 }
 
@@ -140,6 +180,7 @@ export interface NexusGenObjects {
     coacheeId: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
+    messagingStarted: boolean; // Boolean!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Mutation: {};
@@ -247,20 +288,30 @@ export interface NexusGenFieldTypes {
     coacheeId: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: number; // Int!
+    messagingStarted: boolean; // Boolean!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Mutation: { // field return type
+    createBooking: NexusGenRootTypes['Booking']; // Booking!
     createCoach: NexusGenRootTypes['Coach']; // Coach!
     createCoachee: NexusGenRootTypes['Coachee']; // Coachee!
+    createCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
+    createReview: NexusGenRootTypes['Review']; // Review!
+    updateBookingStatus: NexusGenRootTypes['Booking']; // Booking!
+    updateCoachProfile: NexusGenRootTypes['Coach']; // Coach!
+    updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
+    updateMessagingStartedCoachingRelationship: NexusGenRootTypes['CoachingRelationship']; // CoachingRelationship!
   }
   Query: { // field return type
     coachees: NexusGenRootTypes['Coachee'][]; // [Coachee!]!
     coaches: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findBookingByID: NexusGenRootTypes['Booking']; // Booking!
     findCoachByEmailAndPassword: NexusGenRootTypes['Coach']; // Coach!
     findCoachByID: NexusGenRootTypes['Coach']; // Coach!
     findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee']; // Coachee!
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
     findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findUnaddedCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
   Review: { // field return type
     active: boolean; // Boolean!
@@ -357,20 +408,30 @@ export interface NexusGenFieldTypeNames {
     coacheeId: 'Int'
     createdAt: 'DateTime'
     id: 'Int'
+    messagingStarted: 'Boolean'
     updatedAt: 'DateTime'
   }
   Mutation: { // field return type name
+    createBooking: 'Booking'
     createCoach: 'Coach'
     createCoachee: 'Coachee'
+    createCoachingRelationship: 'CoachingRelationship'
+    createReview: 'Review'
+    updateBookingStatus: 'Booking'
+    updateCoachProfile: 'Coach'
+    updateCoacheeProfile: 'Coachee'
+    updateMessagingStartedCoachingRelationship: 'CoachingRelationship'
   }
   Query: { // field return type name
     coachees: 'Coachee'
     coaches: 'Coach'
+    findBookingByID: 'Booking'
     findCoachByEmailAndPassword: 'Coach'
     findCoachByID: 'Coach'
     findCoacheeByEmailAndPassword: 'Coachee'
     findCoacheeByID: 'Coachee'
     findCoachesBySport: 'Coach'
+    findUnaddedCoachesBySport: 'Coach'
   }
   Review: { // field return type name
     active: 'Boolean'
@@ -388,14 +449,43 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createBooking: { // args
+      input: NexusGenInputs['CreateBookingInput']; // CreateBookingInput!
+      slotsInput: NexusGenInputs['CreateBookingSlotInput'][]; // [CreateBookingSlotInput!]!
+    }
     createCoach: { // args
       input: NexusGenInputs['CreateCoachInput']; // CreateCoachInput!
     }
     createCoachee: { // args
       input: NexusGenInputs['CreateCoacheeInput']; // CreateCoacheeInput!
     }
+    createCoachingRelationship: { // args
+      input: NexusGenInputs['CreateCoachingRelationshipInput']; // CreateCoachingRelationshipInput!
+    }
+    createReview: { // args
+      input: NexusGenInputs['CreateReviewInput']; // CreateReviewInput!
+    }
+    updateBookingStatus: { // args
+      id: number; // Int!
+      input: NexusGenInputs['UpdateBookingStatusInput']; // UpdateBookingStatusInput!
+    }
+    updateCoachProfile: { // args
+      id: number; // Int!
+      input: NexusGenInputs['UpdateCoachProfileInput']; // UpdateCoachProfileInput!
+    }
+    updateCoacheeProfile: { // args
+      id: number; // Int!
+      input: NexusGenInputs['UpdateCoacheeProfileInput']; // UpdateCoacheeProfileInput!
+    }
+    updateMessagingStartedCoachingRelationship: { // args
+      id: number; // Int!
+      input: NexusGenInputs['MessagingStartedInput']; // MessagingStartedInput!
+    }
   }
   Query: {
+    findBookingByID: { // args
+      bookingID: number; // Int!
+    }
     findCoachByEmailAndPassword: { // args
       email: string; // String!
       password: string; // String!
@@ -411,6 +501,10 @@ export interface NexusGenArgTypes {
       userID: number; // Int!
     }
     findCoachesBySport: { // args
+      sport: NexusGenEnums['Sport']; // Sport!
+    }
+    findUnaddedCoachesBySport: { // args
+      coacheeID: number; // Int!
       sport: NexusGenEnums['Sport']; // Sport!
     }
   }

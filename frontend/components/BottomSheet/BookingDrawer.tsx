@@ -75,6 +75,8 @@ const BookingDrawer = ({ onClose }: {onClose: () => void}) => {
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
         <View style={styles.dragHandle} />
       </Animated.View>
+
+      
     </View>
   );
 };

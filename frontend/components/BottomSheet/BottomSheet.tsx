@@ -3,9 +3,12 @@ import { Animated, PanResponder, Platform, StyleSheet, View, Dimensions, Text, T
 import { TextInput } from 'react-native-paper';
 import SVGComponent from '../UpperSVG';
 import DragSheetButton from '../DragSheetButton';
+import { ListItemProps } from '../ListItem';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CreateCoachingRelationshipDocument } from '../../generated-gql/graphql';
+import { useMutation } from 'urql'
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
-
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,24 +20,51 @@ const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = height * 0.05;
 
 interface DraggableBottomSheetProps {
-
-  onClose: () => void; // Define the onClose prop
+  onClose: () => void;
+  coachData: ListItemProps['data'];
 }
 
-const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose }) => {
-  const onAddPressed = () => {
-    console.log('Added to Coach')
-  }
+const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, coachData }) => {
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  const [, createCoachingRelationship] = useMutation(CreateCoachingRelationshipDocument); // Initialize the mutation
+
+  const onAddPressed = async () => {
+    try {
+      const coacheeId = await AsyncStorage.getItem('userToken');
+
+      if (coacheeId) {
+        const variables = {
+          coachId: coachData.id,
+          coacheeId: parseInt(coacheeId),
+        };
+
+        const { data, error } = await createCoachingRelationship(variables);
+
+        if (data) {
+          // Handle success, e.g., show a success message
+          console.log('Added to Coach:', data);
+          // Close the bottom sheet
+          setIsBottomSheetOpen(false);
+          onClose();
+        } else if (error) {
+          // Handle error, e.g., show an error message
+          console.error('Error adding coach:', error);
+        }
+      } else {
+        console.error('coacheeId not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('Error adding coach:', error);
+    }
+  };
 
   const onSeePressed = () => {
     console.log('Pressed')
   }
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
- 
   
-
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -109,8 +139,8 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose }) 
         style ={{width: 100, height: 100}}/>
 
         <View style= {styles.row}>
-          <Text style={styles.textCoach}> Coach Name</Text>
-          <Text style={styles.textSport}> Main Sport </Text>
+          <Text style={styles.textCoach}>{coachData.firstName + ' ' + coachData.lastName}</Text>
+          <Text style={styles.textSport}> {coachData.sport} </Text>
     
         </View>
         <View style={styles.button}>
@@ -121,16 +151,17 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose }) 
       <ScrollView style={styles.scrollViewContainer}>
       <Text style={styles.textSport}> Bio </Text>
       <TextInput style={styles.textInput}
-        underlineColor='transparent'
+        // underlineColor='transparent'
         editable={false}/>
 
       <Text style={styles.textSport}> Workplace Address </Text>
       <TextInput style={styles.textInput}
-        underlineColor='transparent'
+        // underlineColor='transparent'
+        value={coachData.workplaceAddress}
         editable={false}/>
       <Text style={styles.textSport}> Affiliates </Text>
       <TextInput style={styles.textInput}
-        underlineColor='transparent'
+        // underlineColor='transparent'
         editable={false}/>
 
       </ScrollView>
@@ -154,10 +185,11 @@ const styles = StyleSheet.create({
   bottomSheet: {
     position: 'absolute',
     width: '100%',
+    right: '-50%',
     height: BOTTOM_SHEET_MAX_HEIGHT,
     bottom: BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT,
     ...Platform.select({
-      android: { elevation: 3 },
+      android: { elevation: 10 },
       ios: {
         shadowColor: '#a8bed2',
         shadowOpacity: 1,
@@ -225,12 +257,15 @@ const styles = StyleSheet.create({
     marginBottom: -200
   },
   Reviews : {
-    paddingBottom: 30,
-    left: 90
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: '5%'
 
   },
 
   textInput: {
+    width: '95%',
     backgroundColor: 'white',
     borderRadius: 10,
     borderColor: "grey",
@@ -248,3 +283,4 @@ const styles = StyleSheet.create({
 });
 
 export default DraggableBottomSheet;
+

@@ -20,6 +20,7 @@ import { FindCoachByIdDocument } from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
+
 const CoachDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -28,6 +29,7 @@ const CoachDashboard = () => {
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
+    
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
     useEffect(() => {
@@ -144,7 +146,7 @@ const CoachDashboard = () => {
                                     { fontSize: 14 },
                                 ]}
                             >
-                                Personal Progress
+                                Client Progress
                             </Text>
                             <Image
                                 source={require('../assets/Progress.png')}

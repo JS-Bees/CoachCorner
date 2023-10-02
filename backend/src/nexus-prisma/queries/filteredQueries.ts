@@ -1,7 +1,7 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
-import { Coachee, Coach } from '../objectTypes';
+import { Coachee, Coach, Booking } from '../objectTypes';
 import { SportEnum } from '../enums';
 
 export const findCoachByEmailAndPassword = queryField(
@@ -122,3 +122,51 @@ export const findCoachesBySport = queryField('findCoachesBySport', {
         return coaches;
     },
 });
+
+
+export const findBookingByID = queryField('findBookingByID', {
+    type: Booking,
+    args: {
+        bookingID: nonNull(intArg()),
+    },
+    resolve: async (_, { bookingID }, context: Context) => {
+        // Search for a Booking by ID
+        const booking = await context.db.booking.findUnique({
+            where: { id: bookingID },
+        });
+
+        if (booking) {
+            return booking;
+        } else {
+            throw new Error(`Booking with ID ${bookingID} does not exist.`);
+        }
+    },
+});
+
+export const findUnaddedCoachesBySport = queryField(
+    'findUnaddedCoachesBySport',
+    {
+        type: list(Coach), // Return a list of available coaches
+        args: {
+            sport: SportEnum, // Required sport argument
+            coacheeID: nonNull(intArg()), // Required coacheeID argument
+        },
+        resolve: async (_, { sport, coacheeID }, context: Context) => {
+            // Search for coaches who are associated with the specified sport
+            // and do not have a coaching relationship with the given coacheeID
+            const coaches = await context.db.coach.findMany({
+                where: {
+                    sport: sport,
+                    coachingRelationships: {
+                        none: {
+                            coacheeId: coacheeID,
+                        },
+                    },
+                },
+            });
+
+            return coaches;
+        },
+    },
+);
+
