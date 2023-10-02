@@ -56,7 +56,7 @@ const CoacheeProfile = () => {
     // Example usage of the query function
     // Replace 'yourToken' with the actual token or userID you want to fetch
     const {
-        data: coachData,
+        data: coacheeData,
         loading: coachLoading,
         error: coachError,
     } = useFetchCoacheeByUserID(userToken);
@@ -75,7 +75,7 @@ const CoacheeProfile = () => {
     const [mantra, setMantra] = React.useState('');
     const [bio, setBio] = React.useState('');
     const [affliation, setAffiliate] = React.useState('');
-    const [address, setAddres] = React.useState(coachData?.findCoacheeByID.address);
+    const [address, setAddres] = React.useState(coacheeData?.findCoacheeByID.address);
     const [age, setAge] = React.useState('');
 
     const [isEditing, setIsEditing] = useState(false);
@@ -126,8 +126,6 @@ const handleSaveButton = async () => {
             console.log("sheeesh error" , e)
         })
 
-    
-
 }
 
     return (
@@ -141,12 +139,12 @@ const handleSaveButton = async () => {
                     onPress={onLogOutPressed}
                 />
             </View>
-            <Text style={styles.text}> Profile </Text>
-
-            <Text
-                style={styles.normalText}
-            >{`${coachData?.findCoacheeByID?.firstName} ${coachData?.findCoacheeByID?.lastName}`}</Text>
-
+             {/* Wrap the "Profile" text, first name, and last name in a fixed-position view */}
+             <View style={styles.profileInfo}>
+                <Text style={styles.text}> Profile </Text>
+                <Text style={styles.normalText}>{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}</Text>
+            </View>
+            <View style={styles.mantraContainer}>
             <TextInput
                 style={styles.mantraTextInput}
                 placeholder='Enter mantra'
@@ -155,11 +153,13 @@ const handleSaveButton = async () => {
                 editable={isEditing}
                 underlineColor="transparent"
             />
+            </View>
 
             <ScrollView
                 style={styles.scrollView}
                 scrollEnabled={scrollEnabled}
                 ref={scrollViewRef}
+                keyboardShouldPersistTaps="handled"
             >
                 <Text style={styles.bio}> Bio </Text>
                 <View>
@@ -219,7 +219,7 @@ const handleSaveButton = async () => {
                             style={styles.bioInput}
                             multiline
                             placeholder='Enter address'
-                            value={address ?? coachData?.findCoacheeByID.address}
+                            value={address ?? coacheeData?.findCoacheeByID.address}
                             onChangeText={(address) => setAddres(address)}
                             
                             editable={isEditing}
@@ -235,16 +235,15 @@ const handleSaveButton = async () => {
                     onPress={toggleEditing}
                     iconColor="#60488A"
                 />
+                    {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
             </View>
 
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('./Icons/User.png')}
+                    source={require('./Icons/Woman.png')}
                     style={styles.image}
                 />
             </View>
-            {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
-            
         </View>
     );
 };
@@ -253,7 +252,7 @@ const imageSize = 100;
 
 const styles = StyleSheet.create({
     scrollView: {
-        top: 100,
+        top: 20,
         width: '95%',
     },
     container: {
@@ -265,12 +264,14 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: 'transparent',
     },
-
     text: {
         color: 'white',
         fontSize: 30,
-        top: '-5%',
+        left: '20%',
+        top: '80%',
         fontFamily: 'Roboto',
+        fontWeight: '700',
+        position: 'absolute'
     },
 
     logOut: {
@@ -283,13 +284,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    mantraContainer: {
+        alignItems: 'center',
+        left: '45%',
+        marginTop: '35%'
+    },
+
     mantraTextInput: {
         paddingHorizontal: 50,
         paddingVertical: 1,
         backgroundColor: 'transparent',
-        alignItems: 'center',
         width: 500,
-        top: '8%',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
@@ -408,7 +413,7 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: '10%',
+        top: '490%',
         fontSize: 25,
         alignItems: 'center',
         fontWeight: '700',
@@ -453,6 +458,10 @@ const styles = StyleSheet.create({
         width: width,
         height: height,
         zIndex: 0,
+    },
+    profileInfo: {
+        position: 'absolute',
+        top: 20, // Adjust the top value as needed
     },
 });
 
