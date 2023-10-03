@@ -72,11 +72,10 @@ const CoachProfile = () => {
         }
     };
 
-    const [mantra, setMantra] = React.useState('');
-    const [bio, setBio] = React.useState('');
-    const [affliation, setAffiliate] = React.useState('');
+    const [mantra, setMantra] = React.useState(coachData?.findCoachByID.mantra);
+    const [bio, setBio] = React.useState(coachData?.findCoachByID.bio);
+    const [affliation, setAffiliate] = React.useState(coachData?.findCoachByID.affiliations);
     const [address, setAddres] = React.useState(coachData?.findCoachByID.workplaceAddress);
-    const [age, setAge] = React.useState('');
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -198,7 +197,7 @@ const handleSaveButton = async () => {
                                 scrollEnabled={scrollEnabled}
                                 multiline
                                 placeholder='Enter affiliation'
-                                value={affliation}
+                                value={affliation ?? coachData?.findCoachByID.affiliations}
                                 onChangeText={(affiliation) =>
                                     setAffiliate(affiliation)
                                 }

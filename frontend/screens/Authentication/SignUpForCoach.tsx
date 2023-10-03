@@ -37,6 +37,10 @@ const SignUpForCoach = () => {
     const [City, setCity] = useState('');
     const [Postal, setPostal] = useState('5800');
     const [dateOfBirth, setDateofBirth] = useState('');
+    const [profilePic] = useState(' ');
+    const [mantra] = useState('Write mantra here');
+    const [bio] = useState('Enter Bio');   
+    const [affiliations] = useState('Enter Affilitations');
     const [selectedSport, setSelectedSport] = useState<Sport[]>([]);
     const [selectedGames, setSelectedGames] = useState<Games[]>([]);
     const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
@@ -136,13 +140,17 @@ const SignUpForCoach = () => {
                 moviesGenres: selectedMovieGenres,
             });
 
-            const { data, error } = await SignUpForCoach({
+            const { data, error, fetching } = await SignUpForCoach({
                 firstName: First_Name,
                 lastName: Last_Name,
                 birthday: date,
                 email: Email.toLowerCase(),
                 password: Password,
                 workplaceAddress: StreetAdd,
+                profilePicture: profilePic,
+                mantra: mantra,
+                bio: bio,
+                affiliations: affiliations,
                 sport: selectedSport[0],
                 games: selectedGames,
                 hobbies: selectedHobbies,

@@ -112,28 +112,36 @@ input CreateBookingSlotInput {
 }
 
 input CreateCoachInput {
+  affiliations: String
+  bio: String
   birthday: DateTime!
   email: String!
   firstName: String!
   games: [Games!]!
   hobbies: [Hobbies!]!
   lastName: String!
+  mantra: String
   moviesGenres: [MovieGenres!]!
   password: String!
+  profilePicture: String
   sport: Sport!
   workplaceAddress: String!
 }
 
 input CreateCoacheeInput {
   address: String!
+  affiliations: String
+  bio: String
   birthday: DateTime!
   email: String!
   firstName: String!
   games: [Games!]!
   hobbies: [Hobbies!]!
   lastName: String!
+  mantra: String
   moviesGenres: [MovieGenres!]!
   password: String!
+  profilePicture: String
 }
 
 input CreateCoachingRelationshipInput {

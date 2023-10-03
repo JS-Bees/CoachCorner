@@ -134,7 +134,7 @@ const SignUpForCoachee = () => {
                 moviesGenres: selectedMovieGenres,
             });
 
-            const { data, error } = await SignUpForCoach({
+            const { data, error, fetching } = await SignUpForCoach({
                 firstName: First_Name,
                 lastName: Last_Name,
                 birthday: date,
