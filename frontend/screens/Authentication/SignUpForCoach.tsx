@@ -292,7 +292,7 @@ const SignUpForCoach = () => {
                             />
                         </View>
                     </View>
-                    <Text style={styles.choiceContainer}>Select Games:</Text>
+                    <Text style={styles.choiceContainer}>Select Video Games:</Text>
                     <View style={styles.checkboxContainer}>
                     <View style={styles.checkbox}>
                             <Text style={{ color: '#a19e9e', marginLeft: 15 }}>PUBG</Text>

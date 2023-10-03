@@ -27,6 +27,10 @@ async function seedDatabase() {
                     games: [Games.MOBILELEGENDS, Games.DOTA],
                     hobbies: [Hobbies.COOKING, Hobbies.PAINTING],
                     moviesGenres: [MovieGenres.ACTION, MovieGenres.COMEDY],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coach2@example.com',
@@ -39,6 +43,10 @@ async function seedDatabase() {
                     games: [Games.VALORANT, Games.MINECRAFT],
                     hobbies: [Hobbies.WRITING, Hobbies.SINGING],
                     moviesGenres: [MovieGenres.ROMANCE, MovieGenres.DRAMA],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coach3@example.com',
@@ -51,6 +59,10 @@ async function seedDatabase() {
                     games: [Games.CALLOFDUTY, Games.PUBG],
                     hobbies: [Hobbies.DANCING, Hobbies.TRAVELLING],
                     moviesGenres: [MovieGenres.HORROR, MovieGenres.THRILLER],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coach4@example.com',
@@ -66,6 +78,10 @@ async function seedDatabase() {
                         MovieGenres.DOCUMENTARY,
                         MovieGenres.MUSICAL,
                     ],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coach5@example.com',
@@ -78,6 +94,10 @@ async function seedDatabase() {
                     games: [Games.CLASHOFCLANS, Games.CANDYCRUSH],
                     hobbies: [Hobbies.HIKING, Hobbies.BAKING],
                     moviesGenres: [MovieGenres.ADVENTURE, MovieGenres.FANTASY],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
             ],
         });
@@ -95,6 +115,10 @@ async function seedDatabase() {
                     games: [Games.VALORANT, Games.MINECRAFT],
                     hobbies: [Hobbies.READING, Hobbies.SINGING],
                     moviesGenres: [MovieGenres.DRAMA, MovieGenres.ROMANCE],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coachee2@example.com',
@@ -106,6 +130,10 @@ async function seedDatabase() {
                     games: [Games.MOBILELEGENDS, Games.DOTA],
                     hobbies: [Hobbies.COOKING, Hobbies.PAINTING],
                     moviesGenres: [MovieGenres.ACTION, MovieGenres.COMEDY],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coachee3@example.com',
@@ -117,6 +145,10 @@ async function seedDatabase() {
                     games: [Games.ARKNIGHTS, Games.AZURELANE],
                     hobbies: [Hobbies.TRAVELLING, Hobbies.WRITING],
                     moviesGenres: [MovieGenres.ANIME, MovieGenres.FANTASY],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coachee4@example.com',
@@ -131,6 +163,10 @@ async function seedDatabase() {
                         MovieGenres.DOCUMENTARY,
                         MovieGenres.MUSICAL,
                     ],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
                 {
                     email: 'coachee5@example.com',
@@ -142,6 +178,10 @@ async function seedDatabase() {
                     games: [Games.STREETFIGHTER, Games.TEKKEN],
                     hobbies: [Hobbies.DANCING, Hobbies.BAKING],
                     moviesGenres: [MovieGenres.HORROR, MovieGenres.MYSTERY],
+                    affiliations: 'Enter affiliations here',
+                    bio: 'Enter bio here',
+                    mantra: 'Enter mantra here',
+                    profilePicture: 'profile picture',
                 },
             ],
         });
@@ -172,24 +212,28 @@ async function seedDatabase() {
                     coacheeId: 1, // Coachee with ID 1
                     serviceType: 'Volleyball Coaching',
                     status: 'COMPLETED',
+                    additionalNotes: 'Bring equipment',
                 },
                 {
                     coachId: 2, // Coach with ID 2
                     coacheeId: 2, // Coachee with ID 2
                     serviceType: 'Volleyball Coaching',
                     status: 'CANCELLED',
+                    additionalNotes: 'Bring equipment',
                 },
                 {
                     coachId: 3, // Coach with ID 3
                     coacheeId: 5, // Coachee with ID 5
                     serviceType: 'Soccer Coaching',
                     status: 'PENDING',
+                    additionalNotes: 'Bring equipment',
                 },
                 {
                     coachId: 2, // Coach with ID 2
                     coacheeId: 1, // Coachee with ID 1
                     serviceType: 'Volleyball Coaching Again',
                     status: 'PENDING',
+                    additionalNotes: 'Bring equipment',
                 },
             ],
         });

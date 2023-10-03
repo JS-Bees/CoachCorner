@@ -32,6 +32,7 @@ const CoachProfile = () => {
         const fetchUserToken = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token)
                 setUserToken(token);
             } catch (error) {
                 console.error('Error fetching token:', error);
@@ -42,24 +43,32 @@ const CoachProfile = () => {
     }, []);
 
     // Define a function to fetch coachee data by userID (token)
-    const useFetchCoacheeByUserID = (userID: any) => {
-        const [coacheeResult] = useQuery({
-            query: FindCoachByIdDocument, // Use the Coachee query document
-            variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-            },
-        });
+    // const useFetchCoacheeByUserID = (userID: any) => {
+    //     const coacheeResult = useQuery({
+    //         query: FindCoachByIdDocument, // Use the Coachee query document
+    //         variables: {
+    //             userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
+    //         },
+    //         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    //     });
 
-        return coacheeResult;
-    };
+    //     return coacheeResult;
+    // };
+    const [{ data: coachData, fetching, error }]  = useQuery({
+        query: FindCoachByIdDocument, // Use the Coachee query document
+        variables: {
+            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
 
     // Example usage of the query function
     // Replace 'yourToken' with the actual token or userID you want to fetch
-    const {
-        data: coachData,
-        loading: coachLoading,
-        error: coachError,
-    } = useFetchCoacheeByUserID(userToken);
+    // const {
+    //     data: coachData,
+    //     loading: coachLoading,
+    //     error: coachError,
+    // } = [coacheeResult];
 
     const onLogOutPressed = async () => {
         try {
@@ -73,9 +82,21 @@ const CoachProfile = () => {
     };
 
     const [mantra, setMantra] = React.useState(coachData?.findCoachByID.mantra);
+    const [age, setAge] = React.useState('18');
     const [bio, setBio] = React.useState(coachData?.findCoachByID.bio);
     const [affliation, setAffiliate] = React.useState(coachData?.findCoachByID.affiliations);
     const [address, setAddres] = React.useState(coachData?.findCoachByID.workplaceAddress);
+    const [profilePicture, setProfilePicture ] = React.useState('fixed');
+
+    useEffect(() => {
+        if (coachData) {
+            setMantra(coachData.findCoachByID.mantra);
+            setBio(coachData.findCoachByID.bio);
+            setAffiliate(coachData.findCoachByID.affiliations);
+            setAddres(coachData.findCoachByID.workplaceAddress);
+            // You can similarly update other state variables as needed
+        }
+    }, [coachData]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -114,11 +135,26 @@ const CoachProfile = () => {
 const [, executeMutation] = useMutation(UpdateCoachProfileDocument)
 const handleSaveButton = async () => {
 
+    console.log("________________________________________________________")
+    console.log("affiliations1", address)
+    console.log("bio1", bio)
+    console.log("mantra1", mantra)
+    console.log("address1", address)
+    console.log("profilepicture1", profilePicture)
+    console.log("________________________________________________________")
+
     return await executeMutation(
-        {id: parseInt(userToken), workplaceAddress: address, affiliations: affliation, mantra: mantra, bio: bio,
+        {id: parseInt(userToken), workplaceAddress: address, affiliations: affliation, mantra: mantra, bio: bio, profilePicture: profilePicture,
         }).then((res) => {
             if(res) {
                 setIsEditing(false)
+                console.log("________________________________________________________")
+                console.log("affiliations", res.data?.updateCoachProfile.affiliations)
+                console.log("bio", res.data?.updateCoachProfile.bio)
+                console.log("mantra", res.data?.updateCoachProfile.mantra)
+                console.log("address", res.data?.updateCoachProfile.workplaceAddress)
+                console.log("profilepicture", res.data?.updateCoachProfile.profilePicture)
+                console.log("________________________________________________________")
                 return res.data
             }
         }).catch((e) => {
@@ -147,6 +183,7 @@ const handleSaveButton = async () => {
             <TextInput
                 style={styles.mantraTextInput}
                 placeholder='Enter mantra'
+                // value={mantra ?? coachData?.findCoachByID.mantra}
                 value={mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
@@ -197,7 +234,7 @@ const handleSaveButton = async () => {
                                 scrollEnabled={scrollEnabled}
                                 multiline
                                 placeholder='Enter affiliation'
-                                value={affliation ?? coachData?.findCoachByID.affiliations}
+                                value={affliation}
                                 onChangeText={(affiliation) =>
                                     setAffiliate(affiliation)
                                 }
@@ -218,7 +255,7 @@ const handleSaveButton = async () => {
                             style={styles.bioInput}
                             multiline
                             placeholder='Enter address'
-                            value={address ?? coachData?.findCoachByID.workplaceAddress}
+                            value={address}
                             onChangeText={(address) => setAddres(address)}
                             
                             editable={isEditing}

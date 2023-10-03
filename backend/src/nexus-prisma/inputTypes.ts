@@ -47,7 +47,7 @@ export const UpdateCoacheeProfileInput = inputObjectType({
         t.field(gqlTypes.Coachee.affiliations);
         t.field(gqlTypes.Coachee.bio);
         t.field(gqlTypes.Coachee.mantra);
-        // t.field(gqlTypes.Coachee.profilePicture);
+        t.field(gqlTypes.Coachee.profilePicture);
     },
 });
 
@@ -58,7 +58,7 @@ export const UpdateCoachProfileInput = inputObjectType({
         t.field(gqlTypes.Coach.affiliations);
         t.field(gqlTypes.Coach.bio);
         t.field(gqlTypes.Coach.mantra);
-        // t.field(gqlTypes.Coach.profilePicture);
+        t.field(gqlTypes.Coach.profilePicture);
     },
 });
 

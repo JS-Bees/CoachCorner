@@ -32,6 +32,7 @@ const CoacheeProfile = () => {
         const fetchUserToken = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token)
                 setUserToken(token);
             } catch (error) {
                 console.error('Error fetching token:', error);
@@ -42,24 +43,32 @@ const CoacheeProfile = () => {
     }, []);
 
     // Define a function to fetch coachee data by userID (token)
-    const useFetchCoacheeByUserID = (userID: any) => {
-        const [coacheeResult] = useQuery({
-            query: FindCoacheeByIdDocument, // Use the Coachee query document
-            variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-            },
-        });
+    // const useFetchCoacheeByUserID = (userID: any) => {
+    //     const coacheeResult = useQuery({
+    //         query: FindCoachByIdDocument, // Use the Coachee query document
+    //         variables: {
+    //             userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
+    //         },
+    //         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    //     });
 
-        return coacheeResult;
-    };
+    //     return coacheeResult;
+    // };
+    const [{ data: coacheeData, fetching, error }]  = useQuery({
+        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        variables: {
+            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
 
     // Example usage of the query function
     // Replace 'yourToken' with the actual token or userID you want to fetch
-    const {
-        data: coacheeData,
-        loading: coachLoading,
-        error: coachError,
-    } = useFetchCoacheeByUserID(userToken);
+    // const {
+    //     data: coachData,
+    //     loading: coachLoading,
+    //     error: coachError,
+    // } = [coacheeResult];
 
     const onLogOutPressed = async () => {
         try {
@@ -72,11 +81,22 @@ const CoacheeProfile = () => {
         }
     };
 
-    const [mantra, setMantra] = React.useState('');
-    const [bio, setBio] = React.useState('');
-    const [affliation, setAffiliate] = React.useState('');
+    const [mantra, setMantra] = React.useState(coacheeData?.findCoacheeByID.mantra);
+    const [age, setAge] = React.useState('18');
+    const [bio, setBio] = React.useState(coacheeData?.findCoacheeByID.bio);
+    const [affliation, setAffiliate] = React.useState(coacheeData?.findCoacheeByID.affiliations);
     const [address, setAddres] = React.useState(coacheeData?.findCoacheeByID.address);
-    const [age, setAge] = React.useState('');
+    const [profilePicture, setProfilePicture ] = React.useState('fixed');
+
+    useEffect(() => {
+        if (coacheeData) {
+            setMantra(coacheeData.findCoacheeByID.mantra);
+            setBio(coacheeData.findCoacheeByID.bio);
+            setAffiliate(coacheeData.findCoacheeByID.affiliations);
+            setAddres(coacheeData.findCoacheeByID.address);
+            // You can similarly update other state variables as needed
+        }
+    }, [coacheeData]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -115,11 +135,26 @@ const CoacheeProfile = () => {
 const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument)
 const handleSaveButton = async () => {
 
+    console.log("________________________________________________________")
+    console.log("affiliations1", address)
+    console.log("bio1", bio)
+    console.log("mantra1", mantra)
+    console.log("address1", address)
+    console.log("profilepicture1", profilePicture)
+    console.log("________________________________________________________")
+
     return await executeMutation(
-        {id: parseInt(userToken), address: address, affiliations: affliation, mantra: mantra, bio: bio,
+        {id: parseInt(userToken), address: address, affiliations: affliation, mantra: mantra, bio: bio, profilePicture: profilePicture,
         }).then((res) => {
             if(res) {
                 setIsEditing(false)
+                console.log("________________________________________________________")
+                console.log("affiliations", res.data?.updateCoacheeProfile.affiliations)
+                console.log("bio", res.data?.updateCoacheeProfile.bio)
+                console.log("mantra", res.data?.updateCoacheeProfile.mantra)
+                console.log("address", res.data?.updateCoacheeProfile.address)
+                console.log("profilepicture", res.data?.updateCoacheeProfile.profilePicture)
+                console.log("________________________________________________________")
                 return res.data
             }
         }).catch((e) => {
@@ -148,6 +183,7 @@ const handleSaveButton = async () => {
             <TextInput
                 style={styles.mantraTextInput}
                 placeholder='Enter mantra'
+                // value={mantra ?? coachData?.findCoachByID.mantra}
                 value={mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
@@ -219,7 +255,7 @@ const handleSaveButton = async () => {
                             style={styles.bioInput}
                             multiline
                             placeholder='Enter address'
-                            value={address ?? coacheeData?.findCoacheeByID.address}
+                            value={address}
                             onChangeText={(address) => setAddres(address)}
                             
                             editable={isEditing}
@@ -240,7 +276,7 @@ const handleSaveButton = async () => {
 
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('./Icons/Woman.png')}
+                    source={require('./Icons/Man.png')}
                     style={styles.image}
                 />
             </View>

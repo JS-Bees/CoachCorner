@@ -30,7 +30,7 @@ declare global {
 
 export interface NexusGenInputs {
   CreateBookingInput: { // input type
-    additionalNotes?: string | null; // String
+    additionalNotes: string; // String!
     coachId: number; // Int!
     coacheeId: number; // Int!
     serviceType: string; // String!
@@ -42,35 +42,35 @@ export interface NexusGenInputs {
     startTime: NexusGenScalars['DateTime']; // DateTime!
   }
   CreateCoachInput: { // input type
-    affiliations?: string | null; // String
-    bio?: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     games: NexusGenEnums['Games'][]; // [Games!]!
     hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     lastName: string; // String!
-    mantra?: string | null; // String
+    mantra: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
-    profilePicture?: string | null; // String
+    profilePicture: string; // String!
     sport: NexusGenEnums['Sport']; // Sport!
     workplaceAddress: string; // String!
   }
   CreateCoacheeInput: { // input type
     address: string; // String!
-    affiliations?: string | null; // String
-    bio?: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     games: NexusGenEnums['Games'][]; // [Games!]!
     hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     lastName: string; // String!
-    mantra?: string | null; // String
+    mantra: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
-    profilePicture?: string | null; // String
+    profilePicture: string; // String!
   }
   CreateCoachingRelationshipInput: { // input type
     coachId: number; // Int!
@@ -89,16 +89,18 @@ export interface NexusGenInputs {
     status: NexusGenEnums['BookingStatus']; // BookingStatus!
   }
   UpdateCoachProfileInput: { // input type
-    affiliations?: string | null; // String
-    bio?: string | null; // String
-    mantra?: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
+    mantra: string; // String!
+    profilePicture: string; // String!
     workplaceAddress: string; // String!
   }
   UpdateCoacheeProfileInput: { // input type
     address: string; // String!
-    affiliations?: string | null; // String
-    bio?: string | null; // String
-    mantra?: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
+    mantra: string; // String!
+    profilePicture: string; // String!
   }
 }
 
@@ -122,7 +124,7 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Booking: { // root type
     active: boolean; // Boolean!
-    additionalNotes?: string | null; // String
+    additionalNotes: string; // String!
     coachId: number; // Int!
     coacheeId: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -143,8 +145,8 @@ export interface NexusGenObjects {
   }
   Coach: { // root type
     active: boolean; // Boolean!
-    affiliations?: string | null; // String
-    bio?: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -154,10 +156,10 @@ export interface NexusGenObjects {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
-    mantra?: string | null; // String
+    mantra: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
-    profilePicture?: string | null; // String
+    profilePicture: string; // String!
     sport: NexusGenEnums['Sport']; // Sport!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     workplaceAddress: string; // String!
@@ -165,8 +167,8 @@ export interface NexusGenObjects {
   Coachee: { // root type
     active: boolean; // Boolean!
     address: string; // String!
-    affiliations?: string | null; // String
-    bio?: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -176,10 +178,10 @@ export interface NexusGenObjects {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
-    mantra?: string | null; // String
+    mantra: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
-    profilePicture?: string | null; // String
+    profilePicture: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoachingRelationship: { // root type
@@ -218,7 +220,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 export interface NexusGenFieldTypes {
   Booking: { // field return type
     active: boolean; // Boolean!
-    additionalNotes: string | null; // String
+    additionalNotes: string; // String!
     bookingSlots: NexusGenRootTypes['BookingSlot'][]; // [BookingSlot!]!
     coach: NexusGenRootTypes['Coach']; // Coach!
     coachId: number; // Int!
@@ -243,8 +245,8 @@ export interface NexusGenFieldTypes {
   }
   Coach: { // field return type
     active: boolean; // Boolean!
-    affiliations: string | null; // String
-    bio: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     bookings: NexusGenRootTypes['Booking'][]; // [Booking!]!
     coachingRelationships: NexusGenRootTypes['CoachingRelationship'][]; // [CoachingRelationship!]!
@@ -256,10 +258,10 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
-    mantra: string | null; // String
+    mantra: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
-    profilePicture: string | null; // String
+    profilePicture: string; // String!
     reviews: NexusGenRootTypes['Review'][]; // [Review!]!
     sport: NexusGenEnums['Sport']; // Sport!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -268,8 +270,8 @@ export interface NexusGenFieldTypes {
   Coachee: { // field return type
     active: boolean; // Boolean!
     address: string; // String!
-    affiliations: string | null; // String
-    bio: string | null; // String
+    affiliations: string; // String!
+    bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     bookings: NexusGenRootTypes['Booking'][]; // [Booking!]!
     coachingRelationships: NexusGenRootTypes['CoachingRelationship'][]; // [CoachingRelationship!]!
@@ -281,10 +283,10 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     isCoach: boolean; // Boolean!
     lastName: string; // String!
-    mantra: string | null; // String
+    mantra: string; // String!
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
-    profilePicture: string | null; // String
+    profilePicture: string; // String!
     reviews: NexusGenRootTypes['Review'][]; // [Review!]!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
