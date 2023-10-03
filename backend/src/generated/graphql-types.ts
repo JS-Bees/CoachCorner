@@ -42,27 +42,35 @@ export interface NexusGenInputs {
     startTime: NexusGenScalars['DateTime']; // DateTime!
   }
   CreateCoachInput: { // input type
+    affiliations?: string | null; // String
+    bio?: string | null; // String
     birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     games: NexusGenEnums['Games'][]; // [Games!]!
     hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     lastName: string; // String!
+    mantra?: string | null; // String
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
+    profilePicture?: string | null; // String
     sport: NexusGenEnums['Sport']; // Sport!
     workplaceAddress: string; // String!
   }
   CreateCoacheeInput: { // input type
     address: string; // String!
+    affiliations?: string | null; // String
+    bio?: string | null; // String
     birthday: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     games: NexusGenEnums['Games'][]; // [Games!]!
     hobbies: NexusGenEnums['Hobbies'][]; // [Hobbies!]!
     lastName: string; // String!
+    mantra?: string | null; // String
     moviesGenres: NexusGenEnums['MovieGenres'][]; // [MovieGenres!]!
     password: string; // String!
+    profilePicture?: string | null; // String
   }
   CreateCoachingRelationshipInput: { // input type
     coachId: number; // Int!

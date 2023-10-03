@@ -10,6 +10,10 @@ export const CreateCoacheeInput = inputObjectType({
         t.field(gqlTypes.Coachee.firstName);
         t.field(gqlTypes.Coachee.lastName);
         t.field(gqlTypes.Coachee.password);
+        t.field(gqlTypes.Coachee.mantra);
+        t.field(gqlTypes.Coachee.affiliations);
+        t.field(gqlTypes.Coachee.bio);
+        t.field(gqlTypes.Coachee.profilePicture);
         t.field(gqlTypes.Coachee.moviesGenres);
         t.field(gqlTypes.Coachee.games);
         t.field(gqlTypes.Coachee.hobbies);
@@ -25,6 +29,10 @@ export const CreateCoachInput = inputObjectType({
         t.field(gqlTypes.Coach.lastName);
         t.field(gqlTypes.Coach.password);
         t.field(gqlTypes.Coach.workplaceAddress);
+        t.field(gqlTypes.Coach.mantra);
+        t.field(gqlTypes.Coach.affiliations);
+        t.field(gqlTypes.Coach.bio);
+        t.field(gqlTypes.Coach.profilePicture);
         t.field(gqlTypes.Coach.sport);
         t.field(gqlTypes.Coach.moviesGenres);
         t.field(gqlTypes.Coach.games);
