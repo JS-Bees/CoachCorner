@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
@@ -96,7 +97,8 @@ const MyClients = () => {
             </View>
             <DataTable>
                 {filteredItems.slice(from, to).map((item) => (
-                    <DataTable.Row key={item.key}>
+                    <DataTable.Row key={item.key}
+                        onPress={() => {navigation.navigate('CoachBookingDrawer')}}>
                         <DataTable.Cell>
                             <Text>{item.name}</Text>
                         </DataTable.Cell>

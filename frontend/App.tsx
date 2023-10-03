@@ -44,6 +44,7 @@ export type RootStackParams = {
     MyClients: any;
     MyCoaches: any;
     SearchList: any;
+    CoachBookingDrawer: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -52,7 +53,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="CoachBookingDrawer" >
+                <RootStack.Navigator initialRouteName="MyClients" >
                     <RootStack.Screen 
                         name="LogIn" 
                         component={LogInPage} 
@@ -111,6 +112,11 @@ export default function App() {
                     <RootStack.Screen 
                         name="SearchList" 
                         component={SearchList} 
+                        options={{headerShown: false}}
+                    />
+                     <RootStack.Screen 
+                        name="CoachBookingDrawer" 
+                        component={CoachBookingDrawer} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>

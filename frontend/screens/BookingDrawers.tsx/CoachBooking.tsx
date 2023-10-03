@@ -16,8 +16,7 @@ const CoachBookingDrawer = () => {
     };
 
     const handleClose = () => {
-        // Add your closing logic here
-        // For example, you can update the state to indicate that the booking drawer is closed
+
         setIsDrawerVisible(false);
     };
       

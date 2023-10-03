@@ -107,7 +107,7 @@ const MyCoaches = () => {
           </DataTable.Cell>
           <View style={{ marginRight: '-5%', marginTop: '1.4%' }}>
             <Button onPress={() => toggleModal(item)}>
-              Book Appointment
+              See Appointments
             </Button>
           </View>
         </DataTable.Row>
