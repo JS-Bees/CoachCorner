@@ -42,18 +42,6 @@ const CoachProfile = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
-    // const useFetchCoacheeByUserID = (userID: any) => {
-    //     const coacheeResult = useQuery({
-    //         query: FindCoachByIdDocument, // Use the Coachee query document
-    //         variables: {
-    //             userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-    //         },
-    //         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
-    //     });
-
-    //     return coacheeResult;
-    // };
     const [{ data: coachData, fetching, error }]  = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
         variables: {
@@ -61,14 +49,7 @@ const CoachProfile = () => {
         },
         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
-
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
-    // const {
-    //     data: coachData,
-    //     loading: coachLoading,
-    //     error: coachError,
-    // } = [coacheeResult];
+    
 
     const onLogOutPressed = async () => {
         try {
@@ -82,11 +63,42 @@ const CoachProfile = () => {
     };
 
     const [mantra, setMantra] = React.useState(coachData?.findCoachByID.mantra);
-    const [age, setAge] = React.useState('18');
+    const [age, setAge] = React.useState('');
     const [bio, setBio] = React.useState(coachData?.findCoachByID.bio);
     const [affliation, setAffiliate] = React.useState(coachData?.findCoachByID.affiliations);
     const [address, setAddres] = React.useState(coachData?.findCoachByID.workplaceAddress);
     const [profilePicture, setProfilePicture ] = React.useState('fixed');
+
+   // Function to format ISO date to a readable date string
+    function formatISODateToReadableDate(isoDate) {
+    const date = new Date(isoDate);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+    }
+  
+  // Use this function to convert the ISO date to a readable date string
+  const formattedBirthday = coachData ? formatISODateToReadableDate(coachData.findCoachByID.birthday) : '';
+  console.log(formattedBirthday)
+
+  // Calculate age based on birthday
+function calculateAge(birthday) {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1; // Subtract 1 if the birthday hasn't occurred yet this year
+    }
+  
+    return age;
+  }
+  
+  // ...
+  
+  // Use this function to calculate the age
+  const calculatedAge = coachData ? calculateAge(coachData.findCoachByID.birthday) : '';
+  console.log(calculatedAge)
 
     useEffect(() => {
         if (coachData) {
@@ -95,6 +107,9 @@ const CoachProfile = () => {
             setAffiliate(coachData.findCoachByID.affiliations);
             setAddres(coachData.findCoachByID.workplaceAddress);
             // You can similarly update other state variables as needed
+             // Calculate age and set it in the age state
+            const calculatedAge = calculateAge(coachData.findCoachByID.birthday);
+            setAge(calculatedAge.toString());
         }
     }, [coachData]);
 
@@ -135,13 +150,6 @@ const CoachProfile = () => {
 const [, executeMutation] = useMutation(UpdateCoachProfileDocument)
 const handleSaveButton = async () => {
 
-    console.log("________________________________________________________")
-    console.log("affiliations1", address)
-    console.log("bio1", bio)
-    console.log("mantra1", mantra)
-    console.log("address1", address)
-    console.log("profilepicture1", profilePicture)
-    console.log("________________________________________________________")
 
     return await executeMutation(
         {id: parseInt(userToken), workplaceAddress: address, affiliations: affliation, mantra: mantra, bio: bio, profilePicture: profilePicture,
@@ -218,10 +226,8 @@ const handleSaveButton = async () => {
                     <View>
                         <TextInput
                             style={styles.ageInput}
-                            value={age}
-                            placeholder='Enter age'
-                            onChangeText={(age) => setAge(age)}
-                            editable={isEditing}
+                            value={age.toString()}
+                            editable={false}
                             underlineColor="white"
                         />
                     </View>

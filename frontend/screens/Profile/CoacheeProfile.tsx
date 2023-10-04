@@ -42,18 +42,6 @@ const CoacheeProfile = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
-    // const useFetchCoacheeByUserID = (userID: any) => {
-    //     const coacheeResult = useQuery({
-    //         query: FindCoachByIdDocument, // Use the Coachee query document
-    //         variables: {
-    //             userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-    //         },
-    //         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
-    //     });
-
-    //     return coacheeResult;
-    // };
     const [{ data: coacheeData, fetching, error }]  = useQuery({
         query: FindCoacheeByIdDocument, // Use the Coachee query document
         variables: {
@@ -61,14 +49,6 @@ const CoacheeProfile = () => {
         },
         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
-
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
-    // const {
-    //     data: coachData,
-    //     loading: coachLoading,
-    //     error: coachError,
-    // } = [coacheeResult];
 
     const onLogOutPressed = async () => {
         try {
@@ -88,6 +68,38 @@ const CoacheeProfile = () => {
     const [address, setAddres] = React.useState(coacheeData?.findCoacheeByID.address);
     const [profilePicture, setProfilePicture ] = React.useState('fixed');
 
+    
+   // Function to format ISO date to a readable date string
+   function formatISODateToReadableDate(isoDate) {
+    const date = new Date(isoDate);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+    }
+  
+  // Use this function to convert the ISO date to a readable date string
+  const formattedBirthday = coacheeData ? formatISODateToReadableDate(coacheeData.findCoacheeByID.birthday) : '';
+  console.log(formattedBirthday)
+
+  // Calculate age based on birthday
+function calculateAge(birthday) {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1; // Subtract 1 if the birthday hasn't occurred yet this year
+    }
+  
+    return age;
+  }
+  
+  // ...
+  
+  // Use this function to calculate the age
+  const calculatedAge = coacheeData ? calculateAge(coacheeData.findCoacheeByID.birthday) : '';
+  console.log(calculatedAge)
+
     useEffect(() => {
         if (coacheeData) {
             setMantra(coacheeData.findCoacheeByID.mantra);
@@ -95,6 +107,8 @@ const CoacheeProfile = () => {
             setAffiliate(coacheeData.findCoacheeByID.affiliations);
             setAddres(coacheeData.findCoacheeByID.address);
             // You can similarly update other state variables as needed
+            const calculatedAge = calculateAge(coacheeData.findCoacheeByID.birthday);
+            setAge(calculatedAge.toString());
         }
     }, [coacheeData]);
 
