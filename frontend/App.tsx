@@ -27,7 +27,7 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.4:5050/graphql', // replace with actual IP address, change to .env file
+    url: 'http://192.168.1.8:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 

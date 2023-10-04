@@ -128,7 +128,7 @@ const SearchList = () => {
 
       <View style={style.resultsContainer}>
         <ScrollView style={style.scrollContainer}>
-          {filteredCoaches.slice(0, 5).map((coach) => (
+          {filteredCoaches.slice(0, 10).map((coach) => (
             <TouchableOpacity key={coach.id} onPress={() => toggleBottomSheet(coach)}>
               <ListItemComponent data={coach} />
             </TouchableOpacity>

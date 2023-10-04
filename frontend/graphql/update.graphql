@@ -1,9 +1,10 @@
 mutation UpdateCoacheeProfile(
     $id: Int!
     $address: String!
-    $affiliations: String
-    $bio: String
-    $mantra: String
+    $affiliations: String!
+    $bio: String!
+    $mantra: String!
+    $profilePicture: String!
 ) {
     updateCoacheeProfile(
         id: $id
@@ -12,21 +13,24 @@ mutation UpdateCoacheeProfile(
             affiliations: $affiliations
             bio: $bio
             mantra: $mantra
+            profilePicture: $profilePicture
         }
     ) {
         address
         affiliations
         bio
         mantra
+        profilePicture
     }
 }
 
 mutation UpdateCoachProfile(
     $id: Int!
     $workplaceAddress: String!
-    $affiliations: String
-    $bio: String
-    $mantra: String
+    $affiliations: String!
+    $bio: String!
+    $mantra: String!
+    $profilePicture: String!
 ) {
     updateCoachProfile(
         id: $id
@@ -35,12 +39,14 @@ mutation UpdateCoachProfile(
             affiliations: $affiliations
             bio: $bio
             mantra: $mantra
+            profilePicture: $profilePicture
         }
     ) {
         workplaceAddress
         affiliations
         bio
         mantra
+        profilePicture
     }
 }
 

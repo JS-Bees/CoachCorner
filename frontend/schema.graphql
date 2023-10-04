@@ -4,7 +4,7 @@
 
 type Booking {
   active: Boolean!
-  additionalNotes: String
+  additionalNotes: String!
   bookingSlots: [BookingSlot!]!
   coach: Coach!
   coachId: Int!
@@ -38,8 +38,8 @@ enum BookingStatus {
 
 type Coach {
   active: Boolean!
-  affiliations: String
-  bio: String
+  affiliations: String!
+  bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
   coachingRelationships: [CoachingRelationship!]!
@@ -51,10 +51,10 @@ type Coach {
   id: Int!
   isCoach: Boolean!
   lastName: String!
-  mantra: String
+  mantra: String!
   moviesGenres: [MovieGenres!]!
   password: String!
-  profilePicture: String
+  profilePicture: String!
   reviews: [Review!]!
   sport: Sport!
   updatedAt: DateTime!
@@ -64,8 +64,8 @@ type Coach {
 type Coachee {
   active: Boolean!
   address: String!
-  affiliations: String
-  bio: String
+  affiliations: String!
+  bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
   coachingRelationships: [CoachingRelationship!]!
@@ -77,10 +77,10 @@ type Coachee {
   id: Int!
   isCoach: Boolean!
   lastName: String!
-  mantra: String
+  mantra: String!
   moviesGenres: [MovieGenres!]!
   password: String!
-  profilePicture: String
+  profilePicture: String!
   reviews: [Review!]!
   updatedAt: DateTime!
 }
@@ -98,7 +98,7 @@ type CoachingRelationship {
 }
 
 input CreateBookingInput {
-  additionalNotes: String
+  additionalNotes: String!
   coachId: Int!
   coacheeId: Int!
   serviceType: String!
@@ -112,28 +112,36 @@ input CreateBookingSlotInput {
 }
 
 input CreateCoachInput {
+  affiliations: String!
+  bio: String!
   birthday: DateTime!
   email: String!
   firstName: String!
   games: [Games!]!
   hobbies: [Hobbies!]!
   lastName: String!
+  mantra: String!
   moviesGenres: [MovieGenres!]!
   password: String!
+  profilePicture: String!
   sport: Sport!
   workplaceAddress: String!
 }
 
 input CreateCoacheeInput {
   address: String!
+  affiliations: String!
+  bio: String!
   birthday: DateTime!
   email: String!
   firstName: String!
   games: [Games!]!
   hobbies: [Hobbies!]!
   lastName: String!
+  mantra: String!
   moviesGenres: [MovieGenres!]!
   password: String!
+  profilePicture: String!
 }
 
 input CreateCoachingRelationshipInput {
@@ -256,15 +264,17 @@ input UpdateBookingStatusInput {
 }
 
 input UpdateCoachProfileInput {
-  affiliations: String
-  bio: String
-  mantra: String
+  affiliations: String!
+  bio: String!
+  mantra: String!
+  profilePicture: String!
   workplaceAddress: String!
 }
 
 input UpdateCoacheeProfileInput {
   address: String!
-  affiliations: String
-  bio: String
-  mantra: String
+  affiliations: String!
+  bio: String!
+  mantra: String!
+  profilePicture: String!
 }

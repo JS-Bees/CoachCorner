@@ -5,6 +5,10 @@ mutation createCoachee(
     $birthday: DateTime!
     $email: String!
     $password: String!
+    $profilePicture: String!
+    $mantra: String!
+    $bio: String!
+    $affiliations: String!
     $games: [Games!]!
     $hobbies: [Hobbies!]!
     $moviesGenres: [MovieGenres!]!
@@ -17,6 +21,10 @@ mutation createCoachee(
             birthday: $birthday
             email: $email
             password: $password
+            profilePicture: $profilePicture
+            mantra: $mantra
+            bio: $bio
+            affiliations: $affiliations
             games: $games
             hobbies: $hobbies
             moviesGenres: $moviesGenres
@@ -26,7 +34,6 @@ mutation createCoachee(
         email
     }
 }
-
 mutation createCoach(
     $firstName: String!
     $lastName: String!
@@ -34,6 +41,10 @@ mutation createCoach(
     $email: String!
     $password: String!
     $workplaceAddress: String!
+    $profilePicture: String!
+    $mantra: String!
+    $bio: String!
+    $affiliations: String!
     $sport: Sport!
     $games: [Games!]!
     $hobbies: [Hobbies!]!
@@ -47,6 +58,10 @@ mutation createCoach(
             email: $email
             password: $password
             workplaceAddress: $workplaceAddress
+            profilePicture: $profilePicture
+            mantra: $mantra
+            bio: $bio
+            affiliations: $affiliations
             sport: $sport
             games: $games
             hobbies: $hobbies
@@ -57,6 +72,7 @@ mutation createCoach(
         email
     }
 }
+
 
 mutation CreateCoachingRelationship($coachId: Int!, $coacheeId: Int!) {
     createCoachingRelationship(

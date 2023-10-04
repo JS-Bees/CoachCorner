@@ -90,10 +90,10 @@ model Coachee {
   hobbies             Hobbies[]
   moviesGenres        MovieGenres[] 
 
-  affiliations        String? 
-  bio                 String?
-  mantra              String?    
-  profilePicture      String?     
+  affiliations        String
+  bio                 String
+  mantra              String 
+  profilePicture      String  
 
   bookings            Booking[]
   coachingRelationships CoachingRelationship[]
@@ -120,10 +120,10 @@ model Coach {
   hobbies             Hobbies[]
   moviesGenres        MovieGenres[]
 
-  affiliations        String? 
-  bio                 String?
-  mantra              String?  
-  profilePicture      String?     
+  affiliations        String
+  bio                 String
+  mantra              String 
+  profilePicture      String    
 
   bookings              Booking[] 
   coachingRelationships CoachingRelationship[]
@@ -173,7 +173,7 @@ model Booking {
   serviceType       String
   status            BookingStatus
 
-  additionalNotes   String?
+  additionalNotes   String
 
   active            Boolean      @default(true)
   createdAt         DateTime     @default(now())

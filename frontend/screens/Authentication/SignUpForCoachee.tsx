@@ -14,7 +14,6 @@ import LogInButton from '../../components/CustomButton';
 import { useMutation } from 'urql';
 import {
     CreateCoacheeDocument,
-    Sport,
     Games,
     Hobbies,
     MovieGenres,
@@ -22,7 +21,7 @@ import {
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RadioButton } from 'react-native-paper';
+import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
 
 const SignUpForCoachee = () => {
     const navigation =
@@ -37,9 +36,9 @@ const SignUpForCoachee = () => {
     const [City, setCity] = useState('');
     const [Postal, setPostal] = useState('5800');
     const [dateOfBirth, setDateofBirth] = useState('');
-    const [selectedGames, setSelectedGames] = useState<Games[]>([Games.Dota]);
-    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([Hobbies.Baking]);
-    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([MovieGenres.Action]);
+    const [selectedGames, setSelectedGames] = useState<Games[]>([]);
+    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
+    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
     const [, SignUpForCoach] = useMutation(CreateCoacheeDocument);
 
     const [date, setdate] = useState(new Date());
@@ -47,12 +46,20 @@ const SignUpForCoachee = () => {
     const [showModal, setShowModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
+    const [errorModalVisible, setErrorModalVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
     };
 
     const toggleModal = () => {
         setShowModal(!showModal);
+    };
+
+    const toggleErrorModal = () => {
+        setErrorModalVisible(!errorModalVisible);
     };
 
     const onChange = ({ type }: any, selectedDate: any) => {
@@ -68,29 +75,66 @@ const SignUpForCoachee = () => {
         }
     };
 
-    // const setInitialSelectedValues = () => {
-    //     setSelectedSport([Sport.Soccer]);
-    //     setSelectedGames([Games.Dota]);
-    //     setSelectedHobbies([Hobbies.Baking]);
-    //     setSelectedMovieGenres([MovieGenres.Action]);
-    // };
+    // Function to toggle checkboxes for games, hobbies, and movie genres
+    const toggleCheckbox = (item: any, state: any, setState: any) => {
+        if (state.includes(item)) {
+            setState(state.filter((selectedItem: any) => selectedItem !== item));
+        } else {
+            setState([...state, item]);
+        }
+    };
+
+    function containsInteger(First_Name, Last_Name) {
+        const regex = /\d/;
+        return regex.test(First_Name) || regex.test(Last_Name);
+    }
 
     const onSignUpPressed = async () => {
         try {
+            // Validate the input fields
+            if (
+                First_Name.trim() === '' ||
+                Last_Name.trim() === '' ||
+                Email.trim() === '' ||
+                Password.trim() === '' ||
+                Repeat_Password.trim() === '' ||
+                StreetAdd.trim() === '' ||
+                City.trim() === '' ||
+                Postal.trim() === '' ||
+                selectedGames.length === 0 ||
+                selectedHobbies.length === 0 ||
+                selectedMovieGenres.length === 0
+            ) {
+                // Display an error message for incomplete fields
+                setErrorMessage('Please fill in all the required fields.');
+                setErrorModalVisible(true);
+                return; // Return early to prevent further execution
+            }
+
+            
+            // Check for integers in First_Name and Last_Name
+         if (containsInteger(First_Name, Last_Name)) {
+            setErrorMessage('First Name and Last Name cannot contain integers.');
+            setErrorModalVisible(true);
+            return; // Return early if validation fails
+        }
+
+      
+
             // Log the data before making the API call
             console.log("Signing up with data:", {
-            firstName: First_Name,
-            lastName: Last_Name,
-            birthday: date,
-            email: Email.toLowerCase(),
-            password: Password,
-            address: StreetAdd,
-            games: selectedGames,
-            hobbies: selectedHobbies,
-            moviesGenres: selectedMovieGenres,
-        });
+                firstName: First_Name,
+                lastName: Last_Name,
+                birthday: date,
+                email: Email.toLowerCase(),
+                password: Password,
+                workplaceAddress: StreetAdd,
+                games: selectedGames,
+                hobbies: selectedHobbies,
+                moviesGenres: selectedMovieGenres,
+            });
 
-            const { data, error } = await SignUpForCoach({
+            const { data, error, fetching } = await SignUpForCoach({
                 firstName: First_Name,
                 lastName: Last_Name,
                 birthday: date,
@@ -121,7 +165,6 @@ const SignUpForCoachee = () => {
         } catch (err) {
             console.error(err);
         }
-        console.log()
     };
 
     return (
@@ -135,16 +178,19 @@ const SignUpForCoachee = () => {
                     <InputSignUpPages
                         placeholder="Full Name"
                         value={First_Name}
+                        checkForInteger
                         setValue={setFirst_Name}
                     />
                     <InputSignUpPages
                         placeholder="Last Name"
                         value={Last_Name}
+                        checkForInteger
                         setValue={setLast_Name}
                     />
                     <InputSignUpPages
                         placeholder="Email"
                         value={Email}
+                        checkEmailEnding
                         setValue={setEmail}
                     />
                 </View>
@@ -208,89 +254,82 @@ const SignUpForCoachee = () => {
                         value={Postal}
                         setValue={setPostal}
                     />
-                    <Text style={styles.choiceContainer}>Select Game:</Text>
-                        <View style={styles.radioContainer}>
-                            <View style={styles.radioButton}>
-                                <Text style={{ color: '#a19e9e' }}>Dota</Text>
-                                <RadioButton
-                                value={Sport.Soccer}
-                                status={selectedGames[0] === Games.Dota ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedGames([Games.Dota])}
-                                />
+                    <Text style={styles.choiceContainer}>Select Video Games:</Text>
+                    <View style={styles.checkboxContainer}>
+                    <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>PUBG</Text>
+                            <Checkbox
+                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
+                            />
                         </View>
-                        <View style={styles.radioButton}>
-                        <Text style={{ color: '#a19e9e' }}>LOL</Text>
-                            <RadioButton
-                                value={Games.Lol}
-                                status={selectedGames[0] === Games.Lol ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedGames([Games.Lol])}
-                                />
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>Dota</Text>
+                            <Checkbox
+                                status={selectedGames.includes(Games.Dota) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Games.Dota, selectedGames, setSelectedGames)}
+                            />
                         </View>
-                        <View style={styles.radioButton}>
-                        <Text style={{ color: '#a19e9e' }}>PUBG</Text>
-                            <RadioButton
-                                value={Games.Pubg}
-                                status={selectedGames[0] === Games.Pubg ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedGames([Games.Pubg])}
-                                />
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 27 }}>LOL</Text>
+                            <Checkbox
+                                status={selectedGames.includes(Games.Lol) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Games.Lol, selectedGames, setSelectedGames)}
+                            />
                         </View>
                     </View>
-                    <Text style={styles.choiceContainer}>Select Hobbie:</Text>
-                        <View style={styles.radioContainer}>
-                            <View style={styles.radioButton}>
-                                <Text style={{ color: '#a19e9e' }}>Reading</Text>
-                                <RadioButton
-                                value={Hobbies.Reading}
-                                status={selectedHobbies[0] === Hobbies.Reading ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedHobbies([Hobbies.Reading])}
-                                />
+
+                    <Text style={styles.choiceContainer}>Select Hobbies:</Text>
+                    <View style={styles.checkboxContainer}>
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e' }}>Reading</Text>
+                            <Checkbox
+                                status={selectedHobbies.includes(Hobbies.Reading) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Hobbies.Reading, selectedHobbies, setSelectedHobbies)}
+                            />
                         </View>
-                        <View style={styles.radioButton}>
-                        <Text style={{ color: '#a19e9e' }}>Singing</Text>
-                            <RadioButton
-                                 value={Hobbies.Singing}
-                                 status={selectedHobbies[0] === Hobbies.Singing ? 'checked' : 'unchecked'}
-                                 onPress={() => setSelectedHobbies([Hobbies.Singing])}
-                                 />
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: -1 }}>Singing</Text>
+                            <Checkbox
+                                status={selectedHobbies.includes(Hobbies.Singing) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Hobbies.Singing, selectedHobbies, setSelectedHobbies)}
+                            />
                         </View>
-                        <View style={styles.radioButton}>
-                        <Text style={{ color: '#a19e9e' }}>Writing</Text>
-                            <RadioButton
-                                value={Hobbies.Writing}
-                                status={selectedHobbies[0] === Hobbies.Writing ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedHobbies([Hobbies.Writing])}
-                                />
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 7 }}>Writing</Text>
+                            <Checkbox
+                                status={selectedHobbies.includes(Hobbies.Writing) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(Hobbies.Writing, selectedHobbies, setSelectedHobbies)}
+                            />
                         </View>
                     </View>
-                    <Text style={styles.choiceContainer}>Select Movie Genre:</Text>
-                        <View style={styles.radioContainer}>
-                            <View style={styles.radioButton}>
-                                <Text style={{ color: '#a19e9e' }}>Action</Text>
-                                <RadioButton
-                                value={MovieGenres.Action}
-                                status={selectedMovieGenres[0] === MovieGenres.Action ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedMovieGenres([MovieGenres.Action])}
-                                />
+
+                    <Text style={styles.choiceContainer}>Select Movie Genres:</Text>
+                    <View style={styles.checkboxContainer}>
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Action</Text>
+                            <Checkbox
+                                status={selectedMovieGenres.includes(MovieGenres.Action) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(MovieGenres.Action, selectedMovieGenres, setSelectedMovieGenres)}
+                            />
                         </View>
-                        <View style={styles.radioButton}>
-                        <Text style={{ color: '#a19e9e' }}>Comedy</Text>
-                            <RadioButton
-                                value={MovieGenres.Comedy}
-                                status={selectedMovieGenres[0] === MovieGenres.Comedy ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedMovieGenres([MovieGenres.Comedy])}
-                                />
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: -7 }}>Comedy</Text>
+                            <Checkbox
+                                status={selectedMovieGenres.includes(MovieGenres.Comedy) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(MovieGenres.Comedy, selectedMovieGenres, setSelectedMovieGenres)}
+                            />
                         </View>
-                        <View style={styles.radioButton}>
-                        <Text style={{ color: '#a19e9e' }}>Horror</Text>
-                            <RadioButton
-                                value={MovieGenres.Horror}
-                                status={selectedMovieGenres[0] === MovieGenres.Horror ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedMovieGenres([MovieGenres.Horror])}
-                                />
+                        <View style={styles.checkbox}>
+                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Horror</Text>
+                            <Checkbox
+                                status={selectedMovieGenres.includes(MovieGenres.Horror) ? 'checked' : 'unchecked'}
+                                onPress={() => toggleCheckbox(MovieGenres.Horror, selectedMovieGenres, setSelectedMovieGenres)}
+                            />
                         </View>
                     </View>
                 </View>
-                    <View style={styles.button}>
+                <View style={styles.button}>
                     <LogInButton text="Sign Up" onPress={onSignUpPressed} />
                 </View>
             </View>
@@ -310,10 +349,23 @@ const SignUpForCoachee = () => {
                         </Pressable>
                     </View>
                 </View>
-                
             )}
-                
-            
+
+            {errorModalVisible && (
+                <View style={styles.modal}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.errorText}>{errorMessage}</Text>
+                        <Pressable
+                            style={styles.modalButton}
+                            onPress={() => {
+                                toggleErrorModal();
+                            }}
+                        >
+                            <Text style={styles.modalButtonText}>OK</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            )}
         </ScrollView>
     );
 };
@@ -355,7 +407,7 @@ const styles = StyleSheet.create({
     },
     choiceContainer: {
         color: '#a19e9e',
-        marginTop: '10%',
+        marginTop: '7%',
         marginLeft: '1%',
         justifyContent: 'flex-start',
     },
@@ -411,6 +463,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#915bc7', // Change the font color to light green
     },
+    errorText: {
+        fontFamily: 'Roboto',
+        fontSize: 15,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: 'center',
+        color: 'red', // Change the font color to red
+    },
     modalButton: {
         backgroundColor: '#A378F2', // Change the background color to purple
         padding: 10,
@@ -422,16 +482,45 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
     },
-    radioContainer: {
+    checkboxContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexWrap: 'wrap',
         marginTop: 10,
     },
-    radioButton: {
+    checkbox: {
         flexDirection: 'row',
         alignItems: 'center',
+        width: '50%',
     },
   
 });
 
 export default SignUpForCoachee;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

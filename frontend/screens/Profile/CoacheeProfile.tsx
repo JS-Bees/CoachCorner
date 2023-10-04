@@ -32,6 +32,7 @@ const CoacheeProfile = () => {
         const fetchUserToken = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token)
                 setUserToken(token);
             } catch (error) {
                 console.error('Error fetching token:', error);
@@ -41,25 +42,13 @@ const CoacheeProfile = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
-    const useFetchCoacheeByUserID = (userID: any) => {
-        const [coacheeResult] = useQuery({
-            query: FindCoacheeByIdDocument, // Use the Coachee query document
-            variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-            },
-        });
-
-        return coacheeResult;
-    };
-
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
-    const {
-        data: coachData,
-        loading: coachLoading,
-        error: coachError,
-    } = useFetchCoacheeByUserID(userToken);
+    const [{ data: coacheeData, fetching, error }]  = useQuery({
+        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        variables: {
+            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
 
     const onLogOutPressed = async () => {
         try {
@@ -72,11 +61,56 @@ const CoacheeProfile = () => {
         }
     };
 
-    const [mantra, setMantra] = React.useState('');
-    const [bio, setBio] = React.useState('');
-    const [affliation, setAffiliate] = React.useState('');
-    const [address, setAddres] = React.useState(coachData?.findCoacheeByID.address);
-    const [age, setAge] = React.useState('');
+    const [mantra, setMantra] = React.useState(coacheeData?.findCoacheeByID.mantra);
+    const [age, setAge] = React.useState('18');
+    const [bio, setBio] = React.useState(coacheeData?.findCoacheeByID.bio);
+    const [affliation, setAffiliate] = React.useState(coacheeData?.findCoacheeByID.affiliations);
+    const [address, setAddres] = React.useState(coacheeData?.findCoacheeByID.address);
+    const [profilePicture, setProfilePicture ] = React.useState('fixed');
+
+    
+   // Function to format ISO date to a readable date string
+   function formatISODateToReadableDate(isoDate) {
+    const date = new Date(isoDate);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+    }
+  
+  // Use this function to convert the ISO date to a readable date string
+  const formattedBirthday = coacheeData ? formatISODateToReadableDate(coacheeData.findCoacheeByID.birthday) : '';
+  console.log(formattedBirthday)
+
+  // Calculate age based on birthday
+function calculateAge(birthday) {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1; // Subtract 1 if the birthday hasn't occurred yet this year
+    }
+  
+    return age;
+  }
+  
+  // ...
+  
+  // Use this function to calculate the age
+  const calculatedAge = coacheeData ? calculateAge(coacheeData.findCoacheeByID.birthday) : '';
+  console.log(calculatedAge)
+
+    useEffect(() => {
+        if (coacheeData) {
+            setMantra(coacheeData.findCoacheeByID.mantra);
+            setBio(coacheeData.findCoacheeByID.bio);
+            setAffiliate(coacheeData.findCoacheeByID.affiliations);
+            setAddres(coacheeData.findCoacheeByID.address);
+            // You can similarly update other state variables as needed
+            const calculatedAge = calculateAge(coacheeData.findCoacheeByID.birthday);
+            setAge(calculatedAge.toString());
+        }
+    }, [coacheeData]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -115,18 +149,31 @@ const CoacheeProfile = () => {
 const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument)
 const handleSaveButton = async () => {
 
+    console.log("________________________________________________________")
+    console.log("affiliations1", address)
+    console.log("bio1", bio)
+    console.log("mantra1", mantra)
+    console.log("address1", address)
+    console.log("profilepicture1", profilePicture)
+    console.log("________________________________________________________")
+
     return await executeMutation(
-        {id: parseInt(userToken), address: address, affiliations: affliation, mantra: mantra, bio: bio,
+        {id: parseInt(userToken), address: address, affiliations: affliation, mantra: mantra, bio: bio, profilePicture: profilePicture,
         }).then((res) => {
             if(res) {
                 setIsEditing(false)
+                console.log("________________________________________________________")
+                console.log("affiliations", res.data?.updateCoacheeProfile.affiliations)
+                console.log("bio", res.data?.updateCoacheeProfile.bio)
+                console.log("mantra", res.data?.updateCoacheeProfile.mantra)
+                console.log("address", res.data?.updateCoacheeProfile.address)
+                console.log("profilepicture", res.data?.updateCoacheeProfile.profilePicture)
+                console.log("________________________________________________________")
                 return res.data
             }
         }).catch((e) => {
             console.log("sheeesh error" , e)
         })
-
-    
 
 }
 
@@ -141,25 +188,28 @@ const handleSaveButton = async () => {
                     onPress={onLogOutPressed}
                 />
             </View>
-            <Text style={styles.text}> Profile </Text>
-
-            <Text
-                style={styles.normalText}
-            >{`${coachData?.findCoacheeByID?.firstName} ${coachData?.findCoacheeByID?.lastName}`}</Text>
-
+             {/* Wrap the "Profile" text, first name, and last name in a fixed-position view */}
+             <View style={styles.profileInfo}>
+                <Text style={styles.text}> Profile </Text>
+                <Text style={styles.normalText}>{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}</Text>
+            </View>
+            <View style={styles.mantraContainer}>
             <TextInput
                 style={styles.mantraTextInput}
                 placeholder='Enter mantra'
+                // value={mantra ?? coachData?.findCoachByID.mantra}
                 value={mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
                 underlineColor="transparent"
             />
+            </View>
 
             <ScrollView
                 style={styles.scrollView}
                 scrollEnabled={scrollEnabled}
                 ref={scrollViewRef}
+                keyboardShouldPersistTaps="handled"
             >
                 <Text style={styles.bio}> Bio </Text>
                 <View>
@@ -219,7 +269,7 @@ const handleSaveButton = async () => {
                             style={styles.bioInput}
                             multiline
                             placeholder='Enter address'
-                            value={address ?? coachData?.findCoacheeByID.address}
+                            value={address}
                             onChangeText={(address) => setAddres(address)}
                             
                             editable={isEditing}
@@ -235,16 +285,15 @@ const handleSaveButton = async () => {
                     onPress={toggleEditing}
                     iconColor="#60488A"
                 />
+                    {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
             </View>
 
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('./Icons/User.png')}
+                    source={require('./Icons/Man.png')}
                     style={styles.image}
                 />
             </View>
-            {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
-            
         </View>
     );
 };
@@ -253,7 +302,7 @@ const imageSize = 100;
 
 const styles = StyleSheet.create({
     scrollView: {
-        top: 100,
+        top: 20,
         width: '95%',
     },
     container: {
@@ -265,12 +314,14 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: 'transparent',
     },
-
     text: {
         color: 'white',
         fontSize: 30,
-        top: '-5%',
+        left: '20%',
+        top: '80%',
         fontFamily: 'Roboto',
+        fontWeight: '700',
+        position: 'absolute'
     },
 
     logOut: {
@@ -283,13 +334,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    mantraContainer: {
+        alignItems: 'center',
+        left: '45%',
+        marginTop: '35%'
+    },
+
     mantraTextInput: {
         paddingHorizontal: 50,
         paddingVertical: 1,
         backgroundColor: 'transparent',
-        alignItems: 'center',
         width: 500,
-        top: '8%',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
@@ -408,7 +463,7 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: '10%',
+        top: '490%',
         fontSize: 25,
         alignItems: 'center',
         fontWeight: '700',
@@ -453,6 +508,10 @@ const styles = StyleSheet.create({
         width: width,
         height: height,
         zIndex: 0,
+    },
+    profileInfo: {
+        position: 'absolute',
+        top: 20, // Adjust the top value as needed
     },
 });
 
