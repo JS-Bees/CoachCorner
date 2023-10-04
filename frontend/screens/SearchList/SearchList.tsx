@@ -110,7 +110,7 @@ const SearchList = () => {
 
       <View style={style.searchContainer}>
         <TextInput
-          placeholder="Search"
+          placeholder="Search Sport"
           clearButtonMode="always"
           style={style.inputText}
           autoCapitalize="none"

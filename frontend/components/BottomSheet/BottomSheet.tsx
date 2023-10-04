@@ -6,7 +6,11 @@ import DragSheetButton from '../DragSheetButton';
 import { ListItemProps } from '../ListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CreateCoachingRelationshipDocument } from '../../generated-gql/graphql';
-import { useMutation } from 'urql'
+import { CreateReviewDocument } from '../../generated-gql/graphql';
+import { FindCoachByIdReviewDocument } from '../../generated-gql/graphql';
+import { useMutation, useQuery } from 'urql'
+import Modal from 'react-native-modal';
+import RatingWithStars from './RatingWithStars';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -28,8 +32,50 @@ interface DraggableBottomSheetProps {
 
 const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, coachData }) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isSecondModalVisible, setSecondModalVisible] = useState(false);
   const [, createCoachingRelationship] = useMutation(CreateCoachingRelationshipDocument); // Initialize the mutation
+  const [, createReviewMutation] = useMutation(CreateReviewDocument);
+
+  const [review, setReview] = useState('');
+  const [rating, setRating] = useState(0); // Initialize with the default rating
+
+  const submitReview = async () => {
+    try {
+      const coacheeId = await AsyncStorage.getItem('userToken');
+
+      if (coacheeId) {
+        const variables = {
+          coachId: coachData.id,
+          coacheeId: parseInt(coacheeId),
+          starRating: rating,
+          comment: review,
+        };
+
+        const { data, error } = await createReviewMutation(variables); // Replace with your mutation function
+
+        if (data) {
+          // Handle success, e.g., show a success message
+          console.log('Review submitted successfully:', data);
+        
+          // Close the "Add a Review" modal
+          closeSecondModal();
+          resetReviewAndRating();
+        } else if (error) {
+          // Handle error, e.g., show an error message
+          console.error('Error submitting review:', error);
+        }
+      } else {
+        console.error('coacheeId not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
+  };
+
+
+
+
 
   const onAddPressed = async () => {
     try {
@@ -61,10 +107,36 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
       console.error('Error adding coach:', error);
     }
   };
+  const [{ data: coachReviewsData }] = useQuery({
+    query: FindCoachByIdReviewDocument,
+    variables: { userID: coachData.id }, // Pass the coach's ID as the userID variable
+    requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+  });
 
-  const onSeePressed = () => {
-    console.log('Pressed')
+
+  const onSeeReviewPressed = () => {
+    setModalVisible(true);
   }
+  const closeModal = () => {
+    setModalVisible(false);
+  }
+
+
+  const onOpenSecondModalPressed = () => {
+    setSecondModalVisible(true);
+  }
+
+  const closeSecondModal = () => {
+    setSecondModalVisible(false);
+  }
+
+  const resetReviewAndRating = () => {
+    setReview(''); // Reset the review to an empty string
+    setRating(0); // Reset the rating to its initial value (0 in this case)
+  };
+
+
+
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
   
@@ -173,14 +245,77 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({ onClose, co
       </ScrollView>
 
      <View style = {styles.Reviews}>
-     <DragSheetButton text={"See My Reviews"} type='TERTIARY' onPress={onSeePressed}/>
+     <DragSheetButton text={"Check Reviews"} type='TERTIARY' onPress={onSeeReviewPressed}/>
+     <DragSheetButton text={"Add a Review"}type='TERTIARY' onPress={onOpenSecondModalPressed}/>
      </View>
-     
-    
-      
-
-
       </Animated.View>
+
+      <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+       <View style={styles.modalContainer}>
+         {/* First modal content here */}
+         <Text>Coach Reviews</Text>
+          <ScrollView>
+            {coachReviewsData &&
+              coachReviewsData.findCoachByID &&
+              coachReviewsData.findCoachByID.reviews.map((review, index) => (
+                <View key={index} style={styles.reviewContainer}>
+
+                  <Text>{review.coachee.firstName} {review.coachee.lastName}</Text>
+                  <RatingWithStars rating={review.starRating} />
+                  <Text>{review.comment}</Text>
+                </View>
+              ))}
+          </ScrollView>
+         <TouchableOpacity onPress={closeModal}>
+           <Text>Close</Text>
+         </TouchableOpacity>
+       </View>
+     </Modal>
+      {/* Second Modal */}
+      <Modal isVisible={isSecondModalVisible} onBackdropPress={closeSecondModal}>
+  <View style={styles.modalContainer}>
+    {/* Second modal content here */}
+    <Text>Enter Reviews</Text>
+    <ScrollView>
+      {/* Text input for the review */}
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter your review"
+        multiline
+        numberOfLines={4}
+        value={review}
+        onChangeText={(text) => setReview(text)}
+      />
+
+      {/* Rating input */}
+      <TextInput
+  style={styles.textInput}
+  placeholder="Enter your Rating (1-5)"
+  keyboardType="numeric" // Only allow numeric input
+  value={rating.toString()} // Use the rating state as the value
+  onChangeText={(text) => {
+    // Validate and set the rating as a number between 1 and 5
+    const numericRating = parseInt(text);
+    if (!isNaN(numericRating) && numericRating >= 1 && numericRating <= 5) {
+      setRating(numericRating);
+    }
+  }}
+/>
+    </ScrollView>
+
+    {/* Submit Review button */}
+    <TouchableOpacity onPress={submitReview}>
+      <Text>Submit Review</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity onPress={() => {
+      closeSecondModal();
+      resetReviewAndRating(); // Call the reset function when closing the modal
+    }}>
+      <Text>Close</Text>
+    </TouchableOpacity>
+  </View>
+</Modal>
     </View>
   );
 };
@@ -288,7 +423,17 @@ const styles = StyleSheet.create({
     width: (width),
     height: (height),
     zIndex: 0,
-  }
+  },
+
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  reviewContainer: {
+    marginBottom: 20,
+  },
 
 
 });

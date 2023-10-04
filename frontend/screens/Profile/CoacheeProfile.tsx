@@ -234,8 +234,7 @@ const handleSaveButton = async () => {
                             style={styles.ageInput}
                             value={age}
                             placeholder='Enter age'
-                            onChangeText={(age) => setAge(age)}
-                            editable={isEditing}
+                            editable={false}
                             underlineColor="white"
                         />
                     </View>
@@ -290,7 +289,7 @@ const handleSaveButton = async () => {
 
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('./Icons/Man.png')}
+                    source={require('./Icons/Woman.png')}
                     style={styles.image}
                 />
             </View>
@@ -317,7 +316,7 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 30,
-        left: '20%',
+        left: '10%',
         top: '80%',
         fontFamily: 'Roboto',
         fontWeight: '700',
@@ -343,6 +342,7 @@ const styles = StyleSheet.create({
     mantraTextInput: {
         paddingHorizontal: 50,
         paddingVertical: 1,
+        left: -20,
         backgroundColor: 'transparent',
         width: 500,
         fontWeight: '700',

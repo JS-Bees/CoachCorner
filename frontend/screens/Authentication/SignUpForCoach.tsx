@@ -37,7 +37,7 @@ const SignUpForCoach = () => {
     const [City, setCity] = useState('');
     const [Postal, setPostal] = useState('5800');
     const [dateOfBirth, setDateofBirth] = useState('');
-    const [profilePic] = useState(' ');
+    const [profilePic] = useState('Fixed');
     const [mantra] = useState('Write mantra here');
     const [bio] = useState('Enter Bio');   
     const [affiliations] = useState('Enter Affilitations');
@@ -70,15 +70,30 @@ const SignUpForCoach = () => {
     const onChange = ({ type }: any, selectedDate: any) => {
         if (type == 'set') {
             const currentDate = selectedDate;
-            setdate(currentDate);
-            if (Platform.OS === 'android') {
+            // Calculate the maximum date one year from today
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() - 1);
+    
+            // Check if the selected date is within the allowed range
+            if (currentDate <= maxDate) {
+                setdate(currentDate);
+                if (Platform.OS === 'android') {
+                    toggleDatePicker();
+                    setDateofBirth(currentDate.toDateString());
+                }
+            } else {
+                // Close the date picker
                 toggleDatePicker();
-                setDateofBirth(currentDate.toDateString());
+    
+                // Show an error message if the selected date is outside the allowed range
+                setErrorMessage('Please select a valid year.');
+                setErrorModalVisible(true);
             }
         } else {
             toggleDatePicker();
         }
     };
+
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
     const toggleCheckbox = (item: any, state: any, setState: any) => {
@@ -238,7 +253,7 @@ const SignUpForCoach = () => {
                         <Pressable onPress={toggleDatePicker}>
                             <TextInput
                                 style={styles.birthdayBorder}
-                                placeholder="Sat Aug 24 2001"
+                                placeholder="Sat Aug 24 2000"
                                 value={dateOfBirth}
                                 onChangeText={setDateofBirth}
                                 editable={false}
