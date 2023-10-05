@@ -1,12 +1,36 @@
-import React, { useRef, useState } from 'react';
-import { Animated, Dimensions, PanResponder, Platform, ScrollView, Text, StyleSheet, View, SafeAreaView } from 'react-native';
+
+import React, { useRef, useState, useEffect } from 'react';
+import {
+  Animated,
+  Dimensions,
+  PanResponder,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Pressable,
+  StyleSheet,
+  Platform
+} from 'react-native';
 import { DatePickerModal } from 'react-native-paper-dates';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import LogInButton from '../CustomButton';
-import { TextInput, Portal, Modal, Button } from 'react-native-paper';
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Button, TextInput} from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ListItemProps } from '../ListItem';
+import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery, useMutation } from 'urql';
+import {
+  FindCoachByIdDocument,
+  FindCoacheeByIdDocument,
+  CreateBookingDocument,
+} from '../../generated-gql/graphql';
+import { RootStackParams } from '../../App';
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
-
 const { width } = Dimensions.get('window');
 
 const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.85;
@@ -15,21 +39,189 @@ const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = 50;
 
-const BookingDrawer = ({ onClose }: { onClose: () => void }) => {
-  const onSubmitPressed = () => {};
+interface BookingDrawerProps {
+  onClose: () => void;
+  coacheeData: ListItemProps['data'];
+}
+
+const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+
+  const [fontsLoaded] = useFonts({
+    'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
+  });
+
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [selectedStartTime, setSelectedStartTime] = useState<Date | null>(null);
+  const [selectedEndTime, setSelectedEndTime] = useState<Date | null>(null);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+  const [isSelectingStartTime, setIsSelectingStartTime] = useState(true);
+  const [date, setDate] = useState<Date | null>(null);
+  const [open, setOpen] = React.useState(false)
+  const [serviceType, setServiceType] = useState<string>('');
+  const [addNotes, setAddNotes] = useState<string>('');
+  const [, createBookingForCoach] = useMutation(CreateBookingDocument);
+
+  const [showModal, setShowModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const startTime = new Date();
+  const endTime = new Date();
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  const toggleErrorModal = () => {
+    setErrorModalVisible(!errorModalVisible);
+  };
+
+  const onSubmitPressed = async () => {
+    try {
+      if (
+        !coachData?.findCoachByID.id ||
+        !coacheeData?.findCoacheeByID.id ||
+        !date|| 
+        !serviceType.trim() ||
+        !addNotes.trim()
+      ) {
+        setErrorMessage('Please fill in all the required fields.');
+        setErrorModalVisible(true);
+        return;
+      }
+
+    
+
    
-  const [selectedDates, setSelectedDates] = useState([]);
-  const [open, setOpen] = useState(false);
 
-  const onDismiss = () => {
-    setOpen(false);
+      const variables = {
+        input: {
+          coachId: coachData?.findCoachByID?.id || 0,
+          coacheeId: coacheeData?.findCoacheeByID?.id || 0,
+          serviceType: serviceType || '',
+          additionalNotes: addNotes || '',
+          status: 'PENDING',
+        },
+        slotsInput: [
+          {
+            date: date || new Date(),
+            endTime: endTime.toISOString(), // Convert endTime to ISO string
+            startTime: startTime.toISOString(), // Convert startTime to ISO string
+          },
+        ],
+      };
+
+      
+
+      const { data: createBookingData, error, fetching } = await createBookingForCoach(variables);
+
+      if (error) {
+        console.error('Error:', error);
+      } else {
+        if (createBookingData?.createBooking?.id) {
+          // Booking was created successfully, and booking ID is available in createBookingData.
+          const bookingId = createBookingData.createBooking.id;
+          console.log('Booking Sent Successfully. Booking ID:', bookingId);
+          setSuccessMessage('Booking Sent Successfully');
+          toggleModal();
+        } else {
+          console.error('Booking creation failed. Data:', createBookingData);
+        }
+      }
+
+
+      if (error) {
+        console.error(error);
+      } else {
+        setSuccessMessage('Booking Sent Succesfully');
+        toggleModal();
+        setDate(null); // Reset selectedDate
+        setServiceType('');
+        setAddNotes('');
+        setSelectedStartTime(null); // Reset selectedStartTime
+        setSelectedEndTime(null); // Reset selectedEndTime
+      }
+    } catch (error) {
+      console.error('Error Submitting Booking:', error);
+    }
   };
 
-  const onConfirm = (params) => {
-    setOpen(false);
-    setSelectedDates(params.dates);
+  const onDismissSingle = React.useCallback(() => {
+    setOpen(false)
+  }, [setOpen])
+
+ const onConfirmSingle = React.useCallback(
+  (params) => {
+    setOpen(false)
+    setDate(params.date)
+  },
+  [setOpen, setDate]
+ )
+
+
+  const showTimePicker = (selectingStartTime: boolean) => {
+    setIsSelectingStartTime(selectingStartTime);
+    setTimePickerVisibility(true);
   };
-  
+
+  const hideTimePicker = () => {
+    setTimePickerVisibility(false);
+  };
+
+  const handleTimeConfirm = (time: Date | null) => {
+    if (isSelectingStartTime) {
+      setSelectedStartTime(time);
+    } else {
+      setSelectedEndTime(time);
+    }
+    hideTimePicker();
+  };
+
+  const handleTextInputPress = (selectingStartTime: boolean) => {
+    if (selectingStartTime) {
+      setSelectedStartTime(null);
+    } else {
+      setSelectedEndTime(null);
+    }
+    showTimePicker(selectingStartTime);
+  };
+
+  const formatTimeWithoutSeconds = (time: Date | null) => {
+    return time ? time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
+  };
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        console.log('token', token);
+        setUserToken(token);
+      } catch (error) {
+        console.error('Error fetching token:', error);
+      }
+    };
+
+    fetchUserToken();
+  }, []);
+
+  const [{ data: coachData, fetching, error }] = useQuery({
+    query: FindCoachByIdDocument,
+    variables: {
+      userID: parseInt(userToken, 10),
+    },
+    requestPolicy: 'cache-and-network',
+  });
+
+  const [{ data: coacheeData }] = useQuery({
+    query: FindCoacheeByIdDocument,
+    variables: {
+      userID: parseInt(userToken, 10),
+    },
+    requestPolicy: 'cache-and-network',
+  });
 
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
@@ -39,32 +231,25 @@ const BookingDrawer = ({ onClose }: { onClose: () => void }) => {
       onPanResponderGrant: () => {
         animatedValue.setOffset(lastGestureDy.current);
       },
-      onPanResponderMove: (e, gesture) => {
+      onPanResponderMove: (_, gesture) => {
         animatedValue.setValue(gesture.dy);
       },
-      onPanResponderRelease: (e, gesture) => {
+      onPanResponderRelease: (_, gesture) => {
         animatedValue.flattenOffset();
         lastGestureDy.current += gesture.dy;
 
         if (lastGestureDy.current >= MAX_DOWNWARD_TRANSLATE_Y) {
-          // The gesture has moved down to the lowest screen point
-          onClose(); // Close the booking drawer
+          onClose();
         } else {
           if (gesture.dy > 0) {
-            // Dragging down
             gesture.dy <= DRAG_THRESHOLD;
           } else {
-            // Dragging up
             gesture.dy >= -DRAG_THRESHOLD;
           }
         }
       },
     })
   ).current;
-  
-
-  
-  
 
   const bottomSheetAnimation = {
     transform: [
@@ -88,80 +273,160 @@ const BookingDrawer = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
-      { /* Overlay */}
       <Animated.View style={[styles.overlay, overlayAnimation]} />
 
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
         <View style={styles.dragHandle} {...panResponder.panHandlers} />
 
-
         <View style={styles.title}>
-          <Text style ={styles.headerText}> Book </Text>
-          <Text style ={styles.headerText}> Appointment </Text>
+          <Text style={styles.headerText}> Book </Text>
+          <Text style={styles.headerText}> Appointment </Text>
         </View>
 
-       <ScrollView
-       keyboardDismissMode='on-drag'
-       contentInsetAdjustmentBehavior = 'always'>
-       <View style = {styles.content}>
-          <Text style={styles.contentText}> Coach Name</Text>
-          <TextInput style = {styles.input}
-          underlineColor = "transparent"
-          maxLength={30}/>
+        <ScrollView keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="always">
+          <View style={styles.content}>
+            <Text style={styles.contentText}> Coach Name</Text>
+            <TextInput
+              style={styles.input}
+              underlineColor="transparent"
+              maxLength={30}
+              editable={false}
+              value={`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}
+            />
 
-          <Text style={styles.contentText}>Client Name</Text>
-          <TextInput style={styles.input}
-          underlineColor = "transparent"
-          maxLength={30}/>
+            <Text style={styles.contentText}>Client Name</Text>
+            <TextInput
+              style={styles.input}
+              underlineColor="transparent"
+              maxLength={30}
+              editable={false}
+              value={`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}
+            />
 
-          <View style = {styles.rowContent}>
-          <Text style={styles.contentText}> Date</Text>
-          <Text style={styles.contentTime}> Time</Text>
-          </View>
+            <Text style={styles.contentText}> Date</Text>
+            <Button onPress={() => setOpen(true)} uppercase={false} style={styles.dateButton}>
+              Select Date
+            </Button>
 
-        
+            <SafeAreaProvider>
+              <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                <DatePickerModal
+                  mode="single"
+                  visible={open}
+                  onDismiss={onDismissSingle}
+                  date = {date}
+                  onConfirm={onConfirmSingle}
+                />
+                <TextInput
+                  underlineColor="white"
+                  style={{
+                    top: '-50%',
+                    alignItems: 'flex',
+                    height: 40,
+                    backgroundColor: 'white',
+                    width: width * 0.74,
+                  }}
+                  value={date ? date.toLocaleDateString() : ''}
+                  editable={false}
+                />
+              </View>
+            </SafeAreaProvider>
 
-          <View style = {styles.rowContent}>
-          <SafeAreaProvider>
-           <View>
-              <TextInput style = {styles.dateInput}
-              underlineColor = "transparent"
-              label = 'Select Date'
-              editable={false}/>
-           </View>
-          </SafeAreaProvider>       
+            <Text style={styles.contentText}> Time</Text>
 
-          
+            <View style={styles.rowContent}>
+              <TouchableOpacity onPress={() => handleTextInputPress(true)}>
+                <TextInput
+                  underlineColor="white"
+                  placeholder="Start Time"
+                  value={formatTimeWithoutSeconds(selectedStartTime) || ''}
+                  editable={false}
+                  style={{
+                    backgroundColor: 'white',
+                    width: '129%',
+                  }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleTextInputPress(false)}>
+                <TextInput
+                  underlineColor="white"
+                  placeholder="End Time"
+                  value={formatTimeWithoutSeconds(selectedEndTime) || ''}
+                  editable={false}
+                  style={{
+                    backgroundColor: 'white',
+                    width: '70%',
+                    marginLeft: '25%',
+                  }}
+                />
+              </TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={isTimePickerVisible}
+                mode="time"
+                onConfirm={handleTimeConfirm}
+                onCancel={hideTimePicker}
+                is24Hour={false}
+              />
+            </View>
 
-          <TextInput style = {styles.timeInput}
-          underlineColor = "transparent"
-          maxLength={10}/>
-          </View>
+            <Text style={styles.contentText}> Service Type</Text>
+            <TextInput
+              style={styles.input}
+              underlineColor="transparent"
+              maxLength={40}
+              value={serviceType}
+              onChangeText={(text) => setServiceType(text)}
+            />
 
-          <Text style={styles.contentText}> Service Type</Text>
-          <TextInput style = {styles.input}
-          underlineColor = "transparent"
-          maxLength={40}/>
-
-          <Text style={styles.contentText}> Additional Notes</Text>
-          <ScrollView style={styles.additionalInputContainer}>
+            <Text style={styles.contentText}> Additional Notes</Text>
+            <ScrollView style={styles.additionalInputContainer}>
               <TextInput
                 style={styles.additionalInput}
-                underlineColor="transparent"
+                underlineColorAndroid="white"
+                underlineColor="white"
                 maxLength={200}
                 multiline
+                value={addNotes}
+                onChangeText={(text) => setAddNotes(text)}
               />
-            </ScrollView>   
-        </View>
-        <LogInButton text={'Submit'} onPress={onSubmitPressed}
-            type='QUARTERNARY' />
-       </ScrollView>
-     
+            </ScrollView>
+          </View>
+          <LogInButton text={'Submit'} onPress={onSubmitPressed} type="QUARTERNARY" />
+
+          {showModal && (
+            <View style={styles.modal}>
+              <View style={styles.modalContent}>
+                <Text style={styles.successText}>{successMessage}</Text>
+                <Pressable
+                  style={styles.modalButton}
+                  onPress={() => {
+                    toggleModal();
+                    navigation.navigate('MyClients');
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>OK</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
+          {errorModalVisible && (
+            <View style={styles.modal}>
+              <View style={styles.modalContent}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+                <Pressable
+                  style={styles.modalButton}
+                  onPress={() => {
+                    toggleErrorModal();
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>OK</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+        </ScrollView>
       </Animated.View>
-
-      
-
-      
     </View>
   );
 };
@@ -228,16 +493,19 @@ const styles = StyleSheet.create({
   },
 
   rowContent: {
+    top: '1%',
     flexDirection: 'row',
+    marginBottom: '5%',
+    justifyContent: 'space-between'
   },
 
   contentText:{
-    fontFamily: 'Cairo_Regular',
+    fontFamily: 'Cairo-Regular',
     color: '#636363'
   },
 
   contentTime:{
-    fontFamily: 'Cairo_Regular',
+    fontFamily: 'Cairo-Regular',
     color: '#636363',
     left: width * 0.3
   },
@@ -285,7 +553,59 @@ const styles = StyleSheet.create({
 
   button: {
     top: '10%'
-  }
+  },
+
+  dateButton: { 
+    left: '10%',
+    top: '-4.3%'
+  },
+
+  timeButton: { 
+    left: '10%',
+    top: '-4.3%'
+  },
+  modal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+},
+modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+},
+successText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#915bc7', // Change the font color to light green
+},
+errorText: {
+    fontFamily: 'Roboto',
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+    color: 'red', // Change the font color to red
+},
+modalButton: {
+    backgroundColor: '#A378F2', // Change the background color to purple
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+},
+modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+},
 
 
 

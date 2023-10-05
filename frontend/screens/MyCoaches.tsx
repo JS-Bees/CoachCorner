@@ -13,7 +13,7 @@ const MyCoaches = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [page, setPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [userID, setUserID] = useState<number | null>(null); // Initialize userID state
+  const [userID, setUserID] = useState<number>(Number); // Initialize userID state
 
   const goBack = () => {
     navigation.goBack();
@@ -45,6 +45,8 @@ const MyCoaches = () => {
     setPage(0);
     fetchUserIDFromStorage(); // Fetch userID when the component mounts
   }, []);
+
+
 
   // Use the fetched userID to query coaching relationships
   const [{ data, fetching, error }] = useQuery({

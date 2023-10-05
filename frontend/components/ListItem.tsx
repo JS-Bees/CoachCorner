@@ -13,6 +13,12 @@ export interface ListItemProps {
         affiliations: string;
     };
     onPress?: () => void;
+    data2: {
+        firstName: string;
+        lastName: string;
+        __typename: string;
+    };
+    
 }
 
 const ListItemComponent: React.FC<ListItemProps> = ({ data, onPress }) => (

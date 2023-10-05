@@ -29,8 +29,8 @@ const styles = StyleSheet.create( {
 
     container_QUARTERNARY: {
 
-        marginTop: '15%',
-        left: "12%",
+        marginTop: '20%',
+        left: "13%",
         width: "75%",
         backgroundColor: '#6441a4', 
         bottom: "1%"

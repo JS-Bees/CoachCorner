@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
   bottomSheet: {
     position: 'absolute',
     width: '100%',
-    right: '-50%',
     height: BOTTOM_SHEET_MAX_HEIGHT,
     bottom: BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT,
     ...Platform.select({

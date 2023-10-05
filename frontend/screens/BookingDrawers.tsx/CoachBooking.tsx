@@ -1,14 +1,47 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Modal} from 'react-native'
 import BookingDrawer from '../../components/BottomSheet/BookingDrawer';
 import { Divider, Text} from 'react-native-paper';
 import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import { useQuery } from 'urql';
+import { FindCoachByIdDocument } from '../../generated-gql/graphql';
+import { RootStackParams } from '../../App';
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+
 
 const CoachBookingDrawer = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token)
+                setUserToken(token);
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+
+        fetchUserToken();
+    }, []);
+
+    const [{ data: coachData, fetching, error }]  = useQuery({
+        query: FindCoachByIdDocument, // Use the Coachee query document
+        variables: {
+            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
     
 
     const handleOpenBottomSheet = () => {
@@ -40,7 +73,7 @@ const CoachBookingDrawer = () => {
         <View style = {styles.container}>
             <View style={styles.upperContainer}>
             <Image source={require('./User.png')} style={styles.imageContainer}/>
-            <Text style={styles.text}>Coach Name</Text>
+            <Text style={styles.text}>{`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}</Text>
             <Divider style ={styles.divider}/>
             </View>
 
