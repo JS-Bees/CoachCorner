@@ -77,7 +77,7 @@ const CoacheeDashboard = () => {
                 <View style={[CoacheeDashboardStyle.topMiniContainer]}>
                     <View style={CoacheeDashboardStyle.profileImageContainer}>
                         <Image
-                            source={require('../assets/User.png')} // Add your profile image source here
+                            source={require('../assets/Woman.png')} // Add your profile image source here
                             style={CoacheeDashboardStyle.profileImage}
                         />
                     </View>

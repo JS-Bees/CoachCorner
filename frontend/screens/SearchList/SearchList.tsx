@@ -96,7 +96,7 @@ const SearchList = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={style.container}>
+    <View style={style.container}>
       <BottomComponent
         style={style.bottomSVG}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -110,7 +110,7 @@ const SearchList = () => {
 
       <View style={style.searchContainer}>
         <TextInput
-          placeholder="Search"
+          placeholder="Search Sport"
           clearButtonMode="always"
           style={style.inputText}
           autoCapitalize="none"
@@ -142,7 +142,7 @@ const SearchList = () => {
           coachData={selectedCoachData}
         />
       )}
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

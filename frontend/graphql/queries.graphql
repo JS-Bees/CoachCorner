@@ -159,3 +159,20 @@ query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
         }
     }
 }
+
+query FindCoachByIdReview($userID: Int!)  {
+    findCoachByID(userID: $userID) {
+        id
+        firstName
+        lastName
+        reviews {
+            coacheeId
+            starRating
+            comment
+            coachee {
+                firstName
+                lastName
+            }
+        }
+    }
+}

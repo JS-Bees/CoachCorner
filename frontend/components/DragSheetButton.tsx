@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
 
 const DragSheetButton = ({ onPress, text, type = 'PRIMARY' }) => {
+    
     return (
         <Pressable
             onPress={onPress}

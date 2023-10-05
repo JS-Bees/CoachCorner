@@ -335,6 +335,7 @@ const styles = StyleSheet.create({
     mantraTextInput: {
         paddingHorizontal: 50,
         paddingVertical: 1,
+        left: -20,
         backgroundColor: 'transparent',
         width: 500,
         fontWeight: '700',
