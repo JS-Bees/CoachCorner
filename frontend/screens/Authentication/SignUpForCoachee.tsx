@@ -7,6 +7,7 @@ import {
     TextInput,
     Pressable,
     Platform,
+    ActivityIndicator
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/InputSignUpPages';
@@ -52,6 +53,8 @@ const SignUpForCoachee = () => {
 
     const [errorModalVisible, setErrorModalVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
     
 
     const toggleDatePicker = () => {
@@ -109,6 +112,7 @@ const SignUpForCoachee = () => {
 
     const onSignUpPressed = async () => {
         try {
+            setIsLoading(true);
             // Validate the input fields
             if (
                 First_Name.trim() === '' ||
@@ -118,10 +122,11 @@ const SignUpForCoachee = () => {
                 Repeat_Password.trim() === '' ||
                 StreetAdd.trim() === '' ||
                 City.trim() === '' ||
-                Postal.trim() === '' ||
-                selectedGames.length === 0 ||
-                selectedHobbies.length === 0 ||
-                selectedMovieGenres.length === 0
+                Postal.trim() === '' 
+                // selectedGames.length === 0 ||
+                // selectedHobbies.length === 0 ||
+                // selectedMovieGenres.length === 0
+                
             ) {
                 // Display an error message for incomplete fields
                 setErrorMessage('Please fill in all the required fields.');
@@ -134,6 +139,7 @@ const SignUpForCoachee = () => {
          if (containsInteger(First_Name, Last_Name)) {
             setErrorMessage('First Name and Last Name cannot contain integers.');
             setErrorModalVisible(true);
+            setIsLoading(false);
             return; // Return early if validation fails
         }
 
@@ -156,7 +162,7 @@ const SignUpForCoachee = () => {
                 firstName: First_Name,
                 lastName: Last_Name,
                 birthday: date,
-                email: Email.toLowerCase(),
+                email: Email,
                 password: Password,
                 address: StreetAdd,
                 profilePicture: profilePic,
@@ -183,9 +189,12 @@ const SignUpForCoachee = () => {
                 setCity('');
                 setPostal('');
                 setDateofBirth('');
+                setIsLoading(false); // Set isLoading to false after success
             }
         } catch (err) {
             console.error(err);
+            // Reset loading state to false in case of an error
+            setIsLoading(false);
         }
     };
 
@@ -352,7 +361,11 @@ const SignUpForCoachee = () => {
                     </View>
                 </View>
                 <View style={styles.button}>
-                    <LogInButton text="Sign Up" onPress={onSignUpPressed} />
+                    {isLoading ? (
+                        <ActivityIndicator size="small" color="#915bc7" />
+                    ) : (
+                        <LogInButton text="Sign Up" onPress={onSignUpPressed} />
+                    )}
                 </View>
             </View>
 
@@ -514,6 +527,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '50%',
     },
+  
 });
 
 export default SignUpForCoachee;

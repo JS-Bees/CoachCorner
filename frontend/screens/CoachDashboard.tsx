@@ -181,7 +181,7 @@ const CoachDashboard = () => {
 const CoachDashboardStyle = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#F6F6F6',
     },
     backgroundContainer: {
         paddingTop: 140,

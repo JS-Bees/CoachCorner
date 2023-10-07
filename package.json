@@ -13,5 +13,11 @@
     "lintBackend": "cd backend && npm run lint",
     "installDepBackend": "npm --prefix ./backend run installDep",
     "installDepFrontend": "npm --prefix ./frontend run installDep"
+  },
+  "dependencies": {
+    "moment": "^2.29.4",
+    "react-native-paper": "^5.10.6",
+    "react-native-paper-dates": "^0.19.7",
+    "react-native-vector-icons": "^10.0.0"
   }
 }

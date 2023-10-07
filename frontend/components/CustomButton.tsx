@@ -16,19 +16,27 @@ const styles = StyleSheet.create( {
         alignItems: 'center',
         height: 40,
         borderRadius: 100,
-        width: 300,
     },
 
     container_PRIMARY: {
         backgroundColor: '#6441a4',
+        width: 300,
     },
 
     container_TERTIARY: {
 
     },
-    
 
- 
+    container_QUARTERNARY: {
+
+        marginTop: '20%',
+        left: "13%",
+        width: "75%",
+        backgroundColor: '#6441a4', 
+        bottom: "1%"
+    },
+
+    
     text: {
         fontWeight: "bold",
         color: 'white',

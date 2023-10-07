@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     Image,
     ScrollView,
+    ActivityIndicator
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import SVGComponent from '../UpperSVG';
@@ -34,12 +35,12 @@ const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.5;
 const MAX_UPWARD_TRANSLATE_Y =
     BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
-const DRAG_THRESHOLD = 100;
+const DRAG_THRESHOLD = height * 0.05;
 
 interface DraggableBottomSheetProps {
     onClose: () => void;
     coachData: ListItemProps['data'];
-    requestPolicy: 'cache-and-network'
+    requestPolicy: 'cache-and-network';
 }
 
 const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
@@ -49,43 +50,55 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isSecondModalVisible, setSecondModalVisible] = useState(false);
+    const [isDraggable, setIsDraggable] = useState(true);
+    const [isAnimatedViewVisible, setAnimatedViewVisible] = useState(true); // New state
+
     const [, createCoachingRelationship] = useMutation(
         CreateCoachingRelationshipDocument,
-    ); // Initialize the mutation
+    );
     const [, createReviewMutation] = useMutation(CreateReviewDocument);
 
     const [review, setReview] = useState('');
-    const [rating, setRating] = useState(0); // Initialize with the default rating
+    const [rating, setRating] = useState(0);
     const [refetch, setRefetch] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(false);
 
+    const [ratingError, setRatingError] = useState<string | null>(null);
+    const [isAddingCoach, setIsAddingCoach] = useState(false);
+
+    
+    
     const submitReview = async () => {
         try {
             const coacheeId = await AsyncStorage.getItem('userToken');
 
             if (coacheeId) {
+                if (!rating) {
+                    setRatingError('Please enter rating');
+                    return; // Don't proceed with the submission
+                }
+
+                // Reset the rating error if it was previously set
+                setRatingError(null);
+
+                setIsLoading(true); // Start loading
+
                 const variables = {
                     coachId: coachData.id,
                     coacheeId: parseInt(coacheeId),
                     starRating: rating,
                     comment: review,
                 };
-                
 
-                const { data, error } = await createReviewMutation(variables); // Replace with your mutation function
-                
+                const { data, error } = await createReviewMutation(variables);
+
                 if (data) {
-                    // Handle success, e.g., show a success message
                     console.log('Review submitted successfully:', data);
-
-                    // Close the "Add a Review" modal
                     closeSecondModal();
                     resetReviewAndRating();
-
-                    // Trigger a refetch
                     setRefetch(true);
                 } else if (error) {
-                    // Handle error, e.g., show an error message
                     console.error('Error submitting review:', error);
                 }
             } else {
@@ -93,13 +106,16 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             }
         } catch (error) {
             console.error('Error submitting review:', error);
+        } finally {
+            setIsLoading(false); // Stop loading
         }
-        
     };
+    
+
     useEffect(() => {
-      if (refetch) {
-        setRefetch(false);
-      }
+        if (refetch) {
+            setRefetch(false);
+        }
     }, [refetch]);
 
     const onAddPressed = async () => {
@@ -107,23 +123,20 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             const coacheeId = await AsyncStorage.getItem('userToken');
 
             if (coacheeId) {
+                setIsAddingCoach(true); // Start adding coach
+
                 const variables = {
                     coachId: coachData.id,
                     coacheeId: parseInt(coacheeId),
                 };
 
-                const { data, error } =
-                    await createCoachingRelationship(variables);
+                const { data, error } = await createCoachingRelationship(variables);
 
                 if (data) {
-                    // Handle success, e.g., show a success message
                     console.log('Added to Coach:', data);
-
-                    // Close the bottom sheet
                     setIsBottomSheetOpen(false);
                     onClose();
                 } else if (error) {
-                    // Handle error, e.g., show an error message
                     console.error('Error adding coach:', error);
                 }
             } else {
@@ -131,34 +144,40 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             }
         } catch (error) {
             console.error('Error adding coach:', error);
+        } finally {
+            setIsAddingCoach(false); // Stop adding coach
         }
     };
-    const [{ data: coachReviewsData}] = useQuery({
-        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    const [{ data: coachReviewsData }] = useQuery({
+        requestPolicy: 'cache-and-network',
         query: FindCoachByIdReviewDocument,
-        variables: { userID: coachData.id }, // Pass the coach's ID as the userID variable
-        pause: refetch, // Refetch the data when refetch is true
-
+        variables: { userID: coachData.id },
+        pause: refetch,
     });
 
     const onSeeReviewPressed = () => {
         setModalVisible(true);
     };
+
     const closeModal = () => {
         setModalVisible(false);
     };
 
     const onOpenSecondModalPressed = () => {
         setSecondModalVisible(true);
+        setIsDraggable(false);
+        setAnimatedViewVisible(false); // Hide the Animated.View
     };
 
     const closeSecondModal = () => {
         setSecondModalVisible(false);
+        setIsDraggable(true);
+        setAnimatedViewVisible(true); // Re-enable the Animated.View
     };
 
     const resetReviewAndRating = () => {
-        setReview(''); // Reset the review to an empty string
-        setRating(0); // Reset the rating to its initial value (0 in this case)
+        setReview('');
+        setRating(0);
     };
 
     const animatedValue = useRef(new Animated.Value(0)).current;
@@ -166,7 +185,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
 
     const panResponder = useRef(
         PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
+            onStartShouldSetPanResponder: () => isDraggable,
             onPanResponderGrant: () => {
                 animatedValue.setOffset(lastGestureDy.current);
             },
@@ -178,7 +197,6 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                 lastGestureDy.current += gesture.dy;
 
                 if (gesture.dy > DRAG_THRESHOLD) {
-                    // Dragged down beyond the threshold, so close the bottom sheet
                     setIsBottomSheetOpen(false);
                     onClose();
                 }
@@ -195,12 +213,9 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             toValue: lastGestureDy.current,
             useNativeDriver: true,
         }).start(() => {
-            // Detect if the bottom sheet is fully open or closed
             setIsBottomSheetOpen(
                 lastGestureDy.current === MAX_DOWNWARD_TRANSLATE_Y,
             );
-            setIsShowOverlay(lastGestureDy.current === MAX_UPWARD_TRANSLATE_Y);
-            // Call the onClose prop when the sheet is closed
             if (lastGestureDy.current === MAX_DOWNWARD_TRANSLATE_Y) {
                 onClose();
             }
@@ -226,9 +241,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
     };
 
     return (
-      
         <View style={styles.container}>
-            {/* Transparent overlay */}
             {isBottomSheetOpen && (
                 <TouchableOpacity
                     style={[StyleSheet.absoluteFill]}
@@ -240,152 +253,162 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                 />
             )}
 
-            <Animated.View
-                style={[styles.bottomSheet, bottomSheetAnimation]}
-                {...panResponder.panHandlers}
-            >
-                <View style={styles.draggableArea}>
-                    <View style={styles.dragHandle} />
-                </View>
-                <SVGComponent />
-                <View style={styles.imageContainer}>
-                    <Image
-                        resizeMode="cover"
-                        source={require('../BottomSheet/User.png')}
-                        style={{ width: 100, height: 100 }}
-                    />
+            {isAnimatedViewVisible && (
+                <Animated.View
+                    style={[styles.bottomSheet, bottomSheetAnimation]}
+                    {...panResponder.panHandlers}
+                >
+                    <View style={styles.draggableArea}>
+                        <View style={styles.dragHandle} />
+                    </View>
+                    <SVGComponent />
+                    <View style={styles.imageContainer}>
+                        <Image
+                            resizeMode="cover"
+                            source={require('../BottomSheet/User.png')}
+                            style={{ width: 100, height: 100 }}
+                        />
 
-                    <View style={styles.row}>
-                        <Text style={styles.textCoach}>
-                            {coachData.firstName + ' ' + coachData.lastName}
-                        </Text>
+                        <View style={styles.row}>
+                            <Text style={styles.textCoach}>
+                                {coachData.firstName + ' ' + coachData.lastName}
+                            </Text>
+                            <Text style={styles.textSport}>
+                                {' '}
+                                {coachData.sport}{' '}
+                            </Text>
+                        </View>
+                        <View style={styles.button}>
+                        {isAddingCoach ? (
+                    <ActivityIndicator size="small" color="#915bc7" />
+                ) : (
+                    <DragSheetButton
+                        text={'Add to My Coaches'}
+                        onPress={onAddPressed}
+                    />
+                )}
+                        </View>
+                    </View>
+
+                    <ScrollView style={styles.scrollViewContainer}>
+                        <Text style={styles.textSport}> Bio </Text>
+                        <TextInput
+                            style={styles.textInput}
+                            value={coachData.bio}
+                            editable={false}
+                        />
+
                         <Text style={styles.textSport}>
                             {' '}
-                            {coachData.sport}{' '}
+                            Workplace Address{' '}
                         </Text>
-                    </View>
-                    <View style={styles.button}>
+                        <TextInput
+                            style={styles.textInput}
+                            value={coachData.workplaceAddress}
+                            editable={false}
+                        />
+                        <Text style={styles.textSport}> Affiliates </Text>
+                        <TextInput
+                            style={styles.textInput}
+                            value={coachData.affiliations}
+                            editable={false}
+                        />
+                    </ScrollView>
+
+                    <View style={styles.Reviews}>
                         <DragSheetButton
-                            text={'Add to My Coaches'}
-                            onPress={onAddPressed}
+                            text={'Check Reviews'}
+                            type="TERTIARY"
+                            onPress={onSeeReviewPressed}
+                        />
+                        <DragSheetButton
+                            text={'Add a Review'}
+                            type="TERTIARY"
+                            onPress={onOpenSecondModalPressed}
                         />
                     </View>
-                </View>
+                </Animated.View>
+            )}
 
-                <ScrollView style={styles.scrollViewContainer}>
-                    <Text style={styles.textSport}> Bio </Text>
-                    <TextInput
-                        style={styles.textInput}
-                        // underlineColor='transparent'
-                        value={coachData.bio}
-                        editable={false}
-                    />
-
-                    <Text style={styles.textSport}> Workplace Address </Text>
-                    <TextInput
-                        style={styles.textInput}
-                        // underlineColor='transparent'
-                        value={coachData.workplaceAddress}
-                        editable={false}
-                    />
-                    <Text style={styles.textSport}> Affiliates </Text>
-                    <TextInput
-                        style={styles.textInput}
-                        // underlineColor='transparent'
-                        value={coachData.affiliations}
-                        editable={false}
-                    />
-                </ScrollView>
-
-                <View style={styles.Reviews}>
-                    <DragSheetButton
-                        text={'Check Reviews'}
-                        type="TERTIARY"
-                        onPress={onSeeReviewPressed}
-                    />
-                    <DragSheetButton
-                        text={'Add a Review'}
-                        type="TERTIARY"
-                        onPress={onOpenSecondModalPressed}
-                    />
-                </View>
-            </Animated.View>
-
-            <Modal isVisible={isModalVisible} 
-                   style={styles.modalContainer}>
-                <View style={styles.modalContainer}>
-                    {/* First modal content here */}
-                    <Text>Coach Reviews</Text>
-                    <ScrollView>
-                        {coachReviewsData &&
-                            coachReviewsData.findCoachByID &&
-                            coachReviewsData.findCoachByID.reviews.map(
+            <Modal isVisible={isModalVisible}>
+                <View style={styles.innerModalContainer}>
+                    <Text style={styles.modalTexts}>Coach Reviews</Text>
+                    {coachReviewsData &&
+                    coachReviewsData.findCoachByID &&
+                    coachReviewsData.findCoachByID.reviews.length > 0 ? (
+                        <ScrollView>
+                            {coachReviewsData.findCoachByID.reviews.map(
                                 (review, index) => (
                                     <View
                                         key={index}
                                         style={styles.reviewContainer}
                                     >
-                                        <Text>
-                                            {review.coachee.firstName}{' '}
-                                            {review.coachee.lastName}
-                                        </Text>
                                         <RatingWithStars
                                             rating={review.starRating}
                                         />
+                                        <Text style={{ fontSize: 12 }}>
+                                            {review.coachee.firstName}{' '}
+                                            {review.coachee.lastName}
+                                        </Text>
                                         <Text>{review.comment}</Text>
-                                        <Text>______________________________________</Text>
+                                        <Text>
+                                            ______________________________________
+                                        </Text>
                                     </View>
                                 ),
                             )}
-                    </ScrollView>
+                        </ScrollView>
+                    ) : (
+                        <Text>No reviews available</Text>
+                    )}
                     <TouchableOpacity onPress={closeModal}>
-                        <Text>Close</Text>
+                        <Text style={styles.modalTextsClose}>Close</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
-            {/* Second Modal */}
+
             <Modal
                 isVisible={isSecondModalVisible}
                 onBackdropPress={closeSecondModal}
             >
-                <View style={styles.modalContainer}>
-                    {/* Second modal content here */}
-                    <Text>Enter Reviews</Text>
-                    {/* <ScrollView> */}
-                        {/* Text input for the review */}
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Enter your eview"
-                            value={review}
-                            onChangeText={(text) => setReview(text)}
-                        />
+                <View style={styles.innerModalContainer}>
+                    <Text style={styles.modalTexts}>Enter Reviews</Text>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Enter your review"
+                        value={review}
+                        onChangeText={(text) => setReview(text)}
+                    />
 
-                        <TextInput
-                            style={styles.textInput}
-                            placeholder="Enter Rating (1-5)"
-                            keyboardType="numeric" // Only allow numeric input
-                            value={rating === 0 ? '' : rating.toString()} // Use the rating state as the value, show an empty string if the rating is 0
-                            onChangeText={(text) => {
-                                if (text === '' || (text >= 1 && text <= 5)) {
-                                    // Check if the input is empty or within the valid range (1-5)
-                                    setRating(text === '' ? 0 : parseInt(text));
-                                }
-                            }}
-                        />
-                    {/* </ScrollView> */}
-
-                    {/* Submit Review button */}
-                    <TouchableOpacity onPress={submitReview}>
-                        <Text>Submit Review</Text>
+                    <TextInput
+                        style={styles.textInput}
+                        placeholder="Enter Rating (1-5)"
+                        keyboardType="numeric"
+                        value={rating === 0 ? '' : rating.toString()}
+                        onChangeText={(text) => {
+                            if (text === '' || (text >= 1 && text <= 5)) {
+                                setRating(text === '' ? 0 : parseInt(text));
+                            }
+                        }}
+                    />
+                     {ratingError && <Text style={styles.ratingError}>{ratingError}</Text>}
+                    <TouchableOpacity
+                        onPress={submitReview}
+                    >
+                         {isLoading ? (
+                            <ActivityIndicator size="small" color="#915bc7" />
+                        ) : (
+                            <Text style={styles.modalTextsGrey}>Submit Review</Text>
+                        )}
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => {
                             closeSecondModal();
-                            resetReviewAndRating(); // Call the reset function when closing the modal
+                            resetReviewAndRating();
                         }}
                     >
-                        <Text>Close</Text>
+                        <Text style={styles.modalTextsGrey}>Close</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
@@ -395,9 +418,8 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
+        flex: 1,
     },
-
     bottomSheet: {
         position: 'absolute',
         width: '100%',
@@ -434,39 +456,33 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
     },
-
     imageContainer: {
         top: -215,
         paddingVertical: 20,
         left: 30,
     },
-
     row: {
         top: -70,
         left: 110,
         alignItems: 'flex-start',
     },
-
     textCoach: {
         fontSize: 25,
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#915bc7',
     },
-
     textSport: {
-        left: 4,
-        fontFamily: 'Roboto',
-        fontSize: 15,
+        left: -4,
+        fontSize: 16,
         fontWeight: '600',
-        color: '#757575',
+        fontFamily: 'Roboto',
+        color: '#636363',
     },
-
     button: {
         top: -65,
         left: 100,
     },
-
     scrollViewContainer: {
         top: -270,
         width: 325,
@@ -478,25 +494,31 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         bottom: '5%',
-        top: '-7%'
+        top: '-7%',
     },
-
     textInput: {
-        width: '110%',
+        left: -10,
+        width: '100%',
         backgroundColor: 'white',
         borderRadius: 10,
         borderColor: 'grey',
     },
-
     svgContainer: {
-        justifyContent: 'flex-start', // Align to the top
+        justifyContent: 'flex-start',
         alignItems: 'center',
         width: width,
         height: height,
         zIndex: 0,
     },
-
     modalContainer: {
+        height: 150,
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    innerModalContainer: {
+        height: 350,
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10,
@@ -504,7 +526,33 @@ const styles = StyleSheet.create({
     },
     reviewContainer: {
         marginBottom: 20,
-        alignItems: "center"
+        alignItems: 'center',
+    },
+    modalTexts: {
+        fontWeight: '700',
+        fontFamily: 'Roboto',
+        color: '#915bc7',
+        fontSize: 20,
+        top: -2,
+    },
+    modalTextsClose: {
+        fontWeight: '700',
+        fontFamily: 'Roboto',
+        color: '#915bc7',
+        fontSize: 16,
+        top: 2,
+    },
+    modalTextsGrey: {
+        fontWeight: '400',
+        fontFamily: 'Roboto',
+        color: 'grey',
+        fontSize: 16,
+        top: 20,
+    },
+    ratingError: {
+        color: 'red',
+        fontSize: 16,
+        marginTop: 8,
     },
 });
 
