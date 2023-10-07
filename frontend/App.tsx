@@ -55,66 +55,66 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn" >
-                    <RootStack.Screen 
-                        name="LogIn" 
-                        component={LogInPage} 
-                        options={{headerShown: false}}
+                <RootStack.Navigator initialRouteName="LogIn">
+                    <RootStack.Screen
+                        name="LogIn"
+                        component={LogInPage}
+                        options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="SignUpA" 
-                        component={SignUpA} 
-                        options={{headerShown: false}}
+                    <RootStack.Screen
+                        name="SignUpA"
+                        component={SignUpA}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="SignUpCoachee"
                         component={SignUpCoachee}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="SignUpCoach"
                         component={SignUpCoach}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoacheeDashboard"
                         component={CoacheeDashboard}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoachDashboard"
                         component={CoachDashboard}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoacheeProfile"
                         component={CoacheeProfile}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoachProfile"
                         component={CoachProfile}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="Appointments"
                         component={Appointments}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="MyClients" 
-                        component={MyClients}   
-                        options={{headerShown: false}}
+                    <RootStack.Screen
+                        name="MyClients"
+                        component={MyClients}
+                        options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="MyCoaches" 
-                        component={MyCoaches} 
-                        options={{headerShown: false}}
+                    <RootStack.Screen
+                        name="MyCoaches"
+                        component={MyCoaches}
+                        options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="SearchList" 
-                        component={SearchList} 
-                        options={{headerShown: false}}
+                    <RootStack.Screen
+                        name="SearchList"
+                        component={SearchList}
+                        options={{ headerShown: false }}
                     />
                      <RootStack.Screen 
                         name="CoachBookingDrawer" 

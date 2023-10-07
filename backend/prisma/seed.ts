@@ -108,7 +108,7 @@ async function seedDatabase() {
                 {
                     email: 'coachee1@example.com',
                     firstName: 'John',
-                    lastName: 'Doe',
+                    lastName: 'Doey',
                     password: hashedPassword,
                     address: 'CoacheeAddress1',
                     birthday: new Date(),

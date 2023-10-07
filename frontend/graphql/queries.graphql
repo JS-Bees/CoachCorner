@@ -125,7 +125,6 @@ query FindCoachesBySport($sport: Sport!) {
     }
 }
 
-
 query FindBookingByID($bookingID: Int!) {
     findBookingByID(bookingID: $bookingID) {
         id
@@ -141,7 +140,7 @@ query FindBookingByID($bookingID: Int!) {
             startTime
             endTime
         }
-     }
+    }
 }
 
 query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
@@ -160,7 +159,7 @@ query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
     }
 }
 
-query FindCoachByIdReview($userID: Int!)  {
+query FindCoachByIdReview($userID: Int!) {
     findCoachByID(userID: $userID) {
         id
         firstName
@@ -173,6 +172,41 @@ query FindCoachByIdReview($userID: Int!)  {
                 firstName
                 lastName
             }
+        }
+    }
+}
+
+query FindBookingsByStatusAndCoachID($status: BookingStatus!, $coachID: Int!) {
+    findBookingsByStatusAndCoachID(status: $status, coachID: $coachID) {
+        id
+        serviceType
+        status
+        additionalNotes
+        coacheeId
+        bookingSlots {
+            id
+            date
+            startTime
+            endTime
+        }
+    }
+}
+
+query FindBookingsByStatusAndCoacheeID(
+    $status: BookingStatus!
+    $coacheeID: Int!
+) {
+    findBookingsByStatusAndCoacheeID(status: $status, coacheeID: $coacheeID) {
+        id
+        serviceType
+        status
+        additionalNotes
+        coachId
+        bookingSlots {
+            id
+            date
+            startTime
+            endTime
         }
     }
 }

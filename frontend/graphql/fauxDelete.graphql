@@ -1,0 +1,7 @@
+mutation UpdateCoachingRelationshipActiveStatus($id: Int!, $active: Boolean!) {
+    updateCoachingRelationshipActiveStatus(id: $id, active: $active) {
+        id
+        active
+        updatedAt
+    }
+}
