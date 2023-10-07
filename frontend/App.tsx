@@ -55,7 +55,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="MyClients" >
+                <RootStack.Navigator initialRouteName="LogIn" >
                     <RootStack.Screen 
                         name="LogIn" 
                         component={LogInPage} 

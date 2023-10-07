@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
@@ -19,6 +18,9 @@ const MyCoaches = () => {
   const navigateToCoachBookingPage = (item) => {
     navigation.navigate('CoachBookingDrawer', { coachee: item.coachee });
   };
+
+  
+  
   
   
   const goBack = () => {

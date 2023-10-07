@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Animated,
@@ -27,7 +28,7 @@ import {
   CreateBookingDocument,
 } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -46,6 +47,7 @@ interface BookingDrawerProps {
 
 const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  const route = useRoute();
 
   const [fontsLoaded] = useFonts({
     'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
@@ -56,6 +58,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
   const [selectedEndTime, setSelectedEndTime] = useState<Date | null>(null);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [isSelectingStartTime, setIsSelectingStartTime] = useState(true);
+  const [selectedClient, setSelectedClient] = useState(route.params?.coachee || null)
   const [date, setDate] = useState<Date | null>(null);
   const [open, setOpen] = React.useState(false)
   const [serviceType, setServiceType] = useState<string>('');
@@ -90,10 +93,9 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
       ) {
         setErrorMessage('Please fill in all the required fields.');
         setErrorModalVisible(true);
+        console.log("im here", coacheeData?.findCoacheeByID.id)
         return;
       }
-
-    
 
    
 
@@ -223,6 +225,10 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
     requestPolicy: 'cache-and-network',
   });
 
+  useEffect(() => {
+    setSelectedClient(route.params?.coachee || null)
+  }, [route.params])
+
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
   const panResponder = useRef(
@@ -300,7 +306,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
               underlineColor="transparent"
               maxLength={30}
               editable={false}
-              value={`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}
+              value={`${selectedClient?.firstName} ${selectedClient?.lastName}`}
             />
 
             <Text style={styles.contentText}> Date</Text>
@@ -612,3 +618,4 @@ modalButtonText: {
 });
 
 export default BookingDrawer;
+

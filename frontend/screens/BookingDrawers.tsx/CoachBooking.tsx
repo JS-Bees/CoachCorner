@@ -88,7 +88,7 @@ const CoachBookingDrawer = () => {
                 visible={isDrawerVisible}
                 onRequestClose={handleOpenBottomSheet}>
                 {isDrawerVisible && <BookingDrawer onClose={handleClose}/>}
-      </Modal>
+            </Modal>
 
             
 
