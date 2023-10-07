@@ -527,6 +527,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '50%',
     },
+  
 });
 
 export default SignUpForCoachee;

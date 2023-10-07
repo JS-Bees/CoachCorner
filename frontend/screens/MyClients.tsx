@@ -13,8 +13,16 @@ const MyCoaches = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [page, setPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [userID, setUserID] = useState<number | null>(null); // Initialize userID state
+  const [userID, setUserID] = useState<number>(Number); // Initialize userID state
 
+  const navigateToCoachBookingPage = (item) => {
+    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee });
+  };
+
+  
+  
+  
+  
   const goBack = () => {
     navigation.goBack();
   };
@@ -100,7 +108,10 @@ const MyCoaches = () => {
     <DataTable.Title>Name</DataTable.Title>
   </DataTable.Header>
         {filteredItems.slice(from, to).map((item, index) => (
-          <DataTable.Row key={index}>
+          <TouchableOpacity
+            key={index}
+            onPress={() => navigateToCoachBookingPage(item)}>
+            <DataTable.Row key={index}>
           <DataTable.Cell>
             <Text>{item.coachee.firstName} {item.coachee.lastName} {" "}</Text>
           </DataTable.Cell>
@@ -110,6 +121,7 @@ const MyCoaches = () => {
             </Button>
           </View>
         </DataTable.Row>
+          </TouchableOpacity>
         ))}
         <Modal
           visible={isModalVisible}

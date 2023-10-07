@@ -1,17 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import LogInPage from './screens/Authentication/LogIn';
 import SignUpA from './screens/Authentication/SignUpA';
 import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
+import CoachProfile from './screens/Profile/CoachProfile';
+import CoacheeProfile from './screens/Profile/CoacheeProfile';
 import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
+import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
 import Appointments from './screens/Appointments';
-import CoacheeProfile from './screens/Profile/CoacheeProfile';
-import CoachProfile from './screens/Profile/CoachProfile';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import SearchList from './screens/SearchList/SearchList';
+import { enGB, registerTranslation } from 'react-native-paper-dates'
+registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -27,7 +29,7 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.254.142:5050/graphql', // replace with actual IP address, change to .env file
+    url: 'http://192.168.1.4:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -44,6 +46,7 @@ export type RootStackParams = {
     MyClients: any;
     MyCoaches: any;
     SearchList: any;
+    CoachBookingDrawer: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -111,6 +114,11 @@ export default function App() {
                     <RootStack.Screen 
                         name="SearchList" 
                         component={SearchList} 
+                        options={{headerShown: false}}
+                    />
+                     <RootStack.Screen 
+                        name="CoachBookingDrawer" 
+                        component={CoachBookingDrawer} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>

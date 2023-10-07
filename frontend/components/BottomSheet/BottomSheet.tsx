@@ -35,7 +35,7 @@ const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.5;
 const MAX_UPWARD_TRANSLATE_Y =
     BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
-const DRAG_THRESHOLD = 100;
+const DRAG_THRESHOLD = height * 0.05;
 
 interface DraggableBottomSheetProps {
     onClose: () => void;
