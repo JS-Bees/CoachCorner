@@ -223,6 +223,7 @@ type Mutation {
   updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
   updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
+  updateCoachingRelationshipActiveStatus(active: Boolean!, id: Int!): CoachingRelationship!
   updateMessagingStartedCoachingRelationship(id: Int!, input: MessagingStartedInput!): CoachingRelationship!
 }
 
@@ -230,6 +231,8 @@ type Query {
   coachees: [Coachee!]!
   coaches: [Coach!]!
   findBookingByID(bookingID: Int!): Booking!
+  findBookingsByStatusAndCoachID(coachID: Int!, status: BookingStatus!): [Booking!]!
+  findBookingsByStatusAndCoacheeID(coacheeID: Int!, status: BookingStatus!): [Booking!]!
   findCoachByEmailAndPassword(email: String!, password: String!): Coach!
   findCoachByID(userID: Int!): Coach!
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
