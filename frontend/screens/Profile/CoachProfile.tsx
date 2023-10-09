@@ -156,13 +156,11 @@ const handleSaveButton = async () => {
         }).then((res) => {
             if(res) {
                 setIsEditing(false)
-                console.log("________________________________________________________")
                 console.log("affiliations", res.data?.updateCoachProfile.affiliations)
                 console.log("bio", res.data?.updateCoachProfile.bio)
                 console.log("mantra", res.data?.updateCoachProfile.mantra)
                 console.log("address", res.data?.updateCoachProfile.workplaceAddress)
                 console.log("profilepicture", res.data?.updateCoachProfile.profilePicture)
-                console.log("________________________________________________________")
                 return res.data
             }
         }).catch((e) => {
@@ -172,32 +170,30 @@ const handleSaveButton = async () => {
 }
 
     return (
-        <View style={styles.container}>
-            <ProfileSvg style={styles.svg} />
-            <BottomComponent style={styles.bottomSVG}></BottomComponent>
-            <View style={styles.logOut}>
-                <LogInButton
-                    text="Logout"
-                    type="QUARTERNARY"
-                    onPress={onLogOutPressed}
-                />
-            </View>
-             {/* Wrap the "Profile" text, first name, and last name in a fixed-position view */}
-             <View style={styles.profileInfo}>
-                <Text style={styles.text}> Profile </Text>
-                <Text style={styles.normalText}>{`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}</Text>
-            </View>
-            <View style={styles.mantraContainer}>
-            <TextInput
-                style={styles.mantraTextInput}
-                placeholder='Enter mantra'
-                // value={mantra ?? coachData?.findCoachByID.mantra}
-                value={mantra}
-                onChangeText={(mantra) => setMantra(mantra)}
-                editable={isEditing}
-                underlineColor="transparent"
-            />
-            </View>
+<View style={styles.container}>
+    <ProfileSvg style={styles.svg} />
+    <BottomComponent style={styles.bottomSVG}></BottomComponent>
+    <View style={styles.logOut}>
+        <LogInButton
+            text="Logout"
+            type="QUARTERNARY"
+            onPress={onLogOutPressed}
+        />
+    </View>
+    <Text style={styles.text}> Profile </Text>
+    <View style={styles.profileInfo}>
+        <Text style={styles.normalText}>{`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}</Text>
+    </View>
+    <View style={styles.mantraContainer}>
+        <TextInput
+            style={styles.mantraTextInput}
+            placeholder='Enter mantra'
+            value={mantra}
+            onChangeText={(mantra) => setMantra(mantra)}
+            editable={isEditing}
+            underlineColor="transparent"
+        />
+    </View>
 
             <ScrollView
                 style={styles.scrollView}
@@ -309,8 +305,8 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 30,
-        left: '20%',
-        top: '80%',
+        left: '36%',
+        top: '6%',
         fontFamily: 'Roboto',
         fontWeight: '700',
         position: 'absolute'
@@ -327,22 +323,22 @@ const styles = StyleSheet.create({
     },
 
     mantraContainer: {
-        alignItems: 'center',
-        left: '45%',
-        marginTop: '35%'
+        left: '50%',
+        marginTop: '30%'
     },
 
     mantraTextInput: {
         paddingHorizontal: 50,
-        paddingVertical: 1,
-        left: -20,
+        paddingVertical: -5,
+        right: '46%',
+        width: 250,
         backgroundColor: 'transparent',
-        width: 500,
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
         fontSize: 15,
     },
+
 
     bioScrollInput: {
         backgroundColor: 'white',

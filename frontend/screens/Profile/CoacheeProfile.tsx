@@ -149,26 +149,15 @@ function calculateAge(birthday) {
 const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument)
 const handleSaveButton = async () => {
 
-    console.log("________________________________________________________")
-    console.log("affiliations1", address)
-    console.log("bio1", bio)
-    console.log("mantra1", mantra)
-    console.log("address1", address)
-    console.log("profilepicture1", profilePicture)
-    console.log("________________________________________________________")
-
     return await executeMutation(
         {id: parseInt(userToken), address: address, affiliations: affliation, mantra: mantra, bio: bio, profilePicture: profilePicture,
         }).then((res) => {
             if(res) {
                 setIsEditing(false)
-                console.log("________________________________________________________")
                 console.log("affiliations", res.data?.updateCoacheeProfile.affiliations)
                 console.log("bio", res.data?.updateCoacheeProfile.bio)
                 console.log("mantra", res.data?.updateCoacheeProfile.mantra)
                 console.log("address", res.data?.updateCoacheeProfile.address)
-                console.log("profilepicture", res.data?.updateCoacheeProfile.profilePicture)
-                console.log("________________________________________________________")
                 return res.data
             }
         }).catch((e) => {
@@ -188,16 +177,14 @@ const handleSaveButton = async () => {
                     onPress={onLogOutPressed}
                 />
             </View>
-             {/* Wrap the "Profile" text, first name, and last name in a fixed-position view */}
+            <Text style={styles.text}> Profile </Text>
              <View style={styles.profileInfo}>
-                <Text style={styles.text}> Profile </Text>
                 <Text style={styles.normalText}>{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}</Text>
             </View>
             <View style={styles.mantraContainer}>
             <TextInput
                 style={styles.mantraTextInput}
                 placeholder='Enter mantra'
-                // value={mantra ?? coachData?.findCoachByID.mantra}
                 value={mantra}
                 onChangeText={(mantra) => setMantra(mantra)}
                 editable={isEditing}
@@ -316,8 +303,8 @@ const styles = StyleSheet.create({
     text: {
         color: 'white',
         fontSize: 30,
-        left: '10%',
-        top: '80%',
+        left: '36%',
+        top: '6%',
         fontFamily: 'Roboto',
         fontWeight: '700',
         position: 'absolute'
@@ -334,17 +321,16 @@ const styles = StyleSheet.create({
     },
 
     mantraContainer: {
-        alignItems: 'center',
-        left: '45%',
-        marginTop: '35%'
+        left: '50%',
+        marginTop: '30%'
     },
 
     mantraTextInput: {
         paddingHorizontal: 50,
-        paddingVertical: 1,
-        left: -20,
+        paddingVertical: -5,
+        right: '46%',
+        width: 250,
         backgroundColor: 'transparent',
-        width: 500,
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',

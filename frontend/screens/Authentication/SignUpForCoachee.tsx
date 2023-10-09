@@ -112,7 +112,6 @@ const SignUpForCoachee = () => {
 
     const onSignUpPressed = async () => {
         try {
-            setIsLoading(true);
             // Validate the input fields
             if (
                 First_Name.trim() === '' ||
@@ -131,6 +130,7 @@ const SignUpForCoachee = () => {
                 // Display an error message for incomplete fields
                 setErrorMessage('Please fill in all the required fields.');
                 setErrorModalVisible(true);
+                setIsLoading(false);
                 return; // Return early to prevent further execution
             }
 
@@ -142,6 +142,7 @@ const SignUpForCoachee = () => {
             setIsLoading(false);
             return; // Return early if validation fails
         }
+        setIsLoading(true); // Set isLoading to true when the signup process starts
 
       
 
@@ -179,7 +180,6 @@ const SignUpForCoachee = () => {
             } else {
                 setSuccessMessage('Signed up successfully!');
                 toggleModal();
-                // Clear form fields
                 setFirst_Name('');
                 setLast_Name('');
                 setEmail('');
@@ -189,11 +189,11 @@ const SignUpForCoachee = () => {
                 setCity('');
                 setPostal('');
                 setDateofBirth('');
-                setIsLoading(false); // Set isLoading to false after success
             }
         } catch (err) {
             console.error(err);
             // Reset loading state to false in case of an error
+        } finally {
             setIsLoading(false);
         }
     };
@@ -210,13 +210,13 @@ const SignUpForCoachee = () => {
                         placeholder="Full Name"
                         value={First_Name}
                         checkForInteger
-                        setValue={setFirst_Name}
+                        setValue={value => setFirst_Name(value.substring(0, 10))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="Last Name"
                         value={Last_Name}
                         checkForInteger
-                        setValue={setLast_Name}
+                        setValue={value => setLast_Name(value.substring(0, 10))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="Email"
