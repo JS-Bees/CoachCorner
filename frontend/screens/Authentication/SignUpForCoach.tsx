@@ -140,7 +140,7 @@ const SignUpForCoach = () => {
             if (containsInteger(First_Name, Last_Name)) {
                 setErrorMessage('First Name and Last Name cannot contain integers.');
                 setErrorModalVisible(true);
-                setIsLoading(true);
+                setIsLoading(false);
                 return; // Return early if validation fails
             }
 
@@ -191,7 +191,7 @@ const SignUpForCoach = () => {
                 setCity('');
                 setPostal('');
                 setDateofBirth('');
-                setIsLoading(true);
+                setIsLoading(false);
             }
         } catch (err) {
             console.error(err);

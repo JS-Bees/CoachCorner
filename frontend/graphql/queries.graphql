@@ -64,6 +64,7 @@ query FindCoacheeByID($userID: Int!) {
         moviesGenres
         isCoach
         coachingRelationships {
+            id
             coach {
                 firstName
                 lastName
@@ -91,6 +92,7 @@ query FindCoachByID($userID: Int!) {
         profilePicture
         isCoach
         coachingRelationships {
+            id
             coachee {
                 firstName
                 lastName

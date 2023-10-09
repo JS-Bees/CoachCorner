@@ -324,8 +324,8 @@ const styles = StyleSheet.create({
     },
 
     logOut: {
-        paddingTop: '10%',
-        left: width * 0.4,
+        top: '-5%',
+        left: '25%',
     },
 
     row: {

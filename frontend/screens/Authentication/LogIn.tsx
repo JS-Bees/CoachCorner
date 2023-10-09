@@ -57,6 +57,8 @@ const LogIn = () => {
     };
 
     const handleLoginError = () => {
+        console.log(Email)
+        console.log(Password)
         setErrorMessage('Email or password is incorrect ' + Email.trim());
         toggleModal();
     };

@@ -16,8 +16,6 @@ import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Import your GraphQL client and query here
 import { useQuery } from 'urql';
 import { FindUnaddedCoachesBySportDocument} from '../../generated-gql/graphql';
 

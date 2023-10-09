@@ -15,7 +15,7 @@ export const findCoachByEmailAndPassword = queryField(
         resolve: async (_, { email, password }, context: Context) => {
             // Search for a Coach with the provided email
             const coach = await context.db.coach.findUnique({
-                where: { email, password, active: true }, // Include the 'active' condition
+                where: { email, active: true }, // Include the 'active' condition
             });
 
             if (coach) {
@@ -47,7 +47,7 @@ export const findCoacheeByEmailAndPassword = queryField(
         resolve: async (_, { email, password }, context: Context) => {
             // Search for a Coachee with the provided email
             const coachee = await context.db.coachee.findUnique({
-                where: { email, password, active: true }, // Include the 'active' condition
+                where: { email, active: true }, // Include the 'active' condition
             });
 
             if (coachee) {
@@ -156,12 +156,15 @@ export const findUnaddedCoachesBySport = queryField(
             const coaches = await context.db.coach.findMany({
                 where: {
                     sport: sport,
-                    coachingRelationships: {
-                        none: {
-                            coacheeId: coacheeID,
+                    active: true, // Include the 'active' condition
+                    NOT: {
+                        coachingRelationships: {
+                            some: {
+                                coacheeId: coacheeID,
+                                active: true // Check for an active coaching relationship with coachee
+                            },
                         },
                     },
-                    active: true, // Include the 'active' condition
                 },
             });
 

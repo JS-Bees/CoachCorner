@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useQuery } from 'urql';
+import { useQuery, useMutation } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import { UpdateCoachingRelationshipActiveStatusDocument } from '../generated-gql/graphql';
 
 const MyCoaches = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [page, setPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [userID, setUserID] = useState<number>(Number); // Initialize userID state
+  const [userID, setUserID] = useState<number>(0);
 
   const goBack = () => {
     navigation.goBack();
@@ -29,12 +30,11 @@ const MyCoaches = () => {
 
   const itemsPerPage = 4;
 
-  // Fetch userID from AsyncStorage
   const fetchUserIDFromStorage = async () => {
     try {
       const storedUserID = await AsyncStorage.getItem('userToken');
       if (storedUserID) {
-        setUserID(parseInt(storedUserID));
+        setUserID(parseInt(storedUserID, 10)); // Parse the storedUserID as an integer
       }
     } catch (error) {
       console.error('Error fetching userID from AsyncStorage:', error);
@@ -43,17 +43,44 @@ const MyCoaches = () => {
 
   useEffect(() => {
     setPage(0);
-    fetchUserIDFromStorage(); // Fetch userID when the component mounts
+    fetchUserIDFromStorage();
   }, []);
 
-
-
-  // Use the fetched userID to query coaching relationships
-  const [{ data, fetching, error }] = useQuery({
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: FindCoacheeByIdDocument,
     variables: { userID },
-    requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    requestPolicy: 'cache-and-network',
   });
+
+  const coachingRelationships = data?.findCoacheeByID?.coachingRelationships || [];
+
+  const [, executeMutation] = useMutation(UpdateCoachingRelationshipActiveStatusDocument);
+
+  // Function to handle the "Remove" button click
+  const handleRemoveClick = async (relationshipId: number) => {
+    try {
+      console.log(relationshipId);
+      console.log('Before executing mutation');
+
+      // Execute the mutation to update the active status to false
+      const response = await executeMutation({
+        id: relationshipId,
+        active: false,
+      });
+
+      // Log the response data
+      console.log('Mutation response:', response);
+
+      // Reexecute the query to fetch updated data
+      reexecuteQuery();
+      console.log('After reexecuting query');
+
+      // Optionally, you can display a success message or perform other actions here
+    } catch (error) {
+      // Handle any errors that occur during the mutation
+      console.error('Error removing coach:', error);
+    }
+  };
 
   if (fetching) {
     // Handle loading state here
@@ -65,16 +92,10 @@ const MyCoaches = () => {
     return <Text>Error: {error.message}</Text>;
   }
 
-  // Assuming data.findCoacheeByID returns an object with a coachingRelationships field
-  const coachingRelationships = data?.findCoacheeByID?.coachingRelationships || [];
-
-
   // Filter items based on the search query
   const filteredItems = coachingRelationships.filter((item) =>
     `${item.coach.firstName} ${item.coach.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  console.log(filteredItems)
 
   const from = page * itemsPerPage;
   const to = (page + 1) * itemsPerPage;
@@ -87,7 +108,6 @@ const MyCoaches = () => {
         </TouchableOpacity>
         <Text style={MyCoachStyle.appointmentLabel}>My Coaches</Text>
       </View>
-      {/* Searchbar */}
       <View style={MyCoachStyle.searchBarContainer}>
         <Searchbar
           placeholder="Search"
@@ -98,21 +118,24 @@ const MyCoaches = () => {
         />
       </View>
       <DataTable>
-      <DataTable.Header>
-    <DataTable.Title>Name</DataTable.Title>
-    <DataTable.Title style={{ marginLeft: '-35%' }}>Sport</DataTable.Title>
-  </DataTable.Header>
+        <DataTable.Header>
+          <DataTable.Title>Name</DataTable.Title>
+          <DataTable.Title style={{ marginLeft: '-35%' }}>Sport</DataTable.Title>
+        </DataTable.Header>
         {filteredItems.slice(from, to).map((item, index) => (
           <DataTable.Row key={index}>
-          <DataTable.Cell>
-            <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
-          </DataTable.Cell>
-          <View style={{ marginRight: '-5%', marginTop: '1.4%' }}>
-            <Button onPress={() => toggleModal(item)}>
-              See Appointments
-            </Button>
-          </View>
-        </DataTable.Row>
+            <DataTable.Cell>
+              <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
+            </DataTable.Cell>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Button onPress={() => toggleModal(item)}>
+                View Appointments
+              </Button>
+              <TouchableOpacity onPress={() => handleRemoveClick(item.id)}>
+                <Ionicons name="trash-outline" size={24} color="red" style={{ marginLeft: 10 }} />
+              </TouchableOpacity>
+            </View>
+          </DataTable.Row>
         ))}
         <Modal
           visible={isModalVisible}
@@ -143,7 +166,6 @@ const MyCoaches = () => {
     </View>
   );
 };
-
 const MyCoachStyle = StyleSheet.create({
   container: {
     flex: 1,
