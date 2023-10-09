@@ -4,7 +4,6 @@ import {
   ScrollView,
   TextInput,
   Dimensions,
-  KeyboardAvoidingView,
   View,
   Platform,
 } from 'react-native';
@@ -92,6 +91,7 @@ const SearchList = () => {
     setShowClearButton(false);
     
   };
+  
 
   return (
     <View style={style.container}>
@@ -136,7 +136,10 @@ const SearchList = () => {
 
       {isBottomSheetVisible && (
         <DraggableBottomSheet
-          onClose={() => setIsBottomSheetVisible(false)}
+        onClose={() => {
+          setIsBottomSheetVisible(false);
+          clearSearch(); // Call clearSearch when the bottom sheet is closed
+        }}
           coachData={selectedCoachData}
         />
       )}

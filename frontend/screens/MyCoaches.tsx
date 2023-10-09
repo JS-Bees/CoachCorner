@@ -120,12 +120,11 @@ const MyCoaches = () => {
       <DataTable>
         <DataTable.Header>
           <DataTable.Title>Name</DataTable.Title>
-          <DataTable.Title style={{ marginLeft: '-35%' }}>Sport</DataTable.Title>
         </DataTable.Header>
         {filteredItems.slice(from, to).map((item, index) => (
           <DataTable.Row key={index}>
             <DataTable.Cell>
-              <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
+              <Text>{item.coach.firstName} {item.coach.lastName}</Text>
             </DataTable.Cell>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Button onPress={() => toggleModal(item)}>
