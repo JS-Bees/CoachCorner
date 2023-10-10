@@ -48,7 +48,7 @@ const schema = makeSchema({
     },
     // just for demo that GraphQL is security at field level
     plugins: [fieldAuthorizePlugin()],
-    // can use thi to protect specific fields
+    // can use this to protect specific fields
 });
 
 // Set up Apollo Server with context
