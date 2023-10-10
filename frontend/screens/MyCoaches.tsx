@@ -123,24 +123,24 @@ const MyCoaches = () => {
         />
       </View>
       <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Name</DataTable.Title>
-        </DataTable.Header>
         {filteredItems.slice(from, to).map((item, index) => (
-         <TouchableOpacity
+          <TouchableOpacity
           key={index}
           onPress={() => navigateToClientBookingPage(item)}>
-           <DataTable.Row key={index}>
-          <DataTable.Cell>
-            <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
-          </DataTable.Cell>
-          <View style={{ marginRight: '-5%', marginTop: '1.4%' }}>
-            <Button onPress={() => toggleModal(item)}>
-              See Appointments
-            </Button>
-          </View>
-        </DataTable.Row>
-         </TouchableOpacity>
+            <DataTable.Row key={index}>
+            <DataTable.Cell>
+              <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
+            </DataTable.Cell>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Button onPress={() => toggleModal(item)}>
+                View Appointments
+              </Button>
+              <TouchableOpacity onPress={() => handleRemoveClick(item.id)}>
+                <Ionicons name="trash-outline" size={24} color="red" style={{ marginLeft: 10 }} />
+              </TouchableOpacity>
+            </View>
+          </DataTable.Row>
+          </TouchableOpacity>
         ))}
         <Modal
           visible={isModalVisible}
