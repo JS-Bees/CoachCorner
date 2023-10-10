@@ -4,7 +4,6 @@ import {
   ScrollView,
   TextInput,
   Dimensions,
-  KeyboardAvoidingView,
   View,
   Platform,
 } from 'react-native';
@@ -16,8 +15,6 @@ import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Import your GraphQL client and query here
 import { useQuery } from 'urql';
 import { FindUnaddedCoachesBySportDocument} from '../../generated-gql/graphql';
 
@@ -94,6 +91,7 @@ const SearchList = () => {
     setShowClearButton(false);
     
   };
+  
 
   return (
     <View style={style.container}>
@@ -138,7 +136,10 @@ const SearchList = () => {
 
       {isBottomSheetVisible && (
         <DraggableBottomSheet
-          onClose={() => setIsBottomSheetVisible(false)}
+        onClose={() => {
+          setIsBottomSheetVisible(false);
+          clearSearch(); // Call clearSearch when the bottom sheet is closed
+        }}
           coachData={selectedCoachData}
         />
       )}

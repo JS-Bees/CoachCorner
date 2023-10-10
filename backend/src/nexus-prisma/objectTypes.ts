@@ -27,7 +27,7 @@ export const Coachee = objectType({
             type: 'Booking',
             resolve: (coachee, _args, ctx) => {
                 return ctx.db.booking.findMany({
-                    where: { coacheeId: coachee.id },
+                    where: { coacheeId: coachee.id, active: true },
                 });
             },
         });
@@ -36,7 +36,7 @@ export const Coachee = objectType({
             type: 'CoachingRelationship',
             resolve: (coachee, _args, ctx: Context) => {
                 return ctx.db.coachingRelationship.findMany({
-                    where: { coacheeId: coachee.id },
+                    where: { coacheeId: coachee.id, active: true },
                 });
             },
         });
@@ -45,7 +45,7 @@ export const Coachee = objectType({
             type: 'Review',
             resolve: (coachee, _args, ctx) => {
                 return ctx.db.review.findMany({
-                    where: { coacheeId: coachee.id },
+                    where: { coacheeId: coachee.id, active: true },
                 });
             },
         });
@@ -79,7 +79,7 @@ export const Coach = objectType({
             type: 'Booking',
             resolve: (coach, _args, ctx) => {
                 return ctx.db.booking.findMany({
-                    where: { coachId: coach.id },
+                    where: { coachId: coach.id, active: true },
                 });
             },
         });
@@ -88,7 +88,7 @@ export const Coach = objectType({
             type: 'CoachingRelationship',
             resolve: (coach, _args, ctx: Context) => {
                 return ctx.db.coachingRelationship.findMany({
-                    where: { coachId: coach.id },
+                    where: { coachId: coach.id, active: true },
                 });
             },
         });
@@ -97,7 +97,7 @@ export const Coach = objectType({
             type: 'Review',
             resolve: (coach, _args, ctx) => {
                 return ctx.db.review.findMany({
-                    where: { coachId: coach.id },
+                    where: { coachId: coach.id, active: true },
                 });
             },
         });
@@ -123,7 +123,7 @@ export const CoachingRelationship = objectType({
             type: 'Coach',
             resolve: (relationship, _args, ctx) => {
                 return ctx.db.coach.findUnique({
-                    where: { id: relationship.coachId },
+                    where: { id: relationship.coachId, active: true },
                 });
             },
         });
@@ -132,7 +132,7 @@ export const CoachingRelationship = objectType({
             type: 'Coachee',
             resolve: (relationship, _args, ctx) => {
                 return ctx.db.coachee.findUnique({
-                    where: { id: relationship.coacheeId },
+                    where: { id: relationship.coacheeId, active: true },
                 });
             },
         });
@@ -149,7 +149,7 @@ export const BookingSlot = objectType({
             type: 'Booking',
             resolve: (bookingSlot, _args, ctx) => {
                 return ctx.db.booking.findUnique({
-                    where: { id: bookingSlot.bookingId },
+                    where: { id: bookingSlot.bookingId, active: true },
                 });
             },
         });
@@ -172,7 +172,7 @@ export const Booking = objectType({
             type: 'BookingSlot',
             resolve: (booking, _args, ctx: Context) => {
                 return ctx.db.bookingSlot.findMany({
-                    where: { bookingId: booking.id },
+                    where: { bookingId: booking.id, active: true },
                 });
             },
         });
@@ -181,7 +181,7 @@ export const Booking = objectType({
             type: 'Coach',
             resolve: (booking, _args, ctx) => {
                 return ctx.db.coach.findUnique({
-                    where: { id: booking.coachId },
+                    where: { id: booking.coachId, active: true },
                 });
             },
         });
@@ -191,7 +191,7 @@ export const Booking = objectType({
             type: 'Coachee',
             resolve: (booking, _args, ctx) => {
                 return ctx.db.coachee.findUnique({
-                    where: { id: booking.coacheeId },
+                    where: { id: booking.coacheeId, active: true },
                 });
             },
         });
@@ -218,7 +218,7 @@ export const Review = objectType({
             type: 'Coach',
             resolve: (review, _args, ctx) => {
                 return ctx.db.coach.findUnique({
-                    where: { id: review.coachId },
+                    where: { id: review.coachId, active: true },
                 });
             },
         });
@@ -227,7 +227,7 @@ export const Review = objectType({
             type: 'Coachee',
             resolve: (review, _args, ctx) => {
                 return ctx.db.coachee.findUnique({
-                    where: { id: review.coacheeId },
+                    where: { id: review.coacheeId, active: true },
                 });
             },
         });

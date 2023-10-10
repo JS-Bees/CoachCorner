@@ -66,7 +66,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
 
     const [ratingError, setRatingError] = useState<string | null>(null);
     const [isAddingCoach, setIsAddingCoach] = useState(false);
-
+        
     
     
     const submitReview = async () => {
@@ -146,6 +146,8 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             console.error('Error adding coach:', error);
         } finally {
             setIsAddingCoach(false); // Stop adding coach
+            onClose();
+            
         }
     };
     const [{ data: coachReviewsData }] = useQuery({

@@ -156,12 +156,15 @@ export const findUnaddedCoachesBySport = queryField(
             const coaches = await context.db.coach.findMany({
                 where: {
                     sport: sport,
-                    coachingRelationships: {
-                        none: {
-                            coacheeId: coacheeID,
+                    active: true, // Include the 'active' condition
+                    NOT: {
+                        coachingRelationships: {
+                            some: {
+                                coacheeId: coacheeID,
+                                active: true // Check for an active coaching relationship with coachee
+                            },
                         },
                     },
-                    active: true, // Include the 'active' condition
                 },
             });
 

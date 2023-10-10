@@ -43,6 +43,7 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+    
   };
 
   return (

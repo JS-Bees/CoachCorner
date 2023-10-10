@@ -110,6 +110,7 @@ query FindCoachByID($userID: Int!) {
         profilePicture
         isCoach
         coachingRelationships {
+            id
             coachee {
                 firstName
                 lastName
