@@ -1,29 +1,273 @@
+// import { objectType } from 'nexus';
+// import * as gqlTypes from 'nexus-prisma';
+// import { DateTime } from 'nexus-prisma/scalars';
+// import { Context } from './context';
+
+// export const custom = DateTime; // this is for the dateTime fields in all files
+
+// export const Coachee = objectType({
+//     name: 'Coachee',
+//     definition(t) {
+//         //
+//         t.string('id');
+//         t.string('address');
+//         t.field(gqlTypes.Coachee.birthday);
+//         t.field(gqlTypes.Coachee.email);
+//         t.field(gqlTypes.Coachee.firstName);
+//         t.field(gqlTypes.Coachee.lastName);
+//         t.field(gqlTypes.Coachee.password);
+//         t.field(gqlTypes.Coachee.moviesGenres);
+//         t.field(gqlTypes.Coachee.games);
+//         t.field(gqlTypes.Coachee.hobbies);
+//         t.field(gqlTypes.Coachee.affiliations);
+//         t.field(gqlTypes.Coachee.bio);
+//         t.field(gqlTypes.Coachee.mantra);
+//         t.field(gqlTypes.Coachee.profilePicture);
+//         // t.field(gqlTypes.Coachee.bookings);
+//         t.list.field('bookings', {
+//             type: 'Booking',
+//             resolve: (coachee, _args, ctx) => {
+//                 return ctx.db.booking.findMany({
+//                     where: { coacheeId: coachee.id, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.Coachee.coachingRelationships);
+//         t.list.field('coachingRelationships', {
+//             type: 'CoachingRelationship',
+//             resolve: (coachee, _args, ctx: Context) => {
+//                 return ctx.db.coachingRelationship.findMany({
+//                     where: { coacheeId: coachee.id, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.Coachee.reviews);
+//         t.list.field('reviews', {
+//             type: 'Review',
+//             resolve: (coachee, _args, ctx) => {
+//                 return ctx.db.review.findMany({
+//                     where: { coacheeId: coachee.id, active: true },
+//                 });
+//             },
+//         });
+//         t.field(gqlTypes.Coachee.isCoach);
+//         t.field(gqlTypes.Coachee.active);
+//         t.field(gqlTypes.Coachee.createdAt);
+//         t.field(gqlTypes.Coachee.updatedAt);
+//     },
+// });
+
+// export const Coach = objectType({
+//     name: 'Coach',
+//     definition(t) {
+//         t.field(gqlTypes.Coach.id);
+//         t.field(gqlTypes.Coach.birthday);
+//         t.field(gqlTypes.Coach.email);
+//         t.field(gqlTypes.Coach.firstName);
+//         t.field(gqlTypes.Coach.lastName);
+//         t.field(gqlTypes.Coach.password);
+//         t.field(gqlTypes.Coach.workplaceAddress);
+//         t.field(gqlTypes.Coach.sport);
+//         t.field(gqlTypes.Coach.moviesGenres);
+//         t.field(gqlTypes.Coach.games);
+//         t.field(gqlTypes.Coach.hobbies);
+//         t.field(gqlTypes.Coach.affiliations);
+//         t.field(gqlTypes.Coach.bio);
+//         t.field(gqlTypes.Coach.mantra);
+//         t.field(gqlTypes.Coach.profilePicture);
+//         // t.field(gqlTypes.Coach.bookings);
+//         t.list.field('bookings', {
+//             type: 'Booking',
+//             resolve: (coach, _args, ctx) => {
+//                 return ctx.db.booking.findMany({
+//                     where: { coachId: coach.id, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.Coach.coachingRelationships);
+//         t.list.field('coachingRelationships', {
+//             type: 'CoachingRelationship',
+//             resolve: (coach, _args, ctx: Context) => {
+//                 return ctx.db.coachingRelationship.findMany({
+//                     where: { coachId: coach.id, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.Coach.reviews);
+//         t.list.field('reviews', {
+//             type: 'Review',
+//             resolve: (coach, _args, ctx) => {
+//                 return ctx.db.review.findMany({
+//                     where: { coachId: coach.id, active: true },
+//                 });
+//             },
+//         });
+//         t.field(gqlTypes.Coach.isCoach);
+//         t.field(gqlTypes.Coach.active);
+//         t.field(gqlTypes.Coach.createdAt);
+//         t.field(gqlTypes.Coach.updatedAt);
+//     },
+// });
+
+// export const CoachingRelationship = objectType({
+//     name: 'CoachingRelationship',
+//     definition(t) {
+//         t.field(gqlTypes.CoachingRelationship.id);
+//         t.field(gqlTypes.CoachingRelationship.coachId);
+//         t.field(gqlTypes.CoachingRelationship.coacheeId);
+//         t.field(gqlTypes.CoachingRelationship.messagingStarted);
+//         t.field(gqlTypes.CoachingRelationship.active);
+//         t.field(gqlTypes.CoachingRelationship.createdAt);
+//         t.field(gqlTypes.CoachingRelationship.updatedAt);
+//         // t.field(gqlTypes.CoachingRelationship.coach);
+//         t.field('coach', {
+//             type: 'Coach',
+//             resolve: (relationship, _args, ctx) => {
+//                 return ctx.db.coach.findUnique({
+//                     where: { id: relationship.coachId, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.CoachingRelationship.coachee);
+//         t.field('coachee', {
+//             type: 'Coachee',
+//             resolve: (relationship, _args, ctx) => {
+//                 return ctx.db.coachee.findUnique({
+//                     where: { id: relationship.coacheeId, active: true },
+//                 });
+//             },
+//         });
+//     },
+// });
+
+// export const BookingSlot = objectType({
+//     name: 'BookingSlot',
+//     definition(t) {
+//         t.field(gqlTypes.BookingSlot.id);
+//         t.field(gqlTypes.BookingSlot.bookingId);
+//         // t.field(gqlTypes.BookingSlot.booking);
+//         t.field('booking', {
+//             type: 'Booking',
+//             resolve: (bookingSlot, _args, ctx) => {
+//                 return ctx.db.booking.findUnique({
+//                     where: { id: bookingSlot.bookingId, active: true },
+//                 });
+//             },
+//         });
+//         // ^IDK if this works test by running query in playground (if bookingSlots can return booking objects), seems like it works
+//         t.field(gqlTypes.BookingSlot.date);
+//         t.field(gqlTypes.BookingSlot.startTime);
+//         t.field(gqlTypes.BookingSlot.endTime);
+//         t.field(gqlTypes.BookingSlot.active);
+//         t.field(gqlTypes.BookingSlot.createdAt);
+//         t.field(gqlTypes.BookingSlot.updatedAt);
+//     },
+// });
+
+// export const Booking = objectType({
+//     name: 'Booking',
+//     definition(t) {
+//         t.field(gqlTypes.Booking.id);
+//         // t.field(gqlTypes.Booking.bookingSlots);
+//         t.list.field('bookingSlots', {
+//             type: 'BookingSlot',
+//             resolve: (booking, _args, ctx: Context) => {
+//                 return ctx.db.bookingSlot.findMany({
+//                     where: { bookingId: booking.id, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.Booking.coach);
+//         t.field('coach', {
+//             type: 'Coach',
+//             resolve: (booking, _args, ctx) => {
+//                 return ctx.db.coach.findUnique({
+//                     where: { id: booking.coachId, active: true },
+//                 });
+//             },
+//         });
+//         t.field(gqlTypes.Booking.coachId);
+//         // t.field(gqlTypes.Booking.coachee);
+//         t.field('coachee', {
+//             type: 'Coachee',
+//             resolve: (booking, _args, ctx) => {
+//                 return ctx.db.coachee.findUnique({
+//                     where: { id: booking.coacheeId, active: true },
+//                 });
+//             },
+//         });
+//         t.field(gqlTypes.Booking.coacheeId);
+//         t.field(gqlTypes.Booking.serviceType);
+//         t.field(gqlTypes.Booking.status);
+//         t.field(gqlTypes.Booking.additionalNotes);
+//         t.field(gqlTypes.Booking.active);
+//         t.field(gqlTypes.Booking.createdAt);
+//         t.field(gqlTypes.Booking.updatedAt);
+//     },
+// });
+
+// export const Review = objectType({
+//     name: 'Review',
+//     definition(t) {
+//         t.field(gqlTypes.Review.id);
+//         t.field(gqlTypes.Review.starRating);
+//         t.field(gqlTypes.Review.comment);
+//         t.field(gqlTypes.Review.coacheeId);
+//         t.field(gqlTypes.Review.coachId);
+//         // t.field(gqlTypes.Review.coach);
+//         t.field('coach', {
+//             type: 'Coach',
+//             resolve: (review, _args, ctx) => {
+//                 return ctx.db.coach.findUnique({
+//                     where: { id: review.coachId, active: true },
+//                 });
+//             },
+//         });
+//         // t.field(gqlTypes.Review.coachee);
+//         t.field('coachee', {
+//             type: 'Coachee',
+//             resolve: (review, _args, ctx) => {
+//                 return ctx.db.coachee.findUnique({
+//                     where: { id: review.coacheeId, active: true },
+//                 });
+//             },
+//         });
+//         t.field(gqlTypes.Review.active);
+//         t.field(gqlTypes.Review.createdAt);
+//         t.field(gqlTypes.Review.updatedAt);
+//     },
+// });
+
 import { objectType } from 'nexus';
-import * as gqlTypes from 'nexus-prisma';
 import { DateTime } from 'nexus-prisma/scalars';
 import { Context } from './context';
+import {
+    SportEnum,
+    MovieGenresEnum,
+    HobbiesEnum,
+    GamesEnum,
+    BookingStatusEnum,
+} from './enums';
 
-export const custom = DateTime; // this is for the dateTime fields in all files
+export const custom = DateTime;
 
 export const Coachee = objectType({
     name: 'Coachee',
     definition(t) {
-        //
-        t.string('id');
-        t.string('address');
-        t.field(gqlTypes.Coachee.birthday);
-        t.field(gqlTypes.Coachee.email);
-        t.field(gqlTypes.Coachee.firstName);
-        t.field(gqlTypes.Coachee.lastName);
-        t.field(gqlTypes.Coachee.password);
-        t.field(gqlTypes.Coachee.moviesGenres);
-        t.field(gqlTypes.Coachee.games);
-        t.field(gqlTypes.Coachee.hobbies);
-        t.field(gqlTypes.Coachee.affiliations);
-        t.field(gqlTypes.Coachee.bio);
-        t.field(gqlTypes.Coachee.mantra);
-        t.field(gqlTypes.Coachee.profilePicture);
-        // t.field(gqlTypes.Coachee.bookings);
+        t.int('id');
+        t.field('birthday', { type: DateTime });
+        t.string('email');
+        t.string('firstName');
+        t.string('lastName');
+        t.string('password');
+        t.string('workplaceAddress');
+        t.list.field('moviesGenres', { type: MovieGenresEnum });
+        t.list.field('hobbies', { type: HobbiesEnum });
+        t.list.field('games', { type: GamesEnum });
+        t.string('affiliations');
+        t.string('bio');
+        t.string('mantra');
+        t.string('profilePicture');
         t.list.field('bookings', {
             type: 'Booking',
             resolve: (coachee, _args, ctx) => {
@@ -32,7 +276,6 @@ export const Coachee = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Coachee.coachingRelationships);
         t.list.field('coachingRelationships', {
             type: 'CoachingRelationship',
             resolve: (coachee, _args, ctx: Context) => {
@@ -41,7 +284,6 @@ export const Coachee = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Coachee.reviews);
         t.list.field('reviews', {
             type: 'Review',
             resolve: (coachee, _args, ctx) => {
@@ -50,32 +292,31 @@ export const Coachee = objectType({
                 });
             },
         });
-        t.field(gqlTypes.Coachee.isCoach);
-        t.field(gqlTypes.Coachee.active);
-        t.field(gqlTypes.Coachee.createdAt);
-        t.field(gqlTypes.Coachee.updatedAt);
+        t.boolean('isCoach');
+        t.boolean('active');
+        t.field('createdAt', { type: DateTime });
+        t.field('updatedAt', { type: DateTime });
     },
 });
 
 export const Coach = objectType({
     name: 'Coach',
     definition(t) {
-        t.field(gqlTypes.Coach.id);
-        t.field(gqlTypes.Coach.birthday);
-        t.field(gqlTypes.Coach.email);
-        t.field(gqlTypes.Coach.firstName);
-        t.field(gqlTypes.Coach.lastName);
-        t.field(gqlTypes.Coach.password);
-        t.field(gqlTypes.Coach.workplaceAddress);
-        t.field(gqlTypes.Coach.sport);
-        t.field(gqlTypes.Coach.moviesGenres);
-        t.field(gqlTypes.Coach.games);
-        t.field(gqlTypes.Coach.hobbies);
-        t.field(gqlTypes.Coach.affiliations);
-        t.field(gqlTypes.Coach.bio);
-        t.field(gqlTypes.Coach.mantra);
-        t.field(gqlTypes.Coach.profilePicture);
-        // t.field(gqlTypes.Coach.bookings);
+        t.int('id');
+        t.field('birthday', { type: DateTime });
+        t.string('email');
+        t.string('firstName');
+        t.string('lastName');
+        t.string('password');
+        t.string('workplaceAddress');
+        t.field('sport', { type: SportEnum });
+        t.list.field('moviesGenres', { type: MovieGenresEnum });
+        t.list.field('hobbies', { type: HobbiesEnum });
+        t.list.field('games', { type: GamesEnum });
+        t.string('affiliations');
+        t.string('bio');
+        t.string('mantra');
+        t.string('profilePicture');
         t.list.field('bookings', {
             type: 'Booking',
             resolve: (coach, _args, ctx) => {
@@ -84,7 +325,6 @@ export const Coach = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Coach.coachingRelationships);
         t.list.field('coachingRelationships', {
             type: 'CoachingRelationship',
             resolve: (coach, _args, ctx: Context) => {
@@ -93,33 +333,31 @@ export const Coach = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Coach.reviews);
         t.list.field('reviews', {
             type: 'Review',
-            resolve: (coach, _args, ctx) => {
+            resolve: (coach, _args, ctx: Context) => {
                 return ctx.db.review.findMany({
                     where: { coachId: coach.id, active: true },
                 });
             },
         });
-        t.field(gqlTypes.Coach.isCoach);
-        t.field(gqlTypes.Coach.active);
-        t.field(gqlTypes.Coach.createdAt);
-        t.field(gqlTypes.Coach.updatedAt);
+        t.boolean('isCoach');
+        t.boolean('active');
+        t.field('createdAt', { type: DateTime });
+        t.field('updatedAt', { type: DateTime });
     },
 });
 
 export const CoachingRelationship = objectType({
     name: 'CoachingRelationship',
     definition(t) {
-        t.field(gqlTypes.CoachingRelationship.id);
-        t.field(gqlTypes.CoachingRelationship.coachId);
-        t.field(gqlTypes.CoachingRelationship.coacheeId);
-        t.field(gqlTypes.CoachingRelationship.messagingStarted);
-        t.field(gqlTypes.CoachingRelationship.active);
-        t.field(gqlTypes.CoachingRelationship.createdAt);
-        t.field(gqlTypes.CoachingRelationship.updatedAt);
-        // t.field(gqlTypes.CoachingRelationship.coach);
+        t.int('id');
+        t.int('coachId');
+        t.int('coacheeId');
+        t.boolean('messagingStarted');
+        t.boolean('active');
+        t.field('createdAt', { type: DateTime });
+        t.field('updatedAt', { type: DateTime });
         t.field('coach', {
             type: 'Coach',
             resolve: (relationship, _args, ctx) => {
@@ -128,7 +366,6 @@ export const CoachingRelationship = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.CoachingRelationship.coachee);
         t.field('coachee', {
             type: 'Coachee',
             resolve: (relationship, _args, ctx) => {
@@ -143,9 +380,14 @@ export const CoachingRelationship = objectType({
 export const BookingSlot = objectType({
     name: 'BookingSlot',
     definition(t) {
-        t.field(gqlTypes.BookingSlot.id);
-        t.field(gqlTypes.BookingSlot.bookingId);
-        // t.field(gqlTypes.BookingSlot.booking);
+        t.int('id');
+        t.int('bookingId');
+        t.field('date', { type: DateTime });
+        t.field('startTime', { type: DateTime });
+        t.field('endTime', { type: DateTime });
+        t.boolean('active');
+        t.field('createdAt', { type: DateTime });
+        t.field('updatedAt', { type: DateTime });
         t.field('booking', {
             type: 'Booking',
             resolve: (bookingSlot, _args, ctx) => {
@@ -154,21 +396,21 @@ export const BookingSlot = objectType({
                 });
             },
         });
-        // ^IDK if this works test by running query in playground (if bookingSlots can return booking objects), seems like it works
-        t.field(gqlTypes.BookingSlot.date);
-        t.field(gqlTypes.BookingSlot.startTime);
-        t.field(gqlTypes.BookingSlot.endTime);
-        t.field(gqlTypes.BookingSlot.active);
-        t.field(gqlTypes.BookingSlot.createdAt);
-        t.field(gqlTypes.BookingSlot.updatedAt);
     },
 });
 
 export const Booking = objectType({
     name: 'Booking',
     definition(t) {
-        t.field(gqlTypes.Booking.id);
-        // t.field(gqlTypes.Booking.bookingSlots);
+        t.int('id');
+        t.int('coacheeId');
+        t.int('coachId');
+        t.string('serviceType');
+        t.field('status', { type: BookingStatusEnum });
+        t.string('additionalNotes');
+        t.boolean('active');
+        t.field('createdAt', { type: DateTime });
+        t.field('updatedAt', { type: DateTime });
         t.list.field('bookingSlots', {
             type: 'BookingSlot',
             resolve: (booking, _args, ctx: Context) => {
@@ -177,7 +419,6 @@ export const Booking = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Booking.coach);
         t.field('coach', {
             type: 'Coach',
             resolve: (booking, _args, ctx) => {
@@ -186,8 +427,6 @@ export const Booking = objectType({
                 });
             },
         });
-        t.field(gqlTypes.Booking.coachId);
-        // t.field(gqlTypes.Booking.coachee);
         t.field('coachee', {
             type: 'Coachee',
             resolve: (booking, _args, ctx) => {
@@ -196,25 +435,20 @@ export const Booking = objectType({
                 });
             },
         });
-        t.field(gqlTypes.Booking.coacheeId);
-        t.field(gqlTypes.Booking.serviceType);
-        t.field(gqlTypes.Booking.status);
-        t.field(gqlTypes.Booking.additionalNotes);
-        t.field(gqlTypes.Booking.active);
-        t.field(gqlTypes.Booking.createdAt);
-        t.field(gqlTypes.Booking.updatedAt);
     },
 });
 
 export const Review = objectType({
     name: 'Review',
     definition(t) {
-        t.field(gqlTypes.Review.id);
-        t.field(gqlTypes.Review.starRating);
-        t.field(gqlTypes.Review.comment);
-        t.field(gqlTypes.Review.coacheeId);
-        t.field(gqlTypes.Review.coachId);
-        // t.field(gqlTypes.Review.coach);
+        t.int('id');
+        t.int('starRating');
+        t.string('comment');
+        t.int('coacheeId');
+        t.int('coachId');
+        t.boolean('active');
+        t.field('createdAt', { type: DateTime });
+        t.field('updatedAt', { type: DateTime });
         t.field('coach', {
             type: 'Coach',
             resolve: (review, _args, ctx) => {
@@ -223,7 +457,6 @@ export const Review = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Review.coachee);
         t.field('coachee', {
             type: 'Coachee',
             resolve: (review, _args, ctx) => {
@@ -232,8 +465,5 @@ export const Review = objectType({
                 });
             },
         });
-        t.field(gqlTypes.Review.active);
-        t.field(gqlTypes.Review.createdAt);
-        t.field(gqlTypes.Review.updatedAt);
     },
 });
