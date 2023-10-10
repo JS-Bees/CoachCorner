@@ -18,9 +18,6 @@ const MyCoaches = () => {
   const navigateToCoachBookingPage = (item) => {
     navigation.navigate('CoachBookingDrawer', { coachee: item.coachee });
   };
-
-  
-  
   
   
   const goBack = () => {

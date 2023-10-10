@@ -15,6 +15,11 @@ const MyCoaches = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [userID, setUserID] = useState<number>(Number); // Initialize userID state
 
+  const navigateToClientBookingPage = (item) => {
+    navigation.navigate('ClientBookingDrawer', { coachId: item.coachId, coach: item.coach });
+  };
+
+
   const goBack = () => {
     navigation.goBack();
   };
@@ -103,7 +108,10 @@ const MyCoaches = () => {
     <DataTable.Title style={{ marginLeft: '-35%' }}>Sport</DataTable.Title>
   </DataTable.Header>
         {filteredItems.slice(from, to).map((item, index) => (
-          <DataTable.Row key={index}>
+         <TouchableOpacity
+          key={index}
+          onPress={() => navigateToClientBookingPage(item)}>
+           <DataTable.Row key={index}>
           <DataTable.Cell>
             <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
           </DataTable.Cell>
@@ -113,6 +121,7 @@ const MyCoaches = () => {
             </Button>
           </View>
         </DataTable.Row>
+         </TouchableOpacity>
         ))}
         <Modal
           visible={isModalVisible}

@@ -55,6 +55,17 @@ const styles = StyleSheet.create( {
         color: 'white'
     },
 
+    text_CONFIRM: {
+        color: '#6441A4',
+        fontSize: 20
+    },
+
+    text_CANCEL: {
+        color:  '#a19e9e',
+        fontSize: 15
+    },
+
+
     
 
 

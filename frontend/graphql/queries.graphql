@@ -63,16 +63,35 @@ query FindCoacheeByID($userID: Int!) {
         profilePicture
         moviesGenres
         isCoach
+        bookings {
+            status
+            coachId
+        }
         coachingRelationships {
+            id
+            coachId
             coach {
                 firstName
                 lastName
                 sport
             }
+
         }
+        bookings {
+            id
+            status
+            coachId
+            serviceType
+            additionalNotes
+            bookingSlots {
+                date
+                endTime
+                startTime
+            }
+        }
+       
     }
 }
-
 query FindCoachByID($userID: Int!) {
     findCoachByID(userID: $userID) {
         id

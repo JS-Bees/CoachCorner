@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Animated,
@@ -52,6 +50,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
   const [fontsLoaded] = useFonts({
     'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
   });
+  
 
   const [userToken, setUserToken] = useState<string | null>(null);
   const [selectedStartTime, setSelectedStartTime] = useState<Date | null>(null);
@@ -228,7 +227,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
   useEffect(() => {
     setSelectedClient(route.params?.coachee || null)
   }, [route.params])
-
+  
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
   const panResponder = useRef(
@@ -618,4 +617,3 @@ modalButtonText: {
 });
 
 export default BookingDrawer;
-

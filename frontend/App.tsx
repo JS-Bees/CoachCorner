@@ -8,9 +8,11 @@ import CoacheeProfile from './screens/Profile/CoacheeProfile';
 import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
 import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
+import ClientBookingDrawer from './screens/BookingDrawers.tsx/ClientBooking';
 import Appointments from './screens/Appointments';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
+import ConfirmBookingDrawer from './components/BottomSheet/ConfirmBookingDrawer';
 import SearchList from './screens/SearchList/SearchList';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
@@ -29,7 +31,7 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.4:5050/graphql', // replace with actual IP address, change to .env file
+    url: 'http://192.168.1.2:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -47,6 +49,8 @@ export type RootStackParams = {
     MyCoaches: any;
     SearchList: any;
     CoachBookingDrawer: any;
+    ClientBookingDrawer: any;
+    ConfirmBookingDrawer: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -55,7 +59,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn">
+                <RootStack.Navigator initialRouteName="Appointments">
                     <RootStack.Screen
                         name="LogIn"
                         component={LogInPage}
@@ -119,6 +123,11 @@ export default function App() {
                      <RootStack.Screen 
                         name="CoachBookingDrawer" 
                         component={CoachBookingDrawer} 
+                        options={{headerShown: false}}
+                    />
+                     <RootStack.Screen 
+                        name="ClientBookingDrawer" 
+                        component={ClientBookingDrawer} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>
