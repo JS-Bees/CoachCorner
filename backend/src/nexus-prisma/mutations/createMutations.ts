@@ -1,5 +1,5 @@
 import { mutationField, nonNull, arg, list } from 'nexus';
-import { Context } from '../context';
+// import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import {
     CreateBookingInput,
@@ -22,7 +22,7 @@ export const createCoachee = mutationField('createCoachee', {
     args: {
         input: nonNull(arg({ type: CreateCoacheeInput })),
     },
-    resolve: async (_, { input }, context: Context) => {
+    resolve: async (_, { input }, context) => {
         const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with 10 salt rounds
         const coacheeData = { ...input, password: hashedPassword };
         return context.db.coachee.create({
@@ -36,7 +36,7 @@ export const createCoach = mutationField('createCoach', {
     args: {
         input: nonNull(arg({ type: CreateCoachInput })),
     },
-    resolve: async (_, { input }, context: Context) => {
+    resolve: async (_, { input }, context) => {
         const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with 10 salt rounds
         const coachData = { ...input, password: hashedPassword };
         return context.db.coach.create({
@@ -53,7 +53,7 @@ export const createCoachingRelationship = mutationField(
         args: {
             input: nonNull(arg({ type: CreateCoachingRelationshipInput })),
         },
-        resolve: async (_, { input }, context: Context) => {
+        resolve: async (_, { input }, context) => {
             // Perform validation and create the coaching relationship in your database.
             // You can access input.coacheeId and input.coachId to create the relationship.
 
@@ -92,7 +92,7 @@ export const createBooking = mutationField('createBooking', {
         input: nonNull(arg({ type: CreateBookingInput })),
         slotsInput: nonNull(list(nonNull(CreateBookingSlotInput))),
     },
-    resolve: async (_, { input, slotsInput }, context: Context) => {
+    resolve: async (_, { input, slotsInput }, context) => {
         // Create the booking in your database
         const booking = await context.db.booking.create({
             data: {
@@ -115,7 +115,7 @@ export const createReview = mutationField('createReview', {
     args: {
         input: nonNull(arg({ type: CreateReviewInput })),
     },
-    resolve: async (_, { input }, context: Context) => {
+    resolve: async (_, { input }, context) => {
         const createdReview = await context.db.review.create({
             data: {
                 starRating: input.starRating,
