@@ -10,23 +10,23 @@ type Booking {
   coachId: Int!
   coachee: Coachee!
   coacheeId: Int!
-  createdAt: DateTime!
+  createdAt: String!
   id: Int!
   serviceType: String!
   status: BookingStatus!
-  updatedAt: DateTime!
+  updatedAt: String!
 }
 
 type BookingSlot {
   active: Boolean!
   booking: Booking!
   bookingId: Int!
-  createdAt: DateTime!
-  date: DateTime!
-  endTime: DateTime!
+  createdAt: String!
+  date: String!
+  endTime: String!
   id: Int!
-  startTime: DateTime!
-  updatedAt: DateTime!
+  startTime: String!
+  updatedAt: String!
 }
 
 enum BookingStatus {
@@ -40,10 +40,10 @@ type Coach {
   active: Boolean!
   affiliations: String!
   bio: String!
-  birthday: DateTime!
+  birthday: String!
   bookings: [Booking!]!
   coachingRelationships: [CoachingRelationship!]!
-  createdAt: DateTime!
+  createdAt: String!
   email: String!
   firstName: String!
   games: [Games!]!
@@ -57,19 +57,18 @@ type Coach {
   profilePicture: String!
   reviews: [Review!]!
   sport: Sport!
-  updatedAt: DateTime!
+  updatedAt: String!
   workplaceAddress: String!
 }
 
 type Coachee {
   active: Boolean!
-  address: String!
   affiliations: String!
   bio: String!
-  birthday: DateTime!
+  birthday: String!
   bookings: [Booking!]!
   coachingRelationships: [CoachingRelationship!]!
-  createdAt: DateTime!
+  createdAt: String!
   email: String!
   firstName: String!
   games: [Games!]!
@@ -82,7 +81,8 @@ type Coachee {
   password: String!
   profilePicture: String!
   reviews: [Review!]!
-  updatedAt: DateTime!
+  updatedAt: String!
+  workplaceAddress: String!
 }
 
 type CoachingRelationship {
@@ -91,10 +91,10 @@ type CoachingRelationship {
   coachId: Int!
   coachee: Coachee!
   coacheeId: Int!
-  createdAt: DateTime!
+  createdAt: String!
   id: Int!
   messagingStarted: Boolean!
-  updatedAt: DateTime!
+  updatedAt: String!
 }
 
 input CreateBookingInput {
@@ -106,15 +106,15 @@ input CreateBookingInput {
 }
 
 input CreateBookingSlotInput {
-  date: DateTime!
-  endTime: DateTime!
-  startTime: DateTime!
+  date: String!
+  endTime: String!
+  startTime: String!
 }
 
 input CreateCoachInput {
   affiliations: String!
   bio: String!
-  birthday: DateTime!
+  birthday: String!
   email: String!
   firstName: String!
   games: [Games!]!
@@ -132,7 +132,7 @@ input CreateCoacheeInput {
   address: String!
   affiliations: String!
   bio: String!
-  birthday: DateTime!
+  birthday: String!
   email: String!
   firstName: String!
   games: [Games!]!
@@ -248,10 +248,10 @@ type Review {
   coachee: Coachee!
   coacheeId: Int!
   comment: String!
-  createdAt: DateTime!
+  createdAt: String!
   id: Int!
   starRating: Int!
-  updatedAt: DateTime!
+  updatedAt: String!
 }
 
 enum Sport {
