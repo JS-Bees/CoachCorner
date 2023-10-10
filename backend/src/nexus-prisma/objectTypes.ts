@@ -8,6 +8,7 @@ export const custom = DateTime; // this is for the dateTime fields in all files
 export const Coachee = objectType({
     name: 'Coachee',
     definition(t) {
+        //
         t.field(gqlTypes.Coachee.id);
         t.field(gqlTypes.Coachee.address);
         t.field(gqlTypes.Coachee.birthday);
