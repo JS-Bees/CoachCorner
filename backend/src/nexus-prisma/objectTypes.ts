@@ -9,8 +9,8 @@ export const Coachee = objectType({
     name: 'Coachee',
     definition(t) {
         //
-        t.field(gqlTypes.Coachee.id);
-        t.field(gqlTypes.Coachee.address);
+        t.string('id');
+        t.string('address');
         t.field(gqlTypes.Coachee.birthday);
         t.field(gqlTypes.Coachee.email);
         t.field(gqlTypes.Coachee.firstName);
