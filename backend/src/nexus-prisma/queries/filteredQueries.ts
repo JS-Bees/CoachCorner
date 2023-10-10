@@ -1,5 +1,5 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
-import { Context } from '../context';
+// import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import { Coachee, Coach, Booking } from '../objectTypes';
 import { SportEnum, BookingStatusEnum } from '../enums';
@@ -12,7 +12,7 @@ export const findCoachByEmailAndPassword = queryField(
             email: nonNull(stringArg()),
             password: nonNull(stringArg()),
         },
-        resolve: async (_, { email, password }, context: Context) => {
+        resolve: async (_, { email, password }, context) => {
             // Search for a Coach with the provided email
             const coach = await context.db.coach.findUnique({
                 where: { email, active: true }, // Include the 'active' condition
@@ -44,7 +44,7 @@ export const findCoacheeByEmailAndPassword = queryField(
             email: nonNull(stringArg()),
             password: nonNull(stringArg()),
         },
-        resolve: async (_, { email, password }, context: Context) => {
+        resolve: async (_, { email, password }, context) => {
             // Search for a Coachee with the provided email
             const coachee = await context.db.coachee.findUnique({
                 where: { email, active: true }, // Include the 'active' condition
@@ -73,7 +73,7 @@ export const findCoachByID = queryField('findCoachByID', {
     args: {
         userID: nonNull(intArg()), // Changed the argument to intArg for ID
     },
-    resolve: async (_, { userID }, context: Context) => {
+    resolve: async (_, { userID }, context) => {
         // Search for a Coach by ID
         const coach = await context.db.coach.findUnique({
             where: { id: userID, active: true }, // Include the 'active' condition
@@ -92,7 +92,7 @@ export const findCoacheeByID = queryField('findCoacheeByID', {
     args: {
         userID: nonNull(intArg()), // Changed the argument to intArg for ID
     },
-    resolve: async (_, { userID }, context: Context) => {
+    resolve: async (_, { userID }, context) => {
         // Search for a Coachee by ID
         const coachee = await context.db.coachee.findUnique({
             where: { id: userID, active: true }, // Include the 'active' condition
@@ -110,7 +110,7 @@ export const findCoachesBySport = queryField('findCoachesBySport', {
     args: {
         sport: SportEnum,
     },
-    resolve: async (_, { sport }, context: Context) => {
+    resolve: async (_, { sport }, context) => {
         // Search for coaches who are associated with the specified sport
         const coaches = await context.db.coach.findMany({
             where: {
@@ -128,7 +128,7 @@ export const findBookingByID = queryField('findBookingByID', {
     args: {
         bookingID: nonNull(intArg()),
     },
-    resolve: async (_, { bookingID }, context: Context) => {
+    resolve: async (_, { bookingID }, context) => {
         // Search for a Booking by ID
         const booking = await context.db.booking.findUnique({
             where: { id: bookingID, active: true }, // Include the 'active' condition
@@ -150,7 +150,7 @@ export const findUnaddedCoachesBySport = queryField(
             sport: SportEnum, // Required sport argument
             coacheeID: nonNull(intArg()), // Required coacheeID argument
         },
-        resolve: async (_, { sport, coacheeID }, context: Context) => {
+        resolve: async (_, { sport, coacheeID }, context) => {
             // Search for coaches who are associated with the specified sport
             // and do not have a coaching relationship with the given coacheeID
             const coaches = await context.db.coach.findMany({
@@ -161,7 +161,7 @@ export const findUnaddedCoachesBySport = queryField(
                         coachingRelationships: {
                             some: {
                                 coacheeId: coacheeID,
-                                active: true // Check for an active coaching relationship with coachee
+                                active: true, // Check for an active coaching relationship with coachee
                             },
                         },
                     },
@@ -181,7 +181,7 @@ export const findBookingsByStatusAndCoachID = queryField(
             status: nonNull(BookingStatusEnum), // Argument for BookingStatus
             coachID: nonNull(intArg()), // Argument for Coach ID
         },
-        resolve: async (_, { status, coachID }, context: Context) => {
+        resolve: async (_, { status, coachID }, context) => {
             // Search for bookings based on the where condition
             const bookings = await context.db.booking.findMany({
                 where: {
@@ -204,7 +204,7 @@ export const findBookingsByStatusAndCoacheeID = queryField(
             status: nonNull(BookingStatusEnum), // Argument for BookingStatus
             coacheeID: nonNull(intArg()), // Argument for Coachee ID
         },
-        resolve: async (_, { status, coacheeID }, context: Context) => {
+        resolve: async (_, { status, coacheeID }, context) => {
             // Search for bookings based on the where condition
             const bookings = await context.db.booking.findMany({
                 where: {

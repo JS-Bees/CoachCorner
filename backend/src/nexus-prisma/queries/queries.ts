@@ -1,5 +1,5 @@
 import { list, queryField } from 'nexus';
-import { Context } from '../context';
+// import { Context } from '../context';
 import { Coachee, Coach } from '../objectTypes';
 // import { PrismaClient } from '@prisma/client';
 
@@ -7,14 +7,14 @@ import { Coachee, Coach } from '../objectTypes';
 
 export const people = queryField('coachees', {
     type: list(Coachee),
-    resolve(_root, _args, ctx: Context) {
+    resolve(_root, _args, ctx) {
         return ctx.db.coachee.findMany();
     },
 });
 
 export const coaches = queryField('coaches', {
     type: list(Coach),
-    resolve(_root, _args, ctx: Context) {
+    resolve(_root, _args, ctx) {
         return ctx.db.coach.findMany();
     },
 });
