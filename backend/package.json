@@ -11,7 +11,7 @@
         "seed": "npx prisma db seed",
         "lint": "eslint src",
         "installDep": "npm install --force",
-        "renderStart": "tsc && node src/index.js"
+        "renderStart": "npx prisma generate && tsc && node src/index.js"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
