@@ -10,7 +10,8 @@
         "dbPushReset": "npx prisma db push --force-reset",
         "seed": "npx prisma db seed",
         "lint": "eslint src",
-        "installDep": "npm install --force"
+        "installDep": "npm install --force",
+        "renderStart": "tsc && node src/index.js"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
