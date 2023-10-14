@@ -5,8 +5,8 @@ import {
     StyleSheet,
     Dimensions,
     Image,
-    Modal,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 import SVGComponent from '../../components/UpperSVG';
 import BottomComponent from '../../components/BottomSvg';
@@ -22,7 +22,6 @@ import {
 } from '../../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const { width, height } = Dimensions.get('window');
 
 const LogIn = () => {
@@ -31,22 +30,37 @@ const LogIn = () => {
 
     const [Email, setEmail] = useState('');
     const [Password, setPassword] = useState('');
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [EmailPasswordError, setEmailPasswordError] = useState('');
+    const [isLoading, setLoading] = useState(false); // Add loading state
+
+    const [coachResult, executeCoachQuery] = useQuery({
+        query: FindCoachByEmailAndPasswordDocument,
+        variables: {
+            email: Email,
+            password: Password,
+        },
+        pause: false,
+    });
+
+    const [coacheeResult, executeCoacheeQuery] = useQuery({
+        query: FindCoacheeByEmailAndPasswordDocument,
+        variables: {
+            email: Email,
+            password: Password,
+        },
+        pause: false, // Pause the query initially
+    });
 
     // Clear the email and password state variables when navigating away from the page
     useEffect(() => {
         const unsubscribe = navigation.addListener('blur', () => {
             setEmail('');
             setPassword('');
+            setEmailPasswordError('');
         });
 
         return unsubscribe;
-    }, [navigation]);
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
+    });
 
     const storeToken = async (token: string) => {
         try {
@@ -56,73 +70,84 @@ const LogIn = () => {
         }
     };
 
+    // console.log(coacheeData?.findCoacheeByEmailAndPassword.email)
+    // console.log(coachData?.findCoachByEmailAndPassword.email)
     const handleLoginError = () => {
-        console.log(Email)
-        console.log(Password)
-        setErrorMessage('Email or password is incorrect ' + Email.trim());
-        toggleModal();
-    };
-
-    const onLogInPressed = () => {
-        let token = null;
-
-        if (
-            (coachData && coachData.findCoachByEmailAndPassword) ||
-            (coacheeData && coacheeData.findCoacheeByEmailAndPassword)
-        ) {
-            if (coachData && coachData.findCoachByEmailAndPassword) {
-                const userId = coachData.findCoachByEmailAndPassword.id;
-                token = userId.toString();
-                storeToken(token);
-                navigation.navigate('CoachDashboard');
-                console.log(
-                    'Successfully logged in as a coach :)',
-                    'Token:',
-                    token,
-                );
-            } else {
-                const userId = coacheeData.findCoacheeByEmailAndPassword.id;
-                token = userId.toString();
-                storeToken(token);
-                navigation.navigate('CoacheeDashboard');
-                console.log(
-                    'Successfully logged in as a coachee :)',
-                    'Token:',
-                    token,
-                );
-            }
+        if (!Email || Password) {
+            setEmailPasswordError('Invalid Email or Password' + Email);
         } else {
-            handleLoginError();
+            setEmailPasswordError('Invalid Email or Password' + Email); // Clear the error message
         }
     };
 
+    const onLogInPressed = () => {
+        // Check if email and password are provided
+        if (!Email || !Password) {
+            handleLoginError();
+            return; // Don't proceed with the login attempt
+        }
+
+        executeCoachQuery({
+            variables: {
+                email: Email,
+                password: Password,
+            },
+            pause: true,
+        });
+
+        executeCoacheeQuery({
+            variables: {
+                email: Email,
+                password: Password,
+            },
+            pause: true,
+        });
+
+        const coachData = coachResult.data;
+        const coacheeData = coacheeResult.data;
+        console.log('coach data', coachData)
+        console.log('coach data', coacheeData)
+            if (
+                (coachData && coachData.findCoachByEmailAndPassword) ||
+                (coacheeData && coacheeData.findCoacheeByEmailAndPassword)
+            ) {
+                setLoading(true); // Start loading
+                if (coachData && coachData.findCoachByEmailAndPassword) {
+                    const userId = coachData.findCoachByEmailAndPassword.id;
+                    storeToken(userId.toString());
+                    navigation.navigate('CoachDashboard');
+                    console.log(
+                        'Successfully logged in as a coach :)',
+                        'Token:',
+                        userId.toString(),
+                    );
+                } else {
+                    const userId = coacheeData.findCoacheeByEmailAndPassword.id;
+                    storeToken(userId.toString());
+                    navigation.navigate('CoacheeDashboard');
+                    console.log(
+                        'Successfully logged in as a coachee :)',
+                        'Token:',
+                        userId.toString(),
+                    );
+                }
+            } else {
+                handleLoginError();
+            }
+            setLoading(false); // Stop loading
+    };
+
     const onForgotPressed = () => {
-        console.warn('Renewed Password');
+        // console.warn('Renewed Password');
         // Add logic for password reset here
     };
 
     const onSignUpPressed = () => {
         navigation.navigate('SignUpA');
     };
-
-    const [coachResult] = useQuery({
-        query: FindCoachByEmailAndPasswordDocument,
-        variables: {
-            email: Email,
-            password: Password,
-        },
-    });
-
-    const [coacheeResult] = useQuery({
-        query: FindCoacheeByEmailAndPasswordDocument,
-        variables: {
-            email: Email,
-            password: Password,
-        },
-    });
-
-    const coachData = coachResult.data;
-    const coacheeData = coacheeResult.data;
+    const clearError = () => {
+        setEmailPasswordError('');
+    };
 
     return (
         <View style={Log_In_Style.container}>
@@ -138,17 +163,30 @@ const LogIn = () => {
             </View>
 
             <View style={Log_In_Style.customContainer}>
+                <Image
+                    source={require('../Authentication/Icons/Email1.png')}
+                    style={Log_In_Style.emailICon}
+                />
                 <CustomInput
                     placeholder="Email"
                     value={Email}
                     setValue={setEmail}
+                    clearError={clearError}
+                />
+                <Image
+                    source={require('../Authentication/Icons/Password1.png')}
+                    style={Log_In_Style.passwordIcon}
                 />
                 <CustomInput
                     placeholder="Password"
                     value={Password}
                     setValue={setPassword}
                     secureTextEntry
+                    clearError={clearError}
                 />
+                <Text style={Log_In_Style.errorTextPassword}>
+                    {EmailPasswordError}
+                </Text>
                 <LogInButton
                     onPress={onForgotPressed}
                     text="Forgot Password?"
@@ -157,29 +195,23 @@ const LogIn = () => {
             </View>
 
             <View style={Log_In_Style.button}>
-                <LogInButton text="Login" onPress={onLogInPressed} />
+                {isLoading ? (
+                    <ActivityIndicator size="large" color="#915bc7" /> // Show loading indicator
+                ) : (
+                    <LogInButton text="Login" onPress={onLogInPressed} />
+                )}
             </View>
 
             <View style={Log_In_Style.noMargin}>
-                <LogInButton
-                    text="Don't have an account? Sign up here!"
-                    type="TERTIARY"
-                    onPress={onSignUpPressed}
-                />
-            </View>
-
-            <Modal visible={isModalVisible} transparent animationType="slide">
-                <View style={Log_In_Style.modalContainer}>
-                    <View style={Log_In_Style.modalContent}>
-                        <Text style={Log_In_Style.errorMessage}>
-                            {errorMessage}
-                        </Text>
-                        <TouchableOpacity onPress={toggleModal}>
-                            <Text style={Log_In_Style.closeButton}>Close</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: 'Roboto' }}>
+                        Don't have an account?{' '}
+                    </Text>
+                    <TouchableOpacity onPress={onSignUpPressed}>
+                        <Text style={{ color: '#6441A4' }}>Sign up here!</Text>
+                    </TouchableOpacity>
                 </View>
-            </Modal>
+            </View>
         </View>
     );
 };
@@ -190,6 +222,7 @@ const Log_In_Style = StyleSheet.create({
         backgroundColor: '#F9FBFC',
         alignItems: 'center',
         zIndex: 0,
+        justifyContent: 'space-between', // Vertical alignment adjusted
     },
 
     customContainer: {
@@ -198,34 +231,33 @@ const Log_In_Style = StyleSheet.create({
     },
 
     button: {
-        marginTop: height * 0.1,
+        marginTop: height * 0.05,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
 
     noMargin: {
-        marginTop: 25,
-        marginBottom: 400,
+        marginTop: height * 0.02, // Responsive marginTop
+        marginBottom: height * 0.2, // Responsive marginBottom
     },
 
     CoachIcon: {
-        width: width * 0.2,
-        height: height * 0.1,
-        padding: 20,
+        width: width * 0.4, // Responsive width
+        height: height * 0.2, // Responsive height
         resizeMode: 'contain',
         maxWidth: 500,
         maxHeight: 500,
     },
 
     iconContainer: {
-        marginTop: 130,
+        marginTop: height * 0.12, // Responsive marginTop
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
 
     textStyle: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: '900',
         fontFamily: 'Roboto',
         color: '#915bc7',
@@ -245,27 +277,34 @@ const Log_In_Style = StyleSheet.create({
         position: 'absolute',
         zIndex: 0,
     },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    errorTextEmail: {
+        fontSize: 12,
+        color: 'red',
+        marginLeft: '-65%',
+        top: '6%',
     },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        alignItems: 'center',
+    errorTextPassword: {
+        fontSize: 12,
+        color: 'red',
+        top: '8%',
     },
-    errorMessage: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: 'purple',
+    signUpHereText: {
+        color: '#6441A4',
+        fontSize: 16, // adjust the size as needed
     },
-    closeButton: {
-        fontSize: 16,
-        color: 'purple',
+    emailICon: {
+        width: 40,
+        height: 40,
+        left: '-40%',
+        top: '16%',
+        zIndex: 4,
+    },
+    passwordIcon: {
+        width: 25,
+        height: 25,
+        left: '-40%',
+        top: '12%',
+        zIndex: 4,
     },
 });
 

@@ -84,12 +84,7 @@ const CoachDashboard = () => {
                         <Text style={CoachDashboardStyle.greetings}>
                             Welcome Back!
                         </Text>
-                        <Text
-                            style={[
-                                CoachDashboardStyle.name,
-                                { paddingRight: '50%' },
-                            ]}
-                        >
+                        <Text style={CoachDashboardStyle.name}>
                             {coachData?.findCoachByID?.firstName}
                         </Text>
                     </View>
@@ -271,10 +266,11 @@ const CoachDashboardStyle = StyleSheet.create({
         alignItems: 'center',
     },
     imageLabel: {
-        fontFamily: 'Blinker-SemiBold',
+        fontFamily: 'Roboto',
+        fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        marginBottom: 10,
+        top: -2
     },
     imageStyle: {
         width: 65,

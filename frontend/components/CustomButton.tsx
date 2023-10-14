@@ -16,6 +16,7 @@ const styles = StyleSheet.create( {
         alignItems: 'center',
         height: 40,
         borderRadius: 100,
+        top: '3%'
     },
 
     container_PRIMARY: {

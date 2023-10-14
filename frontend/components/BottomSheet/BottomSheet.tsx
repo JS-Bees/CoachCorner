@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     Image,
     ScrollView,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import SVGComponent from '../UpperSVG';
@@ -23,14 +23,16 @@ import { FindCoachByIdReviewDocument } from '../../generated-gql/graphql';
 import { useMutation, useQuery } from 'urql';
 import Modal from 'react-native-modal';
 import RatingWithStars from './RatingWithStars';
-
+import { RootStackParams } from '../../App';
+import { useNavigation } from '@react-navigation/core';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
 const { width, height } = Dimensions.get('window');
 
-const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.9;
-const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.5;
+const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 1;
+const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 1;
 
 const MAX_UPWARD_TRANSLATE_Y =
     BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
@@ -47,6 +49,8 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
     onClose,
     coachData,
 }) => {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isSecondModalVisible, setSecondModalVisible] = useState(false);
@@ -66,9 +70,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
 
     const [ratingError, setRatingError] = useState<string | null>(null);
     const [isAddingCoach, setIsAddingCoach] = useState(false);
-        
-    
-    
+
     const submitReview = async () => {
         try {
             const coacheeId = await AsyncStorage.getItem('userToken');
@@ -110,7 +112,33 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             setIsLoading(false); // Stop loading
         }
     };
-    
+
+    // Function to set the selected rating
+    const handleRatingSelection = (rating: number) => {
+        setRating(rating);
+    };
+
+    const renderStars = () => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                <TouchableOpacity
+                    key={i}
+                    onPress={() => handleRatingSelection(i)}
+                >
+                    <Text
+                        style={{
+                            fontSize: 24,
+                            color: i <= rating ? 'gold' : 'gray',
+                        }}
+                    >
+                        ★
+                    </Text>
+                </TouchableOpacity>,
+            );
+        }
+        return stars;
+    };
 
     useEffect(() => {
         if (refetch) {
@@ -130,7 +158,8 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                     coacheeId: parseInt(coacheeId),
                 };
 
-                const { data, error } = await createCoachingRelationship(variables);
+                const { data, error } =
+                    await createCoachingRelationship(variables);
 
                 if (data) {
                     console.log('Added to Coach:', data);
@@ -147,8 +176,8 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
         } finally {
             setIsAddingCoach(false); // Stop adding coach
             onClose();
-            
         }
+        navigation.navigate('MyCoaches');
     };
     const [{ data: coachReviewsData }] = useQuery({
         requestPolicy: 'cache-and-network',
@@ -281,14 +310,17 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                             </Text>
                         </View>
                         <View style={styles.button}>
-                        {isAddingCoach ? (
-                    <ActivityIndicator size="small" color="#915bc7" />
-                ) : (
-                    <DragSheetButton
-                        text={'Add to My Coaches'}
-                        onPress={onAddPressed}
-                    />
-                )}
+                            {isAddingCoach ? (
+                                <ActivityIndicator
+                                    size="small"
+                                    color="#915bc7"
+                                />
+                            ) : (
+                                <DragSheetButton
+                                    text={'Add to My Coaches'}
+                                    onPress={onAddPressed}
+                                />
+                            )}
                         </View>
                     </View>
 
@@ -296,24 +328,47 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                         <Text style={styles.textSport}> Bio </Text>
                         <TextInput
                             style={styles.textInput}
-                            value={coachData.bio}
+                            value={
+                                coachData.bio === 'Enter Bio here' ||
+                                coachData.bio === 'Enter bio here' ||
+                                coachData.bio === 'Enter Bio' || 
+                                coachData.bio === 'Enter bio'
+                                    ? ''
+                                    : coachData.bio
+                            }
                             editable={false}
+                            underlineColor="transparent"
                         />
-
+                        <Text style={styles.textSport}> Affiliates </Text>
+                        <TextInput
+                            style={styles.textInput}
+                            value={
+                                coachData.affiliations === 'Enter Affiliations here' ||
+                                coachData.affiliations === 'Enter affiliations here' ||
+                                coachData.affiliations === 'Enter Affiliations' ||
+                                coachData.affiliations === 'Enter affiliations' 
+                                    ? ''
+                                    : coachData.affiliations
+                            }
+                            editable={false}
+                            underlineColor="transparent"
+                        />
                         <Text style={styles.textSport}>
                             {' '}
                             Workplace Address{' '}
                         </Text>
                         <TextInput
                             style={styles.textInput}
-                            value={coachData.workplaceAddress}
+                            value={
+                                coachData.workplaceAddress === 'Enter Address here' ||
+                                coachData.workplaceAddress === 'Enter address' ||
+                                coachData.workplaceAddress === 'Enter Address' ||
+                                coachData.workplaceAddress === 'Enter address' 
+                                    ? ''
+                                    : coachData.workplaceAddress
+                            }
                             editable={false}
-                        />
-                        <Text style={styles.textSport}> Affiliates </Text>
-                        <TextInput
-                            style={styles.textInput}
-                            value={coachData.affiliations}
-                            editable={false}
+                            underlineColor="transparent"
                         />
                     </ScrollView>
 
@@ -352,9 +407,17 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                                             {review.coachee.firstName}{' '}
                                             {review.coachee.lastName}
                                         </Text>
-                                        <Text>{review.comment}</Text>
+                                        <View
+                                            style={
+                                                styles.reviewCommentContainer
+                                            }
+                                        >
+                                            <Text style={styles.reviewComment}>
+                                                {review.comment}
+                                            </Text>
+                                        </View>
                                         <Text>
-                                            ______________________________________
+                                            ____________________________________________
                                         </Text>
                                     </View>
                                 ),
@@ -374,33 +437,29 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                 onBackdropPress={closeSecondModal}
             >
                 <View style={styles.innerModalContainer}>
-                    <Text style={styles.modalTexts}>Enter Reviews</Text>
+                    <Text style={styles.modalTexts}>Enter Comments</Text>
                     <TextInput
                         style={styles.textInput}
                         placeholder="Enter your review"
+                        multiline
                         value={review}
-                        onChangeText={(text) => setReview(text)}
+                        onChangeText={(text) => setReview(text)}  
                     />
 
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Enter Rating (1-5)"
-                        keyboardType="numeric"
-                        value={rating === 0 ? '' : rating.toString()}
-                        onChangeText={(text) => {
-                            if (text === '' || (text >= 1 && text <= 5)) {
-                                setRating(text === '' ? 0 : parseInt(text));
-                            }
-                        }}
-                    />
-                     {ratingError && <Text style={styles.ratingError}>{ratingError}</Text>}
-                    <TouchableOpacity
-                        onPress={submitReview}
-                    >
-                         {isLoading ? (
+                    <View style={styles.starRatingContainer}>
+                        <Text style={styles.modalTexts}>Select a Rating:</Text>
+                        <View style={styles.starRating}>{renderStars()}</View>
+                    </View>
+                    {ratingError && (
+                        <Text style={styles.ratingError}>{ratingError}</Text>
+                    )}
+                    <TouchableOpacity onPress={submitReview}>
+                        {isLoading ? (
                             <ActivityIndicator size="small" color="#915bc7" />
                         ) : (
-                            <Text style={styles.modalTextsGrey}>Submit Review</Text>
+                            <Text style={styles.modalTextsCloseAdd}>
+                                Submit Review
+                            </Text>
                         )}
                     </TouchableOpacity>
 
@@ -410,7 +469,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
                             resetReviewAndRating();
                         }}
                     >
-                        <Text style={styles.modalTextsGrey}>Close</Text>
+                        <Text style={styles.modalTextCloseClose}>Close</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
@@ -429,7 +488,7 @@ const styles = StyleSheet.create({
         height: BOTTOM_SHEET_MAX_HEIGHT,
         bottom: BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT,
         ...Platform.select({
-            android: { elevation: 10 },
+            android: { elevation: 100 },
             ios: {
                 shadowColor: '#a8bed2',
                 shadowOpacity: 1,
@@ -441,8 +500,8 @@ const styles = StyleSheet.create({
             },
         }),
         backgroundColor: '#F9FBFC',
-        borderTopLeftRadius: 32,
-        borderTopRightRadius: 32,
+        borderTopLeftRadius: 100,
+        borderTopRightRadius: 100,
     },
     draggableArea: {
         width: 500,
@@ -476,8 +535,8 @@ const styles = StyleSheet.create({
     },
     textSport: {
         left: -4,
-        fontSize: 16,
-        fontWeight: '600',
+        fontSize: 17,
+        fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#636363',
     },
@@ -542,19 +601,39 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto',
         color: '#915bc7',
         fontSize: 16,
-        top: 2,
     },
-    modalTextsGrey: {
-        fontWeight: '400',
+    modalTextsCloseAdd: {
+        fontWeight: '700',
         fontFamily: 'Roboto',
-        color: 'grey',
+        color: '#915bc7',
         fontSize: 16,
-        top: 20,
+        top: 25
+    },
+    modalTextCloseClose: {
+        fontWeight: '700',
+        fontFamily: 'Roboto',
+        color: '#915bc7',
+        fontSize: 20,
+        top: 90
     },
     ratingError: {
         color: 'red',
         fontSize: 16,
         marginTop: 8,
+    },
+    reviewCommentContainer: {
+        height: 60, // Set a fixed height
+        overflow: 'hidden', // Hide overflow content
+    },
+    reviewComment: {
+        fontSize: 16,
+    },
+    starRatingContainer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    starRating: {
+        flexDirection: 'row',
     },
 });
 

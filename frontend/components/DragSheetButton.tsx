@@ -35,7 +35,9 @@ const styles = StyleSheet.create({
     },
 
     text_TERTIARY: {
-        color: 'grey',
+        fontFamily: 'Roboto',
+        color: '#915bc7',
+        fontWeight: '900'
     },
 
     text_SECONDARY: {
