@@ -25,17 +25,17 @@ const ClientBookingDrawer= () => {
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    
+    const [isModalVisible, setIsModalVisible] = useState(false);    
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const route = useRoute()
 
     
 
     const coach = route.params?.coach;
     const coachId = route.params?.coachId;
+    
 
     console.log('Coach ID:', coachId);
-
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -58,19 +58,30 @@ const ClientBookingDrawer= () => {
         requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
 
+  
+    useEffect(() => {
     if (coachId) {
         // Extract relevant booking data for the coach
         const coachBookings = coacheeData?.findCoacheeByID?.bookings || [];
-        
+
         // Check if there is a pending booking status for the coach with the coachee
         const hasPendingBooking = coachBookings.some(
-          (booking) => booking.coachId === coachId && BookingStatus.Pending
+            (booking) => booking.coachId === coachId && BookingStatus.Pending
         );
+
+        setIsButtonDisabled(!hasPendingBooking ); // Disable the button if there are no pending bookings
     }
-    
+    }, [coacheeData, coachId]);
+
+    // Keith
+    const handleBookingAction = () => {
+        // Function to be called when booking is confirmed or canceled
+        setIsButtonDisabled(true);
+      };
+    // End Keith
 
     const handleOpenBottomSheet = () => {
-        if (coachId && coach) {
+        if (coachId && coach && !isButtonDisabled) { // Add a condition to check if the button is not disabled
           const coachBookings = coacheeData?.findCoacheeByID?.bookings || [];
           const hasPendingBooking = coachBookings.some(
             (booking) => booking.coachId === coachId && booking.status === BookingStatus.Pending
@@ -79,13 +90,14 @@ const ClientBookingDrawer= () => {
           if (hasPendingBooking) {
             setIsDrawerVisible(true); // Show the bottom sheet if there is a pending booking
           } else {
-            setIsModalVisible(true); // Show the modal for no pending bookings
+            setIsButtonDisabled(true);  // Automatically disable the button if there are no pending bookings
           }
         } else {
-          console.log('Invalid coach or coachId'); // Log an error if coach or coachId is missing
+          console.log('Invalid coach, coachId, or button is disabled'); // Log an error if coach, coachId is missing, or the button is disabled
         }
-      };
-      const handleClose = () => {
+    };
+    
+    const handleClose = () => {
         setIsDrawerVisible(false); // Close the bottom sheet
       };
 
@@ -111,8 +123,19 @@ const ClientBookingDrawer= () => {
             <Divider style ={styles.divider}/>
             </View>
 
-            <TouchableOpacity onPress={handleOpenBottomSheet} style={styles.button}>
-            <MaterialCommunityIcons name="book-account-outline" size={40} color="#6E5DB0" />
+            <TouchableOpacity
+            onPress={handleOpenBottomSheet}
+            style={[
+             styles.button,
+             isButtonDisabled && styles.disabledButton, // Apply disabled styles if isButtonDisabled is true
+            ]}
+            disabled={isButtonDisabled} // Disable the button based on isButtonDisabled
+            >
+            <MaterialCommunityIcons
+             name="book-account-outline"
+            size={40}
+            color={isButtonDisabled ? 'grey' : '#6E5DB0'} // Change color if button is disabled
+            />
             </TouchableOpacity>
 
             
@@ -120,22 +143,10 @@ const ClientBookingDrawer= () => {
                 animationType="slide"
                 transparent={true}
                 visible={isDrawerVisible}
-                onRequestClose={handleOpenBottomSheet}>
-                {isDrawerVisible && <ConfirmBookingDrawer onClose={handleClose}/>}
+                onRequestClose={handleOpenBottomSheet}>  
+                {/* Keith handleBookingAction*/}
+                {isDrawerVisible && <ConfirmBookingDrawer onClose={handleClose} onBookingAction={handleBookingAction}/>}
             </Modal>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => setIsModalVisible(false)}>
-                   <View style={styles.modal}>
-                    <View style={styles.modalContent}>
-                         <Text>You have no bookings with this coach.</Text>
-                         <Button onPress={() => setIsModalVisible(false)} title="Close" />
-                        </View>
-                    </View>
-            </Modal>
-
             
 
             
@@ -184,29 +195,9 @@ const styles = StyleSheet.create ({
         width: '90%',
         color:'grey'
     },
-    modal: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-    },
-    modalButton: {
-        backgroundColor: '#A378F2', // Change the background color to purple
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-        marginTop: 10,
-      },
+    disabledButton :{
+        opacity: 0.5
+    }
 })
 
 

@@ -78,6 +78,10 @@ query FindCoacheeByID($userID: Int!) {
 
         }
         bookings {
+            coach {
+                firstName
+                lastName
+            }
             id
             status
             coachId
@@ -92,6 +96,7 @@ query FindCoacheeByID($userID: Int!) {
        
     }
 }
+
 query FindCoachByID($userID: Int!) {
     findCoachByID(userID: $userID) {
         id
@@ -111,14 +116,26 @@ query FindCoachByID($userID: Int!) {
         isCoach
         coachingRelationships {
             id
+            coacheeId
             coachee {
                 firstName
                 lastName
             }
         }
+        bookings {
+            coachee {
+                firstName
+                lastName
+            }
+            id
+            status
+            bookingSlots {
+                date
+                startTime
+            }
+        }
     }
 }
-
 query FindCoachesBySport($sport: Sport!) {
     findCoachesBySport(sport: $sport) {
         id

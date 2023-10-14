@@ -11,7 +11,8 @@ import {
   View,
   Pressable,
   StyleSheet,
-  Platform
+  Platform,
+  Easing,
 } from 'react-native';
 import { DatePickerModal } from 'react-native-paper-dates';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -30,11 +31,16 @@ import {
 import { RootStackParams } from '../../App';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { ActivityIndicator } from 'react-native';
+import  dayjs from "dayjs"
+
+
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const { width } = Dimensions.get('window');
 
-const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.85;
+const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 0.9;
 const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 0.3;
 const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
@@ -43,15 +49,20 @@ const DRAG_THRESHOLD = 50;
 interface BookingDrawerProps {
   onClose: () => void;
   coacheeData: ListItemProps['data'];
+  coacheeId: string; 
+  coachId: string
 }
 
-const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
+
+
+
+const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClose }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const route = useRoute();
+  
+ 
 
-  const [fontsLoaded] = useFonts({
-    'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
-  });
+
 
   const [userToken, setUserToken] = useState<string | null>(null);
   const [selectedStartTime, setSelectedStartTime] = useState<Date | null>(null);
@@ -64,15 +75,16 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
   const [serviceType, setServiceType] = useState<string>('');
   const [addNotes, setAddNotes] = useState<string>('');
   const [, createBookingForCoach] = useMutation(CreateBookingDocument);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const [showModal, setShowModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const startTime = new Date();
-  const endTime = new Date();
+  
 
   const toggleModal = () => {
     setShowModal(!showModal);
@@ -82,18 +94,21 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
     setErrorModalVisible(!errorModalVisible);
   };
 
+
   const onSubmitPressed = async () => {
+    setIsLoading(true);
     try {
       if (
         !coachData?.findCoachByID.id ||
         !coacheeData?.findCoacheeByID.id ||
+        !coacheeId || 
         !date|| 
         !serviceType.trim() ||
         !addNotes.trim()
       ) {
         setErrorMessage('Please fill in all the required fields.');
         setErrorModalVisible(true);
-        console.log("im here", coacheeData?.findCoacheeByID.id)
+    
         return;
       }
 
@@ -102,7 +117,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
       const variables = {
         input: {
           coachId: coachData?.findCoachByID?.id || 0,
-          coacheeId: coacheeData?.findCoacheeByID?.id || 0,
+          coacheeId: coacheeId,
           serviceType: serviceType || '',
           additionalNotes: addNotes || '',
           status: 'PENDING',
@@ -110,13 +125,12 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
         slotsInput: [
           {
             date: date || new Date(),
-            endTime: endTime.toISOString(), // Convert endTime to ISO string
-            startTime: startTime.toISOString(), // Convert startTime to ISO string
+            endTime: selectedEndTime?.toISOString(), // Convert endTime to ISO string
+            startTime: selectedStartTime?.toISOString(), // Convert startTime to ISO string
           },
         ],
       };
-
-      
+ 
 
       const { data: createBookingData, error, fetching } = await createBookingForCoach(variables);
 
@@ -129,25 +143,20 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
           console.log('Booking Sent Successfully. Booking ID:', bookingId);
           setSuccessMessage('Booking Sent Successfully');
           toggleModal();
+          setDate(null); // Reset selectedDate
+          setServiceType('');
+          setAddNotes('');
+          setSelectedStartTime(null); // Reset selectedStartTime
+          setSelectedEndTime(null); // Reset selectedEndTime
         } else {
           console.error('Booking creation failed. Data:', createBookingData);
         }
       }
 
-
-      if (error) {
-        console.error(error);
-      } else {
-        setSuccessMessage('Booking Sent Succesfully');
-        toggleModal();
-        setDate(null); // Reset selectedDate
-        setServiceType('');
-        setAddNotes('');
-        setSelectedStartTime(null); // Reset selectedStartTime
-        setSelectedEndTime(null); // Reset selectedEndTime
-      }
     } catch (error) {
-      console.error('Error Submitting Booking:', error);
+      console.error('Error Submitting Booking:');
+    } finally {
+      setIsLoading(false); // Reset loading state regardless of success or failure
     }
   };
 
@@ -155,13 +164,18 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
     setOpen(false)
   }, [setOpen])
 
- const onConfirmSingle = React.useCallback(
-  (params) => {
-    setOpen(false)
-    setDate(params.date)
-  },
-  [setOpen, setDate]
- )
+  const onConfirmSingle = React.useCallback((params) => {
+    setOpen(false);
+    
+    // Check if the selected date is before the current date
+    if (params.date < currentDate) {
+      setErrorModalVisible(true);
+      setErrorMessage('Please select date that is not before current date.');
+    } else {
+      setDate(params.date);
+    }
+  }, [setOpen, setDate, currentDate]);
+ 
 
 
   const showTimePicker = (selectingStartTime: boolean) => {
@@ -177,22 +191,30 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
     if (isSelectingStartTime) {
       setSelectedStartTime(time);
     } else {
-      setSelectedEndTime(time);
+      // Ensure end time is not earlier than start time
+      if (time && selectedStartTime && time <= selectedStartTime) {
+        // Show an error or handle the scenario as needed
+        setErrorModalVisible(true);
+        setErrorMessage('End time must be later than start time.');
+        setSelectedEndTime(null); // Clear the end time
+      } else {
+        setSelectedEndTime(time);
+      }
     }
     hideTimePicker();
   };
 
   const handleTextInputPress = (selectingStartTime: boolean) => {
-    if (selectingStartTime) {
-      setSelectedStartTime(null);
-    } else {
-      setSelectedEndTime(null);
-    }
+    // if (selectingStartTime) {
+    //   setSelectedStartTime(null);
+    // } else {
+    //   setSelectedEndTime(null);
+    // }
     showTimePicker(selectingStartTime);
   };
 
   const formatTimeWithoutSeconds = (time: Date | null) => {
-    return time ? time.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: true }) : '';
+    return time ? dayjs(time).format('h:mm A'): '';
   };
 
   useEffect(() => {
@@ -229,11 +251,20 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
     setSelectedClient(route.params?.coachee || null)
   }, [route.params])
 
+ 
+
+  
+
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: (e, gestureState) => {
+        if (e.nativeEvent.locationX < DRAG_THRESHOLD) {
+          return false;
+        }
+        return true;
+      },
       onPanResponderGrant: () => {
         animatedValue.setOffset(lastGestureDy.current);
       },
@@ -257,6 +288,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
     })
   ).current;
 
+
   const bottomSheetAnimation = {
     transform: [
       {
@@ -264,33 +296,51 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
           inputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
           outputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
           extrapolate: 'clamp',
+          easing: Easing.bezier(0.1, 0, 0, 0.1),
         }),
       },
     ],
+    zIndex: 0
+    
   };
+  
 
   const overlayAnimation = {
     opacity: animatedValue.interpolate({
       inputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
-      outputRange: [0.5, 0.3],
+      outputRange: [0.5, 0.1], // Updated outputRange to fade out completely
       extrapolate: 'clamp',
     }),
+    zIndex: -1
   };
 
+  
+  const [fontsLoaded] = useFonts({
+    'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
+    'Inter-Semibold': require('./Fonts/Inter-SemiBold.otf')
+  });
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
+    <View style={styles.container} {...panResponder.panHandlers} >
       <Animated.View style={[styles.overlay, overlayAnimation]} />
 
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
         <View style={styles.dragHandle} {...panResponder.panHandlers} />
 
-        <View style={styles.title}>
+        <View style={[styles.title, {marginBottom: '15%'}]}>
           <Text style={styles.headerText}> Book </Text>
           <Text style={styles.headerText}> Appointment </Text>
-        </View>
+        </View> 
 
-        <ScrollView keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="always">
-          <View style={styles.content}>
+        
+
+        <KeyboardAwareScrollView enableOnAndroid={true}>
+          <ScrollView keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="always"
+         style={{ zIndex: 1 }}>
+          <View style={[styles.content, {marginTop: '10%'}]}>
             <Text style={styles.contentText}> Coach Name</Text>
             <TextInput
               style={styles.input}
@@ -345,7 +395,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
                 <TextInput
                   underlineColor="white"
                   placeholder="Start Time"
-                  value={formatTimeWithoutSeconds(selectedStartTime) || ''}
+                  value={formatTimeWithoutSeconds(selectedStartTime) ?? ''}
                   editable={false}
                   style={{
                     backgroundColor: 'white',
@@ -357,7 +407,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
                 <TextInput
                   underlineColor="white"
                   placeholder="End Time"
-                  value={formatTimeWithoutSeconds(selectedEndTime) || ''}
+                  value={formatTimeWithoutSeconds(selectedEndTime) ?? ''}
                   editable={false}
                   style={{
                     backgroundColor: 'white',
@@ -370,7 +420,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
                 isVisible={isTimePickerVisible}
                 mode="time"
                 onConfirm={handleTimeConfirm}
-                onCancel={hideTimePicker}
+                onCancel={hideTimePicker} 
                 is24Hour={false}
               />
             </View>
@@ -384,7 +434,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
               onChangeText={(text) => setServiceType(text)}
             />
 
-            <Text style={styles.contentText}> Additional Notes</Text>
+            <Text style={styles.contentText}> Additional Notes</Text>   
             <ScrollView style={styles.additionalInputContainer}>
               <TextInput
                 style={styles.additionalInput}
@@ -398,6 +448,10 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
             </ScrollView>
           </View>
           <LogInButton text={'Submit'} onPress={onSubmitPressed} type="QUARTERNARY" />
+          {isLoading ? (
+      
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : null}
 
           {showModal && (
             <View style={styles.modal}>
@@ -431,10 +485,14 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ onClose }) => {
               </View>
             </View>
           )}
+          
         </ScrollView>
+        </KeyboardAwareScrollView>
       </Animated.View>
     </View>
   );
+
+ 
 };
 
 const styles = StyleSheet.create({
@@ -456,15 +514,6 @@ const styles = StyleSheet.create({
     bottom: BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT,
     ...Platform.select({
       android: { elevation: 3 },
-      ios: {
-        shadowColor: '#a8bed2',
-        shadowOpacity: 1,
-        shadowRadius: 6,
-        shadowOffset: {
-          width: 2,
-          height: 2,
-        },
-      },
     }),
     backgroundColor: "#F6F6F6",
     borderTopLeftRadius: 32,
@@ -477,6 +526,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'center',
     marginTop: 16,
+    zIndex: 3
+    
   },
 
 

@@ -119,7 +119,7 @@ const CoachDashboard = () => {
                             CoachDashboardStyle.miniContainer,
                             { backgroundColor: '#F2E9FB' },
                         ]}
-                        onPress={() => navigation.navigate('Appointments')}
+                        onPress={() => navigation.navigate('CoachAppointments')}
                     >
                         <View style={CoachDashboardStyle.nestedMiniContainer}>
                             <Text style={CoachDashboardStyle.imageLabel}>

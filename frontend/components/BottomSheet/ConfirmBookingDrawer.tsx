@@ -10,6 +10,8 @@ import {
   StyleSheet,
   Modal,
   Platform,
+  TouchableWithoutFeedback,
+  Pressable
 } from 'react-native';
 import LogInButton from '../CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,9 +22,9 @@ import {
   FindBookingsByStatusAndCoacheeIdDocument,
   BookingStatus,
 } from '../../generated-gql/graphql';
-import { useNavigation, useRoute } from '@react-navigation/core';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useRoute } from '@react-navigation/core';
 import { useFonts } from 'expo-font';
+import  dayjs from "dayjs"
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const { width } = Dimensions.get('window');
@@ -42,7 +44,8 @@ const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = 50;
 
-const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) => {
+// Keith Props Booking Action
+const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, onBookingAction }) => {
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false); // State for success modal
   const [isCancelledModalVisible, setIsCancelledModalVisible] = useState(false); // State for cancelled
   const route = useRoute();
@@ -160,6 +163,10 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
         console.log('Booking status updated successfully:', result.data);
         setIsBookingConfirmed(true);
         setIsSuccessModalVisible(true);
+        // Keith onBookingAction
+        if (onBookingAction) {
+          onBookingAction(); // Notify the parent component
+        }
       }
     });
   };
@@ -173,7 +180,11 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
         console.error('Error updating booking status:', result.error);
       } else {
         console.log('Booking status updated successfully:', result.data);
-        setIsCancelledModalVisible(true)
+        setIsCancelledModalVisible(true);
+        // Keith onBookingAction
+        if (onBookingAction) {
+          onBookingAction(); // Notify the parent component
+        }
       }
     });
   };
@@ -181,7 +192,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
   const handleTextPress = () => {
     // Handle the text press event here.
     // You can implement scrolling logic or any other action you want.
-    console.log('Text pressed');
+   
   };
 
   const formatDate = (dateString: string) => {
@@ -192,11 +203,11 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
     return `${month}-${day}-${year}`;
   };
 
-  const formatTime = (timeString: string) => {
-    const [hours, minutes] = timeString.split(':');
-    return `${hours}:${minutes}`;
+  const formatTime = (timeString) => {
+    // Assuming the timeString is in HH:mm format
+    const formattedTime = dayjs(timeString, 'HH:mm').format('h:mm A');
+    return formattedTime;
   };
-  
   const [fontsloaded] = useFonts({
     'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
   });
@@ -212,25 +223,24 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
 
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
         <View style={styles.dragHandle} {...panResponder.panHandlers} />
-
-        <View style={styles.title}>
+        <View style={[styles.title, {marginBottom: '15%'}]}>
           <Text style={styles.headerText}>Confirm</Text>
           <Text style={styles.headerText}>Appointment</Text>
         </View>
 
         <ScrollView
           keyboardDismissMode="on-drag"
-          contentInsetAdjustmentBehavior="always"
-          style={{ flex: 1 }}
+          style={{zIndex: 2, flex: 1, minHeight: 100}}
         >
-          <View style={styles.content}>
+
+          <Pressable style={{flex: 1}}>
+          <View style={[styles.content, {marginTop: '10%'}]}>
             <Text style={styles.secondHeaderText}>Coach Name</Text>
             <Text style={styles.contentText}>
               {`${selectedCoach?.firstName} ${selectedCoach?.lastName}`}
             </Text>
 
-            <Text style={styles.secondHeaderText}
-            onPress={handleTextPress}>Client Name</Text>
+            <Text style={styles.secondHeaderText}>Client Name</Text>
             <Text style={styles.contentText}>
               {`${coacheeData?.findCoacheeByID.firstName} ${coacheeData?.findCoacheeByID.lastName}`}
             </Text>
@@ -260,7 +270,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
             )}
 
             <Text style={styles.secondHeaderText}
-            onPress={handleTextPress}>Service Type</Text>
+            >Service Type</Text>
             {bookingData?.findBookingsByStatusAndCoacheeID.map((booking) =>
               booking.additionalNotes && (
                 <Text key={booking.id} style={styles.contentText}>
@@ -270,7 +280,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
             )}
 
             <Text style={styles.secondHeaderText}
-            onPress={handleTextPress}>Additional Notes</Text>
+            >Additional Notes</Text>
             {bookingData?.findBookingsByStatusAndCoacheeID.map((booking) =>
               booking.additionalNotes && (
                 <Text key={booking.id} style={styles.contentText}>
@@ -292,6 +302,19 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
             />
           </View>
 
+          <View style={styles.cancelButton}>
+            <LogInButton text={'Cancel this Appointment'} type="CANCEL" 
+             onPress={() =>
+              handleCancelBooking(
+                bookingData?.findBookingsByStatusAndCoacheeID[0]?.id || 0
+                )
+            }/>
+          </View>
+          </Pressable>
+
+         
+          </ScrollView>
+
           {/* Success Modal */}
       <Modal
         transparent={true}
@@ -310,18 +333,12 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose }) 
           </View>
         </View>
       </Modal>
+      
 
-          <View style={styles.cancelButton}>
-            <LogInButton text={'Cancel this Appointment'} type="CANCEL" 
-             onPress={() =>
-              handleCancelBooking(
-                bookingData?.findBookingsByStatusAndCoacheeID[0]?.id || 0
-                )
-            }/>
-          </View>
+
 
           
-        </ScrollView>
+        
       </Animated.View>
     </View>
   );
@@ -338,8 +355,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: 'black',
+    zIndex: -1
   },
   bottomSheet: {
+    zIndex: 1,
     position: 'absolute',
     width: '100%',
     height: BOTTOM_SHEET_MAX_HEIGHT,
@@ -391,7 +410,7 @@ const styles = StyleSheet.create({
   },
   secondHeaderTextEnd: {
     marginBottom: '1.5%',
-    right:"100%",
+    right:"-40%",
     fontFamily: 'Cairo-Regular',
     color: '#636363',
     fontSize: 20
@@ -401,7 +420,7 @@ const styles = StyleSheet.create({
   content: {
     alignItems: "flex-start", 
     left: '13%',
-    top: "8%"
+    top: "8%",
   },
 
   rowContent: {
@@ -427,7 +446,7 @@ const styles = StyleSheet.create({
   },
   contentTextEnd:{
     top: "8%",
-    left:"-260%",
+    right:"130%",
     marginBottom:"5%",
     fontFamily: 'Cairo-Regular',
     color: '#636363'
@@ -440,7 +459,7 @@ const styles = StyleSheet.create({
 
   button: {
     top: '10%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cancelButton: {
     top: '10%',

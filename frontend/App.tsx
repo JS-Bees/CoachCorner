@@ -9,10 +9,10 @@ import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
 import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
 import ClientBookingDrawer from './screens/BookingDrawers.tsx/ClientBooking';
-import Appointments from './screens/Appointments';
+import CoachAppointments from './screens/Appointments/CoachAppointments';
+import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
-import ConfirmBookingDrawer from './components/BottomSheet/ConfirmBookingDrawer';
 import SearchList from './screens/SearchList/SearchList';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
@@ -31,7 +31,7 @@ import {
 
 const client = new Client({
     // url: 'http://localhost:5050/graphql',
-    url: 'http://10.10.10.56:5050/graphql', // replace with actual IP address, change to .env file
+    url: 'http://192.168.1.2:5050/graphql', // replace with actual IP address, change to .env file
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -51,6 +51,8 @@ export type RootStackParams = {
     CoachBookingDrawer: any;
     ClientBookingDrawer: any;
     ConfirmBookingDrawer: any;
+    CoachAppointments: any;
+    ClientAppointments: any, 
 };
 
 const RootStack = createNativeStackNavigator();
@@ -101,8 +103,13 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
-                        name="Appointments"
-                        component={Appointments}
+                        name="CoachAppointments"
+                        component={CoachAppointments}
+                        options={{ headerShown: false }}
+                    />
+                      <RootStack.Screen
+                        name="ClientAppointments"
+                        component={ClientAppointments}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen

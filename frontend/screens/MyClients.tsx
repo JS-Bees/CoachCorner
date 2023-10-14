@@ -16,7 +16,7 @@ const MyCoaches = () => {
   const [userID, setUserID] = useState<number>(Number); // Initialize userID state
 
   const navigateToCoachBookingPage = (item) => {
-    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee });
+    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee, coacheeId: item.coacheeId, coachId: item.coachId});
   };
   
   
@@ -32,7 +32,7 @@ const MyCoaches = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 10;
 
   // Fetch userID from AsyncStorage
   const fetchUserIDFromStorage = async () => {

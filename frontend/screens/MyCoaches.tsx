@@ -33,7 +33,7 @@ const MyCoaches = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 10;
 
   const fetchUserIDFromStorage = async () => {
     try {
@@ -129,7 +129,7 @@ const MyCoaches = () => {
           onPress={() => navigateToClientBookingPage(item)}>
             <DataTable.Row key={index}>
             <DataTable.Cell>
-              <Text>{item.coach.firstName} {item.coach.lastName} {" "} {item.coach.sport}</Text>
+              <Text>{item.coach.firstName} {item.coach.lastName} </Text>
             </DataTable.Cell>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Button onPress={() => toggleModal(item)}>

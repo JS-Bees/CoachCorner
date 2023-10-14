@@ -36,6 +36,14 @@ const styles = StyleSheet.create( {
         bottom: "1%"
     },
 
+    container_CANCEL: {
+        paddingVertical: 5,
+    },
+
+    container_CONFIRM: {
+        height: 50,
+       
+    },
     
     text: {
         fontWeight: "bold",
@@ -61,7 +69,7 @@ const styles = StyleSheet.create( {
     },
 
     text_CANCEL: {
-        color:  '#a19e9e',
+        color:  '#D22E2E',
         fontSize: 15
     },
 
