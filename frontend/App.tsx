@@ -14,8 +14,8 @@ import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import SearchList from './screens/SearchList/SearchList';
-import { enGB, registerTranslation } from 'react-native-paper-dates'
-registerTranslation('en-GB', enGB)
+import { enGB, registerTranslation } from 'react-native-paper-dates';
+registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -128,10 +128,10 @@ export default function App() {
                         component={SearchList}
                         options={{ headerShown: false }}
                     />
-                     <RootStack.Screen 
-                        name="CoachBookingDrawer" 
-                        component={CoachBookingDrawer} 
-                        options={{headerShown: false}}
+                    <RootStack.Screen
+                        name="CoachBookingDrawer"
+                        component={CoachBookingDrawer}
+                        options={{ headerShown: false }}
                     />
                      <RootStack.Screen 
                         name="ClientBookingDrawer" 
