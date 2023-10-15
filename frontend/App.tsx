@@ -27,9 +27,10 @@ import {
     fetchExchange,
 } from 'urql';
 
+const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+
 const client = new Client({
-    // url: 'http://localhost:5050/graphql',
-    url: 'https://coach-corner-render-backend-4.onrender.com', // replace with actual IP address, change to .env file
+    url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
 

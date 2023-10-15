@@ -161,7 +161,7 @@ export const findUnaddedCoachesBySport = queryField(
                         coachingRelationships: {
                             some: {
                                 coacheeId: coacheeID,
-                                active: true // Check for an active coaching relationship with coachee
+                                active: true, // Check for an active coaching relationship with coachee
                             },
                         },
                     },
