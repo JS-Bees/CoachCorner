@@ -175,6 +175,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             console.error('Error adding coach:', error);
         } finally {
             setIsAddingCoach(false); // Stop adding coach
+
             onClose();
         }
         navigation.navigate('MyCoaches');

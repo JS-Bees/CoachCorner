@@ -117,7 +117,7 @@ const CoacheeDashboard = () => {
                             CoacheeDashboardStyle.miniContainer,
                             { backgroundColor: '#F2E9FB' },
                         ]}
-                        onPress={() => navigation.navigate('Appointments')}
+                        onPress={() => navigation.navigate('ClientAppointments')}
                     >
                         <View style={CoacheeDashboardStyle.nestedMiniContainer}>
                             <Text style={CoacheeDashboardStyle.imageLabel}>

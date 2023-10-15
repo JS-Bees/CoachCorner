@@ -8,7 +8,9 @@ import CoacheeProfile from './screens/Profile/CoacheeProfile';
 import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
 import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
-import Appointments from './screens/Appointments';
+import ClientBookingDrawer from './screens/BookingDrawers.tsx/ClientBooking';
+import CoachAppointments from './screens/Appointments/CoachAppointments';
+import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import SearchList from './screens/SearchList/SearchList';
@@ -27,11 +29,10 @@ import {
     fetchExchange,
 } from 'urql';
 
-// const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    // url: apiUrl!,
-    url: 'http://192.168.254.142:5050/graphql', // replace with actual IP address, change to .env file
+    url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -49,6 +50,10 @@ export type RootStackParams = {
     MyCoaches: any;
     SearchList: any;
     CoachBookingDrawer: any;
+    ClientBookingDrawer: any;
+    ConfirmBookingDrawer: any;
+    CoachAppointments: any;
+    ClientAppointments: any, 
 };
 
 const RootStack = createNativeStackNavigator();
@@ -99,8 +104,13 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
-                        name="Appointments"
-                        component={Appointments}
+                        name="CoachAppointments"
+                        component={CoachAppointments}
+                        options={{ headerShown: false }}
+                    />
+                      <RootStack.Screen
+                        name="ClientAppointments"
+                        component={ClientAppointments}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -121,6 +131,11 @@ export default function App() {
                      <RootStack.Screen 
                         name="CoachBookingDrawer" 
                         component={CoachBookingDrawer} 
+                        options={{headerShown: false}}
+                    />
+                     <RootStack.Screen 
+                        name="ClientBookingDrawer" 
+                        component={ClientBookingDrawer} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>

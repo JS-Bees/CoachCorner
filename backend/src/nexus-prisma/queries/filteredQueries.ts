@@ -24,7 +24,7 @@ export const findCoachByEmailAndPassword = queryField(
 
             console.log(`Current Time: ${formattedTime}`); // Output the current time to the console
             const coach = await context.db.coach.findUnique({
-                where: { email, active: true }, // Include the 'active' condition
+                where: { email, active: true}, // Include the 'active' condition
             });
             const currentTime1 = new Date(); // Create a new Date object representing the current date and time
 

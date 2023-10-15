@@ -16,6 +16,11 @@ const MyCoaches = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [userID, setUserID] = useState<number>(0);
 
+  const navigateToClientBookingPage = (item) => {
+    navigation.navigate('ClientBookingDrawer', { coachId: item.coachId, coach: item.coach });
+  };
+
+
   const goBack = () => {
     navigation.goBack();
   };
@@ -28,7 +33,7 @@ const MyCoaches = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const itemsPerPage = 4;
+  const itemsPerPage = 10;
 
   const fetchUserIDFromStorage = async () => {
     try {
@@ -118,13 +123,13 @@ const MyCoaches = () => {
         />
       </View>
       <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Name</DataTable.Title>
-        </DataTable.Header>
         {filteredItems.slice(from, to).map((item, index) => (
-          <DataTable.Row key={index}>
+          <TouchableOpacity
+          key={index}
+          onPress={() => navigateToClientBookingPage(item)}>
+            <DataTable.Row key={index}>
             <DataTable.Cell>
-              <Text>{item.coach.firstName} {item.coach.lastName}</Text>
+              <Text>{item.coach.firstName} {item.coach.lastName} </Text>
             </DataTable.Cell>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Button onPress={() => toggleModal(item)}>
@@ -135,6 +140,7 @@ const MyCoaches = () => {
               </TouchableOpacity>
             </View>
           </DataTable.Row>
+          </TouchableOpacity>
         ))}
         <Modal
           visible={isModalVisible}

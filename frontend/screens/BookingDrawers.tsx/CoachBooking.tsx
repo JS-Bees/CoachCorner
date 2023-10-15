@@ -9,17 +9,31 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {useState, useEffect} from 'react'
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../../generated-gql/graphql';
+import { useRoute } from '@react-navigation/native';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+interface RouteParams {
+    coacheeId: string
+    
+}
+
 
 
 const CoachBookingDrawer = () => {
+    const route = useRoute()
+
+    
+
+    const coacheeId = route.params?.coacheeId;
+    console.log('Coachee ID:', coacheeId);
+
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -87,7 +101,7 @@ const CoachBookingDrawer = () => {
                 transparent={true}
                 visible={isDrawerVisible}
                 onRequestClose={handleOpenBottomSheet}>
-                {isDrawerVisible && <BookingDrawer onClose={handleClose}/>}
+                {isDrawerVisible && <BookingDrawer onClose={handleClose} coacheeId={coacheeId}/>}
             </Modal>
 
             
