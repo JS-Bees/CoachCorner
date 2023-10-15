@@ -20,6 +20,7 @@ import { FindCoachByIdDocument } from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
+
 const CoachDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -28,6 +29,7 @@ const CoachDashboard = () => {
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
+    
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
     useEffect(() => {
@@ -74,7 +76,7 @@ const CoachDashboard = () => {
                 <View style={[CoachDashboardStyle.topMiniContainer]}>
                     <View style={CoachDashboardStyle.profileImageContainer}>
                         <Image
-                            source={require('../assets/User.png')} // Add your profile image source here
+                            source={require('../assets/Man.png')} // Add your profile image source here
                             style={CoachDashboardStyle.profileImage}
                         />
                     </View>
@@ -82,12 +84,7 @@ const CoachDashboard = () => {
                         <Text style={CoachDashboardStyle.greetings}>
                             Welcome Back!
                         </Text>
-                        <Text
-                            style={[
-                                CoachDashboardStyle.name,
-                                { paddingRight: '50%' },
-                            ]}
-                        >
+                        <Text style={CoachDashboardStyle.name}>
                             {coachData?.findCoachByID?.firstName}
                         </Text>
                     </View>
@@ -117,7 +114,7 @@ const CoachDashboard = () => {
                             CoachDashboardStyle.miniContainer,
                             { backgroundColor: '#F2E9FB' },
                         ]}
-                        onPress={() => navigation.navigate('Appointments')}
+                        onPress={() => navigation.navigate('CoachAppointments')}
                     >
                         <View style={CoachDashboardStyle.nestedMiniContainer}>
                             <Text style={CoachDashboardStyle.imageLabel}>
@@ -144,10 +141,10 @@ const CoachDashboard = () => {
                                     { fontSize: 14 },
                                 ]}
                             >
-                                Personal Progress
+                                My Notes
                             </Text>
                             <Image
-                                source={require('../assets/Progress.png')}
+                                source={require('../assets/Writing.png')}
                                 style={[CoachDashboardStyle.imageStyle]}
                             />
                         </View>
@@ -170,25 +167,6 @@ const CoachDashboard = () => {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <View style={CoachDashboardStyle.buttonContainer}>
-                    <Button
-                        mode="contained"
-                        style={{
-                            backgroundColor: '#A378F2',
-                            width: 270,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                        labelStyle={{
-                            color: 'white',
-                            fontFamily: 'Blinker-SemiBold',
-                            fontSize: 20,
-                        }}
-                        onPress={() => console.log('Pressed')}
-                    >
-                        Find Coach
-                    </Button>
-                </View>
             </View>
             <BottomComponent style={CoachDashboardStyle.bottomSVG} />
         </View>
@@ -198,7 +176,7 @@ const CoachDashboard = () => {
 const CoachDashboardStyle = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#F6F6F6',
     },
     backgroundContainer: {
         paddingTop: 140,
@@ -288,14 +266,17 @@ const CoachDashboardStyle = StyleSheet.create({
         alignItems: 'center',
     },
     imageLabel: {
-        fontFamily: 'Blinker-SemiBold',
+        fontFamily: 'Roboto',
+        fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        marginBottom: 10,
+        top: -2
     },
     imageStyle: {
         width: 65,
         height: 65,
+        alignContent: 'center',
+        alignItems: 'center'
     },
     buttonContainer: {
         flexDirection: 'row',

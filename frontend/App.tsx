@@ -1,20 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import LogInPage from './screens/Authentication/LogIn';
 import SignUpA from './screens/Authentication/SignUpA';
 import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
+import CoachProfile from './screens/Profile/CoachProfile';
+import CoacheeProfile from './screens/Profile/CoacheeProfile';
 import CoacheeDashboard from './screens/CoacheeDashboard';
 import CoachDashboard from './screens/CoachDashboard';
-import Appointments from './screens/Appointments';
-import CoacheeProfile from './screens/Profile/CoacheeProfile';
-import CoachProfile from './screens/Profile/CoachProfile';
+import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
+import ClientBookingDrawer from './screens/BookingDrawers.tsx/ClientBooking';
+import CoachAppointments from './screens/Appointments/CoachAppointments';
+import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
-import { NavigationContainer } from '@react-navigation/native';
-import CoacheeProfile  from './screens/Profiles/CoacheeProfile';
-import CoachProfile from './screens/Profiles/CoachProfile';
 import SearchList from './screens/SearchList/SearchList';
+import { enGB, registerTranslation } from 'react-native-paper-dates';
+registerTranslation('en-GB', enGB);
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
@@ -27,9 +29,10 @@ import {
     fetchExchange,
 } from 'urql';
 
+const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+
 const client = new Client({
-    // url: 'http://localhost:5050/graphql',
-    url: 'http://192.168.1.8:5050/graphql', // replace with actual IP address, change to .env file
+    url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -45,70 +48,94 @@ export type RootStackParams = {
     CoachProfile: any;
     MyClients: any;
     MyCoaches: any;
-    CoachSample: any;
+    SearchList: any;
+    CoachBookingDrawer: any;
+    ClientBookingDrawer: any;
+    ConfirmBookingDrawer: any;
+    CoachAppointments: any;
+    ClientAppointments: any, 
 };
 
 const RootStack = createNativeStackNavigator();
 
 export default function App() {
-<!--       <RootStack.Navigator initialRouteName="ResultsList"> -->
-<!--       <RootStack.Screen name="ResultsList" component={SearchList} /> -->
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn" >
-                    <RootStack.Screen 
-                        name="LogIn" 
-                        component={LogInPage} 
-                        options={{headerShown: false}}/>
-                    <RootStack.Screen 
-                        name="SignUpA" 
-                        component={SignUpA} 
-                        options={{headerShown: false}}/>
+                <RootStack.Navigator initialRouteName="LogIn">
+                    <RootStack.Screen
+                        name="LogIn"
+                        component={LogInPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="SignUpA"
+                        component={SignUpA}
+                        options={{ headerShown: false }}
+                    />
                     <RootStack.Screen
                         name="SignUpCoachee"
                         component={SignUpCoachee}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="SignUpCoach"
                         component={SignUpCoach}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoacheeDashboard"
                         component={CoacheeDashboard}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoachDashboard"
                         component={CoachDashboard}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoacheeProfile"
                         component={CoacheeProfile}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
                         name="CoachProfile"
                         component={CoachProfile}
-                        options={{headerShown: false}}
+                        options={{ headerShown: false }}
                     />
                     <RootStack.Screen
-                        name="Appointments"
-                        component={Appointments}
-                        options={{headerShown: false}}
+                        name="CoachAppointments"
+                        component={CoachAppointments}
+                        options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="MyClients" 
-                        component={MyClients}   
-                        options={{headerShown: false}}
+                      <RootStack.Screen
+                        name="ClientAppointments"
+                        component={ClientAppointments}
+                        options={{ headerShown: false }}
                     />
-                        
-                    <RootStack.Screen 
-                        name="MyCoaches" 
-                        component={MyCoaches} 
+                    <RootStack.Screen
+                        name="MyClients"
+                        component={MyClients}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="MyCoaches"
+                        component={MyCoaches}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="SearchList"
+                        component={SearchList}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CoachBookingDrawer"
+                        component={CoachBookingDrawer}
+                        options={{ headerShown: false }}
+                    />
+                     <RootStack.Screen 
+                        name="ClientBookingDrawer" 
+                        component={ClientBookingDrawer} 
                         options={{headerShown: false}}
                     />
                 </RootStack.Navigator>

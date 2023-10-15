@@ -57,8 +57,43 @@ query FindCoacheeByID($userID: Int!) {
         games
         hobbies
         lastName
+        bio
+        affiliations
+        mantra
+        profilePicture
         moviesGenres
         isCoach
+        bookings {
+            status
+            coachId
+        }
+        coachingRelationships {
+            id
+            coachId
+            coach {
+                firstName
+                lastName
+                sport
+            }
+
+        }
+        bookings {
+            coach {
+                firstName
+                lastName
+            }
+            id
+            status
+            coachId
+            serviceType
+            additionalNotes
+            bookingSlots {
+                date
+                endTime
+                startTime
+            }
+        }
+       
     }
 }
 
@@ -71,13 +106,37 @@ query FindCoachByID($userID: Int!) {
         games
         hobbies
         lastName
-        moviesGenres
         sport
+        moviesGenres
         workplaceAddress
+        bio
+        affiliations
+        mantra
+        profilePicture
         isCoach
+        coachingRelationships {
+            id
+            coacheeId
+            coachee {
+                firstName
+                lastName
+            }
+        }
+        bookings {
+            coachee {
+                firstName
+                lastName
+            }
+            id
+            status
+            bookingSlots {
+                date
+                startTime
+                endTime
+            }
+        }
     }
 }
-
 query FindCoachesBySport($sport: Sport!) {
     findCoachesBySport(sport: $sport) {
         id
@@ -101,5 +160,91 @@ query FindCoachesBySport($sport: Sport!) {
         }
         isCoach
         active
+    }
+}
+
+query FindBookingByID($bookingID: Int!) {
+    findBookingByID(bookingID: $bookingID) {
+        id
+        coacheeId
+        coachId
+        serviceType
+        status
+        additionalNotes
+        bookingSlots {
+            id
+            bookingId
+            date
+            startTime
+            endTime
+        }
+    }
+}
+
+query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
+    findUnaddedCoachesBySport(sport: $sport, coacheeID: $coacheeID) {
+        id
+        firstName
+        lastName
+        email
+        sport
+        bio
+        workplaceAddress
+        affiliations
+        coachingRelationships {
+            coacheeId
+        }
+    }
+}
+
+query FindCoachByIdReview($userID: Int!) {
+    findCoachByID(userID: $userID) {
+        id
+        firstName
+        lastName
+        reviews {
+            coacheeId
+            starRating
+            comment
+            coachee {
+                firstName
+                lastName
+            }
+        }
+    }
+}
+
+query FindBookingsByStatusAndCoachID($status: BookingStatus!, $coachID: Int!) {
+    findBookingsByStatusAndCoachID(status: $status, coachID: $coachID) {
+        id
+        serviceType
+        status
+        additionalNotes
+        coacheeId
+        bookingSlots {
+            id
+            date
+            startTime
+            endTime
+        }
+    }
+}
+
+query FindBookingsByStatusAndCoacheeID(
+    $status: BookingStatus!
+    $coacheeID: Int!
+) {
+    findBookingsByStatusAndCoacheeID(status: $status, coacheeID: $coacheeID) {
+        id
+        serviceType
+        status
+        additionalNotes
+        coachId
+        bookingSlots {
+            id
+            date
+            startTime
+            endTime
+        }
     }
 }

@@ -7,20 +7,33 @@ import {
     Text,
     ScrollView,
 } from 'react-native';
-import { TextInput, IconButton } from 'react-native-paper';
+import { TextInput, IconButton, Button } from 'react-native-paper';
 import ProfileSvg from '../../components/ProfileSvg';
 import BottomComponent from '../../components/BottomSvg';
-import LogInButton from '../../components/CustomButton';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoacheeByIdDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UpdateCoacheeProfileDocument } from '../../generated-gql/graphql';
+import { useMutation } from 'urql';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import LogoutConfirmationModal from '../Authentication/LogoutModal';
 
 const { width, height } = Dimensions.get('window');
 
 const CoacheeProfile = () => {
+    const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+
+    const showLogoutModal = () => {
+        setLogoutModalVisible(true);
+    };
+
+    const hideLogoutModal = () => {
+        setLogoutModalVisible(false);
+    };
+
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -30,6 +43,7 @@ const CoacheeProfile = () => {
         const fetchUserToken = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token);
                 setUserToken(token);
             } catch (error) {
                 console.error('Error fetching token:', error);
@@ -39,42 +53,93 @@ const CoacheeProfile = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
-    const useFetchCoacheeByUserID = (userID: any) => {
-        const [coachResult] = useQuery({
-            query: FindCoacheeByIdDocument, // Use the Coachee query document
-            variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-            },
-        });
-
-        return coachResult;
-    };
-
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
-    const {
-        data: coachData,
-        loading: coachLoading,
-        error: coachError,
-    } = useFetchCoacheeByUserID(userToken);
+    const [{ data: coacheeData, fetching, error }] = useQuery({
+        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        variables: {
+            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
 
     const onLogOutPressed = async () => {
         try {
             // Clear the user token from AsyncStorage
             await AsyncStorage.removeItem('userToken');
+            // Clear all cache data from AsyncStorage
+            await AsyncStorage.clear();
             // Navigate to the login page
+            console.log("Bye Token:"+userToken)
             navigation.navigate('LogIn');
         } catch (error) {
             console.error('Error logging out:', error);
         }
     };
+    
 
-    const [mantra, setMantra] = React.useState(' A mantra goes here ');
-    const [bio, setBio] = React.useState('Add your bio here...');
-    const [affliation, setAffiliate] = React.useState('Add your affiliates');
-    const [address, setAddres] = React.useState('Your address goes here...');
-    const [age, setAge] = React.useState('Age');
+    const [mantra, setMantra] = React.useState(
+        coacheeData?.findCoacheeByID.mantra,
+    );
+    const [age, setAge] = React.useState('18');
+    const [bio, setBio] = React.useState(coacheeData?.findCoacheeByID.bio);
+    const [affliation, setAffiliate] = React.useState(
+        coacheeData?.findCoacheeByID.affiliations,
+    );
+    const [address, setAddres] = React.useState(
+        coacheeData?.findCoacheeByID.address,
+    );
+    const [profilePicture, setProfilePicture] = React.useState('fixed');
+
+    // Function to format ISO date to a readable date string
+    function formatISODateToReadableDate(isoDate) {
+        const date = new Date(isoDate);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
+    }
+
+    // Use this function to convert the ISO date to a readable date string
+    const formattedBirthday = coacheeData
+        ? formatISODateToReadableDate(coacheeData.findCoacheeByID.birthday)
+        : '';
+    console.log(formattedBirthday);
+
+    // Calculate age based on birthday
+    function calculateAge(birthday) {
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+            return age - 1; // Subtract 1 if the birthday hasn't occurred yet this year
+        }
+
+        return age;
+    }
+
+    // ...
+
+    // Use this function to calculate the age
+    const calculatedAge = coacheeData
+        ? calculateAge(coacheeData.findCoacheeByID.birthday)
+        : '';
+    console.log(calculatedAge);
+
+    useEffect(() => {
+        if (coacheeData) {
+            setMantra(coacheeData.findCoacheeByID.mantra);
+            setBio(coacheeData.findCoacheeByID.bio);
+            setAffiliate(coacheeData.findCoacheeByID.affiliations);
+            setAddres(coacheeData.findCoacheeByID.address);
+            // You can similarly update other state variables as needed
+            const calculatedAge = calculateAge(
+                coacheeData.findCoacheeByID.birthday,
+            );
+            setAge(calculatedAge.toString());
+        }
+    }, [coacheeData]);
 
     const [isEditing, setIsEditing] = useState(false);
     const [scrollEnabled, setScrollable] = useState(false);
@@ -109,35 +174,83 @@ const CoacheeProfile = () => {
         setScrollable(isEditing);
     }, [isEditing]);
 
+    const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument);
+    const handleSaveButton = async () => {
+        return await executeMutation({
+            id: parseInt(userToken),
+            address: address,
+            affiliations: affliation,
+            mantra: mantra,
+            bio: bio,
+            profilePicture: profilePicture,
+        })
+            .then((res) => {
+                if (res) {
+                    setIsEditing(false);
+                    console.log(
+                        'affiliations',
+                        res.data?.updateCoacheeProfile.affiliations,
+                    );
+                    console.log('bio', res.data?.updateCoacheeProfile.bio);
+                    console.log(
+                        'mantra',
+                        res.data?.updateCoacheeProfile.mantra,
+                    );
+                    console.log(
+                        'address',
+                        res.data?.updateCoacheeProfile.address,
+                    );
+                    return res.data;
+                }
+            })
+            .catch((e) => {
+                console.log('sheeesh error', e);
+            });
+    };
+
     return (
         <View style={styles.container}>
             <ProfileSvg style={styles.svg} />
             <BottomComponent style={styles.bottomSVG}></BottomComponent>
             <View style={styles.logOut}>
-                <LogInButton
-                    text="Logout"
-                    type="QUARTERNARY"
-                    onPress={onLogOutPressed}
+                <IconButton
+                    icon={({ size }) => (
+                        <Icon
+                            name="sign-out"
+                            size={size}
+                            style={{ color: 'white' }}
+                        />
+                    )}
+                    onPress={showLogoutModal}
                 />
             </View>
-            <Text style={styles.text}> Profile </Text>
-
-            <Text
-                style={styles.normalText}
-            >{`${coachData?.findCoacheeByID?.firstName} ${coachData?.findCoacheeByID?.lastName}`}</Text>
-
-            <TextInput
-                style={styles.mantraTextInput}
-                value={mantra}
-                onChangeText={(mantra) => setMantra(mantra)}
-                editable={isEditing}
-                underlineColor="transparent"
+            {/* The Logout Confirmation Modal */}
+            <LogoutConfirmationModal
+                visible={isLogoutModalVisible}
+                onConfirm={onLogOutPressed} // This function logs out the user
+                onCancel={hideLogoutModal} // This function hides the modal
             />
+             <View style={styles.profileInfo}>
+                <Text
+                    style={styles.normalText}
+                >{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}</Text>
+            </View>
+            <View style={styles.mantraContainer}>
+                <TextInput
+                    style={styles.mantraTextInput}
+                    placeholder="Enter mantra"
+                    value={mantra}
+                    onChangeText={(text) => setMantra(text.substring(0, 25))}
+                    editable={isEditing}
+                    underlineColor="transparent"
+                />
+            </View>
 
             <ScrollView
                 style={styles.scrollView}
                 scrollEnabled={scrollEnabled}
                 ref={scrollViewRef}
+                keyboardShouldPersistTaps="handled"
             >
                 <Text style={styles.bio}> Bio </Text>
                 <View>
@@ -146,6 +259,7 @@ const CoacheeProfile = () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
+                            placeholder="Enter bio"
                             value={bio}
                             onChangeText={(bio) => setBio(bio)}
                             editable={isEditing}
@@ -160,25 +274,27 @@ const CoacheeProfile = () => {
                         <TextInput
                             style={styles.ageInput}
                             value={age}
-                            onChangeText={(age) => setAge(age)}
-                            editable={isEditing}
+                            placeholder="Enter age"
+                            editable={false}
                             underlineColor="white"
                         />
                     </View>
 
-                    <Text style={styles.affliate}> Affiliations </Text>
+                    <Text style={styles.affliate}> Affiliation </Text>
                     <View>
                         <ScrollView style={styles.affiliateScrollInput}>
                             <TextInput
                                 style={styles.affliateTextInput}
                                 scrollEnabled={scrollEnabled}
-                                multiline
+                                // multiline
+                                placeholder="Enter affiliation"
                                 value={affliation}
-                                onChangeText={(affliation) =>
-                                    setAffiliate(affliation)
+                                onChangeText={(affiliation) =>
+                                    setAffiliate(affiliation)
                                 }
                                 editable={isEditing}
                                 underlineColor="white"
+                                maxLength={20}
                             />
                         </ScrollView>
                     </View>
@@ -193,7 +309,8 @@ const CoacheeProfile = () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
-                            value={coachData?.findCoacheeByID.address}
+                            placeholder="Enter address"
+                            value={address}
                             onChangeText={(address) => setAddres(address)}
                             editable={isEditing}
                             underlineColor="white"
@@ -204,15 +321,20 @@ const CoacheeProfile = () => {
 
             <View style={styles.iconContainer}>
                 <IconButton
-                    icon={isEditing ? 'pencil' : 'pencil-off'}
+                    icon={isEditing ? '' : 'pencil'}
                     onPress={toggleEditing}
                     iconColor="#60488A"
                 />
+                {isEditing ? (
+                    <Button onPress={handleSaveButton}> Save changes</Button>
+                ) : (
+                    ''
+                )}
             </View>
 
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('./Icons/User.png')}
+                    source={require('./Icons/Woman.png')}
                     style={styles.image}
                 />
             </View>
@@ -224,29 +346,45 @@ const imageSize = 100;
 
 const styles = StyleSheet.create({
     scrollView: {
-        top: 100,
+        top: 20,
         width: '95%',
     },
+
     container: {
         flex: 1,
         backgroundColor: '#F9FBFC',
         alignItems: 'center',
     },
+
     scrollContainer: {
         width: '100%',
         backgroundColor: 'transparent',
     },
 
-    text: {
-        color: 'white',
-        fontSize: 20,
-        top: -5,
-        fontFamily: 'Roboto',
+    topBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 20,
     },
 
+    text: {
+        // top: '20%', // Remove top
+        flex: 1, // Set the flex property to make it take up a proportion of available space
+        color: 'white',
+        fontSize: 30,
+        fontFamily: 'Roboto',
+        fontWeight: '700',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+    },
+
+
     logOut: {
-        paddingTop: '5%',
-        left: width * 0.4,
+        alignItems: 'center',
+        left: '44%',
+        paddingTop: '4%',
     },
 
     row: {
@@ -254,16 +392,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    mantraContainer: {
+        marginTop: '40%',
+        alignItems: 'center', // Center the text
+        width: '70%',
+    },
+
     mantraTextInput: {
-        paddingHorizontal: 50,
-        paddingVertical: 1,
+        width: '100%', // Set a fixed width
         backgroundColor: 'transparent',
-        alignItems: 'center',
-        width: 300,
-        top: 100,
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
+        fontSize: 15,
+        textAlign: 'center', // Center the text
     },
 
     bioScrollInput: {
@@ -300,8 +442,10 @@ const styles = StyleSheet.create({
     },
 
     bio: {
-        top: 180,
-        fontSize: 16,
+        top: '18%',
+        left: '3%',
+        fontSize: 17,
+        fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#636363',
         textAlign: 'left',
@@ -310,9 +454,11 @@ const styles = StyleSheet.create({
     },
 
     age: {
-        top: -30,
-        fontSize: 16,
+        top: '-11%',
+        left: '3%',
+        fontSize: 17,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -320,9 +466,10 @@ const styles = StyleSheet.create({
     },
 
     affliate: {
-        top: -30,
-        fontSize: 16,
+        top: '-11%',
+        fontSize: 17,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -338,23 +485,25 @@ const styles = StyleSheet.create({
 
     affliateTextInput: {
         backgroundColor: 'white',
-        height: 60,
+        height: 70,
     },
 
     affiliateScrollInput: {
         backgroundColor: 'white',
         borderRadius: 10,
         width: 220,
-        right: 285,
+        right: 300,
         top: -170,
-        position: 'absolute',
         fontSize: 16,
+        position: 'absolute',
     },
 
     address: {
-        top: -245,
-        fontSize: 16,
+        top: '-26%',
+        left: '3%',
+        fontSize: 17,
         fontFamily: 'Roboto',
+        fontWeight: '700',
         color: '#636363',
         textAlign: 'left',
         width: 320,
@@ -371,12 +520,14 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: 120,
+        flex: 1, // Set the flex property to make it take up a proportion of available space
+        marginTop: 170,
         fontSize: 25,
-        alignItems: 'center',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#915bc7',
+        textAlign: 'center', // Center the text
+        width: '100%', // Set a fixed width to prevent movement
     },
 
     svg: {
@@ -416,6 +567,14 @@ const styles = StyleSheet.create({
         width: width,
         height: height,
         zIndex: 0,
+    },
+
+    profileInfo: {
+        position: 'absolute',
+        top: 20, // Adjust the top value as needed
+        width: '100%', // Ensure it spans the full width
+        flexDirection: 'column', // Arrange the elements in a column
+        alignItems: 'center', // Center the elements horizontally
     },
 });
 

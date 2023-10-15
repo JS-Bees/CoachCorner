@@ -20,10 +20,19 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.kbbkebab.frontend"
     },
     "web": {
       "favicon": "./assets/splash.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5652d2c7-2a86-40b2-81df-ab5e7f1039ff"
+      }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

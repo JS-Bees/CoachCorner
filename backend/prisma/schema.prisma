@@ -90,10 +90,10 @@ model Coachee {
   hobbies             Hobbies[]
   moviesGenres        MovieGenres[] 
 
-  affiliations        String? 
-  bio                 String?
-  mantra              String?    
-  profilePicture      String?     
+  affiliations        String
+  bio                 String
+  mantra              String 
+  profilePicture      String  
 
   bookings            Booking[]
   coachingRelationships CoachingRelationship[]
@@ -120,10 +120,10 @@ model Coach {
   hobbies             Hobbies[]
   moviesGenres        MovieGenres[]
 
-  affiliations        String? 
-  bio                 String?
-  mantra              String?  
-  profilePicture      String?     
+  affiliations        String
+  bio                 String
+  mantra              String 
+  profilePicture      String    
 
   bookings              Booking[] 
   coachingRelationships CoachingRelationship[]
@@ -137,15 +137,16 @@ model Coach {
 
 
 model CoachingRelationship {
-  id            Int      @id @default(autoincrement())
-  coach         Coach    @relation(fields: [coachId], references: [id])
-  coachId       Int
-  coachee       Coachee  @relation(fields: [coacheeId], references: [id])
-  coacheeId     Int
+  id                  Int      @id @default(autoincrement())
+  coach               Coach    @relation(fields: [coachId], references: [id])
+  coachId             Int
+  coachee             Coachee  @relation(fields: [coacheeId], references: [id])
+  coacheeId           Int
 
-  active        Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  messagingStarted    Boolean  @default(false)
+  active              Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model BookingSlot {
@@ -172,7 +173,7 @@ model Booking {
   serviceType       String
   status            BookingStatus
 
-  additionalNotes   String?
+  additionalNotes   String
 
   active            Boolean      @default(true)
   createdAt         DateTime     @default(now())

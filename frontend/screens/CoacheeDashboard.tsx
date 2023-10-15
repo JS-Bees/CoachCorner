@@ -20,6 +20,7 @@ import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
+
 const CoacheeDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -30,6 +31,7 @@ const CoacheeDashboard = () => {
     });
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -75,7 +77,7 @@ const CoacheeDashboard = () => {
                 <View style={[CoacheeDashboardStyle.topMiniContainer]}>
                     <View style={CoacheeDashboardStyle.profileImageContainer}>
                         <Image
-                            source={require('../assets/User.png')} // Add your profile image source here
+                            source={require('../assets/Woman.png')} // Add your profile image source here
                             style={CoacheeDashboardStyle.profileImage}
                         />
                     </View>
@@ -115,7 +117,7 @@ const CoacheeDashboard = () => {
                             CoacheeDashboardStyle.miniContainer,
                             { backgroundColor: '#F2E9FB' },
                         ]}
-                        onPress={() => navigation.navigate('Appointments')}
+                        onPress={() => navigation.navigate('ClientAppointments')}
                     >
                         <View style={CoacheeDashboardStyle.nestedMiniContainer}>
                             <Text style={CoacheeDashboardStyle.imageLabel}>
@@ -137,11 +139,10 @@ const CoacheeDashboard = () => {
                     >
                         <View style={CoacheeDashboardStyle.nestedMiniContainer}>
                             <Text
-                                style={{
-                                    fontSize: 14,
-                                    fontFamily: 'Blinker-SemiBold',
-                                    color: '#483B5F',
-                                }}
+                                 style={[
+                                    CoacheeDashboardStyle.imageLabel,
+                                    { fontSize: 14 },
+                                ]}
                             >
                                 Personal Progress
                             </Text>
@@ -183,7 +184,7 @@ const CoacheeDashboard = () => {
                             fontFamily: 'Blinker-SemiBold',
                             fontSize: 22,
                         }}
-                        onPress={() => console.log('Pressed')}
+                        onPress={() => navigation.navigate('SearchList')}
                     >
                         Find Coach
                     </Button>
@@ -254,6 +255,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
         color: 'white',
     },
     name: {
+        fontFamily: 'Blinker-Light',
         color: 'white',
     },
     profileImage: {
@@ -286,9 +288,11 @@ const CoacheeDashboardStyle = StyleSheet.create({
         alignItems: 'center',
     },
     imageLabel: {
-        fontFamily: 'Blinker-SemiBold',
+        fontFamily: 'Roboto',
+        fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
+        top: -2
     },
     imageStyle: {
         width: 65,

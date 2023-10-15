@@ -7,7 +7,10 @@ interface InputSignUpPagesProps extends TextInputProps {
   setValue: (value: string) => void;
   placeholder: string;
   secureTextEntry?: boolean;
-  passwordToMatch?: string; // Add this prop to compare with another password field
+  passwordToMatch?: string;
+  checkForInteger?: boolean;
+  checkEmailEnding?: boolean;
+  editable?: boolean; // Add the editable prop
 }
 
 const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
@@ -16,18 +19,35 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
   placeholder,
   secureTextEntry,
   passwordToMatch,
+  checkForInteger, 
+  checkEmailEnding,
+  editable, // Add the editable prop
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorText, setErrorText] = useState('');
 
   useEffect(() => {
-    // Check if the password matches the passwordToMatch when value changes
     if (passwordToMatch !== undefined && value !== passwordToMatch) {
       setErrorText('Passwords do not match');
+    } else if (checkForInteger && /\d/.test(value)) {
+      setErrorText('Input cannot contain numbers');
+    } else if (checkEmailEnding && value.trim() !== '') {
+      if (!value.match(/.{5,}@gmail.com$/)) {
+        setErrorText('Invalid email, should end with "@gmail.com"');
+      } else if (
+        !value.endsWith('.com') &&
+        !value.endsWith('.co.uk') &&
+        !value.endsWith('.edu')
+      ) {
+        setErrorText('Invalid email ending');
+      } else {
+        setErrorText('');
+      }
     } else {
       setErrorText('');
     }
-  }, [value, passwordToMatch]);
+  }, [value, passwordToMatch, checkForInteger, checkEmailEnding]);
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -35,18 +55,26 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.inputContainer, errorText ? styles.errorInputContainer : null]}>
+      <View
+        style={[
+          styles.inputContainer,
+          errorText ? styles.errorInputContainer : null,
+        ]}
+      >
         <TextInput
           value={value}
           onChangeText={setValue}
           placeholder={placeholder}
-          style={[
-            styles.input,
-            errorText ? styles.errorInput : null, // Apply error styles
-          ]}
           secureTextEntry={!showPassword && secureTextEntry}
           placeholderTextColor="#a19e9e"
+          style={[
+            styles.input,
+            errorText ? styles.errorInput : null,
+          ]}
+          editable={editable}
         />
+        
+
         {secureTextEntry && (
           <TouchableOpacity onPress={togglePasswordVisibility}>
             <FontAwesome
@@ -58,7 +86,9 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
         )}
       </View>
       {errorText && (
-        <Text style={styles.errorText}>{errorText}</Text> // Display error text above the border
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{errorText}</Text>
+        </View>
       )}
     </View>
   );
@@ -66,7 +96,7 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 5, // Add margin to separate error text from input field
+    marginVertical: 5,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -79,22 +109,22 @@ const styles = StyleSheet.create({
     borderColor: '#e8e8e8',
   },
   errorInputContainer: {
-    borderColor: 'red', // Apply red border when there's an error
+    borderColor: 'red',
   },
   input: {
     flex: 1,
     marginLeft: 5,
     textAlignVertical: "center",
     color: '#a19e9e',
+    paddingRight: 30,
   },
-  errorInput: {
-    borderColor: 'red', // Apply red border when there's an error
+  errorContainer: {
+    marginTop: 5, // Adjust this margin as needed
   },
   errorText: {
     color: 'red',
-    fontSize: 12, // Smaller font size for error text
-    marginTop: 10, // Move error text above the border
-    marginBottom: 5, // Add margin to separate error text from input field
+    fontSize: 12,
+    marginBottom: 10,
   },
 });
 
