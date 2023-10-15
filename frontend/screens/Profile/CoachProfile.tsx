@@ -10,7 +10,6 @@ import {
 import { TextInput, IconButton, Button } from 'react-native-paper';
 import ProfileSvg from '../../components/ProfileSvg';
 import BottomComponent from '../../components/BottomSvg';
-import LogInButton from '../../components/CustomButton';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoachByIdDocument } from '../../generated-gql/graphql';
@@ -19,10 +18,22 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { UpdateCoachProfileDocument } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import LogoutConfirmationModal from '../Authentication/LogoutModal';
 
 const { width, height } = Dimensions.get('window');
 
 const CoachProfile = () => {
+    const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+
+    const showLogoutModal = () => {
+        setLogoutModalVisible(true);
+    };
+
+    const hideLogoutModal = () => {
+        setLogoutModalVisible(false);
+    };
+
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -32,7 +43,7 @@ const CoachProfile = () => {
         const fetchUserToken = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                console.log('token', token)
+                console.log('token', token);
                 setUserToken(token);
             } catch (error) {
                 console.error('Error fetching token:', error);
@@ -42,63 +53,77 @@ const CoachProfile = () => {
         fetchUserToken();
     }, []);
 
-    const [{ data: coachData, fetching, error }]  = useQuery({
+    const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
         variables: {
             userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
         },
-        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
-    
 
     const onLogOutPressed = async () => {
         try {
             // Clear the user token from AsyncStorage
             await AsyncStorage.removeItem('userToken');
+            // Clear all cache data from AsyncStorage
+            await AsyncStorage.clear();
             // Navigate to the login page
+            console.log("Bye Token:"+userToken)
             navigation.navigate('LogIn');
         } catch (error) {
             console.error('Error logging out:', error);
         }
     };
+    
 
     const [mantra, setMantra] = React.useState(coachData?.findCoachByID.mantra);
     const [age, setAge] = React.useState('');
     const [bio, setBio] = React.useState(coachData?.findCoachByID.bio);
-    const [affliation, setAffiliate] = React.useState(coachData?.findCoachByID.affiliations);
-    const [address, setAddres] = React.useState(coachData?.findCoachByID.workplaceAddress);
-    const [profilePicture, setProfilePicture ] = React.useState('fixed');
+    const [affliation, setAffiliate] = React.useState(
+        coachData?.findCoachByID.affiliations,
+    );
+    const [address, setAddres] = React.useState(
+        coachData?.findCoachByID.workplaceAddress,
+    );
+    const [profilePicture, setProfilePicture] = React.useState('fixed');
 
-   // Function to format ISO date to a readable date string
+    // Function to format ISO date to a readable date string
     function formatISODateToReadableDate(isoDate) {
-    const date = new Date(isoDate);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString(undefined, options);
+        const date = new Date(isoDate);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
     }
-  
-  // Use this function to convert the ISO date to a readable date string
-  const formattedBirthday = coachData ? formatISODateToReadableDate(coachData.findCoachByID.birthday) : '';
-  console.log(formattedBirthday)
 
-  // Calculate age based on birthday
-function calculateAge(birthday) {
-    const birthDate = new Date(birthday);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-  
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1; // Subtract 1 if the birthday hasn't occurred yet this year
+    // Use this function to convert the ISO date to a readable date string
+    const formattedBirthday = coachData
+        ? formatISODateToReadableDate(coachData.findCoachByID.birthday)
+        : '';
+    console.log(formattedBirthday);
+
+    // Calculate age based on birthday
+    function calculateAge(birthday) {
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+            return age - 1; // Subtract 1 if the birthday hasn't occurred yet this year
+        }
+
+        return age;
     }
-  
-    return age;
-  }
-  
-  // ...
-  
-  // Use this function to calculate the age
-  const calculatedAge = coachData ? calculateAge(coachData.findCoachByID.birthday) : '';
-  console.log(calculatedAge)
+
+    // ...
+
+    // Use this function to calculate the age
+    const calculatedAge = coachData
+        ? calculateAge(coachData.findCoachByID.birthday)
+        : '';
+    console.log(calculatedAge);
 
     useEffect(() => {
         if (coachData) {
@@ -107,8 +132,10 @@ function calculateAge(birthday) {
             setAffiliate(coachData.findCoachByID.affiliations);
             setAddres(coachData.findCoachByID.workplaceAddress);
             // You can similarly update other state variables as needed
-             // Calculate age and set it in the age state
-            const calculatedAge = calculateAge(coachData.findCoachByID.birthday);
+            // Calculate age and set it in the age state
+            const calculatedAge = calculateAge(
+                coachData.findCoachByID.birthday,
+            );
             setAge(calculatedAge.toString());
         }
     }, [coachData]);
@@ -129,7 +156,6 @@ function calculateAge(birthday) {
         }
     };
 
-
     useEffect(() => {
         if (scrollViewRef.current) {
             if (isEditing) {
@@ -147,53 +173,79 @@ function calculateAge(birthday) {
         setScrollable(isEditing);
     }, [isEditing]);
 
-const [, executeMutation] = useMutation(UpdateCoachProfileDocument)
-const handleSaveButton = async () => {
-
-
-    return await executeMutation(
-        {id: parseInt(userToken), workplaceAddress: address, affiliations: affliation, mantra: mantra, bio: bio, profilePicture: profilePicture,
-        }).then((res) => {
-            if(res) {
-                setIsEditing(false)
-                console.log("affiliations", res.data?.updateCoachProfile.affiliations)
-                console.log("bio", res.data?.updateCoachProfile.bio)
-                console.log("mantra", res.data?.updateCoachProfile.mantra)
-                console.log("address", res.data?.updateCoachProfile.workplaceAddress)
-                console.log("profilepicture", res.data?.updateCoachProfile.profilePicture)
-                return res.data
-            }
-        }).catch((e) => {
-            console.log("sheeesh error" , e)
+    const [, executeMutation] = useMutation(UpdateCoachProfileDocument);
+    const handleSaveButton = async () => {
+        return await executeMutation({
+            id: parseInt(userToken),
+            workplaceAddress: address,
+            affiliations: affliation,
+            mantra: mantra,
+            bio: bio,
+            profilePicture: profilePicture,
         })
-
-}
+            .then((res) => {
+                if (res) {
+                    setIsEditing(false);
+                    console.log(
+                        'affiliations',
+                        res.data?.updateCoachProfile.affiliations,
+                    );
+                    console.log('bio', res.data?.updateCoachProfile.bio);
+                    console.log('mantra', res.data?.updateCoachProfile.mantra);
+                    console.log(
+                        'address',
+                        res.data?.updateCoachProfile.workplaceAddress,
+                    );
+                    console.log(
+                        'profilepicture',
+                        res.data?.updateCoachProfile.profilePicture,
+                    );
+                    return res.data;
+                }
+            })
+            .catch((e) => {
+                console.log('sheeesh error', e);
+            });
+    };
 
     return (
-<View style={styles.container}>
-    <ProfileSvg style={styles.svg} />
-    <BottomComponent style={styles.bottomSVG}></BottomComponent>
-    <View style={styles.logOut}>
-        <LogInButton
-            text="Logout"
-            type="QUARTERNARY"
-            onPress={onLogOutPressed}
-        />
-    </View>
-    <Text style={styles.text}> Profile </Text>
-    <View style={styles.profileInfo}>
-        <Text style={styles.normalText}>{`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}</Text>
-    </View>
-    <View style={styles.mantraContainer}>
-        <TextInput
-            style={styles.mantraTextInput}
-            placeholder='Enter mantra'
-            value={mantra}
-            onChangeText={(mantra) => setMantra(mantra)}
-            editable={isEditing}
-            underlineColor="transparent"
-        />
-    </View>
+        <View style={styles.container}>
+            <ProfileSvg style={styles.svg} />
+            <BottomComponent style={styles.bottomSVG}></BottomComponent>
+            <View style={styles.logOut}>
+                <IconButton
+                    icon={({ size }) => (
+                        <Icon
+                            name="sign-out"
+                            size={size}
+                            style={{ color: 'white' }}
+                        />
+                    )}
+                    onPress={showLogoutModal}
+                />
+            </View>
+            {/* The Logout Confirmation Modal */}
+            <LogoutConfirmationModal
+                visible={isLogoutModalVisible}
+                onConfirm={onLogOutPressed} // This function logs out the user
+                onCancel={hideLogoutModal} // This function hides the modal
+            />
+            
+            <View style={styles.profileInfo}>
+                <Text
+                    style={styles.normalText}
+                >{`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}</Text>
+            </View>
+            <View style={styles.mantraContainer}>
+                <TextInput
+                    style={styles.mantraTextInput}
+                    placeholder="Enter mantra"
+                    value={mantra}
+                    onChangeText={(text) => setMantra(text.substring(0, 25))}
+                    editable={isEditing}
+                    underlineColor="transparent"
+                />
+            </View>
 
             <ScrollView
                 style={styles.scrollView}
@@ -208,7 +260,7 @@ const handleSaveButton = async () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
-                            placeholder='Enter bio'
+                            placeholder="Enter bio"
                             value={bio}
                             onChangeText={(bio) => setBio(bio)}
                             editable={isEditing}
@@ -228,20 +280,21 @@ const handleSaveButton = async () => {
                         />
                     </View>
 
-                    <Text style={styles.affliate}> Affiliations </Text>
+                    <Text style={styles.affliate}> Affiliation </Text>
                     <View>
                         <ScrollView style={styles.affiliateScrollInput}>
                             <TextInput
                                 style={styles.affliateTextInput}
                                 scrollEnabled={scrollEnabled}
-                                multiline
-                                placeholder='Enter affiliation'
+                                // multiline
+                                placeholder="Enter affiliation"
                                 value={affliation}
                                 onChangeText={(affiliation) =>
                                     setAffiliate(affiliation)
                                 }
                                 editable={isEditing}
                                 underlineColor="white"
+                                maxLength={20}
                             />
                         </ScrollView>
                     </View>
@@ -256,10 +309,9 @@ const handleSaveButton = async () => {
                             scrollEnabled={scrollEnabled}
                             style={styles.bioInput}
                             multiline
-                            placeholder='Enter address'
+                            placeholder="Enter address"
                             value={address}
                             onChangeText={(address) => setAddres(address)}
-                            
                             editable={isEditing}
                             underlineColor="white"
                         />
@@ -273,7 +325,11 @@ const handleSaveButton = async () => {
                     onPress={toggleEditing}
                     iconColor="#60488A"
                 />
-                    {isEditing ? <Button onPress={handleSaveButton}> Save changes</Button> : ''}
+                {isEditing ? (
+                    <Button onPress={handleSaveButton}> Save changes</Button>
+                ) : (
+                    ''
+                )}
             </View>
 
             <View style={styles.imageContainer}>
@@ -293,28 +349,40 @@ const styles = StyleSheet.create({
         top: 20,
         width: '95%',
     },
+
     container: {
         flex: 1,
         backgroundColor: '#F9FBFC',
         alignItems: 'center',
     },
+
     scrollContainer: {
         width: '100%',
         backgroundColor: 'transparent',
     },
+
+    topBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 20,
+    },
+
     text: {
+        flex: 1, // Set the flex property to make it take up a proportion of available space
         color: 'white',
         fontSize: 30,
-        left: '36%',
-        top: '6%',
         fontFamily: 'Roboto',
         fontWeight: '700',
-        position: 'absolute'
+        textAlign: 'center',
+        textAlignVertical: 'center',
     },
 
     logOut: {
-        top: '-5%',
-        left: '25%',
+        alignItems: 'center',
+        left: '44%',
+        paddingTop: '4%',
     },
 
     row: {
@@ -323,22 +391,20 @@ const styles = StyleSheet.create({
     },
 
     mantraContainer: {
-        left: '50%',
-        marginTop: '30%'
+        marginTop: '40%',
+        alignItems: 'center', // Center the text
+        width: '70%',
     },
 
     mantraTextInput: {
-        paddingHorizontal: 50,
-        paddingVertical: -5,
-        right: '46%',
-        width: 250,
+        width: '100%', // Set a fixed width
         backgroundColor: 'transparent',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#717171',
         fontSize: 15,
+        textAlign: 'center', // Center the text
     },
-
 
     bioScrollInput: {
         backgroundColor: 'white',
@@ -376,7 +442,7 @@ const styles = StyleSheet.create({
     bio: {
         top: '18%',
         left: '3%',
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#636363',
@@ -388,7 +454,7 @@ const styles = StyleSheet.create({
     age: {
         top: '-11%',
         left: '3%',
-        fontSize: 16,
+        fontSize: 17,
         fontFamily: 'Roboto',
         fontWeight: '700',
         color: '#636363',
@@ -399,7 +465,7 @@ const styles = StyleSheet.create({
 
     affliate: {
         top: '-11%',
-        fontSize: 16,
+        fontSize: 17,
         fontFamily: 'Roboto',
         fontWeight: '700',
         color: '#636363',
@@ -433,7 +499,7 @@ const styles = StyleSheet.create({
     address: {
         top: '-26%',
         left: '3%',
-        fontSize: 16,
+        fontSize: 17,
         fontFamily: 'Roboto',
         fontWeight: '700',
         color: '#636363',
@@ -452,12 +518,14 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: '490%',
+        flex: 1, // Set the flex property to make it take up a proportion of available space
+        marginTop: 170,
         fontSize: 25,
-        alignItems: 'center',
         fontWeight: '700',
         fontFamily: 'Roboto',
         color: '#915bc7',
+        textAlign: 'center', // Center the text
+        width: '100%', // Set a fixed width to prevent movement
     },
 
     svg: {
@@ -498,9 +566,13 @@ const styles = StyleSheet.create({
         height: height,
         zIndex: 0,
     },
+
     profileInfo: {
         position: 'absolute',
         top: 20, // Adjust the top value as needed
+        width: '100%', // Ensure it spans the full width
+        flexDirection: 'column', // Arrange the elements in a column
+        alignItems: 'center', // Center the elements horizontally
     },
 });
 

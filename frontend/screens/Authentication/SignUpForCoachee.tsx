@@ -34,8 +34,8 @@ const SignUpForCoachee = () => {
     const [Password, setPassword] = useState('');
     const [Repeat_Password, setRepeat_Password] = useState('');
     const [StreetAdd, setStreetAddress] = useState('');
-    const [City, setCity] = useState('');
-    const [Postal, setPostal] = useState('5800');
+    const [City, setCity] = useState('Iloilo');
+    const [Postal, setPostal] = useState('5000');
     const [dateOfBirth, setDateofBirth] = useState('');
     const [profilePic] = useState('Fixed');
     const [mantra] = useState('Write mantra here');
@@ -70,31 +70,33 @@ const SignUpForCoachee = () => {
     };
 
     const onChange = ({ type }: any, selectedDate: any) => {
-        if (type == 'set') {
-            const currentDate = selectedDate;
-            // Calculate the maximum date one year from today
-            const maxDate = new Date();
-            maxDate.setFullYear(maxDate.getFullYear() - 1);
-    
-            // Check if the selected date is within the allowed range
-            if (currentDate <= maxDate) {
-                setdate(currentDate);
-                if (Platform.OS === 'android') {
-                    toggleDatePicker();
-                    setDateofBirth(currentDate.toDateString());
-                }
-            } else {
-                // Close the date picker
-                toggleDatePicker();
-    
-                // Show an error message if the selected date is outside the allowed range
-                setErrorMessage('Please select a valid year.');
-                setErrorModalVisible(true);
+        if (type === 'set') {
+          const currentDate = selectedDate;
+          const minDate = new Date();
+          minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
+          const maxDate = new Date();
+          maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
+      
+          // Check if the selected date is within the allowed range
+          if (currentDate >= minDate && currentDate <= maxDate) {
+            setdate(currentDate);
+            if (Platform.OS === 'android') {
+              toggleDatePicker();
+              setDateofBirth(currentDate.toDateString());
             }
-        } else {
+          } else {
+            // Close the date picker
             toggleDatePicker();
+      
+            // Show an error message if the selected date is outside the allowed range
+            setErrorMessage(`Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
+            setErrorModalVisible(true);
+          }
+        } else {
+          toggleDatePicker();
         }
-    };
+      };
+      
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
     const toggleCheckbox = (item: any, state: any, setState: any) => {
@@ -121,10 +123,8 @@ const SignUpForCoachee = () => {
                 Repeat_Password.trim() === '' ||
                 StreetAdd.trim() === '' ||
                 City.trim() === '' ||
-                Postal.trim() === '' 
-                // selectedGames.length === 0 ||
-                // selectedHobbies.length === 0 ||
-                // selectedMovieGenres.length === 0
+                Postal.trim() === '' ||
+                Password.trim() !== Repeat_Password.trim() 
                 
             ) {
                 // Display an error message for incomplete fields
@@ -151,7 +151,7 @@ const SignUpForCoachee = () => {
                 firstName: First_Name,
                 lastName: Last_Name,
                 birthday: date,
-                email: Email.toLowerCase(),
+                email: Email,
                 password: Password,
                 workplaceAddress: StreetAdd,
                 games: selectedGames,
@@ -242,7 +242,7 @@ const SignUpForCoachee = () => {
                     />
                 </View>
 
-                <View style={styles.birthdayContainer}>
+                <View style={styles.customContainer}>
                     <Text style={styles.birthdayText}>Date of Birth</Text>
 
                     {showPicker && (
@@ -267,8 +267,8 @@ const SignUpForCoachee = () => {
                     )}
                 </View>
 
-                <View style={styles.AdressContainer}>
-                    <Text style={styles.birthdayText}>Address Information</Text>
+                <View style={styles.customContainer}>
+                    <Text style={styles.addressText}>Address Information</Text>
 
                     <InputSignUpPages
                         placeholder="Street Address"
@@ -279,11 +279,13 @@ const SignUpForCoachee = () => {
                         placeholder="City"
                         value={City}
                         setValue={setCity}
+                        editable={false}
                     />
                     <InputSignUpPages
                         placeholder="Postal Code"
                         value={Postal}
                         setValue={setPostal}
+                        editable={false}
                     />
                     <Text style={styles.choiceContainer}>Select Video Games:</Text>
                     <View style={styles.checkboxContainer}>
@@ -310,7 +312,7 @@ const SignUpForCoachee = () => {
                         </View>
                     </View>
 
-                    <Text style={styles.choiceContainer}>Select Hobbies:</Text>
+                    <Text style={styles.selectdHobbiesContainer}>Select Hobbies:</Text>
                     <View style={styles.checkboxContainer}>
                         <View style={styles.checkbox}>
                             <Text style={{ color: '#a19e9e' }}>Reading</Text>
@@ -320,14 +322,14 @@ const SignUpForCoachee = () => {
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: -1 }}>Singing</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: -1}}>Singing</Text>
                             <Checkbox
                                 status={selectedHobbies.includes(Hobbies.Singing) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Hobbies.Singing, selectedHobbies, setSelectedHobbies)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 7 }}>Writing</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 7}}>Writing</Text>
                             <Checkbox
                                 status={selectedHobbies.includes(Hobbies.Writing) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(Hobbies.Writing, selectedHobbies, setSelectedHobbies)}
@@ -345,14 +347,14 @@ const SignUpForCoachee = () => {
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: -7 }}>Comedy</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: -6}}>Comedy</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Comedy) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Comedy, selectedMovieGenres, setSelectedMovieGenres)}
                             />
                         </View>
                         <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Horror</Text>
+                            <Text style={{ color: '#a19e9e', marginLeft: 10}}>Horror</Text>
                             <Checkbox
                                 status={selectedMovieGenres.includes(MovieGenres.Horror) ? 'checked' : 'unchecked'}
                                 onPress={() => toggleCheckbox(MovieGenres.Horror, selectedMovieGenres, setSelectedMovieGenres)}
@@ -443,7 +445,7 @@ const styles = StyleSheet.create({
     choiceContainer: {
         color: '#a19e9e',
         marginTop: '7%',
-        marginLeft: '1%',
+        left: '-26%',
         justifyContent: 'flex-start',
     },
     birthdayBorder: {
@@ -466,6 +468,11 @@ const styles = StyleSheet.create({
     },
     birthdayText: {
         color: '#a19e9e',
+        left: '-35%'
+    },
+    addressText: {
+        color: '#a19e9e',
+        left: '-26%'
     },
     textStyle: {
         fontSize: 24,
@@ -501,7 +508,6 @@ const styles = StyleSheet.create({
     errorText: {
         fontFamily: 'Roboto',
         fontSize: 15,
-        fontWeight: 'bold',
         marginBottom: 10,
         textAlign: 'center',
         color: 'red', // Change the font color to red
@@ -520,13 +526,19 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginTop: 10,
+        marginTop: 1,
     },
     checkbox: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: '50%',
+        width: '30%',
     },
+    selectdHobbiesContainer: {
+        color: '#a19e9e',
+        marginTop: '7%',
+        left: '-31%',
+        justifyContent: 'flex-start',
+    }
   
 });
 
