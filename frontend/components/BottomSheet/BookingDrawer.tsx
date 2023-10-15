@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Animated,
@@ -69,6 +68,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   const [selectedEndTime, setSelectedEndTime] = useState<Date | null>(null);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [isSelectingStartTime, setIsSelectingStartTime] = useState(true);
+  const [isSelectingEndTime, setIsSelectingEndTime] = useState(true);
   const [selectedClient, setSelectedClient] = useState(route.params?.coachee || null)
   const [date, setDate] = useState<Date | null>(null);
   const [open, setOpen] = React.useState(false)
@@ -104,7 +104,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
         !coacheeId || 
         !date|| 
         !serviceType.trim() ||
-        !addNotes.trim()
+        !addNotes.trim() 
       ) {
         setErrorMessage('Please fill in all the required fields.');
         setErrorModalVisible(true);
@@ -113,6 +113,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
       }
 
    
+      
 
       const variables = {
         input: {
@@ -128,9 +129,9 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
             endTime: selectedEndTime?.toISOString(), // Convert endTime to ISO string
             startTime: selectedStartTime?.toISOString(), // Convert startTime to ISO string
           },
+        
         ],
       };
- 
 
       const { data: createBookingData, error, fetching } = await createBookingForCoach(variables);
 
@@ -183,6 +184,11 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     setTimePickerVisibility(true);
   };
 
+  const showTimePickerEndTime = (selectingEndTime : boolean) => {
+    setIsSelectingEndTime(selectingEndTime);
+    setTimePickerVisibility(true);
+  };
+
   const hideTimePicker = () => {
     setTimePickerVisibility(false);
   };
@@ -193,11 +199,11 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     } else {
       // Ensure end time is not earlier than start time
       if (time && selectedStartTime && time <= selectedStartTime) {
-        // Show an error or handle the scenario as needed
         setErrorModalVisible(true);
         setErrorMessage('End time must be later than start time.');
         setSelectedEndTime(null); // Clear the end time
       } else {
+        console.log('Selected End Time:', formatTimeWithoutSeconds(time))
         setSelectedEndTime(time);
       }
     }
@@ -211,11 +217,15 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     //   setSelectedEndTime(null);
     // }
     showTimePicker(selectingStartTime);
+    console.log(selectedEndTime)
+
   };
 
   const formatTimeWithoutSeconds = (time: Date | null) => {
     return time ? dayjs(time).format('h:mm A'): '';
   };
+
+ 
 
   useEffect(() => {
     const fetchUserToken = async () => {
@@ -389,6 +399,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
             </SafeAreaProvider>
 
             <Text style={styles.contentText}> Time</Text>
+            
 
             <View style={styles.rowContent}>
               <TouchableOpacity onPress={() => handleTextInputPress(true)}>

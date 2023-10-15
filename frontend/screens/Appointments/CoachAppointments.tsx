@@ -8,9 +8,19 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BookingStatus, FindCoachByIdDocument } from '../../generated-gql/graphql';
-import { useQuery } from 'urql';
+import { useQuery, useMutation} from 'urql';
 import { Picker } from '@react-native-picker/picker'; // Import the Picker component
 import dayjs from 'dayjs';
+
+
+const UPDATE_BOOKING_STATUS = `
+  mutation UpdateBookingStatus($id: Int!, $status: BookingStatus!) {
+    updateBookingStatus(id: $id, input: { status: $status }) {
+      id
+      status
+    }
+  }
+`;
 
 
 
@@ -22,6 +32,11 @@ const CoachAppointments = () => {
     const [userToken, setUserToken] = useState<string | null>(null);
     const [appointmentLabel, setAppointmentLabel] = useState();
     const [selectedCategory, setSelectedCategory] = useState('upcoming'); // Initialize selected category
+    const [completedAppointments, setCompletedAppointments] = useState<Booking[]>([]);
+    const [mutationResult, executeMutation] = useMutation(UPDATE_BOOKING_STATUS);
+
+    
+
 
     const from = page * itemsPerPage;
     const to = (page + 1) * itemsPerPage;
@@ -53,11 +68,11 @@ const CoachAppointments = () => {
 
     const formatTimestampToTimeString = (timestamp) => {
         const date = dayjs(timestamp);
-        // Get the local time in 12-hour format with AM/PM
         const timeString = date.format('h:mm A');
         
         return timeString;
     };
+    
 
     const getCurrentPageItems = (items) => {
         const startIndex = page * itemsPerPage;
@@ -78,7 +93,7 @@ const CoachAppointments = () => {
         let filteredItems = [];
         switch (selectedCategory) {
             case 'finished':
-                filteredItems = finishedAppointments || [];
+                filteredItems = (coachData?.findCoachByID?.bookings || []).filter((booking) => booking.status === BookingStatus.Completed);
                 break;
             case 'upcoming':
                 filteredItems = (coachData?.findCoachByID?.bookings || []).filter((booking) => booking.status === BookingStatus.Confirmed);
@@ -97,6 +112,71 @@ const CoachAppointments = () => {
         navigation.goBack();
     };
 
+    
+
+    useEffect(() => {
+        setPage(0);
+    }, []);
+
+    // Function to format a timestamp into a readable date string
+    const formatTimestampToDateString = (timestamp: string | number | Date) => {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString(); // Adjust formatting as needed
+    };
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+   
+    const toggleModal = (item: React.SetStateAction<null>) => {
+        setSelectedItem(item);
+        setModalVisible(!isModalVisible);
+    };
+
+
+    
+
+
+    useEffect(() => {
+        setPage(0);
+        if (coachData) {
+            updateAppointmentStatus();
+        }
+    }, [coachData]);
+
+    const updateAppointmentStatus = () => {
+        const updatedAppointments = (coachData?.findCoachByID?.bookings || []).map((booking) => {
+            if (booking.status === BookingStatus.Confirmed) {
+                const appointmentEndTime = dayjs(booking.bookingSlots[0]?.endTime);
+                const currentDateTime = dayjs();
+    
+                if (currentDateTime.isAfter(appointmentEndTime)) {
+                    // Execute the mutation to update the appointment status to 'Completed'
+                    executeMutation({ id: booking.id, status: BookingStatus.Completed });
+                }
+            }
+            return booking; // Keep other appointments in the array
+        });
+    
+        const newCompletedAppointments = updatedAppointments.filter(
+            (booking) => booking.status === BookingStatus.Completed
+        );
+    
+        // Set the state to update the 'Finished Appointments' list
+        setCompletedAppointments(newCompletedAppointments);
+    };
+
+    useEffect(() => {
+        setPage(0);
+        if (coachData) {
+            updateAppointmentStatus();
+    
+            // Set the selected category to 'finished' when data is available
+            setSelectedCategory('finished');
+        }
+    }, [coachData]);
+    
+    
     const [items] = useState([
         {
             key: 1,
@@ -127,43 +207,6 @@ const CoachAppointments = () => {
             time: '1:00 PM',
         },
     ]);
-
-    // Sample finished appointments
-    const [finishedAppointments] = useState([
-        {
-            key: 5,
-            name: 'Msdsacaron',
-            date: Date.now(),
-            location: 'Roxas',
-            time: '2:00 PM',
-        },
-        {
-            key: 6,
-            name: 'Cheesecake',
-            date: Date.now(),
-            location: 'Roxas',
-            time: '3:00 PM',
-        },
-    ]);
-
-    useEffect(() => {
-        setPage(0);
-    }, []);
-
-    // Function to format a timestamp into a readable date string
-    const formatTimestampToDateString = (timestamp: string | number | Date) => {
-        const date = new Date(timestamp);
-        return date.toLocaleDateString(); // Adjust formatting as needed
-    };
-
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
-
-   
-    const toggleModal = (item: React.SetStateAction<null>) => {
-        setSelectedItem(item);
-        setModalVisible(!isModalVisible);
-    };
 
 
     return (
@@ -196,39 +239,33 @@ const CoachAppointments = () => {
         <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
             <DataTable.Title numeric>Date</DataTable.Title>
-            <DataTable.Title numeric>Time</DataTable.Title>
-            <DataTable.Title numeric>Details</DataTable.Title>
+            <DataTable.Title numeric>Start Time</DataTable.Title>
+            <DataTable.Title numeric>             End Time</DataTable.Title>
         </DataTable.Header>
-        {getFilteredItems().map((item) => (
-            <DataTable.Row key={item.key}>
+        {getFilteredItems().map((booking) => (
+            <DataTable.Row key={booking.id}>
                 <DataTable.Cell>
-                    <Text>{item.name}</Text>
+                    <Text>{booking.coachee ? `${booking.coachee.firstName} ${booking.coachee.lastName}` : 'N/A'}</Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric>
                     <Text>
-                        {formatTimestampToDateString(item.date)}
+                    {formatTimestampToDateString(booking.bookingSlots[0].date)}
                     </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric>
-                    <Text>{item.time}</Text>
+                    <Text>{formatTimestampToTimeString(booking.bookingSlots[0]?.startTime)}</Text>
                 </DataTable.Cell>
-                <View
-                    style={{
-                        marginRight: '-5%',
-                        marginTop: '1.4%',
-                    }}
-                >
-                    <Button onPress={() => toggleModal(item)}>
-                        View
-                    </Button>
-                </View>
+                <DataTable.Cell numeric>
+                    <Text>{formatTimestampToTimeString(booking.bookingSlots[0]?.endTime)}</Text>
+                </DataTable.Cell>
+                
             </DataTable.Row>
         ))}
         <DataTable.Pagination
             page={page}
             numberOfPages={itemsPerPage}
             onPageChange={page => setPage(page)}
-            label={`${from + 1}-${to} of ${items.length}`}
+            label={`${from + 1}-${to} of ${completedAppointments.length}`}
         />
     </DataTable>
 )}
@@ -239,8 +276,8 @@ const CoachAppointments = () => {
         <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
             <DataTable.Title numeric>Date</DataTable.Title>
-            <DataTable.Title numeric>Time</DataTable.Title>
-            <DataTable.Title>                  Details</DataTable.Title>
+            <DataTable.Title numeric>Start Time</DataTable.Title>
+            <DataTable.Title>             End Time</DataTable.Title>
         </DataTable.Header>
         
         {getFilteredItems().map((booking) => (
@@ -260,16 +297,11 @@ const CoachAppointments = () => {
                         {formatTimestampToTimeString(booking.bookingSlots[0]?.startTime)}
                     </Text>
                 </DataTable.Cell>
-                <View
-                        style={{
-                            marginRight: '-5%',
-                            marginTop: '1.4%',
-                        }}
-                    >
-                        <Button>
-                            View
-                        </Button>
-                    </View>
+                <DataTable.Cell numeric>
+                    <Text>
+                        {formatTimestampToTimeString(booking.bookingSlots[0]?.endTime)}
+                    </Text>
+                </DataTable.Cell>
             </DataTable.Row>
             
         ))}
@@ -288,9 +320,9 @@ const CoachAppointments = () => {
         <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
             <DataTable.Title numeric>Date</DataTable.Title>
-            <DataTable.Title numeric>Time</DataTable.Title>
-            <DataTable.Title>                Status</DataTable.Title>
-        </DataTable.Header>
+            <DataTable.Title numeric>Start Time</DataTable.Title>
+            <DataTable.Title>           End Time</DataTable.Title>
+        </DataTable.Header> 
         
         {getFilteredItems().map((booking) => (
             <DataTable.Row key={booking.id}>
@@ -310,7 +342,7 @@ const CoachAppointments = () => {
                     </Text>
                 </DataTable.Cell>
                 <DataTable.Cell numeric>
-                    <Text>{booking.status}</Text>
+                    <Text>{formatTimestampToTimeString(booking.bookingSlots[0]?.endTime)}</Text>
                 </DataTable.Cell>
             </DataTable.Row>
         ))}

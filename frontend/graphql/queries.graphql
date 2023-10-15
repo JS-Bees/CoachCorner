@@ -132,6 +132,7 @@ query FindCoachByID($userID: Int!) {
             bookingSlots {
                 date
                 startTime
+                endTime
             }
         }
     }
