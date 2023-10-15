@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TextInputProps, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TextInput, TextInputProps, TouchableOpacity, Text, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
 interface CustomInputProps extends TextInputProps {
@@ -9,10 +9,13 @@ interface CustomInputProps extends TextInputProps {
     secureTextEntry?: boolean;
     validate?: boolean;
     validateEmail?: (email: string) => boolean;
-    clearError: () => void; // Add clearError prop to clear error
+    clearError: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    iconSource1?: any; // Add iconSource prop
+    iconSource2?: any;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ value, setValue, placeholder, secureTextEntry, validate, validateEmail, clearError }) => {
+const CustomInput: React.FC<CustomInputProps> = ({ value, setValue, placeholder, secureTextEntry, validate, validateEmail, clearError, iconSource1, iconSource2 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isValid, setIsValid] = useState(true);
 
@@ -20,7 +23,6 @@ const CustomInput: React.FC<CustomInputProps> = ({ value, setValue, placeholder,
         setShowPassword(!showPassword);
     };
 
-    // Function to handle validation and update isValid state
     const handleValidation = (text: string) => {
         if (validate && validateEmail && placeholder.toLowerCase() === 'email') {
             const isEmailValid = validateEmail(text);
@@ -30,11 +32,18 @@ const CustomInput: React.FC<CustomInputProps> = ({ value, setValue, placeholder,
 
     return (
         <View style={styles.container}>
+            {iconSource1 && (
+                <Image source={iconSource1} style={styles.icon1} />
+            )}
+             {iconSource2 && (
+                <Image source={iconSource2} style={styles.icon2} />
+            )}
+
             <TextInput
                 value={value}
                 onChangeText={(text) => {
                     setValue(text);
-                    clearError(); // Clear the error when the user types
+                    clearError();
                     handleValidation(text);
                 }}
                 placeholder={placeholder}
@@ -72,6 +81,25 @@ const styles = StyleSheet.create({
         elevation: 6,
         shadowOpacity: 5,
         borderColor: '#e8e8e8',
+        flexDirection: 'row', // Add flexDirection to align icon and input horizontally
+    },
+
+    icon1: {
+        position: 'absolute',
+        left: '5%',
+        top: 5,
+        width: 32,
+        height: 32,
+        marginVertical: 'auto',
+    },
+
+    icon2: {
+        position: 'absolute',
+        left: '7%',
+        top: 5,
+        width: 23,
+        height: 23,
+        marginVertical: 'auto',
     },
 
     input: {
@@ -81,7 +109,7 @@ const styles = StyleSheet.create({
     },
 
     invalidInput: {
-        borderColor: 'red', // Add a red border for invalid input
+        borderColor: 'red',
     },
 
     toggleButton: {

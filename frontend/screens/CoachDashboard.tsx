@@ -141,10 +141,10 @@ const CoachDashboard = () => {
                                     { fontSize: 14 },
                                 ]}
                             >
-                                Client Progress
+                                My Notes
                             </Text>
                             <Image
-                                source={require('../assets/Progress.png')}
+                                source={require('../assets/Writing.png')}
                                 style={[CoachDashboardStyle.imageStyle]}
                             />
                         </View>
@@ -275,6 +275,8 @@ const CoachDashboardStyle = StyleSheet.create({
     imageStyle: {
         width: 65,
         height: 65,
+        alignContent: 'center',
+        alignItems: 'center'
     },
     buttonContainer: {
         flexDirection: 'row',

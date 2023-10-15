@@ -74,9 +74,9 @@ const LogIn = () => {
     // console.log(coachData?.findCoachByEmailAndPassword.email)
     const handleLoginError = () => {
         if (!Email || Password) {
-            setEmailPasswordError('Invalid Email or Password' + Email);
+            setEmailPasswordError('Invalid Email or Password');
         } else {
-            setEmailPasswordError('Invalid Email or Password' + Email); // Clear the error message
+            setEmailPasswordError('Invalid Email or Password'); // Clear the error message
         }
     };
 
@@ -163,21 +163,19 @@ const LogIn = () => {
             </View>
 
             <View style={Log_In_Style.customContainer}>
-                <Image
-                    source={require('../Authentication/Icons/Email1.png')}
-                    style={Log_In_Style.emailICon}
-                />
+            <View><Text></Text></View>
+            <View><Text></Text></View>
                 <CustomInput
+                    iconSource1={require('../Authentication/Icons/Email1.png')}
                     placeholder="Email"
                     value={Email}
                     setValue={setEmail}
                     clearError={clearError}
                 />
-                <Image
-                    source={require('../Authentication/Icons/Password1.png')}
-                    style={Log_In_Style.passwordIcon}
-                />
+                <View><Text></Text></View>
+                <View><Text></Text></View>
                 <CustomInput
+                    iconSource2={require('../Authentication/Icons/Password1.png')}
                     placeholder="Password"
                     value={Password}
                     setValue={setPassword}
@@ -204,11 +202,11 @@ const LogIn = () => {
 
             <View style={Log_In_Style.noMargin}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ fontFamily: 'Roboto' }}>
+                <Text style={{ fontFamily: 'Roboto', fontSize: 12}}>
                         Don't have an account?{' '}
                     </Text>
                     <TouchableOpacity onPress={onSignUpPressed}>
-                        <Text style={{ color: '#6441A4' }}>Sign up here!</Text>
+                        <Text style={{ color: '#6441A4', fontFamily: 'Roboto', fontSize: 12}}>Sign up here!</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -287,24 +285,6 @@ const Log_In_Style = StyleSheet.create({
         fontSize: 12,
         color: 'red',
         top: '8%',
-    },
-    signUpHereText: {
-        color: '#6441A4',
-        fontSize: 16, // adjust the size as needed
-    },
-    emailICon: {
-        width: 40,
-        height: 40,
-        left: '-40%',
-        top: '16%',
-        zIndex: 4,
-    },
-    passwordIcon: {
-        width: 25,
-        height: 25,
-        left: '-40%',
-        top: '12%',
-        zIndex: 4,
     },
 });
 

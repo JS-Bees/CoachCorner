@@ -230,8 +230,7 @@ const CoacheeProfile = () => {
                 onConfirm={onLogOutPressed} // This function logs out the user
                 onCancel={hideLogoutModal} // This function hides the modal
             />
-            <View style={styles.profileInfo}>
-                <Text style={styles.text}> Profile </Text>
+             <View style={styles.profileInfo}>
                 <Text
                     style={styles.normalText}
                 >{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}</Text>
@@ -371,7 +370,8 @@ const styles = StyleSheet.create({
     },
 
     text: {
-        top: '20%',
+        // top: '20%', // Remove top
+        flex: 1, // Set the flex property to make it take up a proportion of available space
         color: 'white',
         fontSize: 30,
         fontFamily: 'Roboto',
@@ -379,6 +379,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         textAlignVertical: 'center',
     },
+
 
     logOut: {
         alignItems: 'center',
@@ -519,7 +520,8 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        top: '170%',
+        flex: 1, // Set the flex property to make it take up a proportion of available space
+        marginTop: 170,
         fontSize: 25,
         fontWeight: '700',
         fontFamily: 'Roboto',
@@ -570,6 +572,9 @@ const styles = StyleSheet.create({
     profileInfo: {
         position: 'absolute',
         top: 20, // Adjust the top value as needed
+        width: '100%', // Ensure it spans the full width
+        flexDirection: 'column', // Arrange the elements in a column
+        alignItems: 'center', // Center the elements horizontally
     },
 });
 
