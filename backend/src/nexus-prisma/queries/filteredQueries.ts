@@ -14,10 +14,27 @@ export const findCoachByEmailAndPassword = queryField(
         },
         resolve: async (_, { email, password }, context: Context) => {
             // Search for a Coach with the provided email
+            const currentTime = new Date(); // Create a new Date object representing the current date and time
+
+            const hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes();
+            const seconds = currentTime.getSeconds();
+
+            const formattedTime = `${hours}:${minutes}:${seconds}`; // Format the time as a string
+
+            console.log(`Current Time: ${formattedTime}`); // Output the current time to the console
             const coach = await context.db.coach.findUnique({
                 where: { email, active: true}, // Include the 'active' condition
             });
+            const currentTime1 = new Date(); // Create a new Date object representing the current date and time
 
+            const hours1 = currentTime1.getHours();
+            const minutes1 = currentTime1.getMinutes();
+            const seconds1 = currentTime1.getSeconds();
+
+            const formattedTime1 = `${hours1}:${minutes1}:${seconds1}`; // Format the time as a string
+
+            console.log(`Current Time1: ${formattedTime1}`); // Output the current time to the console
             if (coach) {
                 // If a Coach is found, compare the password
                 const passwordMatch = await bcrypt.compare(
@@ -25,6 +42,15 @@ export const findCoachByEmailAndPassword = queryField(
                     coach.password,
                 );
                 if (passwordMatch) {
+                    const currentTime1 = new Date(); // Create a new Date object representing the current date and time
+
+                    const hours1 = currentTime1.getHours();
+                    const minutes1 = currentTime1.getMinutes();
+                    const seconds1 = currentTime1.getSeconds();
+        
+                    const formattedTime1 = `${hours1}:${minutes1}:${seconds1}`; // Format the time as a string
+        
+                    console.log(`Current Time2: ${formattedTime1}`); // Output the current time to the console
                     return coach;
                 } else {
                     throw new Error('Incorrect password.');
@@ -49,7 +75,6 @@ export const findCoacheeByEmailAndPassword = queryField(
             const coachee = await context.db.coachee.findUnique({
                 where: { email, active: true }, // Include the 'active' condition
             });
-
             if (coachee) {
                 // If a Coachee is found, compare the password
                 const passwordMatch = await bcrypt.compare(

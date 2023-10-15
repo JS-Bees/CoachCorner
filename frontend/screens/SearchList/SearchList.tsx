@@ -73,9 +73,11 @@ const SearchList = () => {
   };
 
   const handleSearch = (text) => {
-    const uppercaseText = text.toUpperCase();
+    const trimmedText = text.trim(); // Remove leading and trailing white spaces
+    const uppercaseText = trimmedText.toUpperCase();
     setSearchQuery(uppercaseText);
     setShowClearButton(uppercaseText !== '');
+
   };
 
   const handleKeyPress = (e) => {
@@ -187,7 +189,7 @@ const style = StyleSheet.create({
         fontFamily: 'Roboto',
         color: '#915bc7',
         fontSize: 30,
-        zIndex: 1,
+        zIndex: -1,
         top: '5%',
         right: '20%',
     },
