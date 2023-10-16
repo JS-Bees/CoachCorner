@@ -10,7 +10,9 @@ export default function CoachSample(): JSX.Element | null {
     });
 
     const { data, error, fetching } = result;
-
+    // result.data // we do stuff with it
+    // result.fetching // show loader
+    // result.error // show error message
     if (fetching) {
         return <Text> Loading ... pls wait ...</Text>;
     }

@@ -16,7 +16,7 @@ const MyCoaches = () => {
   const [userID, setUserID] = useState<number>(Number); // Initialize userID state
 
   const navigateToCoachBookingPage = (item) => {
-    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee, coacheeId: item.coacheeId, coachId: item.coachId});
+    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee, coacheeId: item.coacheeId, coachId: item.coachId, coacheeFirstName: item.coachee.firstName, coacheeLastName: item.coachee.lastName});
   };
   
   

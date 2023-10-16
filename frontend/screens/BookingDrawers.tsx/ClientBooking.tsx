@@ -18,6 +18,8 @@ import { BookingStatus, FindCoacheeByIdDocument } from '../../generated-gql/grap
 interface RouteParams {
     coachId?: string
     coach?: any
+    coachFirstName: string
+    coachLastName: string
 }
 
 const ClientBookingDrawer= () => {
@@ -29,13 +31,13 @@ const ClientBookingDrawer= () => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const route = useRoute()
 
-    
-
     const coach = route.params?.coach;
     const coachId = route.params?.coachId;
+   
     
-
     console.log('Coach ID:', coachId);
+    console.log('Coach:', coach);
+
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -119,7 +121,7 @@ const ClientBookingDrawer= () => {
         <View style = {styles.container}>
             <View style={styles.upperContainer}>
             <Image source={require('./User.png')} style={styles.imageContainer}/>
-            <Text style={styles.text}>{`${coacheeData?.findCoacheeByID.firstName} ${coacheeData?.findCoacheeByID.lastName}`}</Text>
+            <Text style={styles.text}>{`${coach?.firstName} ${coach?.lastName}`}</Text>
             <Divider style ={styles.divider}/>
             </View>
 

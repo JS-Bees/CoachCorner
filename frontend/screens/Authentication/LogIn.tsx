@@ -39,7 +39,9 @@ const LogIn = () => {
             email: Email,
             password: Password,
         },
-        pause: false,
+        pause: true,
+        
+        
     });
 
     const [coacheeResult, executeCoacheeQuery] = useQuery({
@@ -48,19 +50,43 @@ const LogIn = () => {
             email: Email,
             password: Password,
         },
-        pause: false, // Pause the query initially
+        pause: true, // Pause the query initially
     });
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            clearCredentials();
+        });
+    
+        return () => {
+            unsubscribe();
+            clearCredentials();
+        };
+    }, []);
 
     // Clear the email and password state variables when navigating away from the page
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('blur', () => {
-            setEmail('');
-            setPassword('');
-            setEmailPasswordError('');
+    const clearCredentials = async () => {
+        setEmail('');
+        setPassword('');
+        setEmailPasswordError('');
+    
+        await executeCoachQuery({
+            variables: {
+                email: '',
+                password: '',
+            },
         });
+    
+        await executeCoacheeQuery({
+            variables: {
+                email: '',
+                password: '',
+            },
+        });
+    };
 
-        return unsubscribe;
-    });
+    console.log(Email + ' This is the current email')
+    console.log(Password + ' This is the current pass')
 
     const storeToken = async (token: string) => {
         try {
@@ -70,72 +96,112 @@ const LogIn = () => {
         }
     };
 
-    // console.log(coacheeData?.findCoacheeByEmailAndPassword.email)
-    // console.log(coachData?.findCoachByEmailAndPassword.email)
     const handleLoginError = () => {
-        if (!Email || Password) {
+        if (!Email && !Password) {
+            setEmailPasswordError('  ');
+        }
+        else if (!Email || !Password) { // Check if both Email and Password are empty
             setEmailPasswordError('Invalid Email or Password');
-        } else {
-            setEmailPasswordError('Invalid Email or Password'); // Clear the error message
-        }
-    };
-
-    const onLogInPressed = () => {
-        // Check if email and password are provided
-        if (!Email || !Password) {
-            handleLoginError();
-            return; // Don't proceed with the login attempt
-        }
-
-        executeCoachQuery({
-            variables: {
-                email: Email,
-                password: Password,
-            },
-            pause: true,
-        });
-
-        executeCoacheeQuery({
-            variables: {
-                email: Email,
-                password: Password,
-            },
-            pause: true,
-        });
-
-        const coachData = coachResult.data;
-        const coacheeData = coacheeResult.data;
-        console.log('coach data', coachData)
-        console.log('coach data', coacheeData)
-            if (
-                (coachData && coachData.findCoachByEmailAndPassword) ||
-                (coacheeData && coacheeData.findCoacheeByEmailAndPassword)
-            ) {
-                setLoading(true); // Start loading
-                if (coachData && coachData.findCoachByEmailAndPassword) {
-                    const userId = coachData.findCoachByEmailAndPassword.id;
-                    storeToken(userId.toString());
-                    navigation.navigate('CoachDashboard');
-                    console.log(
-                        'Successfully logged in as a coach :)',
-                        'Token:',
-                        userId.toString(),
-                    );
-                } else {
-                    const userId = coacheeData.findCoacheeByEmailAndPassword.id;
-                    storeToken(userId.toString());
-                    navigation.navigate('CoacheeDashboard');
-                    console.log(
-                        'Successfully logged in as a coachee :)',
-                        'Token:',
-                        userId.toString(),
-                    );
-                }
-            } else {
-                handleLoginError();
+        } else if(coachResult.error) {
+            setEmailPasswordError('User not found')
+            if(EmailPasswordError === 'User not found') {
+                setEmailPasswordError(' ')
             }
-            setLoading(false); // Stop loading
+            return;
+        }else if(coacheeResult.error) {
+            setEmailPasswordError('User not found')
+            if(EmailPasswordError === 'User not found') {
+                setEmailPasswordError(' ')
+            }
+            return;
+        } 
+        
+        else {
+            setEmailPasswordError(' '); // Clear the error message
+        }
     };
+    // const handleLoginError = () => {
+    //     if (!Email && !Password) {
+    //         setEmailPasswordError('  ');
+    //     } else if (!Email || !Password) {
+    //         setEmailPasswordError('Invalid Email or Password');
+    //     } else if(coachResult.error && !coacheeResult.error) {
+    //         setEmailPasswordError('Coach not found')
+    //     }else if(!coachResult.error && coacheeResult.error) {
+    //         setEmailPasswordError('Coachee not found')
+    //     } else {
+    //         setEmailPasswordError(' ');
+    //     }
+    // };
+    
+
+    const onLogInPressed = async () => {
+        // Check if email and password are provided
+
+
+        // }else if(coachResult.error) {
+        //     handleLoginError();
+        //     return;
+        // }else if(coacheeResult.error) {
+        //     handleLoginError();
+        //     return;
+        // }
+            setLoading(true); // Start loading
+            console.log(coacheeResult.data?.findCoacheeByEmailAndPassword.isCoach)
+            console.log(coachResult.data?.findCoachByEmailAndPassword.isCoach)
+  
+                await executeCoacheeQuery({
+                    variables: {
+                        email: Email,
+                        password: Password,
+                    },
+              });
+
+               await executeCoachQuery({
+                    variables: {
+                        email: Email,
+                        password: Password,
+                    },
+                });
+            
+    
+    
+    };
+
+    useEffect(() => {
+        handleLoginError()
+        if(isLoading) {
+            setEmailPasswordError(' ')
+            setLoading(false)
+        }
+    }, [coachResult, coacheeResult])
+        
+    useEffect(() => {    
+        if (coachResult.data && coachResult.data.findCoachByEmailAndPassword) {
+            const userId = coachResult.data.findCoachByEmailAndPassword.id;
+            storeToken(userId.toString());
+            navigation.navigate('CoachDashboard');
+            console.log(
+                'Successfully logged in as a coach :)',
+                'Token:',
+                userId.toString(),
+            );
+        } else if (
+            coacheeResult.data &&
+            coacheeResult.data.findCoacheeByEmailAndPassword
+        ) {
+            const userId = coacheeResult.data.findCoacheeByEmailAndPassword.id;
+            storeToken(userId.toString());
+            navigation.navigate('CoacheeDashboard');
+            console.log(
+                'Successfully logged in as a coachee :)',
+                'Token:',
+                userId.toString(),
+            );
+        }
+        setLoading(false); // Stop loading
+    }, [coachResult.data?.findCoachByEmailAndPassword.email, coacheeResult.data?.findCoacheeByEmailAndPassword.email])
+
 
     const onForgotPressed = () => {
         // console.warn('Renewed Password');
@@ -197,7 +263,7 @@ const LogIn = () => {
                     <ActivityIndicator size="large" color="#915bc7" /> // Show loading indicator
                 ) : (
                     <LogInButton text="Login" onPress={onLogInPressed} />
-                )}
+                 )} 
             </View>
 
             <View style={Log_In_Style.noMargin}>

@@ -340,7 +340,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
       <Animated.View style={[styles.bottomSheet, bottomSheetAnimation]}>
         <View style={styles.dragHandle} {...panResponder.panHandlers} />
 
-        <View style={[styles.title, {marginBottom: '15%'}]}>
+        <View style={[styles.title, {marginBottom: '10%'}]}>
           <Text style={styles.headerText}> Book </Text>
           <Text style={styles.headerText}> Appointment </Text>
         </View> 
@@ -350,7 +350,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
         <KeyboardAwareScrollView enableOnAndroid={true}>
           <ScrollView keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="always"
          style={{ zIndex: 1 }}>
-          <View style={[styles.content, {marginTop: '10%'}]}>
+          <View style={[styles.content, {marginTop: '5%'}]}>
             <Text style={styles.contentText}> Coach Name</Text>
             <TextInput
               style={styles.input}
@@ -458,7 +458,9 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
               />
             </ScrollView>
           </View>
-          <LogInButton text={'Submit'} onPress={onSubmitPressed} type="QUARTERNARY" />
+          <View>
+            <LogInButton text={'Submit'} onPress={onSubmitPressed} type="QUINARY" />
+          </View>
           {isLoading ? (
       
             <ActivityIndicator size="large" color="#0000ff" />

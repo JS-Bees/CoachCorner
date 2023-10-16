@@ -16,6 +16,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface RouteParams {
     coacheeId: string
+    coacheeFirstName: string
+    coacheeLastName: string
     
 }
 
@@ -27,6 +29,8 @@ const CoachBookingDrawer = () => {
     
 
     const coacheeId = route.params?.coacheeId;
+    const coacheeFirstName = route.params?.coacheeFirstName;
+    const coacheeLastName = route.params?.coacheeLastName
     console.log('Coachee ID:', coacheeId);
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -87,7 +91,7 @@ const CoachBookingDrawer = () => {
         <View style = {styles.container}>
             <View style={styles.upperContainer}>
             <Image source={require('./User.png')} style={styles.imageContainer}/>
-            <Text style={styles.text}>{`${coachData?.findCoachByID?.firstName} ${coachData?.findCoachByID?.lastName}`}</Text>
+            <Text style={styles.text}>{`${coacheeFirstName} ${coacheeLastName}`}</Text>
             <Divider style ={styles.divider}/>
             </View>
 

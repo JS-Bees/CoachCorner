@@ -189,11 +189,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, on
     });
   };
 
-  const handleTextPress = () => {
-    // Handle the text press event here.
-    // You can implement scrolling logic or any other action you want.
-   
-  };
+  
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
