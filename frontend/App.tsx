@@ -32,8 +32,7 @@ import {
 const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.254.142:5050/graphql',
-    // url: apiUrl!,
+    url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -54,7 +53,7 @@ export type RootStackParams = {
     ClientBookingDrawer: any;
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
-    ClientAppointments: any, 
+    ClientAppointments: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -109,7 +108,7 @@ export default function App() {
                         component={CoachAppointments}
                         options={{ headerShown: false }}
                     />
-                      <RootStack.Screen
+                    <RootStack.Screen
                         name="ClientAppointments"
                         component={ClientAppointments}
                         options={{ headerShown: false }}
@@ -134,10 +133,10 @@ export default function App() {
                         component={CoachBookingDrawer}
                         options={{ headerShown: false }}
                     />
-                     <RootStack.Screen 
-                        name="ClientBookingDrawer" 
-                        component={ClientBookingDrawer} 
-                        options={{headerShown: false}}
+                    <RootStack.Screen
+                        name="ClientBookingDrawer"
+                        component={ClientBookingDrawer}
+                        options={{ headerShown: false }}
                     />
                 </RootStack.Navigator>
             </NavigationContainer>
