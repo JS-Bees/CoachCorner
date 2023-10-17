@@ -120,32 +120,10 @@ const LogIn = () => {
             setEmailPasswordError(' '); // Clear the error message
         }
     };
-    // const handleLoginError = () => {
-    //     if (!Email && !Password) {
-    //         setEmailPasswordError('  ');
-    //     } else if (!Email || !Password) {
-    //         setEmailPasswordError('Invalid Email or Password');
-    //     } else if(coachResult.error && !coacheeResult.error) {
-    //         setEmailPasswordError('Coach not found')
-    //     }else if(!coachResult.error && coacheeResult.error) {
-    //         setEmailPasswordError('Coachee not found')
-    //     } else {
-    //         setEmailPasswordError(' ');
-    //     }
-    // };
-    
+ 
 
     const onLogInPressed = async () => {
-        // Check if email and password are provided
 
-
-        // }else if(coachResult.error) {
-        //     handleLoginError();
-        //     return;
-        // }else if(coacheeResult.error) {
-        //     handleLoginError();
-        //     return;
-        // }
             setLoading(true); // Start loading
             console.log(coacheeResult.data?.findCoacheeByEmailAndPassword.isCoach)
             console.log(coachResult.data?.findCoachByEmailAndPassword.isCoach)
