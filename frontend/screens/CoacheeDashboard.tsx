@@ -17,6 +17,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import { BackHandler } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +26,7 @@ const { width, height } = Dimensions.get('window');
 const CoacheeDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
@@ -31,6 +34,22 @@ const CoacheeDashboard = () => {
     });
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    
+    useEffect(() => {
+        const backAction = () => {
+            if (isFocused) {
+                // Prevent navigating back when the screen is focused
+                return true;
+            }
+            return false;
+        };
+
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+        return () => {
+            backHandler.remove();
+        };
+    }, [isFocused]);
 
 
     useEffect(() => {

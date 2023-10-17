@@ -9,7 +9,6 @@ import { useQuery, useMutation } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { UpdateCoachingRelationshipActiveStatusDocument } from '../generated-gql/graphql';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons
-import { MaterialIcons } from '@expo/vector-icons'; // You can use MaterialIcons for appointment icon
 import { AntDesign } from '@expo/vector-icons';
 
 const MyCoaches = () => {
@@ -235,6 +234,7 @@ const MyCoachStyle = StyleSheet.create({
   searchBarInput: {
     fontSize: 16, // Font size
   },
+  
 });
 
 export default MyCoaches;

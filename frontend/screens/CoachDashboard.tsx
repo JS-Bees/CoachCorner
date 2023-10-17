@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-native-paper';
 import BottomComponent from '../components/BottomSvg';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
@@ -17,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
+import { BackHandler } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ const { width, height } = Dimensions.get('window');
 const CoachDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
+        const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
@@ -31,6 +33,23 @@ const CoachDashboard = () => {
     });
     
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+     
+    useEffect(() => {
+        const backAction = () => {
+            if (isFocused) {
+                // Prevent navigating back when the screen is focused
+                return true;
+            }
+            return false;
+        };
+
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+        return () => {
+            backHandler.remove();
+        };
+    }, [isFocused]);
 
     useEffect(() => {
         const fetchUserToken = async () => {
