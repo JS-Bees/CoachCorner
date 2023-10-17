@@ -8,7 +8,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons
-import { MaterialIcons } from '@expo/vector-icons'; // You can use MaterialIcons for appointment icon
 import { AntDesign } from '@expo/vector-icons';
 
 const MyCoaches = () => {
