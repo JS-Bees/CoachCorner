@@ -12,186 +12,153 @@ generator nexus {
 }
 
 
-enum Sport {
-    BADMINTON
-    BASKETBALL
-    SOCCER
-    SWIMMING
-    VOLLEYBALL
-}
-
-enum MovieGenres {
-    ACTION
-    ANIME
-    ADVENTURE
-    COMEDY
-    DRAMA
-    FANTASY
-    KDRAMA
-    SCIFI
-    HORROR
-    MYSTERY
-    THRILLER
-    ROMANCE
-    DOCUMENTARY
-    MUSICAL
-}
-
-enum Hobbies {
-    BAKING
-    COOKING
-    DANCING
-    HIKING
-    PAINTING
-    PHOTOGRAPHY
-    READING
-    SINGING
-    TRAVELLING
-    WRITING
-}
-
-enum Games {
-    ARKNIGHTS
-    AZURELANE
-    CALLOFDUTY
-    CANDYCRUSH
-    CLASHOFCLANS
-    COUNTERSTRIKE
-    DOTA
-    GENSHINIMPACT
-    LOL
-    MINECRAFT
-    MOBILELEGENDS
-    OVERWATCH
-    PUBG
-    STREETFIGHTER
-    TEKKEN
-    VALORANT
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-  COMPLETED
+model Sport {
+  id                  Int      @id @default(autoincrement()) 
+  user                User     @relation(fields: [userId], references: [id])
+  userId              Int      @map("user_id")
+  type                String
 }
 
 
-model Coachee {
-  id                  Int      @id @default(autoincrement())
-  address             String
-  birthday            DateTime
-  email               String   @unique 
-  firstName           String
-  lastName            String
-  password            String
+model MovieGenres {
+  id                  Int      @id @default(autoincrement()) 
+  user                User     @relation(fields: [userId], references: [id])
+  userId              Int      @map("user_id")
+  type                String
 
-  games               Games[]
-  hobbies             Hobbies[]
-  moviesGenres        MovieGenres[] 
+  @@map("movies_genres")
+}
 
-  affiliations        String
-  bio                 String
-  mantra              String 
-  profilePicture      String  
+model Games {
+  id                  Int      @id @default(autoincrement()) 
+  user                User     @relation(fields: [userId], references: [id])
+  userId              Int      @map("user_id")
+  type                String
 
-  bookings            Booking[]
-  coachingRelationships CoachingRelationship[]
-  reviews             Review[] 
+  @@map("games")
+}
 
-  isCoach             Boolean   @default(false) 
-  active              Boolean   @default(true)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+model Hobbies {
+  id                  Int      @id @default(autoincrement()) 
+  user                User     @relation(fields: [userId], references: [id])
+  userId              Int      @map("user_id")
+  type                String
+
+  @@map("hobbies")
+}
+
+model ProfilePicture {
+  id                  Int      @id @default(autoincrement()) 
+  user                User     @relation(fields: [userId], references: [id])
+  userId              Int      @map("user_id")
+  url                 String
+
+  @@map("profile_picture")
+}
+
+model BookingStatus {
+  id                     Int       @id @default(autoincrement()) 
+  bookingId              Int       @map("booking_id")
+  booking                Booking   @relation(fields: [bookingId], references: [id])
+  status                 String
+
+  @@map("booking_status")
 }
 
 
-model Coach {
-  id                  Int      @id @default(autoincrement())
-  birthday            DateTime   
-  email               String   @unique 
-  firstName           String
-  lastName            String
-  password            String
-  workplaceAddress    String
+model User {
+  id                  Int               @id @default(autoincrement()) 
+  address             String   
+  birthday            DateTime 
+  email               String            @unique
+  firstName           String            @map("first_name")
+  lastName            String            @map("last_name")
+  password            String   
+
+  sport               Sport    
+  games               Games[]  
+  hobbies             Hobbies[]  
+  moviesGenres        MovieGenres[]     @map("movies_genres")
+  profilePicture      ProfilePicture    @map("profile_picture")
+
+  affiliations        String    
+  bio                 String    
+  mantra              String    
+
+  bookings            Booking[]  
+  coachingRelationships CoachingRelationship[]        @map("coaching_relationships")
+  reviews             Review[]   
+
+  isCoach             Boolean       @default(false)   @map("is_coach")
   
-  sport               Sport
-  games               Games[]
-  hobbies             Hobbies[]
-  moviesGenres        MovieGenres[]
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
 
-  affiliations        String
-  bio                 String
-  mantra              String 
-  profilePicture      String    
-
-  bookings              Booking[] 
-  coachingRelationships CoachingRelationship[]
-  reviews               Review[] 
-
-  isCoach             Boolean   @default(true)
-  active              Boolean   @default(true)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  @map("users")
 }
-
 
 model CoachingRelationship {
-  id                  Int      @id @default(autoincrement())
-  coach               Coach    @relation(fields: [coachId], references: [id])
-  coachId             Int
-  coachee             Coachee  @relation(fields: [coacheeId], references: [id])
-  coacheeId           Int
+  id                Int           @id @default(autoincrement())
+  firstUser         User          @relation(fields: [firstUserId], references: [id])
+  firstUserId       Int           @map("first_user_id")
+  secondUser        User          @relation(fields: [secondUserId], references: [id])
+  secondUserId      Int           @map("second_user_id")
 
-  messagingStarted    Boolean  @default(false)
-  active              Boolean  @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  messagingStarted    Boolean     @default(false)
+  active              Boolean     @default(true)
+  createdAt           DateTime    @default(now())  @map("created_at")
+  updatedAt           DateTime    @updatedAt       @map("updated_at")
+
+  @@map("coaching_relationships")
 }
 
 model BookingSlot {
-  id            Int       @id @default(autoincrement())
-  bookingId     Int
-  booking       Booking   @relation(fields: [bookingId], references: [id])
+  id            Int               @id @default(autoincrement())
+  bookingId     Int               @map("booking_id")
+  booking       Booking           @relation(fields: [bookingId], references: [id])
   date          DateTime
-  startTime     DateTime
-  endTime       DateTime
+  startTime     DateTime          @map("start_time")
+  endTime       DateTime          @map("end_time")
 
-  active        Boolean      @default(true)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  active        Boolean           @default(true)
+  createdAt     DateTime          @default(now())  @map("created_at")
+  updatedAt     DateTime          @updatedAt       @map("updated_at")
+ 
+  @@map("booking_slots")
 }
 
-
 model Booking {
-  id                Int          @id @default(autoincrement())
-  bookingSlots      BookingSlot[]
-  coach             Coach        @relation(fields: [coachId], references: [id])
-  coachId           Int
-  coachee           Coachee      @relation(fields: [coacheeId], references: [id])
-  coacheeId         Int
-  serviceType       String
-  status            BookingStatus
+  id                Int             @id @default(autoincrement())
+  bookingSlots      BookingSlot[]   @map("booking_slots")
+  firstUser         User            @relation(fields: [firstUserId], references: [id])
+  firstUserId       Int             @map("first_user_id")
+  secondUser        User            @relation(fields: [secondUserId], references: [id])
+  secondUserId      Int             @map("second_user_id")
+  serviceType       String          @map("service_type")
+  status            BookingStatus       
 
-  additionalNotes   String
+  additionalNotes   String          @map("additional_notes")
 
-  active            Boolean      @default(true)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  active            Boolean         @default(true)
+  createdAt         DateTime        @default(now())  @map("created_at")
+  updatedAt         DateTime        @updatedAt       @map("updated_at")
+
+  @@map("bookings")
 }
 
 model Review {
-  id                Int       @id @default(autoincrement())
-  starRating        Int      
-  comment           String
-  coach             Coach     @relation(fields: [coachId], references: [id])
-  coachId           Int
-  coachee           Coachee   @relation(fields: [coacheeId], references: [id])
-  coacheeId         Int
+  id                Int             @id @default(autoincrement())
+  starRating        Int             @map("star_rating")
+  comment           String    
+  firstUser         User            @relation(fields: [firstUserId], references: [id])
+  firstUserId       Int             @map("first_user_id")
+  secondUser        User            @relation(fields: [secondUserId], references: [id])
+  secondUserId      Int             @map("second_user_id")
 
-  active            Boolean   @default(true)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  active            Boolean         @default(true)
+  createdAt         DateTime        @default(now())   @map("created_at")
+  updatedAt         DateTime        @updatedAt        @map("updated_at")
+  
+  @@map("reviews")
 }
-
-
