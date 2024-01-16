@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import BottomComponent from '../../components/BottomSvg';
+import BottomComponent from '../../components/SVGs/BottomSvg';
 import ListItemComponent from '../../components/ListItem';
 import DraggableBottomSheet from '../../components/BottomSheet/BottomSheet';
 import { RootStackParams } from '../../App';

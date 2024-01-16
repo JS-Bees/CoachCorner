@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
-import BottomComponent from '../components/BottomSvg';
+import BottomComponent from '../components/SVGs/BottomSvg';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

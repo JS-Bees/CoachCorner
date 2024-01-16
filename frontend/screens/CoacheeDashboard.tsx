@@ -5,11 +5,8 @@ import {
     Dimensions,
     Image,
     Platform,
-    TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Button } from 'react-native-paper';
-import BottomComponent from '../components/BottomSvg';
+import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,11 +14,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
+import { SearchBar } from '@rneui/themed';
+import Icon from 'react-native-vector-icons/Ionicons'
+import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
 
+
+
+
 const CoacheeDashboard = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -31,6 +36,18 @@ const CoacheeDashboard = () => {
     });
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [searchText, setSearchText] = useState('');
+    const [seeAllCoaches, setSeeAllCoaches] = useState(false);
+    const handleSeeAllPress = () => {
+        setSeeAllCoaches(!seeAllCoaches);
+        if (!seeAllCoaches) {
+          navigation.navigate('MyCoaches_alt'); 
+        }
+    };
+    
+    
+
+    
 
 
     useEffect(() => {
@@ -58,6 +75,10 @@ const CoacheeDashboard = () => {
         return coacheeResult;
     };
 
+    const handleSearchChange = (text: string) => {
+        setSearchText(text);
+    };
+
     // Example usage of the query function
     // Replace 'yourToken' with the actual token or userID you want to fetch
     const {
@@ -70,127 +91,102 @@ const CoacheeDashboard = () => {
         return null;
     }
 
+    const TopCoaches: Profile[] = [ //max 2
+        {
+          name: 'Serena Williams',
+          imageSource: require('../assets/Woman.png'),
+          gainedStars: 5
+        },
+        {
+            name: 'Kobe Brian',
+            imageSource: require('../assets/Woman.png'),
+            gainedStars: 3
+        },
+        
+    ];
+
+    const RecommendedCoaches: Profile[] = [ // max 2
+        {
+          name: 'Serena Williams',
+          imageSource: require('../assets/Woman.png'),
+          gainedStars: 2
+        },
+        {
+            name: 'Kobe Brian',
+            imageSource: require('../assets/Woman.png'),
+            gainedStars: 4
+        }
+    ];
+
+   
+
     return (
         <View style={CoacheeDashboardStyle.container}>
-            <View style={CoacheeDashboardStyle.backgroundContainer}></View>
-            <View style={CoacheeDashboardStyle.topContainer}>
-                <View style={[CoacheeDashboardStyle.topMiniContainer]}>
-                    <View style={CoacheeDashboardStyle.profileImageContainer}>
-                        <Image
-                            source={require('../assets/Woman.png')} // Add your profile image source here
-                            style={CoacheeDashboardStyle.profileImage}
-                        />
-                    </View>
-                    <View
-                        style={CoacheeDashboardStyle.nameAndGreetingsContainer}
-                    >
-                        <Text style={CoacheeDashboardStyle.greetings}>
-                            Welcome Back!
-                        </Text>
-                        <Text style={CoacheeDashboardStyle.name}>
-                            {coacheeData?.findCoacheeByID?.firstName}
-                        </Text>
-                    </View>
-                </View>
+            <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
+                <Text style={CoacheeDashboardStyle.greetings}>
+                    Welcome 
+                </Text>
+                <Text style={CoacheeDashboardStyle.name}>
+                    {coacheeData?.findCoacheeByID?.firstName}!
+                </Text>
+                
             </View>
-            <View style={CoacheeDashboardStyle.middleContainer}>
-                <View style={CoacheeDashboardStyle.row}>
-                    <TouchableOpacity
-                        style={[
-                            CoacheeDashboardStyle.miniContainer,
-                            { backgroundColor: '#DED2EA', marginVertical: 20 },
-                        ]}
-                        onPress={() => navigation.navigate('MyCoaches')}
-                    >
-                        <View style={CoacheeDashboardStyle.nestedMiniContainer}>
-                            <Text style={CoacheeDashboardStyle.imageLabel}>
-                                My Coaches
-                            </Text>
-                            <Image
-                                source={require('../assets/Coach.png')}
-                                style={[CoacheeDashboardStyle.imageStyle]}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            CoacheeDashboardStyle.miniContainer,
-                            { backgroundColor: '#F2E9FB' },
-                        ]}
-                        onPress={() => navigation.navigate('ClientAppointments')}
-                    >
-                        <View style={CoacheeDashboardStyle.nestedMiniContainer}>
-                            <Text style={CoacheeDashboardStyle.imageLabel}>
-                                Appointments
-                            </Text>
-                            <Image
-                                source={require('../assets/Appointment.png')}
-                                style={CoacheeDashboardStyle.imageStyle}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={CoacheeDashboardStyle.row}>
-                    <View
-                        style={[
-                            CoacheeDashboardStyle.miniContainer,
-                            { backgroundColor: '#D8C7F9', marginVertical: 20 },
-                        ]}
-                    >
-                        <View style={CoacheeDashboardStyle.nestedMiniContainer}>
-                            <Text
-                                 style={[
-                                    CoacheeDashboardStyle.imageLabel,
-                                    { fontSize: 14 },
-                                ]}
-                            >
-                                Personal Progress
-                            </Text>
-                            <Image
-                                source={require('../assets/Progress.png')}
-                                style={[CoacheeDashboardStyle.imageStyle]}
-                            />
-                        </View>
-                    </View>
-                    <TouchableOpacity
-                        style={[
-                            CoacheeDashboardStyle.miniContainer,
-                            { backgroundColor: '#D2CBDF' },
-                        ]}
-                        onPress={() => navigation.navigate('CoacheeProfile')}
-                    >
-                        <View style={CoacheeDashboardStyle.nestedMiniContainer}>
-                            <Text style={CoacheeDashboardStyle.imageLabel}>
-                                My Profile
-                            </Text>
-                            <Image
-                                source={require('../assets/Profile.png')}
-                                style={CoacheeDashboardStyle.imageStyle}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={CoacheeDashboardStyle.buttonContainer}>
-                    <Button
-                        mode="contained"
-                        style={{
-                            backgroundColor: '#A378F2',
-                            width: 270,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                        labelStyle={{
-                            color: 'white',
-                            fontFamily: 'Blinker-SemiBold',
-                            fontSize: 22,
-                        }}
-                        onPress={() => navigation.navigate('SearchList')}
-                    >
-                        Find Coach
-                    </Button>
-                </View>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('CoacheeProfile')}>
+            <Image
+                    source={require('../assets/Woman.png')} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'10%', marginTop: '-10%'}}/>
+            
+            </TouchableOpacity>
+            <View style={CoacheeDashboardStyle.iconContainer}>
+            <Icon name="notifications-outline" size={35} color='#7E3FF0' />
             </View>
-            <BottomComponent style={CoacheeDashboardStyle.bottomSVG} />
+            <KeyboardAvoidingView
+            style={CoacheeDashboardStyle.container}
+            behavior={Platform.OS === "android" ? 'height' : 'padding'}>
+            <View style={CoacheeDashboardStyle.searchContainer}>
+                <SearchBar
+                 placeholder='Search for a sport'
+                 onChangeText={handleSearchChange}
+                 value={searchText}
+                 platform='android'
+                 containerStyle={CoacheeDashboardStyle.searchBarContainer}
+                 inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}/>
+            </View>
+
+
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 300}}>
+            <View style={CoacheeDashboardStyle.frameContainer}> 
+                <Text style={CoacheeDashboardStyle.frameText}>Find the right coach for you!</Text>
+                <Text style={CoacheeDashboardStyle.frameDescription}>Get trained by expert coaches in different sport fields</Text>
+                <Image
+                    source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')} 
+                    style={{width: 120, height: 120, marginLeft:'65%', marginTop: '-15%'}}/>
+            </View>
+
+            <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                <Text style={CoacheeDashboardStyle.greetings}> Top Coaches </Text>
+                <TouchableOpacity onPress={handleSeeAllPress}>
+                 <Text style={CoacheeDashboardStyle.seeAll}>
+                    {seeAllCoaches ? 'See Less' : 'See All'}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            <CoachProfiles profiles={ seeAllCoaches ? TopCoaches: TopCoaches.slice(0, 2)}/>
+
+    
+
+            <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                <Text style={CoacheeDashboardStyle.greetings}> Recommend for you </Text>
+            </View>
+            <CoachProfiles profiles={RecommendedCoaches}/>
+
+
+            </ScrollView>
+
+            </KeyboardAvoidingView>
+
+
         </View>
     );
 };
@@ -209,61 +205,33 @@ const CoacheeDashboardStyle = StyleSheet.create({
         width: '100%',
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
-    topContainer: {
-        borderRadius: 20, // Adjust the value for the desired curve
-        backgroundColor: '#B69AF0', // Purple background color
-        height: `${20}%`, // Responsive height
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'absolute', // Position the top container absolutely
-        top: 0, // Place it at the top of the screen
-        left: 0,
-        right: 0,
-        zIndex: 1, // Set a higher z-index to put it in front
-        marginTop: Platform.OS === 'ios' ? 10 : -30, // Adjust the marginTop based on the platform
-        flexDirection: 'row', // To align items horizontally
-    },
-    topMiniContainer: {
-        borderRadius: (width * 0.3) / 2, // Half of the screen width
-        width: width * 0.3, // 40% of screen width
-        height: width * 0.3, // 40% of screen width (to create a circle)
-        marginEnd: '70%', // Add some space between the topMiniContainer and other content
-        marginTop: '32%', // 5% margin top (adjust this value as needed)
-        backgroundColor: 'white',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    profileImageContainer: {
-        width: '100%',
-        height: '100%',
-        borderRadius: (width * 0.3) / 2, // Make the container circular
-        overflow: 'hidden', // Clip the content to the circle
-        alignItems: 'center',
-    },
+
+
     nameAndGreetingsContainer: {
-        width: width * 0.42, // Adjust the width as needed
-        height: width * 0.35,
-        overflow: 'hidden', // Clip the content to the circle
-        alignItems: 'center',
-        flexDirection: 'column', // Stack children vertically
-        justifyContent: 'center', // Center content horizontally
-        marginTop: '-30%', // 5% margin top (adjust this value as needed)
+        paddingTop:"20%",
+        marginLeft: '25%',
+        flexDirection: 'row', 
     },
+
+    topCoachesContainer:  {
+        paddingTop:"10%",
+        marginLeft: '7%',
+        flexDirection: 'row', 
+    },
+    
+
     greetings: {
-        fontFamily: 'Blinker-SemiBold',
-        fontSize: 22,
-        color: 'white',
+        fontFamily: 'Roboto',
+        fontSize: 18,
+        color: '#656466',
     },
     name: {
-        fontFamily: 'Blinker-Light',
-        color: 'white',
+        fontFamily: 'Roboto',
+        fontSize: 18,
+        color: '#7E3FF0',
+        marginLeft: '2%'
     },
-    profileImage: {
-        marginTop: 12,
-        width: '80%',
-        height: '80%',
-        resizeMode: 'cover',
-    },
+  
     middleContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -287,6 +255,11 @@ const CoacheeDashboardStyle = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    iconContainer: {
+        marginTop: "-10%",
+        marginLeft: '83%',
+        flexDirection: 'row', 
+    },
     imageLabel: {
         fontFamily: 'Roboto',
         fontWeight: '800',
@@ -304,25 +277,71 @@ const CoacheeDashboardStyle = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    // svgContainer: {
-    //     position: 'absolute',
-    //     bottom: 0,
-    //     left: 0,
-    //     right: 0,
-    //     alignItems: 'center',
-    //     zIndex: -1, // Set a lower z-index to put it behind mini-containers
-    //     width: '100%', // Expand to full width
-    //     height: '35%', // Set the height as a percentage of the screen height
-    //     padding: 0,
-    //     margin: 0,
-    // },
-    bottomSVG: {
-        justifyContent: 'flex-end',
-        position: 'absolute',
-        width: width,
-        height: height,
-        zIndex: 0,
+    searchContainer: {
+        borderWidth: 2, // Add a border
+        width: "85%",
+        borderColor: '#7E3FF0', // Set the border color
+        borderRadius: 15, // Add border radius to make it rounded
+        marginTop: "10%",
+        marginLeft: '7%',
+        paddingHorizontal: 10
     },
+    searchBarContainer: {
+        // Set the dimensions of the SearchBar container
+        width: 300, // Adjust the width as needed
+        height: 40, // Adjust the height as needed
+    },
+
+    searchBarInputContainer: {
+
+        height: '100%', // Match the height of the container
+    },
+
+    frameContainer: {
+        backgroundColor: "#7E3FF0",
+        marginTop: "5%",
+        marginLeft: "7%",
+        width: '85%',
+        height: "15%",
+        overflow: "hidden",
+        borderRadius: 16  
+    },
+    frameText: {
+        color: "white",
+        top: 16,
+        left: 18,
+        fontSize: 18,
+        lineHeight: 24,
+    },
+    frameDescription: {
+        textAlign: "left",
+        left: 18,
+        top: 25,
+        fontSize: 14,
+        lineHeight: 18,
+        fontWeight: "500",
+        color: 'white',
+        width: 206
+    },
+
+    
+    seeAll: {
+        color: "#7E3FF0",
+        fontSize: 13,
+        paddingTop: '1.5%',
+        marginLeft: '60%'
+    },
+    seeAllRecommended: {
+        color: "#7E3FF0",
+        fontSize: 13,
+        paddingTop: '1.5%',
+        marginLeft: '25%'
+    },
+    coachNameText: {
+       alignItems:'center',
+       justifyContent: "center",
+    }
+   
 });
 
 export default CoacheeDashboard;

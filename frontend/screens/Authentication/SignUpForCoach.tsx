@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/InputSignUpPages';
-import LogInButton from '../../components/CustomButton';
+import LogInButton from '../../components/Custom components/CustomButton';
 import { useMutation } from 'urql';
 import {
     CreateCoachDocument,

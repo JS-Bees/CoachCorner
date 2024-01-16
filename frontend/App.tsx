@@ -1,6 +1,6 @@
 import React from 'react';
 import LogInPage from './screens/Authentication/LogIn';
-import SignUpA from './screens/Authentication/SignUpA';
+import RolePicking from './screens/Authentication/RolePicking';
 import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
 import CoachProfile from './screens/Profile/CoachProfile';
@@ -13,11 +13,14 @@ import CoachAppointments from './screens/Appointments/CoachAppointments';
 import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
+import MyCoaches_alt from './screens/MyCoaches_alt';
 import SearchList from './screens/SearchList/SearchList';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
@@ -32,6 +35,7 @@ import {
 const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
+    // url: 'http://192.168.1.4:5050/graphql',
     url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -54,15 +58,17 @@ export type RootStackParams = {
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
     ClientAppointments: any, 
+    MyCoaches_alt: any
 };
 
 const RootStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn">
+                <RootStack.Navigator initialRouteName="MyCoaches_alt">
                     <RootStack.Screen
                         name="LogIn"
                         component={LogInPage}
@@ -70,7 +76,7 @@ export default function App() {
                     />
                     <RootStack.Screen
                         name="SignUpA"
-                        component={SignUpA}
+                        component={RolePicking}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -84,8 +90,9 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
+                    
                         name="CoacheeDashboard"
-                        component={CoacheeDashboard}
+                        component={TabNavigator}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -138,8 +145,46 @@ export default function App() {
                         component={ClientBookingDrawer} 
                         options={{headerShown: false}}
                     />
+                    <RootStack.Screen 
+                        name="MyCoaches_alt" 
+                        component={MyCoaches_alt} 
+                        options={{headerShown: false}}
+                        />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
     );
 }
+function TabNavigator() {
+    return (
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({  color, size }) => {
+            let iconName;
+  
+            if (route.name === 'Home') {
+              iconName = 'home';
+            } else if (route.name === 'Coaches') {
+              iconName = 'sports';
+            } else if (route.name === 'Sessions') {
+              iconName = 'schedule';
+            } else if (route.name === 'Chats') {
+              iconName = 'chat';
+            }
+  
+            // You can return any component here for the icon
+            return <MaterialIcons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: '#7E3FF0', // Color for the active tab
+          inactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+        }}
+      >
+        <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
+        <Tab.Screen name="Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
+        <Tab.Screen name="Sessions" component={CoachAppointments} options={{ headerShown: false }} />
+        <Tab.Screen name="Chats" component={CoacheeProfile} options={{ headerShown: false }} />
+      </Tab.Navigator>
+    );
+  }

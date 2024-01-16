@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
   Pressable
 } from 'react-native';
-import LogInButton from '../CustomButton';
+import LogInButton from '../Custom components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, useMutation } from 'urql';
 import {

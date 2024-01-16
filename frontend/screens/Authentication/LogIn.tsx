@@ -8,10 +8,10 @@ import {
     TouchableOpacity,
     ActivityIndicator,
 } from 'react-native';
-import SVGComponent from '../../components/UpperSVG';
-import BottomComponent from '../../components/BottomSvg';
-import CustomInput from '../../components/CustomeInput';
-import LogInButton from '../../components/CustomButton';
+import SVGComponent from '../../components/SVGs/UpperSVG';
+import BottomComponent from '../../components/SVGs/BottomSvg';
+import CustomInput from '../../components/Custom components/CustomeInput';
+import LogInButton from '../../components/Custom components/CustomButton';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';

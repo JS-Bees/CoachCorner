@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { DatePickerModal } from 'react-native-paper-dates';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import LogInButton from '../CustomButton';
+import LogInButton from '../Custom components/CustomButton';
 import { Button, TextInput} from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ListItemProps } from '../ListItem';
