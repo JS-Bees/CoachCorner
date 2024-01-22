@@ -10,7 +10,7 @@ import {
     ActivityIndicator
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import InputSignUpPages from '../../components/InputSignUpPages';
+import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
 import LogInButton from '../../components/Custom components/CustomButton';
 import { useMutation } from 'urql';
 import {

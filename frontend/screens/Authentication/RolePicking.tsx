@@ -6,7 +6,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { RootStackParams } from "../../App";
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Octicons } from '@expo/vector-icons';
 
 
 const { width, height } = Dimensions.get('window');
@@ -23,7 +22,7 @@ const RolePicking = () => {
             <View style={Rolepickingstyle.iconContainer}>
                 <Image
                     source={require('../Authentication/Icons/CoachIcon.png')}
-                    style={Rolepickingstyle.CoachIcon}
+                    style={[Rolepickingstyle.CoachIcon, { tintColor: '#7E3FF0' }]}
                 />
                 <Text style={Rolepickingstyle.textStyle}>
                     What is your role in sports?
@@ -35,14 +34,14 @@ const RolePicking = () => {
                     <TouchableOpacity 
                         onPress={() => navigation.navigate('SignUpCoach')}
                         style={Rolepickingstyle.iconButton}>
-                      <MaterialIcons name='sports' size={60} color={"#6441A4"}/>
+                      <MaterialIcons name='sports' size={60} color={"#7E3FF0"}/>
                       <Text style={Rolepickingstyle.textStyle}> Coach </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity 
                         onPress={() => navigation.navigate('SignUpCoachee')}
                         style={Rolepickingstyle.iconButton}>
-                      <MaterialIcons name='sports-handball' size={60} color={"#6441A4"}/>
+                      <MaterialIcons name='sports-handball' size={60} color={"#7E3FF0"}/>
                       <Text style={Rolepickingstyle.textStyle}> Trainee </Text>
                     </TouchableOpacity>
                 </View>
@@ -76,9 +75,9 @@ const Rolepickingstyle = StyleSheet.create({
     },
     textStyle: {
         fontSize: 24,
-        fontWeight: '900',
+        fontWeight: '200',
         fontFamily: 'Roboto',
-        color: '#915bc7',
+        color: '#7E3FF0',
         textAlign: 'left',
     },
     svgContainer: {

@@ -14,7 +14,7 @@ import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import MyCoaches_alt from './screens/MyCoaches_alt';
-import BookingPage from './screens/BookingDrawers.tsx/BookingPage';
+import SplashScreen from './screens/Authentication/SplashScreen';
 import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
@@ -44,6 +44,7 @@ const client = new Client({
 
 export type RootStackParams = {
     LogIn: any;
+    LogIn_alt: any;
     SignUpA: any;
     SignUpCoachee: any;
     SignUpCoach: any;
@@ -62,7 +63,8 @@ export type RootStackParams = {
     ClientAppointments: any, 
     MyCoaches_alt: any,
     BookingPage: any,
-    ChatPage: any
+    ChatPage: any,
+    SplashScreen: any
 };
 
 const RootStack = createNativeStackNavigator();
@@ -72,14 +74,19 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="CoacheeDashboard">
+                <RootStack.Navigator initialRouteName="RolePicking">
+                <RootStack.Screen
+                        name="SplashScreen"
+                        component={SplashScreen}
+                        options={{ headerShown: false }}
+                    />
                     <RootStack.Screen
                         name="LogIn"
                         component={LogInPage}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
-                        name="SignUpA"
+                        name="RolePicking"
                         component={RolePicking}
                         options={{ headerShown: false }}
                     />

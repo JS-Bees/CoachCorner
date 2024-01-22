@@ -1,13 +1,10 @@
 import {
     View,
-    Text,
     StyleSheet,
-    Dimensions,
     Image,
-    Platform,
     TouchableOpacity
 } from 'react-native';
-import React, { useEffect, useState, } from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';

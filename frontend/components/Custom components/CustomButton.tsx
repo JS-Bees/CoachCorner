@@ -13,15 +13,22 @@ const styles = StyleSheet.create( {
     container: {
         paddingHorizontal: 10,
         paddingVertical: 10,
-        alignItems: 'center',
         height: 40,
-        borderRadius: 100,
         top: '3%'
     },
 
     container_PRIMARY: {
-        backgroundColor: '#6441a4',
+        marginTop: '5%',
+        backgroundColor: '#7E3FF0',
         width: 300,
+        borderRadius: 15,
+        alignItems: 'center',
+    },
+    container_SECONDARY:{
+        marginTop: '-10%',
+        alignItems: 'flex-end',
+        marginLeft: '60%'
+
     },
 
     container_TERTIARY: {

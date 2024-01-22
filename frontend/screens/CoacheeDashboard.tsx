@@ -15,7 +15,7 @@ import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
-import { SearchBar } from '@rneui/themed';
+import { SearchBar } from '@rneui/themed'; 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 

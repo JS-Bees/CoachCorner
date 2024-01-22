@@ -7,10 +7,10 @@ import {
     TextInput,
     Pressable,
     Platform,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import InputSignUpPages from '../../components/InputSignUpPages';
+import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
 import LogInButton from '../../components/Custom components/CustomButton';
 import { useMutation } from 'urql';
 import {
@@ -203,7 +203,10 @@ const SignUpForCoachee = () => {
             <View style={styles.container}>
                 <View style={styles.iconContainer}>
                     <Text style={styles.textStyle}>Create Account</Text>
+                    <Text style={styles.subtitle}>Enter the required details to create an account</Text>
                 </View>
+
+
 
                 <View style={styles.customContainer}>
                     <InputSignUpPages
@@ -219,7 +222,7 @@ const SignUpForCoachee = () => {
                         setValue={value => setLast_Name(value.substring(0, 10))} // Limit to 9 characters
                     />
                     <InputSignUpPages
-                        placeholder="Email"
+                        placeholder="johnsmith@gmail.com"
                         value={Email}
                         checkEmailEnding
                         setValue={setEmail}
@@ -413,7 +416,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#F9FBFC',
+        backgroundColor: 'white',
         zIndex: 0,
         paddingHorizontal: 20,
         paddingBottom: 20,
@@ -421,6 +424,7 @@ const styles = StyleSheet.create({
     customContainer: {
         alignItems: 'center',
         padding: 10,
+        marginRight: "7%"
     },
     button: {
         marginTop: 25,
@@ -475,11 +479,12 @@ const styles = StyleSheet.create({
         left: '-26%'
     },
     textStyle: {
-        fontSize: 24,
-        fontWeight: '900',
+        fontSize: 25,
+        paddingTop: 30,        
+        fontWeight: '200',
         fontFamily: 'Roboto',
-        color: '#915bc7',
-        textAlign: 'left',
+        color: '#7E3FF0',
+        textAlign: 'center',
     },
     // Modal styles
     modal: {
@@ -538,6 +543,12 @@ const styles = StyleSheet.create({
         marginTop: '7%',
         left: '-31%',
         justifyContent: 'flex-start',
+    },
+    subtitle: {
+        fontSize: 14,
+        fontWeight: '200',
+        fontFamily: 'Roboto',
+        color: '#656466',
     }
   
 });

@@ -21,10 +21,12 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
   passwordToMatch,
   checkForInteger, 
   checkEmailEnding,
-  editable, // Add the editable prop
+  editable = true
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorText, setErrorText] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+
 
   useEffect(() => {
     if (passwordToMatch !== undefined && value !== passwordToMatch) {
@@ -53,6 +55,28 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
     setShowPassword(!showPassword);
   };
 
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
+  const inputStyle = {
+    height: 40,
+    borderColor: isFocused ? '#7E3FF0' : (editable ? '#D4C5ED' : '#D8D5DB'),
+    borderWidth: 1.5,
+    borderRadius: 10,
+    marginBottom: 10,
+    paddingLeft: 40, // Adjust paddingLeft to make space for the eye icon
+    paddingRight: 10, // Adjust paddingRight as needed
+    width: 300,
+    flexDirection: 'row', // Add flexDirection to align icon and input horizontally
+    
+  };
+
+
   return (
     <View style={styles.container}>
       <View
@@ -68,15 +92,19 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
           secureTextEntry={!showPassword && secureTextEntry}
           placeholderTextColor="#a19e9e"
           style={[
-            styles.input,
+            inputStyle,
             errorText ? styles.errorInput : null,
           ]}
           editable={editable}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
         
 
         {secureTextEntry && (
-          <TouchableOpacity onPress={togglePasswordVisibility}>
+          <TouchableOpacity 
+            onPress={togglePasswordVisibility}
+            style={styles.eyeIcon}>
             <FontAwesome
               name={showPassword ? 'eye' : 'eye-slash'}
               size={20}
@@ -126,6 +154,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 10,
   },
+  focusedInputContainer: {
+    borderColor: 'blue', // Add the focused border color
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 10, 
+    top: 5,
+  }
 });
 
 export default InputSignUpPages;
