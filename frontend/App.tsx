@@ -14,6 +14,8 @@ import ClientAppointments from './screens/Appointments/ClientAppointmens';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
 import MyCoaches_alt from './screens/MyCoaches_alt';
+import BookingPage from './screens/BookingDrawers.tsx/BookingPage';
+import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
@@ -58,7 +60,9 @@ export type RootStackParams = {
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
     ClientAppointments: any, 
-    MyCoaches_alt: any
+    MyCoaches_alt: any,
+    BookingPage: any,
+    ChatPage: any
 };
 
 const RootStack = createNativeStackNavigator();
@@ -68,7 +72,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="MyCoaches_alt">
+                <RootStack.Navigator initialRouteName="CoacheeDashboard">
                     <RootStack.Screen
                         name="LogIn"
                         component={LogInPage}
@@ -150,6 +154,11 @@ export default function App() {
                         component={MyCoaches_alt} 
                         options={{headerShown: false}}
                         />
+                    <RootStack.Screen 
+                        name="ChatPage" 
+                        component={ChatPage} 
+                        options={{headerShown: false}}
+                        />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
@@ -184,7 +193,7 @@ function TabNavigator() {
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
         <Tab.Screen name="Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
         <Tab.Screen name="Sessions" component={CoachAppointments} options={{ headerShown: false }} />
-        <Tab.Screen name="Chats" component={CoacheeProfile} options={{ headerShown: false }} />
+        <Tab.Screen name="Chats" component={ChatPage} options={{ headerShown: false }} />
       </Tab.Navigator>
     );
   }

@@ -6,7 +6,7 @@ import {
     Image,
     Platform,
 } from 'react-native';
-import React, { useEffect, useState, } from 'react';
+import React, { useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,7 +15,7 @@ import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
-import CoacheeDashboard from './CoacheeDashboard';
+
 
 
 const { width, height } = Dimensions.get('window');
@@ -35,6 +35,7 @@ const MyCoaches_alt = () => {
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
+
 
 
     const AllCoaches: Profile[] = [ //max 2
@@ -74,7 +75,7 @@ const MyCoaches_alt = () => {
         
             </View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate(CoacheeDashboard)}>
+            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
             <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
             </TouchableOpacity>
             </View>
