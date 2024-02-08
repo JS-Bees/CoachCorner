@@ -17,6 +17,10 @@ import MyCoaches_alt from './screens/MyCoaches_alt';
 import SplashScreen from './screens/Authentication/SplashScreen';
 import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
+import ChooseVideoGames from './screens/Authentication/InterestPickingScreens/VideoGames';
+import ChooseHobbies from './screens/Authentication/InterestPickingScreens/Hobbies';
+import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieGenre';
+import PreviewPage from './screens/PreviewPage';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -64,7 +68,11 @@ export type RootStackParams = {
     MyCoaches_alt: any,
     BookingPage: any,
     ChatPage: any,
-    SplashScreen: any
+    ChooseVideoGames: any,
+    ChooseHobbies: any,
+    ChooseMovies: any,
+    SplashScreen: any,
+    PreviewPage: any
 };
 
 const RootStack = createNativeStackNavigator();
@@ -74,7 +82,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="RolePicking">
+                <RootStack.Navigator initialRouteName="CoacheeDashboard">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
@@ -164,6 +172,26 @@ export default function App() {
                     <RootStack.Screen 
                         name="ChatPage" 
                         component={ChatPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="InterestPickingGames" 
+                        component={ChooseVideoGames} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="InterestPickingHobby" 
+                        component={ChooseHobbies} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="InterestPickingMovie" 
+                        component={ChooseMovies} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="PreviewPage" 
+                        component={PreviewPage} 
                         options={{headerShown: false}}
                         />
                 </RootStack.Navigator>

@@ -10,7 +10,6 @@ import React, { useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'

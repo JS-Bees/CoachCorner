@@ -63,7 +63,7 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
     setIsFocused(false);
   };
 
-  const inputStyle = {
+  const inputStyle = {  
     height: 40,
     borderColor: isFocused ? '#7E3FF0' : (editable ? '#D4C5ED' : '#D8D5DB'),
     borderWidth: 1.5,

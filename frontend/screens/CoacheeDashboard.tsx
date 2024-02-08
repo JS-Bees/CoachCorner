@@ -96,6 +96,7 @@ const CoacheeDashboard = () => {
           name: 'Serena Williams',
           imageSource: require('../assets/Woman.png'),
           gainedStars: 5
+
         },
         {
             name: 'Kobe Brian',
