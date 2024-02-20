@@ -179,6 +179,7 @@ const SignUpForCoachee = () => {
                 console.error(error);
             } else {
                 setSuccessMessage('Signed up successfully!');
+                navigation.navigate('InterestPickingGames');
                 toggleModal();
                 setFirst_Name('');
                 setLast_Name('');
@@ -369,7 +370,7 @@ const SignUpForCoachee = () => {
                     {isLoading ? (
                         <ActivityIndicator size="small" color="#915bc7" />
                     ) : (
-                        <LogInButton text="Sign Up" onPress={onSignUpPressed} />
+                        <LogInButton text="Next" onPress={onSignUpPressed} />
                     )}
                 </View>
             </View>

@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import LogInButton from '../../components/Custom components/CustomButton';
+import SlideInComponent from '../../components/SlideInComponent';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,6 +25,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 const { width, height } = Dimensions.get('window');
 
+
 const LogIn = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -33,6 +35,15 @@ const LogIn = () => {
   const [EmailPasswordError, setEmailPasswordError] = useState('');
   const [isLoading, setLoading] = useState(false); // Add loading state
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSlideInVisible, setIsSlideInVisible] = useState(false);
+
+  const handleOpenSlideIn = () => {
+    setIsSlideInVisible(true);
+  };
+
+  const handleCloseSlideIn = () => {
+    setIsSlideInVisible(false);
+  };
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
@@ -125,13 +136,13 @@ const LogIn = () => {
           userId.toString(),
         );
       } else {
-        const userId = coacheeData.findCoacheeByEmailAndPassword.id;
+        const userId = coacheeData?.findCoacheeByEmailAndPassword.id;
         storeToken(userId.toString());
         navigation.navigate('CoacheeDashboard');
         console.log(
           'Successfully logged in as a coachee :)',
           'Token:',
-          userId.toString(),
+          userId?.toString(),
         );
       }
     } else {
@@ -151,52 +162,36 @@ const LogIn = () => {
 
   return (
     <View style={Log_In_Style.container}>
-        <View style={Log_In_Style.iconContainer}>
+        <View style={Log_In_Style.imageContainer}>
           <Image
             source={require('../../assets/stretching.png')}
             style={Log_In_Style.CoachIcon}
           />
         </View>
         <Text style={Log_In_Style.textStyle}>Login</Text>
+        <Text style={Log_In_Style.subtitleText}>
+            You are logging as? 
+          </Text>
+        <View style={Log_In_Style.buttonsContainer} >
+        {!isSlideInVisible && (
+          <View style={Log_In_Style.buttonsContainer}>
+              <TouchableOpacity onPress={handleOpenSlideIn}>
+          <Text style={Log_In_Style.buttonsText}>Coach</Text>
+           </TouchableOpacity>
+            <TouchableOpacity onPress={handleOpenSlideIn}>
+           <Text style={Log_In_Style.buttonsText}>Trainee</Text>
+          </TouchableOpacity>
+          </View>
+        )}
+
+        <SlideInComponent isVisible={isSlideInVisible} onClose={handleCloseSlideIn}>
         <View>
           <Text style={Log_In_Style.detailsStyle}>
             Enter the required details to access your account and find the right
             coach for you
           </Text>
         </View>
-        <KeyboardAwareScrollView
-        style={Log_In_Style.keyboardAvoidContainer}
-        keyboardShouldPersistTaps="handled">
-            <View style={Log_In_Style.customContainer}>
-          <Input
-            leftIcon={
-              <Icon name="envelope" size={20} color="#7E3FF0" />
-            }
-            placeholder="johnsmith@gmail.com"
-            value={Email}
-            onChangeText={setEmail}
-            errorMessage={EmailPasswordError}
-          />
-          <View>
-          </View>
-          <Input
-            leftIcon={
-              <Icon name="lock" size={20} color="#7E3FF0" />
-            }
-            placeholder="Password"
-            value={Password}
-            onChangeText={setPassword}
-            secureTextEntry
-            errorMessage={EmailPasswordError}
-          />
-          <LogInButton
-            onPress={onForgotPressed}
-            text="Forgot Password?"
-            type="SECONDARY"
-          />
-        </View>
-        </KeyboardAwareScrollView>
-
+       
         <View style={Log_In_Style.customContainer}>
           <View>
             <Text></Text>
@@ -247,7 +242,7 @@ const LogIn = () => {
         </View>
 
         <View style={Log_In_Style.noMargin}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: '5%'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: '-1%'}}>
             <Text style={{ fontFamily: 'Roboto', fontSize: 12, }}>
               Don't have an account?{' '}
             </Text>
@@ -263,6 +258,9 @@ const LogIn = () => {
               </Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        </SlideInComponent>
         </View>
     </View>
   );
@@ -308,7 +306,7 @@ const Log_In_Style = StyleSheet.create({
     maxHeight: 500,
   },
 
-  iconContainer: {
+  imageContainer: {
     marginTop: height * 0.12, // Responsive marginTop
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -321,7 +319,7 @@ const Log_In_Style = StyleSheet.create({
     color: '#7E3FF0',
     justifyContent: 'flex-end',
     marginLeft: '10%',
-    marginTop: '15%',
+    marginTop: '-60%',
   },
 
   detailsStyle: {
@@ -333,6 +331,14 @@ const Log_In_Style = StyleSheet.create({
     marginTop: '2%',
     paddingRight: 15,
     paddingLeft: 2,
+  },
+  subtitleText: {
+    bottom: "23%",
+    fontSize: 15,
+    fontWeight: '200',
+    fontFamily: 'Roboto',
+    color: '#656466',
+    marginLeft: '10%',
   },
 
   errorTextEmail: {
@@ -346,6 +352,16 @@ const Log_In_Style = StyleSheet.create({
     color: 'red',
     top: '8%',
   },
+  buttonsContainer: {
+    flexDirection: "row",
+    bottom: "70%",
+    justifyContent: "space-between",
+    marginLeft: "12%"
+  },
+  buttonsText: {
+    fontSize: 18,
+    marginRight: "30%"
+  }
 });
 
 export default LogIn;

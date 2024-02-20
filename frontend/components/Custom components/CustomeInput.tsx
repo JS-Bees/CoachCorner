@@ -11,7 +11,7 @@ interface CustomInputProps extends TextInputProps {
     validateEmail?: (email: string) => boolean;
     clearError: () => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    iconSource1?: any; // Add iconSource prop
+    iconSource1?: any; 
     iconSource2?: any;
 }
 

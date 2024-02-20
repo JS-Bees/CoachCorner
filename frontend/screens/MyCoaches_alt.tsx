@@ -37,31 +37,61 @@ const MyCoaches_alt = () => {
 
 
 
-    const AllCoaches: Profile[] = [ //max 2
+    const AllCoaches: Profile[] = [ 
         {
-          name: 'Serena Williams',
-          imageSource: require('../assets/Woman.png'),
-          gainedStars: 4
+            name: 'Serena Williams',
+            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
+            gainedStars: 3,
+            mainSport: "Tennis",
+            about: "Serena Jameka Williams is an American former professional tennis player.Widely regarded as one of the greatest tennis players of all time, she was ranked world No. 1 in singles by the Women's Tennis.",
+            workplaceAddress: "So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458"
         },
         {
             name: 'Kobe Brian',
-            imageSource: require('../assets/Woman.png'),
-            gainedStars: 3
+            imageSource: require('../assets/Kobe_Brian.jpg'),
+            gainedStars: 5,
+            mainSport: "Basketball",
+            about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
+            workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
         },
-        
+        {
+            name: 'Jane Smith',
+            imageSource: require('../assets/Jane_Smith.png'),
+            gainedStars: 3,
+            mainSport: "Basketball",
+            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+            workplaceAddress: "Smith's Hoops Academy 456 Court Street Basketballville, Slam Dunk County Hoopsland, 98765"
+        },
+        {
+            name: 'John Doe',
+            imageSource: require('../assets/John_Doe.png'), 
+            gainedStars: 4,
+            mainSport: "Basketball",
+            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
+            workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
+        },
+      
+
     ];
 
     const FavoriteCoaches: Profile[] = [ // max 2
         {
-          name: 'John Doe',
-          imageSource: require('../assets/Woman.png'),
-          gainedStars: 2
+            name: 'John Doe',
+            imageSource: require('../assets/John_Doe.png'), 
+            gainedStars: 4,
+            mainSport: "Basketball",
+            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
+            workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
         },
         {
             name: 'Jane Smith',
-            imageSource: require('../assets/Woman.png'),
-            gainedStars: 4
-        }
+            imageSource: require('../assets/Jane_Smith.png'),
+            gainedStars: 3,
+            mainSport: "Basketball",
+            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+            workplaceAddress: "Smith's Hoops Academy 456 Court Street Basketballville, Slam Dunk County Hoopsland, 98765"
+        },
+        
     ];
 
 
@@ -80,7 +110,7 @@ const MyCoaches_alt = () => {
             </View>
             
             <TouchableOpacity
-                onPress={() => navigation.navigate('CoacheeProfile')}>
+                onPress={() => navigation.navigate('NewCoacheeProfile')}>
             <Image
                     source={require('../assets/Woman.png')} // Add your profile image source here
                     style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
@@ -121,9 +151,6 @@ const MyCoaches_alt = () => {
 
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
                <View>
-               <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
-               <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
-               <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
                <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
                </View>
 

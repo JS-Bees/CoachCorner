@@ -15,6 +15,7 @@ import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
+import Profile from "../components/Profile Tiles/CoachProfileTile"
 import { SearchBar } from '@rneui/themed'; 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
@@ -44,6 +45,10 @@ const CoacheeDashboard = () => {
           navigation.navigate('MyCoaches_alt'); 
         }
     };
+
+    const navigateToNotifications = () => {
+        navigation.navigate("NotificationPage");
+      };
     
     
 
@@ -92,31 +97,43 @@ const CoacheeDashboard = () => {
     }
 
     const TopCoaches: Profile[] = [ //max 2
-        {
-          name: 'Serena Williams',
-          imageSource: require('../assets/Woman.png'),
-          gainedStars: 5
-
+        { //pictures should be in png so that it can be edited and put in smoothly
+            name: 'Serena Williams',
+            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
+            gainedStars: 3,
+            mainSport: "Tennis",
+            about: "Serena Jameka Williams is an American former professional tennis player.Widely regarded as one of the greatest tennis players of all time, she was ranked world No. 1 in singles by the Women's Tennis.",
+            workplaceAddress: "So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458"
+          
         },
         {
             name: 'Kobe Brian',
-            imageSource: require('../assets/Woman.png'),
-            gainedStars: 3
+            imageSource: require('../assets/Kobe_Brian.jpg'),
+            gainedStars: 5,
+            mainSport: "Basketball",
+            about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
+            workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
         },
         
     ];
 
     const RecommendedCoaches: Profile[] = [ // max 2
         {
-          name: 'Serena Williams',
-          imageSource: require('../assets/Woman.png'),
-          gainedStars: 2
+            name: 'John Doe',
+            imageSource: require('../assets/John_Doe.png'), 
+            gainedStars: 4,
+            mainSport: "Basketball",
+            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
+            workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
         },
         {
             name: 'Kobe Brian',
-            imageSource: require('../assets/Woman.png'),
-            gainedStars: 4
-        }
+            imageSource: require('../assets/Kobe_Brian.jpg'),
+            gainedStars: 3,
+            mainSport: "Basketball",
+            about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
+            workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
+        },
     ];
 
    
@@ -133,15 +150,17 @@ const CoacheeDashboard = () => {
                 
             </View>
             <TouchableOpacity
-                onPress={() => navigation.navigate('CoacheeProfile')}>
+                onPress={() => navigation.navigate('NewCoacheeProfile')}>
             <Image
                     source={require('../assets/Woman.png')} // Add your profile image source here
                     style={{width: 40, height: 40, marginLeft:'10%', marginTop: '-10%'}}/>
             
             </TouchableOpacity>
-            <View style={CoacheeDashboardStyle.iconContainer}>
+           <TouchableOpacity onPress={navigateToNotifications}>
+           <View style={CoacheeDashboardStyle.iconContainer}>
             <Icon name="notifications-outline" size={35} color='#7E3FF0' />
             </View>
+           </TouchableOpacity>
             <KeyboardAvoidingView
             style={CoacheeDashboardStyle.container}
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
@@ -167,11 +186,7 @@ const CoacheeDashboard = () => {
 
             <View style={CoacheeDashboardStyle.topCoachesContainer}>
                 <Text style={CoacheeDashboardStyle.greetings}> Top Coaches </Text>
-                <TouchableOpacity onPress={handleSeeAllPress}>
-                 <Text style={CoacheeDashboardStyle.seeAll}>
-                    {seeAllCoaches ? 'See Less' : 'See All'}
-                    </Text>
-                </TouchableOpacity>
+
             </View>
             <CoachProfiles profiles={ seeAllCoaches ? TopCoaches: TopCoaches.slice(0, 2)}/>
 
@@ -179,6 +194,11 @@ const CoacheeDashboard = () => {
 
             <View style={CoacheeDashboardStyle.topCoachesContainer}>
                 <Text style={CoacheeDashboardStyle.greetings}> Recommend for you </Text>
+                <TouchableOpacity onPress={handleSeeAllPress}>
+                <Text style={CoacheeDashboardStyle.seeAll}>
+                     See All
+                </Text>
+                </TouchableOpacity>
             </View>
             <CoachProfiles profiles={RecommendedCoaches}/>
 
@@ -330,7 +350,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
         color: "#7E3FF0",
         fontSize: 13,
         paddingTop: '1.5%',
-        marginLeft: '60%'
+        marginLeft: '50%'
     },
     seeAllRecommended: {
         color: "#7E3FF0",
