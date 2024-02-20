@@ -11,8 +11,7 @@ generator nexus {
   provider = "nexus-prisma"
 }
 
-
-model User {
+model Coach {  
   id                  Int               @id @default(autoincrement()) 
   address             String   
   birthday            DateTime 
@@ -20,91 +19,219 @@ model User {
   firstName           String            @map("first_name")
   lastName            String            @map("last_name")
   password            String   
+  profilePicture      String            @map("profile_picture")
+  mantra              String
+  bio                 String
+  coachingRole        Boolean           @map("coaching_role")
 
-  sport               String    
-  games               String[]  
-  hobbies             String[]  
-  moviesGenres        String[]     @map("movies_genres")
-  profilePicture      String    @map("profile_picture")
+  interests           CoachInterest[]
+  tasks               CoachTask[]
+  reviews             Review[]
+  bookings            Booking[]
+  contacts            Contact[]
+  sports              Sport[]
 
-  affiliations        String    
-  bio                 String    
-  mantra              String    
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
 
-  bookings            Booking[]  
-  coachingRelationships CoachingRelationship[]        @map("coaching_relationships")
-  reviews             Review[]   
+  @@map("coachs")
+}
 
-  isCoach             Boolean       @default(false)   @map("is_coach")
+model Coachee {  
+  id                  Int               @id @default(autoincrement()) 
+  address             String   
+  birthday            DateTime 
+  email               String            @unique
+  firstName           String            @map("first_name")
+  lastName            String            @map("last_name")
+  password            String   
+  profilePicture      String            @map("profile_picture")
+  mantra              String
+  bio                 String
+  coachingRole        Boolean           @map("coaching_role")
+
+  interests           CoacheeInterest[]
+  tasks               CoacheeTask[]
+  reviews             Review[]
+  bookings            Booking[]
+  contacts            Contact[]
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("coachees")
+}
+
+model Sport {
+  id                  Int               @id @default(autoincrement()) 
+  coach               Coach             @relation(fields: [coachId], references: [id]) 
+  coachId             Int               @map("coach_id")
+  type                String
+  sportsCredentials   SportsCredential[]  
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("sports")
+}
+
+model SportsCredential {
+  id                  Int               @id @default(autoincrement())
+  sport               Sport             @relation(fields: [sportId], references: [id])
+  sportId             Int               @map("sport_id") 
+  credentialPicture   String            @map("credential_picture")
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("sports_credentials")
+}
+
+model CoachInterest {
+  id                  Int               @id @default(autoincrement()) 
+  coach               Coach             @relation(fields: [coachId], references: [id])
+  coachId             Int               @map("coach_id")
+
+  type                String
+  name                String
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("coach_interests")
+}
+
+model CoacheeInterest {
+  id                  Int               @id @default(autoincrement()) 
+  coachee             Coachee           @relation(fields: [coacheeId], references: [id])
+  coacheeId           Int               @map("coachee_id")
+
+  type                String
+  name                String
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("coachee_interests")
+}
+
+
+model CoachTask {
+  id                  Int               @id @default(autoincrement()) 
+  coach               Coach             @relation(fields: [coachId], references: [id])
+  coachId             Int               @map("coach_id")
+  
+  title               String
+  description         String
+  completionStatus    String            @map("completion_status")
+  date                DateTime
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("coach_tasks")
+}
+
+model CoacheeTask {
+  id                  Int               @id @default(autoincrement()) 
+  coachee             Coachee           @relation(fields: [coacheeId], references: [id])
+  coacheeId           Int               @map("coachee_id")
+  
+  title               String
+  description         String
+  completionStatus    String            @map("completion_status")
+  date                DateTime
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("coachee_tasks")
+}
+
+
+model Review {
+  id                  Int               @id @default(autoincrement())
+  coach               Coach             @relation(fields: [coachId], references: [id])
+  coachee             Coachee           @relation(fields: [coacheeId], references: [id]) 
+  coachId             Int               @map("coach_id")
+  coacheeId           Int               @map("coachee_id")
+  starRating          Int               @map("star_rating")
+  comment             String
   
   active              Boolean       @default(true)
   createdAt           DateTime      @default(now())   @map("created_at")
   updatedAt           DateTime      @updatedAt        @map("updated_at")
 
-  @map("users")
-}
-
-model CoachingRelationship {
-  id                Int           @id @default(autoincrement())
-  firstUser         User          @relation(fields: [firstUserId], references: [id])
-  firstUserId       Int           @map("first_user_id")
-  secondUser        User          @relation(fields: [secondUserId], references: [id])
-  secondUserId      Int           @map("second_user_id")
-
-  messagingStarted    Boolean     @default(false)
-  active              Boolean     @default(true)
-  createdAt           DateTime    @default(now())  @map("created_at")
-  updatedAt           DateTime    @updatedAt       @map("updated_at")
-
-  @@map("coaching_relationships")
-}
-
-model BookingSlot {
-  id            Int               @id @default(autoincrement())
-  bookingId     Int               @map("booking_id")
-  booking       Booking           @relation(fields: [bookingId], references: [id])
-  date          DateTime
-  startTime     DateTime          @map("start_time")
-  endTime       DateTime          @map("end_time")
-
-  active        Boolean           @default(true)
-  createdAt     DateTime          @default(now())  @map("created_at")
-  updatedAt     DateTime          @updatedAt       @map("updated_at")
- 
-  @@map("booking_slots")
+  @@map("reviews")
 }
 
 model Booking {
-  id                Int             @id @default(autoincrement())
-  bookingSlots      BookingSlot[]   @map("booking_slots")
-  firstUser         User            @relation(fields: [firstUserId], references: [id])
-  firstUserId       Int             @map("first_user_id")
-  secondUser        User            @relation(fields: [secondUserId], references: [id])
-  secondUserId      Int             @map("second_user_id")
-  serviceType       String          @map("service_type")
-  status            String      
+  id                  Int               @id @default(autoincrement())
+  coach               Coach             @relation(fields: [coachId], references: [id])
+  coachee             Coachee           @relation(fields: [coacheeId], references: [id]) 
+  coachId             Int               @map("coach_id")
+  coacheeId           Int               @map("coachee_id")
+  serviceType         String            @map("service_type")
+  additionalNotes     String            @map("additional_notes")
+  status              String            
 
-  additionalNotes   String          @map("additional_notes")
+  bookingSlots        BookingSlot[]     
 
-  active            Boolean         @default(true)
-  createdAt         DateTime        @default(now())  @map("created_at")
-  updatedAt         DateTime        @updatedAt       @map("updated_at")
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
 
   @@map("bookings")
 }
 
-model Review {
-  id                Int             @id @default(autoincrement())
-  starRating        Int             @map("star_rating")
-  comment           String    
-  firstUser         User            @relation(fields: [firstUserId], references: [id])
-  firstUserId       Int             @map("first_user_id")
-  secondUser        User            @relation(fields: [secondUserId], references: [id])
-  secondUserId      Int             @map("second_user_id")
+model BookingSlot {
+  id                  Int               @id @default(autoincrement())
+  booking             Booking           @relation(fields: [bookingId], references: [id]) 
+  bookingId           Int               @map("booking_id")
+  date                DateTime 
+  startTime           DateTime          @map("start_time")
+  endTime             DateTime          @map("end_time")
+  status              String    
 
-  active            Boolean         @default(true)
-  createdAt         DateTime        @default(now())   @map("created_at")
-  updatedAt         DateTime        @updatedAt        @map("updated_at")
-  
-  @@map("reviews")
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("booking_slots")
+}
+
+model Contact {
+  id                  Int               @id @default(autoincrement())
+  coach               Coach             @relation(fields: [coachId], references: [id])
+  coachee             Coachee           @relation(fields: [coacheeId], references: [id]) 
+  coachId             Int               @map("coach_id")
+  coacheeId           Int               @map("coachee_id")
+  contactedStatus     Boolean           @map("contacted_status")
+
+  messages            Message[]
+
+  active              Boolean       @default(true)
+  createdAt           DateTime      @default(now())   @map("created_at")
+  updatedAt           DateTime      @updatedAt        @map("updated_at")
+
+  @@map("contacts")
+}
+
+model Message {
+  id                  Int               @id @default(autoincrement())
+  contact             Contact           @relation(fields: [contactId], references: [id]) 
+  contactId           Int               @map("contact_id")
+  content             String
+
+  createdAt           DateTime      @default(now())   @map("created_at")
+
+  @@map("messages")
 }

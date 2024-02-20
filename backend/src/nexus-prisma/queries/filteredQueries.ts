@@ -2,7 +2,7 @@ import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import { Coachee, Coach, Booking } from '../objectTypes';
-import { SportEnum, BookingStatusEnum } from '../enums';
+// import { SportEnum, BookingStatusEnum } from '../enums';
 
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
@@ -14,27 +14,11 @@ export const findCoachByEmailAndPassword = queryField(
         },
         resolve: async (_, { email, password }, context: Context) => {
             // Search for a Coach with the provided email
-            const currentTime = new Date(); // Create a new Date object representing the current date and time
 
-            const hours = currentTime.getHours();
-            const minutes = currentTime.getMinutes();
-            const seconds = currentTime.getSeconds();
-
-            const formattedTime = `${hours}:${minutes}:${seconds}`; // Format the time as a string
-
-            console.log(`Current Time: ${formattedTime}`); // Output the current time to the console
             const coach = await context.db.coach.findUnique({
-                where: { email, active: true}, // Include the 'active' condition
+                where: { email, active: true }, // Include the 'active' condition
             });
-            const currentTime1 = new Date(); // Create a new Date object representing the current date and time
 
-            const hours1 = currentTime1.getHours();
-            const minutes1 = currentTime1.getMinutes();
-            const seconds1 = currentTime1.getSeconds();
-
-            const formattedTime1 = `${hours1}:${minutes1}:${seconds1}`; // Format the time as a string
-
-            console.log(`Current Time1: ${formattedTime1}`); // Output the current time to the console
             if (coach) {
                 // If a Coach is found, compare the password
                 const passwordMatch = await bcrypt.compare(
@@ -42,15 +26,6 @@ export const findCoachByEmailAndPassword = queryField(
                     coach.password,
                 );
                 if (passwordMatch) {
-                    const currentTime1 = new Date(); // Create a new Date object representing the current date and time
-
-                    const hours1 = currentTime1.getHours();
-                    const minutes1 = currentTime1.getMinutes();
-                    const seconds1 = currentTime1.getSeconds();
-        
-                    const formattedTime1 = `${hours1}:${minutes1}:${seconds1}`; // Format the time as a string
-        
-                    console.log(`Current Time2: ${formattedTime1}`); // Output the current time to the console
                     return coach;
                 } else {
                     throw new Error('Incorrect password.');
@@ -130,23 +105,23 @@ export const findCoacheeByID = queryField('findCoacheeByID', {
     },
 });
 
-export const findCoachesBySport = queryField('findCoachesBySport', {
-    type: list(Coach), // Return a list of coaches
-    args: {
-        sport: SportEnum,
-    },
-    resolve: async (_, { sport }, context: Context) => {
-        // Search for coaches who are associated with the specified sport
-        const coaches = await context.db.coach.findMany({
-            where: {
-                sport: sport,
-                active: true, // Include the 'active' condition
-            },
-        });
+// export const findCoachesBySport = queryField('findCoachesBySport', {
+//     type: list(Coach), // Return a list of coaches
+//     args: {
+//         sport: SportEnum,
+//     },
+//     resolve: async (_, { sport }, context: Context) => {
+//         // Search for coaches who are associated with the specified sport
+//         const coaches = await context.db.coach.findMany({
+//             where: {
+//                 sport: sport,
+//                 active: true, // Include the 'active' condition
+//             },
+//         });
 
-        return coaches;
-    },
-});
+//         return coaches;
+//     },
+// });
 
 export const findBookingByID = queryField('findBookingByID', {
     type: Booking,
@@ -167,43 +142,43 @@ export const findBookingByID = queryField('findBookingByID', {
     },
 });
 
-export const findUnaddedCoachesBySport = queryField(
-    'findUnaddedCoachesBySport',
-    {
-        type: list(Coach), // Return a list of available coaches
-        args: {
-            sport: SportEnum, // Required sport argument
-            coacheeID: nonNull(intArg()), // Required coacheeID argument
-        },
-        resolve: async (_, { sport, coacheeID }, context: Context) => {
-            // Search for coaches who are associated with the specified sport
-            // and do not have a coaching relationship with the given coacheeID
-            const coaches = await context.db.coach.findMany({
-                where: {
-                    sport: sport,
-                    active: true, // Include the 'active' condition
-                    NOT: {
-                        coachingRelationships: {
-                            some: {
-                                coacheeId: coacheeID,
-                                active: true, // Check for an active coaching relationship with coachee
-                            },
-                        },
-                    },
-                },
-            });
+// export const findUnaddedCoachesBySport = queryField(
+//     'findUnaddedCoachesBySport',
+//     {
+//         type: list(Coach), // Return a list of available coaches
+//         args: {
+//             sport: SportEnum, // Required sport argument
+//             coacheeID: nonNull(intArg()), // Required coacheeID argument
+//         },
+//         resolve: async (_, { sport, coacheeID }, context: Context) => {
+//             // Search for coaches who are associated with the specified sport
+//             // and do not have a coaching relationship with the given coacheeID
+//             const coaches = await context.db.coach.findMany({
+//                 where: {
+//                     sport: sport,
+//                     active: true, // Include the 'active' condition
+//                     NOT: {
+//                         coachingRelationships: {
+//                             some: {
+//                                 coacheeId: coacheeID,
+//                                 active: true, // Check for an active coaching relationship with coachee
+//                             },
+//                         },
+//                     },
+//                 },
+//             });
 
-            return coaches;
-        },
-    },
-);
+//             return coaches;
+//         },
+//     },
+// );
 
 export const findBookingsByStatusAndCoachID = queryField(
     'findBookingsByStatusAndCoachID',
     {
         type: list(Booking),
         args: {
-            status: nonNull(BookingStatusEnum), // Argument for BookingStatus
+            status: nonNull(stringArg()), // Argument for BookingStatus
             coachID: nonNull(intArg()), // Argument for Coach ID
         },
         resolve: async (_, { status, coachID }, context: Context) => {
@@ -226,7 +201,7 @@ export const findBookingsByStatusAndCoacheeID = queryField(
     {
         type: list(Booking),
         args: {
-            status: nonNull(BookingStatusEnum), // Argument for BookingStatus
+            status: nonNull(stringArg()), // Argument for BookingStatus
             coacheeID: nonNull(intArg()), // Argument for Coachee ID
         },
         resolve: async (_, { status, coacheeID }, context: Context) => {
@@ -240,6 +215,62 @@ export const findBookingsByStatusAndCoacheeID = queryField(
             });
 
             return bookings;
+        },
+    },
+);
+
+// findCoachesBySport or findUnaddedCoachesBySport (make both)
+
+export const findCoachesBySport = queryField('findCoachesBySport', {
+    type: list(Coach),
+    args: {
+        sportType: nonNull(stringArg()),
+    },
+    resolve: async (_, { sportType }, context: Context) => {
+        // Use the context-aware Prisma client to search for coaches
+        const coaches = await context.db.coach.findMany({
+            where: {
+                sports: {
+                    some: {
+                        type: sportType,
+                    },
+                },
+                active: true,
+            },
+        });
+
+        return coaches;
+    },
+});
+
+export const findNonContactCoachesBySport = queryField(
+    'findNonContactCoachesBySport',
+    {
+        type: list(Coach),
+        args: {
+            sportType: nonNull(stringArg()),
+            coacheeID: nonNull(intArg()),
+        },
+        resolve: async (_, { sportType, coacheeID }, context: Context) => {
+            const coaches = await context.db.coach.findMany({
+                where: {
+                    sports: {
+                        some: {
+                            type: sportType,
+                        },
+                    },
+                    contacts: {
+                        none: {
+                            coachee: {
+                                id: coacheeID,
+                            },
+                        },
+                    },
+                    active: true,
+                },
+            });
+
+            return coaches;
         },
     },
 );
