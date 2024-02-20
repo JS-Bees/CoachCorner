@@ -1,6 +1,6 @@
 import React from 'react';
 import LogInPage from './screens/Authentication/LogIn';
-import SignUpA from './screens/Authentication/SignUpA';
+import RolePicking from './screens/Authentication/RolePicking';
 import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
 import CoachProfile from './screens/Profile/CoachProfile';
@@ -11,13 +11,26 @@ import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
 import ClientBookingDrawer from './screens/BookingDrawers.tsx/ClientBooking';
 import CoachAppointments from './screens/Appointments/CoachAppointments';
 import ClientAppointments from './screens/Appointments/ClientAppointmens';
+import NewCoacheeProfile from './screens/Profile/NewCoacheeProfile';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
+import MyCoaches_alt from './screens/MyCoaches_alt';
+import Booking_Sessions from './screens/Sessions';
+import SplashScreen from './screens/Authentication/SplashScreen';
+import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
-import { enGB, registerTranslation } from 'react-native-paper-dates';
-registerTranslation('en-GB', enGB);
+import ChooseVideoGames from './screens/Authentication/InterestPickingScreens/VideoGames';
+import ChooseHobbies from './screens/Authentication/InterestPickingScreens/Hobbies';
+import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieGenre';
+import PreviewPage from './screens/PreviewPage';
+import ReviewsPage from './screens/ReviewsPage';
+import NotificationPage from './screens/NotificationPage';
+import { enGB, registerTranslation } from 'react-native-paper-dates'
+registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
@@ -32,13 +45,14 @@ import {
 const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    // url: 'http://192.168.1.12:5050/graphql',
+    // url: 'http://192.168.1.4:5050/graphql',
     url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
 
 export type RootStackParams = {
     LogIn: any;
+    LogIn_alt: any;
     SignUpA: any;
     SignUpCoachee: any;
     SignUpCoach: any;
@@ -47,6 +61,7 @@ export type RootStackParams = {
     Appointments: any;
     CoacheeProfile: any;
     CoachProfile: any;
+    NewCoacheeProfile: any;
     MyClients: any;
     MyCoaches: any;
     SearchList: any;
@@ -54,24 +69,42 @@ export type RootStackParams = {
     ClientBookingDrawer: any;
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
-    ClientAppointments: any;
+    ClientAppointments: any, 
+    MyCoaches_alt: any,
+    BookingPage: any,
+    ChatPage: any,
+    ChooseVideoGames: any,
+    ChooseHobbies: any,
+    ChooseMovies: any,
+    SplashScreen: any,
+    PreviewPage: any,
+    ReviewsPage: any,
+    BookingSessions: any,
+    NotificationPage: any,
+    
 };
 
 const RootStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn">
+                <RootStack.Navigator initialRouteName="SignUpCoachee">
+                <RootStack.Screen
+                        name="SplashScreen"
+                        component={SplashScreen}
+                        options={{ headerShown: false }}
+                    />
                     <RootStack.Screen
                         name="LogIn"
                         component={LogInPage}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
-                        name="SignUpA"
-                        component={SignUpA}
+                        name="RolePicking"
+                        component={RolePicking}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -86,7 +119,7 @@ export default function App() {
                     />
                     <RootStack.Screen
                         name="CoacheeDashboard"
-                        component={CoacheeDashboard}
+                        component={TabNavigator}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -114,6 +147,11 @@ export default function App() {
                         component={ClientAppointments}
                         options={{ headerShown: false }}
                     />
+                      <RootStack.Screen
+                        name="NewCoacheeProfile"
+                        component={NewCoacheeProfile}
+                        options={{ headerShown: false }}
+                    />
                     <RootStack.Screen
                         name="MyClients"
                         component={MyClients}
@@ -139,8 +177,82 @@ export default function App() {
                         component={ClientBookingDrawer}
                         options={{ headerShown: false }}
                     />
+                    <RootStack.Screen 
+                        name="MyCoaches_alt" 
+                        component={MyCoaches_alt} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="ChatPage" 
+                        component={ChatPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="InterestPickingGames" 
+                        component={ChooseVideoGames} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="InterestPickingHobby" 
+                        component={ChooseHobbies} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="InterestPickingMovie" 
+                        component={ChooseMovies} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="PreviewPage" 
+                        component={PreviewPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="ReviewsPage" 
+                        component={ReviewsPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="NotificationPage" 
+                        component={NotificationPage} 
+                        options={{headerShown: false}}
+                        />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
+    );
+}
+function TabNavigator() {
+    const getTabBarIcon = (routeName: string) => {
+      switch (routeName) {
+        case 'Home':
+          return 'home';
+        case 'Coaches':
+          return 'sports';
+        case 'Sessions':
+          return 'schedule';
+        case 'Chats':
+          return 'chat';
+        default:
+          return null;
+      }
+    };
+  
+    return (
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            const iconName = getTabBarIcon(route.name);
+            return iconName ? <MaterialIcons name={iconName} size={size} color={color} /> : null;
+          },
+          tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
+          tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+        })}
+      >
+        <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
+        <Tab.Screen name="Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
+        <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
+        <Tab.Screen name="Chats" component={ChatPage} options={{ headerShown: false }} />
+      </Tab.Navigator>
     );
 }

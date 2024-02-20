@@ -8,8 +8,8 @@ import {
     ScrollView,
 } from 'react-native';
 import { TextInput, IconButton, Button } from 'react-native-paper';
-import ProfileSvg from '../../components/ProfileSvg';
-import BottomComponent from '../../components/BottomSvg';
+import ProfileSvg from '../../components/SVGs/ProfileSvg';
+import BottomComponent from '../../components/SVGs/BottomSvg';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoacheeByIdDocument } from '../../generated-gql/graphql';

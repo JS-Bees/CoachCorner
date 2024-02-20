@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import BottomComponent from '../components/BottomSvg';
+import { Button } from 'react-native-paper';
+import BottomComponent from '../components/SVGs/BottomSvg';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,20 +22,18 @@ import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
-
 const CoachDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
-        const isFocused = useIsFocused();
+    const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
-    
+
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
-     
     useEffect(() => {
         const backAction = () => {
             if (isFocused) {
@@ -44,7 +43,10 @@ const CoachDashboard = () => {
             return false;
         };
 
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
 
         return () => {
             backHandler.remove();
@@ -289,13 +291,13 @@ const CoachDashboardStyle = StyleSheet.create({
         fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        top: -2
+        top: -2,
     },
     imageStyle: {
         width: 65,
         height: 65,
         alignContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     buttonContainer: {
         flexDirection: 'row',
