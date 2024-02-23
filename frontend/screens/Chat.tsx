@@ -17,10 +17,14 @@ const ChatPage = () => {
     const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
+    const handleNavigateBack = () => {
+        navigation.goBack();
+    };
+
     return (
         <View style={ChatStyle.container}>
             <View style={ChatStyle.iconContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
+            <TouchableOpacity onPress={handleNavigateBack}>
             <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
             </TouchableOpacity>
             </View>

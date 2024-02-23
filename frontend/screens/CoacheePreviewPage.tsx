@@ -16,7 +16,7 @@ interface PreviewPageProps {
 
 
 
-const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
+const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const handleButtonPress = () => {
@@ -27,28 +27,12 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     navigation.goBack();
   };
 
-  const handleSeeReviewsPress = () => {
-    navigation.navigate("ReviewsPage", {
-      profile: profile
-    });
-  };
+  
 
-  const { profile, gainedStars,} = route.params || {};
+  const { profile} = route.params || {};
 
-  const totalStars = 5;
-
-  // Render star icons based on the total number of stars
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 0; i < totalStars; i++) {
-      stars.push(
-        <View key={i} style={styles.starsContainer}>
-          <Icon name={i < gainedStars ? "star" : "star-outline"} size={20} color="#FECB2E" />
-        </View>
-      );
-    }
-    return stars;
-  };
+  
+  
 
   return (
     <View style={styles.container}>
@@ -65,14 +49,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         <Text style={styles.name}>{profile?.name}</Text>
       </View>
 
-      <View style={styles.starsContainer}>
-          {renderStars()} 
-          <View style={styles.reviewsContainer}> 
-            <TouchableOpacity onPress={handleSeeReviewsPress}>
-              <Text style={styles.reviewText}>See Reviews</Text>
-            </TouchableOpacity>
-          </View>
-      </View>
 
 
       <View style = {styles.content}>
@@ -84,28 +60,29 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
       <Text style={styles.about}>{profile?.about}</Text>
       </View>
 
-      <View style = {styles.addressContainer}>
+      <View style = {styles.affliationsContainer}>
         <Text style={styles.aboutText} >
-            Workplace Address
+           Affliations
         </Text>
       </View>
-      <View style={styles.worplaceAddressContainer}>
-      <Text style={styles.workplaceAddressText}>{profile?.workplaceAddress}</Text>
+      <View style={styles.affliationsContainer}>
+      <Text style={styles.affliationsText}>{profile?.affliations}</Text>
       </View>
 
-    
-
       
-
+      <View style = {styles.affliationsContainer}>
+        <Text style={styles.aboutText} >
+        </Text>
+      </View>
       <View style={styles.buttonContainer}>
       <TouchableOpacity
         style={styles.button}
         onPress={handleButtonPress}
       >
-        <Text style={{ color: 'white', fontSize: 15, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Message this Coach</Text>
+        <Text style={{ color: 'white', fontSize: 15, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Message this Trainee</Text>
       </TouchableOpacity>
       </View>
-      
+
 
     </View>
   );
@@ -176,11 +153,12 @@ const styles = StyleSheet.create({
   aboutText: {
     fontFamily: "Roboto",
     fontWeight: '200',
-    fontSize: 20
+    fontSize: 20,
+    bottom: "80%"
   },
   aboutContainer:{
     position: 'absolute',
-    bottom: "25%", 
+    bottom: "27%", 
     alignItems: 'center',
     left: "6%",
     width: "85%"
@@ -208,26 +186,21 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
   },
-  addressContainer: {
+  affliationsContainer: {
     position: 'absolute',
     bottom: "20%", // Adjust this value to move the title up or down
     alignItems: 'center',
     left: "5%"
   },
-  worplaceAddressContainer: {
-    position: 'absolute',
-    bottom: "19%", // Adjust this value to move the address text up or down
-    left: "6%",
-    width: "85%"
-  },
-  workplaceAddressText: {
+  affliationsText: {
     position: "absolute",
     textAlign: "justify",
     lineHeight: 20, // Adjust line height as needed
     fontFamily: "Roboto",
     fontWeight: '200',
+    left: "15%",
     color: '#908D93',
   }
 });
 
-export default PreviewPage;
+export default CoacheePreviewPage;

@@ -8,6 +8,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import SessionModal from '../Modals/UpcomingSessionModal';
+
 interface Session {
   coachName: string;
   imageSource: ImageSourcePropType;
