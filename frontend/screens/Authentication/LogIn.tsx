@@ -21,21 +21,36 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import LoadingSpinner from '../../components/LoadingIndicator';
 const { width, height } = Dimensions.get('window');
 
-
 const LogIn = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
+  const [CoachOrCoachee, setCoachOrCoachee] = useState('');
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
   const [EmailPasswordError, setEmailPasswordError] = useState('');
-  const [isLoading, setLoading] = useState(false); // Add loading state
+  const [isLoading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSlideInVisible, setIsSlideInVisible] = useState(false);
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    // Clear error message when email is changed
+    if (EmailPasswordError) {
+      setEmailPasswordError('');
+    }
+  };
+  
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+    // Clear error message when password is changed
+    if (EmailPasswordError) {
+      setEmailPasswordError('');
+    }
+  };
+  
 
   const handleOpenSlideIn = () => {
     setIsSlideInVisible(true);
@@ -49,25 +64,22 @@ const LogIn = () => {
     setIsPasswordVisible((prev) => !prev);
   };
 
-  const [coachResult, executeCoachQuery] = useQuery({
+  const [coachResult,executeCoachQuery,] = useQuery({
     query: FindCoachByEmailAndPasswordDocument,
     variables: {
       email: Email,
       password: Password,
     },
-    pause: false,
   });
-
-  const [coacheeResult, executeCoacheeQuery] = useQuery({
+  
+  const [coacheeResult,executeCoacheeQuery] = useQuery({
     query: FindCoacheeByEmailAndPasswordDocument,
     variables: {
       email: Email,
       password: Password,
     },
-    pause: false, // Pause the query initially
   });
 
-  // Clear the email and password state variables when navigating away from the page
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
       setEmail('');
@@ -76,147 +88,142 @@ const LogIn = () => {
     });
 
     return unsubscribe;
-  });
+  }, [navigation]);
 
   const storeToken = async (token: string) => {
     try {
       await AsyncStorage.setItem('userToken', token);
+      console.log('Async token:', token); // Add this line to log the async token
     } catch (error) {
       console.error('Error storing token:', error);
     }
   };
+  
 
   const handleLoginError = () => {
-    if (!Email || Password) {
-      setEmailPasswordError('Invalid Email or Password');
-    } else {
-      setEmailPasswordError('Invalid Email or Password'); // Clear the error message
-    }
+    setEmailPasswordError('Invalid Email or Password');
+    console.log("Invalid Email or Password")
   };
 
-  const onLogInPressed = () => {
-    // Check if email and password are provided
+
+
+  const onLogInPressed = async () => {
     if (!Email || !Password) {
       handleLoginError();
-      return; // Don't proceed with the login attempt
+      console.log("error");
+      return;
     }
-
-    executeCoachQuery({
-      variables: {
-        email: Email,
-        password: Password,
-      },
-      pause: true,
-    });
-
-    executeCoacheeQuery({
-      variables: {
-        email: Email,
-        password: Password,
-      },
-      pause: true,
-    });
-
-    const coachData = coachResult.data;
-    const coacheeData = coacheeResult.data;
-    console.log('coach data', coachData);
-    console.log('coach data', coacheeData);
-    if (
-      (coachData && coachData.findCoachByEmailAndPassword) ||
-      (coacheeData && coacheeData.findCoacheeByEmailAndPassword)
-    ) {
-      setLoading(true); // Start loading
-      if (coachData && coachData.findCoachByEmailAndPassword) {
-        const userId = coachData.findCoachByEmailAndPassword.id;
-        storeToken(userId.toString());
-        navigation.navigate('CoachDashboard');
-        console.log(
-          'Successfully logged in as a coach :)',
-          'Token:',
-          userId.toString(),
-        );
+  
+    setLoading(true); // Start loading
+  
+    if (CoachOrCoachee === "coach") {
+      await executeCoachQuery(); // Execute the coach query
+    } else {
+      await executeCoacheeQuery(); // Execute the coachee query
+    }
+  
+    setTimeout(() => {
+      setLoading(false); // Stop loading
+    }, 2000); // Adjust the delay time as needed
+    
+    // After the queries finish, you can access the data
+    if (CoachOrCoachee === "coach" && coachResult.data) {
+      // Handle coach result
+      const coachData = coachResult.data.findCoachByEmailAndPassword;
+      if (coachData) {
+        const userId = coachData.id;
+        storeToken(userId.toString()); // Store user ID as async token
+        navigation.navigate('CoachDashboard'); // Navigate to coach dashboard
+        console.log(coachData)
       } else {
-        const userId = coacheeData?.findCoacheeByEmailAndPassword.id;
-        storeToken(userId.toString());
-        navigation.navigate('CoacheeDashboard');
-        console.log(
-          'Successfully logged in as a coachee :)',
-          'Token:',
-          userId?.toString(),
-        );
+        handleLoginError();
+      }
+    } else if (CoachOrCoachee === "trainee" && coacheeResult.data) {
+      // Handle coachee result
+      const coacheeData = coacheeResult.data.findCoacheeByEmailAndPassword;
+      if (coacheeData) {
+        const userId = coacheeData.id;
+        storeToken(userId.toString()); // Store user ID as async token
+        navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
+        console.log(coacheeData)
+      } else {
+        handleLoginError();
       }
     } else {
+      // Handle login error
       handleLoginError();
     }
-    setLoading(false); // Stop loading
   };
 
   const onForgotPressed = () => {
-    // console.warn('Renewed Password');
     // Add logic for password reset here
   };
 
   const onSignUpPressed = () => {
-    navigation.navigate('SignUpA');
+    if (CoachOrCoachee === 'coach'){
+      navigation.navigate('SignUpCoach');
+      console.log('Navigating to signup for coach')
+    } else {
+      navigation.navigate('SignUpCoachee')
+      console.log('Navigating to signup for coachee')
+    }
+  };
+
+  const handleCoachButtonPress = () => {
+    setCoachOrCoachee('coach');
+    handleOpenSlideIn();
+  };
+
+  const handleTraineeButtonPress = () => {
+    setCoachOrCoachee('trainee');
+    handleOpenSlideIn();
   };
 
   return (
     <View style={Log_In_Style.container}>
-        <View style={Log_In_Style.imageContainer}>
-          <Image
-            source={require('../../assets/stretching.png')}
-            style={Log_In_Style.CoachIcon}
-          />
-        </View>
-        <Text style={Log_In_Style.textStyle}>Login</Text>
-        <Text style={Log_In_Style.subtitleText}>
-            You are logging as? 
-          </Text>
-        <View style={Log_In_Style.buttonsContainer} >
+      <View style={Log_In_Style.imageContainer}>
+        <Image
+          source={require('../../assets/stretching.png')}
+          style={Log_In_Style.CoachIcon}
+        />
+      </View>
+      <Text style={Log_In_Style.textStyle}>Login</Text>
+      <Text style={Log_In_Style.subtitleText}>You are logging as?</Text>
+      <View style={Log_In_Style.buttonsContainer}>
         {!isSlideInVisible && (
           <View style={Log_In_Style.buttonsContainer}>
-              <TouchableOpacity onPress={handleOpenSlideIn}>
-          <Text style={Log_In_Style.buttonsText}>Coach</Text>
-           </TouchableOpacity>
-            <TouchableOpacity onPress={handleOpenSlideIn}>
-           <Text style={Log_In_Style.buttonsText}>Trainee</Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={handleCoachButtonPress}>
+              <Text style={Log_In_Style.buttonsText}>Coach</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleTraineeButtonPress}>
+              <Text style={Log_In_Style.buttonsText}>Trainee</Text>
+            </TouchableOpacity>
           </View>
         )}
 
         <SlideInComponent isVisible={isSlideInVisible} onClose={handleCloseSlideIn}>
-        <View>
-          <Text style={Log_In_Style.detailsStyle}>
-            Enter the required details to access your account and find the right
-            coach for you
-          </Text>
-        </View>
-       
-        <View style={Log_In_Style.customContainer}>
           <View>
-            <Text></Text>
+            <Text style={Log_In_Style.detailsStyle}>
+              Enter the required details to access your account and find the right coach for you
+            </Text>
           </View>
-          <Input
-            leftIcon={
-              <Icon name="envelope" size={20} color="#7E3FF0" />
-            }
-            placeholder="johnsmith@gmail.com"
-            value={Email}
-            onChangeText={setEmail}
-            errorMessage={EmailPasswordError}
-          />
-          <View>
-          </View>
-          <Input
-            leftIcon={
-              <Icon name="lock" size={25} color="#7E3FF0" />
-            }
-            placeholder="Password"
-            value={Password}
-            onChangeText={setPassword}
-            secureTextEntry={!isPasswordVisible}
-            errorMessage={EmailPasswordError}
-            rightIcon={
+
+          <View style={Log_In_Style.customContainer}>
+            <Input
+              leftIcon={<Icon name="envelope" size={20} color="#7E3FF0" />}
+              placeholder="johnsmith@gmail.com"
+              value={Email}
+              onChangeText={handleEmailChange}
+              errorMessage={EmailPasswordError}
+            />
+            <Input
+              leftIcon={<Icon name="lock" size={25} color="#7E3FF0" />}
+              placeholder="Password"
+              value={Password}
+              onChangeText={handlePasswordChange}
+              secureTextEntry={!isPasswordVisible}
+              errorMessage={EmailPasswordError}
+              rightIcon={
                 <TouchableOpacity onPress={togglePasswordVisibility}>
                   <Icon
                     name={isPasswordVisible ? 'eye-slash' : 'eye'}
@@ -225,43 +232,30 @@ const LogIn = () => {
                   />
                 </TouchableOpacity>
               }
-          />
-          <LogInButton
-            onPress={onForgotPressed}
-            text="Forgot Password?"
-            type="SECONDARY"
-          />
-        </View>
-
-        <View style={Log_In_Style.button}>
-          {isLoading ? (
-            <ActivityIndicator size="large" color="#915bc7" />
-          ) : (
-            <LogInButton text="Login" onPress={onLogInPressed} />
-          )}
-        </View>
-
-        <View style={Log_In_Style.noMargin}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: '-1%'}}>
-            <Text style={{ fontFamily: 'Roboto', fontSize: 12, }}>
-              Don't have an account?{' '}
-            </Text>
-            <TouchableOpacity onPress={onSignUpPressed}>
-              <Text
-                style={{
-                  color: '#6441A4',
-                  fontFamily: 'Roboto',
-                  fontSize: 12,
-                }}
-              >
-                Sign up here!
-              </Text>
-            </TouchableOpacity>
+            />
+            <LogInButton onPress={onForgotPressed} text="Forgot Password?" type="SECONDARY" />
           </View>
-        </View>
 
+          <View style={Log_In_Style.button}>
+            {isLoading ? (
+              <ActivityIndicator size="large" color="#915bc7" />
+            ) : (
+              <LogInButton text="Login" onPress={onLogInPressed} />
+            )}
+          </View>
+
+          <View style={Log_In_Style.noMargin}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -1 }}>
+              <Text style={{ fontFamily: 'Roboto', fontSize: 12 }}>Don't have an account? </Text>
+              <TouchableOpacity onPress={onSignUpPressed}>
+                <Text style={{ color: '#6441A4', fontFamily: 'Roboto', fontSize: 12 }}>
+                  Sign up here!
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </SlideInComponent>
-        </View>
+      </View>
     </View>
   );
 };
@@ -282,7 +276,7 @@ const Log_In_Style = StyleSheet.create({
     marginLeft: '4%',
     paddingRight: 15,
     paddingLeft: 15,
-    paddingVertical: '-15%'
+    paddingVertical: -15,
   },
 
   button: {
@@ -319,7 +313,7 @@ const Log_In_Style = StyleSheet.create({
     color: '#7E3FF0',
     justifyContent: 'flex-end',
     marginLeft: '10%',
-    marginTop: '-60%',
+    marginTop: -60,
   },
 
   detailsStyle: {
@@ -333,7 +327,7 @@ const Log_In_Style = StyleSheet.create({
     paddingLeft: 2,
   },
   subtitleText: {
-    bottom: "23%",
+    bottom: 23,
     fontSize: 15,
     fontWeight: '200',
     fontFamily: 'Roboto',
@@ -344,24 +338,24 @@ const Log_In_Style = StyleSheet.create({
   errorTextEmail: {
     fontSize: 12,
     color: 'red',
-    marginLeft: '-65%',
-    top: '6%',
+    marginLeft: -65,
+    top: 6,
   },
   errorTextPassword: {
     fontSize: 12,
     color: 'red',
-    top: '8%',
+    top: 8,
   },
   buttonsContainer: {
-    flexDirection: "row",
-    bottom: "70%",
-    justifyContent: "space-between",
-    marginLeft: "12%"
+    flexDirection: 'row',
+    bottom: '70%',
+    justifyContent: 'space-between',
+    marginLeft: '12%',
   },
   buttonsText: {
     fontSize: 18,
-    marginRight: "30%"
-  }
+    marginRight: '30%',
+  },
 });
 
 export default LogIn;

@@ -13,15 +13,25 @@ import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BookingStatus, FindCoacheeByIdDocument } from '../../generated-gql/graphql';
-
+import ClientInformationModal from './ClientInformationModal';
 
 interface RouteParams {
     coachId?: string
     coach?: any
+    coachFirstName: string
+    coachLastName: string
 }
 
 const ClientBookingDrawer= () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
+    const showInformationModal = () => {
+        setConfirmModalVisible(true);
+    };
+
+    const hideInformationModal = () => {
+        setConfirmModalVisible(false);
+    };
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
@@ -29,13 +39,13 @@ const ClientBookingDrawer= () => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const route = useRoute()
 
-    
-
     const coach = route.params?.coach;
     const coachId = route.params?.coachId;
+   
     
-
     console.log('Coach ID:', coachId);
+    console.log('Coach:', coach);
+
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -119,7 +129,7 @@ const ClientBookingDrawer= () => {
         <View style = {styles.container}>
             <View style={styles.upperContainer}>
             <Image source={require('./User.png')} style={styles.imageContainer}/>
-            <Text style={styles.text}>{`${coacheeData?.findCoacheeByID.firstName} ${coacheeData?.findCoacheeByID.lastName}`}</Text>
+            <Text style={styles.text}>{`${coach?.firstName} ${coach?.lastName}`}</Text>
             <Divider style ={styles.divider}/>
             </View>
 
@@ -148,6 +158,15 @@ const ClientBookingDrawer= () => {
                 {isDrawerVisible && <ConfirmBookingDrawer onClose={handleClose} onBookingAction={handleBookingAction}/>}
             </Modal>
             
+            <View>
+            <TouchableOpacity onPress={showInformationModal}>
+            <MaterialCommunityIcons name="information" size={24} color="#6E5DB0" style={styles.iconContainer}/>
+            </TouchableOpacity>
+            </View>
+            <ClientInformationModal
+                visible={isConfirmModalVisible}
+                onConfirm={hideInformationModal}
+            />
 
             
 
@@ -195,9 +214,17 @@ const styles = StyleSheet.create ({
         width: '90%',
         color:'grey'
     },
+
     disabledButton :{
         opacity: 0.5
-    }
+    },
+
+    iconContainer: {
+        alignItems: 'center', // Center the icon horizontally
+        marginLeft: '70%',
+        marginTop: '-3%'
+      },
+    
 })
 
 

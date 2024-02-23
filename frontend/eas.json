@@ -1,0 +1,31 @@
+{
+    "build": {
+        "preview": {
+            "android": {
+                "buildType": "apk"
+            },
+            "env": {
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coach-corner-render-backend-4.onrender.com/graphql"
+            }
+        },
+        "preview2": {
+            "android": {
+                "gradleCommand": ":app:assembleRelease"
+            },
+            "env": {
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coach-corner-render-backend-4.onrender.com/graphql"
+            }
+        },
+        "preview3": {
+            "developmentClient": true,
+            "env": {
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coach-corner-render-backend-4.onrender.com/graphql"
+            }
+        },
+        "production": {
+            "env": {
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coach-corner-render-backend-4.onrender.com/graphql"
+            }
+        }
+    }
+}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
@@ -9,6 +8,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery, useMutation } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { UpdateCoachingRelationshipActiveStatusDocument } from '../generated-gql/graphql';
+import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons
+import { AntDesign } from '@expo/vector-icons';
 
 const MyCoaches = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -17,7 +18,7 @@ const MyCoaches = () => {
   const [userID, setUserID] = useState<number>(0);
 
   const navigateToClientBookingPage = (item) => {
-    navigation.navigate('ClientBookingDrawer', { coachId: item.coachId, coach: item.coach });
+    navigation.navigate('ClientBookingDrawer', { coachId: item.coachId, coach: item.coach});
   };
 
 
@@ -132,11 +133,15 @@ const MyCoaches = () => {
               <Text>{item.coach.firstName} {item.coach.lastName} </Text>
             </DataTable.Cell>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Button onPress={() => toggleModal(item)}>
-                View Appointments
-              </Button>
-              <TouchableOpacity onPress={() => handleRemoveClick(item.id)}>
-                <Ionicons name="trash-outline" size={24} color="red" style={{ marginLeft: 10 }} />
+                {/* Replace "View Appointments" button with chat and appointment icons */}
+                <TouchableOpacity onPress={() => navigateToClientBookingPage(item)}>
+                <Ionicons name="chatbubble-ellipses-outline" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigateToClientBookingPage(item)}>
+                <AntDesign name="book" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleRemoveClick(item.id)}>
+                  <Ionicons name="trash-outline" size={24} color="red" />
               </TouchableOpacity>
             </View>
           </DataTable.Row>
@@ -229,6 +234,9 @@ const MyCoachStyle = StyleSheet.create({
   searchBarInput: {
     fontSize: 16, // Font size
   },
+  
 });
 
 export default MyCoaches;
+
+

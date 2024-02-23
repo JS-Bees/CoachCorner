@@ -75,6 +75,8 @@ const CoachProfile = () => {
         }
     };
     
+    
+    
 
     const [mantra, setMantra] = React.useState(coachData?.findCoachByID.mantra);
     const [age, setAge] = React.useState('');
