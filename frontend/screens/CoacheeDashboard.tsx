@@ -13,7 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+// import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import Profile from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed';
@@ -23,6 +23,7 @@ import {
     KeyboardAvoidingView,
     TouchableOpacity,
 } from 'react-native';
+import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,7 +31,7 @@ const CoacheeDashboard = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const isFocused = useIsFocused();
+    // const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
@@ -138,7 +139,7 @@ const CoacheeDashboard = () => {
     return (
         <View style={CoacheeDashboardStyle.container}>
             <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
-                <Text style={CoacheeDashboardStyle.greetings}>Welcome</Text>
+                <Text style={CoacheeDashboardStyle.greetings}>Welcome </Text>
                 <Text style={CoacheeDashboardStyle.name}>
                     {coacheeData?.findCoacheeByID?.firstName}!
                 </Text>
@@ -322,14 +323,16 @@ const CoacheeDashboardStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     searchContainer: {
-        borderWidth: 2, // Add a border
+        borderWidth: 3, // Add a border
         width: '85%',
         borderColor: '#7E3FF0', // Set the border color
         borderRadius: 15, // Add border radius to make it rounded
         marginTop: '10%',
-        marginLeft: '7%',
+        marginLeft: 'auto', // Set left margin to auto
+        marginRight: 'auto', // Set right margin to auto
         paddingHorizontal: 10,
     },
+    
     searchBarContainer: {
         // Set the dimensions of the SearchBar container
         width: 300, // Adjust the width as needed

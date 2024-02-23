@@ -1,250 +1,35 @@
 # copy paste queries from playground here
 
-query getAllCoaches {
-    coaches {
-        id
-        birthday
-        email
-        firstName
-        games
-        hobbies
-        lastName
-        moviesGenres
-        sport
-        workplaceAddress
-        isCoach
-    }
+# New queries
+
+query FindCoachByEmailAndPassword($email: String!, $password: String!) {
+  findCoachByEmailAndPassword(email: $email, password: $password) {
+    id
+    firstName
+    lastName
+  }
 }
 
 query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
-    findCoacheeByEmailAndPassword(email: $email, password: $password) {
-        id
-        address
-        birthday
-        email
-        firstName
-        games
-        hobbies
-        lastName
-        moviesGenres
-        isCoach
-    }
+  findCoacheeByEmailAndPassword(email: $email, password: $password) {
+  id
+  firstName
+  lastName  
+  }
 }
 
-query FindCoachByEmailAndPassword($email: String!, $password: String!) {
-    findCoachByEmailAndPassword(email: $email, password: $password) {
-        id
-        birthday
-        email
-        firstName
-        games
-        hobbies
-        lastName
-        moviesGenres
-        sport
-        workplaceAddress
-        isCoach
-    }
+query FindCoacheeByID($userId: Int!) {
+  findCoacheeByID(userID: $userId) {
+    id
+    firstName
+    lastName
+  }
 }
 
-query FindCoacheeByID($userID: Int!) {
-    findCoacheeByID(userID: $userID) {
-        id
-        address
-        birthday
-        email
-        firstName
-        games
-        hobbies
-        lastName
-        bio
-        affiliations
-        mantra
-        profilePicture
-        moviesGenres
-        isCoach
-        bookings {
-            status
-            coachId
-        }
-        coachingRelationships {
-            id
-            coachId
-            coach {
-                firstName
-                lastName
-                sport
-            }
-
-        }
-        bookings {
-            coach {
-                firstName
-                lastName
-            }
-            id
-            status
-            coachId
-            serviceType
-            additionalNotes
-            bookingSlots {
-                date
-                endTime
-                startTime
-            }
-        }
-       
-    }
-}
-
-query FindCoachByID($userID: Int!) {
-    findCoachByID(userID: $userID) {
-        id
-        birthday
-        email
-        firstName
-        games
-        hobbies
-        lastName
-        sport
-        moviesGenres
-        workplaceAddress
-        bio
-        affiliations
-        mantra
-        profilePicture
-        isCoach
-        coachingRelationships {
-            id
-            coacheeId
-            coachee {
-                firstName
-                lastName
-            }
-        }
-        bookings {
-            coachee {
-                firstName
-                lastName
-            }
-            id
-            status
-            bookingSlots {
-                date
-                startTime
-                endTime
-            }
-        }
-    }
-}
-query FindCoachesBySport($sport: Sport!) {
-    findCoachesBySport(sport: $sport) {
-        id
-        firstName
-        sport
-        email
-        lastName
-        birthday
-        password
-        workplaceAddress
-        games
-        hobbies
-        moviesGenres
-        affiliations
-        bio
-        mantra
-        profilePicture
-        coachingRelationships {
-            id
-            coacheeId
-        }
-        isCoach
-        active
-    }
-}
-
-query FindBookingByID($bookingID: Int!) {
-    findBookingByID(bookingID: $bookingID) {
-        id
-        coacheeId
-        coachId
-        serviceType
-        status
-        additionalNotes
-        bookingSlots {
-            id
-            bookingId
-            date
-            startTime
-            endTime
-        }
-    }
-}
-
-query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
-    findUnaddedCoachesBySport(sport: $sport, coacheeID: $coacheeID) {
-        id
-        firstName
-        lastName
-        email
-        sport
-        bio
-        workplaceAddress
-        affiliations
-        coachingRelationships {
-            coacheeId
-        }
-    }
-}
-
-query FindCoachByIdReview($userID: Int!) {
-    findCoachByID(userID: $userID) {
-        id
-        firstName
-        lastName
-        reviews {
-            coacheeId
-            starRating
-            comment
-            coachee {
-                firstName
-                lastName
-            }
-        }
-    }
-}
-
-query FindBookingsByStatusAndCoachID($status: BookingStatus!, $coachID: Int!) {
-    findBookingsByStatusAndCoachID(status: $status, coachID: $coachID) {
-        id
-        serviceType
-        status
-        additionalNotes
-        coacheeId
-        bookingSlots {
-            id
-            date
-            startTime
-            endTime
-        }
-    }
-}
-
-query FindBookingsByStatusAndCoacheeID(
-    $status: BookingStatus!
-    $coacheeID: Int!
-) {
-    findBookingsByStatusAndCoacheeID(status: $status, coacheeID: $coacheeID) {
-        id
-        serviceType
-        status
-        additionalNotes
-        coachId
-        bookingSlots {
-            id
-            date
-            startTime
-            endTime
-        }
-    }
+query FindCoachByID($userId: Int!) {
+  findCoachByID(userID: $userId) {
+    id
+    firstName
+    lastName
+  }
 }

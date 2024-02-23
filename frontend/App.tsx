@@ -41,12 +41,13 @@ import {
     cacheExchange,
     fetchExchange,
 } from 'urql';
+import ChooseSport from './screens/Authentication/InterestPickingScreens/ChooseSport';
 
-const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+// const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    // url: 'http://192.168.1.4:5050/graphql',
-    url: apiUrl!,
+    url: 'http://192.168.1.14:5050/graphql',
+    // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -73,6 +74,7 @@ export type RootStackParams = {
     MyCoaches_alt: any,
     BookingPage: any,
     ChatPage: any,
+    chooseSport: any,
     ChooseVideoGames: any,
     ChooseHobbies: any,
     ChooseMovies: any,
@@ -91,7 +93,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="SignUpCoachee">
+                <RootStack.Navigator initialRouteName="SignupCoachee">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
@@ -185,6 +187,11 @@ export default function App() {
                     <RootStack.Screen 
                         name="ChatPage" 
                         component={ChatPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="SportPicking" 
+                        component={ChooseSport} 
                         options={{headerShown: false}}
                         />
                     <RootStack.Screen 

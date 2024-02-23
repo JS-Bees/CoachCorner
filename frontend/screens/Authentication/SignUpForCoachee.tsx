@@ -13,18 +13,14 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
 import LogInButton from '../../components/Custom components/CustomButton';
 import { useMutation } from 'urql';
-import {
-    CreateCoacheeDocument,
-    Games,
-    Hobbies,
-    MovieGenres,
-} from '../../generated-gql/graphql';
+import { CreateCoacheeDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
+// import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
 
-const SignUpForCoachee = () => {
+
+const SignUpForCoachee = ({route}) => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -39,14 +35,13 @@ const SignUpForCoachee = () => {
     const [dateOfBirth, setDateofBirth] = useState('');
     const [profilePic] = useState('Fixed');
     const [mantra] = useState('Write mantra here');
-    const [bio] = useState('Enter Bio');   
-    const [affiliations] = useState('Enter Affilitations');
-    const [selectedGames, setSelectedGames] = useState<Games[]>([]);
-    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
-    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
+    const [bio] = useState('Mt bio');   
+    const [coachingRole] = useState(false);
     const [, SignUpForCoachee] = useMutation(CreateCoacheeDocument);
+    const [CoachorCoachee, setCoachOrCoachee] = useState('coachee');
+    
 
-    const [date, setdate] = useState(new Date());
+    const [Exact_Date, setdate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -55,11 +50,31 @@ const SignUpForCoachee = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
+
     
 
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
+   
     };
+
+    
+    // const navigateToHobbies = () => {
+    //     navigation.navigate('InterestPickingHobby', 
+    //     {  firstName: First_Name,
+    //         lastName: Last_Name,
+    //         birthday: date,
+    //         email: Email,
+    //         password: Password,
+    //         workplaceAddress: StreetAdd,
+    //         profilePic: profilePic,
+    //         mantra: mantra,
+    //         bio: bio,
+    //         coachingRole: coachingRole,
+            
+
+    //     }); 
+    // };
 
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -89,14 +104,14 @@ const SignUpForCoachee = () => {
             toggleDatePicker();
       
             // Show an error message if the selected date is outside the allowed range
-            setErrorMessage(`Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
+            setErrorMessage(`Please select a valid date be tween ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
             setErrorModalVisible(true);
           }
         } else {
           toggleDatePicker();
         }
       };
-      
+
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
     const toggleCheckbox = (item: any, state: any, setState: any) => {
@@ -112,8 +127,7 @@ const SignUpForCoachee = () => {
         return regex.test(First_Name) || regex.test(Last_Name);
     }
 
-    const onSignUpPressed = async () => {
-        try {
+    const onNext = async () => {
             // Validate the input fields
             if (
                 First_Name.trim() === '' ||
@@ -126,6 +140,7 @@ const SignUpForCoachee = () => {
                 Postal.trim() === '' ||
                 Password.trim() !== Repeat_Password.trim() 
                 
+                
             ) {
                 // Display an error message for incomplete fields
                 setErrorMessage('Please fill in all the required fields.');
@@ -136,13 +151,13 @@ const SignUpForCoachee = () => {
 
             
             // Check for integers in First_Name and Last_Name
-         if (containsInteger(First_Name, Last_Name)) {
-            setErrorMessage('First Name and Last Name cannot contain integers.');
-            setErrorModalVisible(true);
-            setIsLoading(false);
-            return; // Return early if validation fails
-        }
-        setIsLoading(true); // Set isLoading to true when the signup process starts
+            if (containsInteger(First_Name, Last_Name)) {
+                setErrorMessage('First Name and Last Name cannot contain integers.');
+                setErrorModalVisible(true);
+                setIsLoading(false);
+                return; // Return early if validation fails
+            }
+            // setIsLoading(true); // Set isLoading to true when the signup process starts
 
       
 
@@ -150,53 +165,72 @@ const SignUpForCoachee = () => {
             console.log("Signing up with data:", {
                 firstName: First_Name,
                 lastName: Last_Name,
-                birthday: date,
+                birthday: Exact_Date,
                 email: Email,
                 password: Password,
                 workplaceAddress: StreetAdd,
-                games: selectedGames,
-                hobbies: selectedHobbies,
-                moviesGenres: selectedMovieGenres,
+                
             });
 
-            const { data, error, fetching } = await SignUpForCoachee({
-                firstName: First_Name,
-                lastName: Last_Name,
-                birthday: date,
-                email: Email,
-                password: Password,
-                address: StreetAdd,
-                profilePicture: profilePic,
-                mantra: mantra,
-                bio: bio,
-                affiliations: affiliations,
-                games: selectedGames,
-                hobbies: selectedHobbies,
-                moviesGenres: selectedMovieGenres,
-            });
+            // const coachInput = {firstName: First_Name,
+            //     lastName: Last_Name,
+            //     birthday: date,
+            //     email: Email,
+            //     password: Password,
+            //     address: StreetAdd,
+            //     profilePicture: profilePic,
+            //     mantra: mantra,
+            //     bio: bio,
+            //     coachingRole: coachingRole}
 
-            if (error) {
-                console.error(error);
-            } else {
-                setSuccessMessage('Signed up successfully!');
-                navigation.navigate('InterestPickingGames');
-                toggleModal();
-                setFirst_Name('');
-                setLast_Name('');
-                setEmail('');
-                setPassword('');
-                setRepeat_Password('');
-                setStreetAddress('');
-                setCity('');
-                setPostal('');
-                setDateofBirth('');
-            }
-        } catch (err) {
-            console.error(err);
-            // Reset loading state to false in case of an error
-        } finally {
-            setIsLoading(false);
-        }
+            // const interestsInput = selectedHobbies.map(hobby => ({ hobby }));
+            
+            
+        //     const { data, error, fetching } = await SignUpForCoachee({
+        //         input: coachInput,
+        //         interestsInput: interestsInput,
+        //       });
+        //     navigateToHobbies()
+
+        //     if (Error) {
+        //         console.error(Error + "lol");
+
+        //     } else {
+        //         setSuccessMessage('Signed up successfully!');
+        //         toggleModal();
+        //         setFirst_Name('');
+        //         setLast_Name('');
+        //         setEmail('');
+        //         setPassword('');
+        //         setRepeat_Password('');
+        //         setStreetAddress('');
+        //         setCity('');
+        //         setPostal('');
+        //         setDateofBirth('');
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        //     // Reset loading state to false in case of an error
+        // } finally {
+        //     setIsLoading(false);
+        // }
+        console.log(Exact_Date)
+        navigation.navigate('InterestPickingHobby', 
+        {  firstName: First_Name,
+            lastName: Last_Name,
+            birthday: Exact_Date,
+            email: Email,
+            password: Password,
+            workplaceAddress: StreetAdd,
+            profilePic: profilePic,
+            mantra: mantra,
+            bio: bio,
+            coachingRole: coachingRole,
+            coachOrCoachee: CoachorCoachee,
+
+        }); 
+        
+            
     };
 
     return (
@@ -253,7 +287,7 @@ const SignUpForCoachee = () => {
                         <DateTimePicker
                             mode="date"
                             display="spinner"
-                            value={date}
+                            value={Exact_Date}
                             onChange={onChange}
                         />
                     )}
@@ -291,86 +325,12 @@ const SignUpForCoachee = () => {
                         setValue={setPostal}
                         editable={false}
                     />
-                    <Text style={styles.choiceContainer}>Select Video Games:</Text>
-                    <View style={styles.checkboxContainer}>
-                    <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>PUBG</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>Dota</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Dota) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Dota, selectedGames, setSelectedGames)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 27 }}>LOL</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Lol) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Lol, selectedGames, setSelectedGames)}
-                            />
-                        </View>
-                    </View>
-
-                    <Text style={styles.selectdHobbiesContainer}>Select Hobbies:</Text>
-                    <View style={styles.checkboxContainer}>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Reading</Text>
-                            <Checkbox
-                                status={selectedHobbies.includes(Hobbies.Reading) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Hobbies.Reading, selectedHobbies, setSelectedHobbies)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: -1}}>Singing</Text>
-                            <Checkbox
-                                status={selectedHobbies.includes(Hobbies.Singing) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Hobbies.Singing, selectedHobbies, setSelectedHobbies)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 7}}>Writing</Text>
-                            <Checkbox
-                                status={selectedHobbies.includes(Hobbies.Writing) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Hobbies.Writing, selectedHobbies, setSelectedHobbies)}
-                            />
-                        </View>
-                    </View>
-
-                    <Text style={styles.choiceContainer}>Select Movie Genres:</Text>
-                    <View style={styles.checkboxContainer}>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Action</Text>
-                            <Checkbox
-                                status={selectedMovieGenres.includes(MovieGenres.Action) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(MovieGenres.Action, selectedMovieGenres, setSelectedMovieGenres)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: -6}}>Comedy</Text>
-                            <Checkbox
-                                status={selectedMovieGenres.includes(MovieGenres.Comedy) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(MovieGenres.Comedy, selectedMovieGenres, setSelectedMovieGenres)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 10}}>Horror</Text>
-                            <Checkbox
-                                status={selectedMovieGenres.includes(MovieGenres.Horror) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(MovieGenres.Horror, selectedMovieGenres, setSelectedMovieGenres)}
-                            />
-                        </View>
-                    </View>
                 </View>
                 <View style={styles.button}>
                     {isLoading ? (
                         <ActivityIndicator size="small" color="#915bc7" />
                     ) : (
-                        <LogInButton text="Next" onPress={onSignUpPressed} />
+                        <LogInButton text="Next" onPress={onNext} />
                     )}
                 </View>
             </View>

@@ -1,134 +1,18 @@
-mutation createCoachee(
-    $firstName: String!
-    $lastName: String!
-    $address: String!
-    $birthday: DateTime!
-    $email: String!
-    $password: String!
-    $profilePicture: String!
-    $mantra: String!
-    $bio: String!
-    $affiliations: String!
-    $games: [Games!]!
-    $hobbies: [Hobbies!]!
-    $moviesGenres: [MovieGenres!]!
-) {
-    createCoachee(
-        input: {
-            firstName: $firstName
-            lastName: $lastName
-            address: $address
-            birthday: $birthday
-            email: $email
-            password: $password
-            profilePicture: $profilePicture
-            mantra: $mantra
-            bio: $bio
-            affiliations: $affiliations
-            games: $games
-            hobbies: $hobbies
-            moviesGenres: $moviesGenres
-        }
-    ) {
-        id
-        email
-    }
-}
-mutation createCoach(
-    $firstName: String!
-    $lastName: String!
-    $birthday: DateTime!
-    $email: String!
-    $password: String!
-    $workplaceAddress: String!
-    $profilePicture: String!
-    $mantra: String!
-    $bio: String!
-    $affiliations: String!
-    $sport: Sport!
-    $games: [Games!]!
-    $hobbies: [Hobbies!]!
-    $moviesGenres: [MovieGenres!]!
-) {
-    createCoach(
-        input: {
-            firstName: $firstName
-            lastName: $lastName
-            birthday: $birthday
-            email: $email
-            password: $password
-            workplaceAddress: $workplaceAddress
-            profilePicture: $profilePicture
-            mantra: $mantra
-            bio: $bio
-            affiliations: $affiliations
-            sport: $sport
-            games: $games
-            hobbies: $hobbies
-            moviesGenres: $moviesGenres
-        }
-    ) {
-        id
-        email
-    }
+mutation CreateCoach($input: CreateCoachInput!, $interestsInput: [CreateCoachInterestInput!]!, $sportsInput: [CreateSportInput!]!) {
+  createCoach(input: $input, interestsInput: $interestsInput, sportsInput: $sportsInput) {
+    id
+    firstName
+    lastName
+  }
 }
 
 
-mutation CreateCoachingRelationship($coachId: Int!, $coacheeId: Int!) {
-    createCoachingRelationship(
-        input: {
-            coachId: $coachId
-            coacheeId: $coacheeId
-        }
-    ) {
-        id
-        coachId
-        coacheeId
-        messagingStarted
-        active
-        createdAt
-    }
-}
 
-mutation CreateBooking(
-    $input: CreateBookingInput!
-    $slotsInput: [CreateBookingSlotInput!]!
-) {
-    createBooking(input: $input, slotsInput: $slotsInput) {
-        id
-        coacheeId
-        coachId
-        serviceType
-        status
-        additionalNotes
-        bookingSlots {
-            id
-            bookingId
-            date
-            startTime
-            endTime
-        }
-    }
-}
-
-mutation CreateReview(
-    $starRating: Int!
-    $comment: String!
-    $coachId: Int!
-    $coacheeId: Int!
-) {
-    createReview(
-        input: {
-            starRating: $starRating
-            comment: $comment
-            coachId: $coachId
-            coacheeId: $coacheeId
-        }
-    ) {
-        id
-        starRating
-        comment
-        coachId
-        coacheeId
-    }
+mutation CreateCoachee($input: CreateCoacheeInput!, $interestsInput: [CreateCoacheeInterestInput!]!) {
+  createCoachee(input: $input, interestsInput: $interestsInput) {
+    id
+    firstName
+    lastName
+    email
+  }
 }
