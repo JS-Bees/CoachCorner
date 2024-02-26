@@ -21,6 +21,7 @@ import Booking_Sessions from './screens/Sessions';
 import SplashScreen from './screens/Authentication/SplashScreen';
 import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
+import ChooseSport from './screens/Authentication/InterestPickingScreens/ChooseSport';
 import ChooseVideoGames from './screens/Authentication/InterestPickingScreens/VideoGames';
 import ChooseHobbies from './screens/Authentication/InterestPickingScreens/Hobbies';
 import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieGenre';
@@ -45,7 +46,7 @@ import {
     cacheExchange,
     fetchExchange,
 } from 'urql';
-import ChooseSport from './screens/Authentication/InterestPickingScreens/ChooseSport';
+
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
@@ -101,7 +102,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="SignupCoachee">
+                <RootStack.Navigator initialRouteName="LogIn">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}

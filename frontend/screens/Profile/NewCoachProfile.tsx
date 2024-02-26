@@ -1,19 +1,23 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView, Alert, TextInput, Animated} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { useRef } from 'react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FindCoachByIdDocument, UpdateCoachProfileDocument } from '../../generated-gql/graphql';
+import { useMutation, useQuery } from 'urql';
+
 
 
 import PagerView from 'react-native-pager-view';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-interface CoacheeProfile {
+interface CoachProfile {
     coachName: string;
-    mainSport: string;
+    mainSport:  string[],
     imageSource: ImageSourcePropType;
     about: string;
     achievements: string;
@@ -36,12 +40,94 @@ const NewCoachProfile = () => {
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition] = useState<'left' | 'right'>('right');
     const [activeTab, setActiveTab] = useState(0);
+    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+
+    const [, executeMutation] = useMutation(UpdateCoachProfileDocument);
+
+    const [{ data: coachData, fetching, error }] = useQuery({
+        query: FindCoachByIdDocument, // Use the Coachee query document
+        variables: {
+            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
+
+    const [editedBio, setEditedBio] = useState<string>(coachData?.findCoachByID.bio || '');
+    const [editedAddress, setEditedAddress] = useState<string>(coachData?.findCoachByID.address || '');
+
+
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token);
+                setUserToken(token);
+                console.log(coachData?.findCoachByID?.firstName)
+                console.log(coachData?.findCoachByID.lastName)
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+    
+        fetchUserToken();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token);
+                setUserToken(token);
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+    
+        fetchUserToken();
+    }, []);
+    
 
     const toggleDrawer = () => {
-        if (drawerPosition === 'right') {
-            drawer.current?.openDrawer();
-        } else {
+        if (drawer.current) {
+            drawer.current.openDrawer();
+        }
+    };
+
+    const handleSaveChanges = async () => {
+        // Check if either bio or address is empty
+        if ((!editedBio.trim() && !editedAddress.trim()) || 
+            (editedBio.trim() === coachData?.findCoachByID.bio && editedAddress.trim() === coachData?.findCoachByID.address)) 
+            {
+            Alert.alert('No changes made.');
+            return;
+        }
+    
+        try {
+            await executeMutation({
+                updateCoachProfileId: parseInt(userToken),
+                input: {
+                    bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio,
+                    address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address,
+                    mantra: "new mantra",
+                    profilePicture: "new profile picture"
+                }
+            });
+    
+            // Update the original bio and address if they were changed
+            if (editedBio.trim()) {
+                setEditedBio(editedBio);
+            }
+            if (editedAddress.trim()) {
+                setEditedAddress(editedAddress);
+            }
+    
+            // Close the drawer
             drawer.current?.closeDrawer();
+        } catch (error) {
+            console.error('Error saving changes:', error);
+            Alert.alert('Error saving changes. Please try again.');
         }
     };
 
@@ -58,32 +144,98 @@ const NewCoachProfile = () => {
 
     const handleNavigateBack = () => {
         navigation.goBack();
+        // Clear the editedBio and editedAddress inputs when navigating back
+        setEditedBio('');
+        setEditedAddress('');
     };
 
-    const CoacheeProfiles: CoacheeProfile[] = [
+    const CoachProfiles: CoachProfile[] = [
         {
-            coachName: "Jane Smith",
-            mainSport: "Basketball",
+            coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
+            mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', '), // Map over sports array and join them"V 
             imageSource: require('../../assets/Jane_Smith.png'),
-            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+            about: coachData?.findCoachByID.bio,
             achievements: "None at the moment",
-            workplaceAddress: "Apt. 5B, Oakwood Apartments, Park Avenue, Springfield, IL 62702, United States",
-            interests: {
-                movieGenres:["Romance, Comedy"],
-                hobbies: ["writing, reading"],
-                videoGames: ["valorant, pubg"]      
-            }
-
-        },
+            workplaceAddress: coachData?.findCoachByID.address,
+            interests: coachData?.findCoachByID.interests.reduce((acc, interest) => {
+                if (interest.type === 'Movie Genre') {
+                  acc.movieGenres.push(interest.name);
+                } else if (interest.type === 'Hobby') {
+                  acc.hobbies.push(interest.name);
+                } else if (interest.type === 'Game') {
+                  acc.videoGames.push(interest.name);
+                }
+                return acc;
+              }, {
+                movieGenres: [],
+                hobbies: [],
+                videoGames: [],
+              }),
+            },
     ]
+
+    const [isEditMode, setIsEditMode] = useState(false);
+    const slideAnimation = useRef(new Animated.Value(0)).current;
+    const opacityAnimation = useRef(new Animated.Value(0)).current;
+
+
+    useEffect(() => {
+        if (isEditMode) {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [isEditMode]);
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <Image source={CoacheeProfiles[0].imageSource} style={styles.circleImage}/>
-            <TouchableOpacity style={styles.drawerButton}> 
+            <Image source={CoachProfiles[0]?.imageSource} style={styles.circleImage}/>
+            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText}>Edit Profile</Text>
             </TouchableOpacity>
+            {isEditMode && (
+                <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
+                    <TextInput
+                        style={styles.input}
+                        value={editedBio}
+                        onChangeText={setEditedBio}
+                        placeholder="Edit Bio"
+                        multiline={true}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={editedAddress}
+                        onChangeText={setEditedAddress}
+                        placeholder="Edit Address"
+                    />
+                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                        <Text style={styles.buttonText2}>Save Changes</Text>
+                    </TouchableOpacity>
+                </Animated.View>
+            )}
             <TouchableOpacity style={styles.drawerButton} > 
                 <Icon name="settings-outline" size={30} color="#7E3FF0" />
                 <Text style={styles.buttonText}>Account Settings</Text>
@@ -106,7 +258,8 @@ const NewCoachProfile = () => {
             </TouchableOpacity>
         </View>
     );
-
+    
+    
     return (
         <DrawerLayoutAndroid
             ref={drawer}
@@ -116,7 +269,7 @@ const NewCoachProfile = () => {
         >
             <View style={styles.container}>
                 <View style={styles.subContainer}>
-                    <Image source={CoacheeProfiles[0].imageSource} style={styles.profileImage}/>
+                    <Image source={CoachProfiles[0].imageSource} style={styles.profileImage}/>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={handleNavigateBack}>
                             <Icon name="arrow-back-circle" size={30} color="#FDDE6E" />
@@ -125,8 +278,8 @@ const NewCoachProfile = () => {
                             <Icon name="settings-outline" size={30} color="#FDDE6E" style={styles.settingsIcon} />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.headerText}>{CoacheeProfiles[0].coachName}</Text>
-                    <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text>
+                    <Text style={styles.headerText}>{CoachProfiles[0].coachName}</Text>
+                    <Text style={styles.subText}>{CoachProfiles[0].mainSport}</Text>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
@@ -141,34 +294,35 @@ const NewCoachProfile = () => {
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>
                         <View key="1">
                            <ScrollView>
-                           <Text style={styles.titleHeader}>Bio</Text>
-                            <Text style={styles.contentText}>{CoacheeProfiles[0].about}</Text>
+                           <Text style={styles.titleHeader}>  Bio</Text>
+                            <Text style={styles.contentText}>{CoachProfiles[0].about}</Text>
                             <Text style={styles.titleHeader}> Workplace Address</Text>
-                            <Text style={styles.contentText}>{CoacheeProfiles[0].workplaceAddress}</Text>
+                            <Text style={styles.contentText}>{CoachProfiles[0].workplaceAddress}</Text>
                             
-                            <Text style={styles.titleHeader}>Interests</Text>
+                            <Text style={styles.titleHeader}> Interests</Text>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Movies</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests.movieGenres.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>Movies:</Text>
+                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.movieGenres?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
                             <Text style={styles.subHeader}>Hobbies:</Text>
-                            <Text style={styles.subontentText}> {CoacheeProfiles[0].interests.hobbies.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subontentText}> {CoachProfiles[0].interests?.hobbies?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Video Games</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests.videoGames.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>   Video Games:</Text>
+                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.videoGames?.join(', ')}{"\n"}</Text>
                             </View>
+             
                            </ScrollView>
                         </View>
                         <View key="2">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
+                            <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
                         </View>
                         <View key="3">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
+                            <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
                         </View>
                     </PagerView>
                 </View>
@@ -210,17 +364,14 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     headerText: {
-        position: "absolute",
         paddingTop: "5%",
-        top: "34%",
-        right: "59%",
+        right: "18%",
         fontSize: 25,
         fontWeight: "400",
         color: "#7E3FF0"
     },
     subText: {
         paddingTop: "1%",
-        top: "5%",
         right: "30%",
         fontSize: 18,
         fontWeight: "300",
@@ -239,7 +390,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         paddingVertical: 10,
-        top: "10%",
         width: '100%',
     },
     tabButton: {
@@ -249,7 +399,6 @@ const styles = StyleSheet.create({
     pagerView: {
         flex: 1,
         width: '100%',
-        top: "2%"
     },
     drawerContainer: {
         flex: 1,
@@ -316,7 +465,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     logOutButton: {
-        top: "80%", 
+        top: "105%", 
         flexDirection: "row",
     },
     buttonText: {
@@ -326,7 +475,28 @@ const styles = StyleSheet.create({
         color: "#7E3FF0",
         zIndex: 3.
     },
+    buttonText2: {
+        top: "2%",
+        marginLeft: "5%",
+        fontWeight: "600",
+        color: "white",
+        zIndex: 3.
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+        width: 250,
+    },
+    saveButton: {
+        backgroundColor: '#7E3FF0',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        width: 250,
+    },
   
 })
-
 export default NewCoachProfile;

@@ -1,19 +1,22 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView, TextInput} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { useRef } from 'react';
-import { useState } from 'react';
-
-
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FindCoacheeByIdDocument, UpdateCoacheeProfileDocument } from '../../generated-gql/graphql';
+import { useMutation, useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Alert } from 'react-native';
+import { Animated } from 'react-native';
 
 interface CoacheeProfile {
     coacheeName: string;
-    mainSport: string;
+    // mainSport: string;
     imageSource: ImageSourcePropType;
     about: string;
     achievements: string;
@@ -28,23 +31,90 @@ interface CoacheeProfile {
 
 
 
-
-
-
 const NewCoacheeProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const pagerRef = useRef<PagerView>(null);
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition] = useState<'left' | 'right'>('right');
     const [activeTab, setActiveTab] = useState(0);
+    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+    const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument);
+
+    const [{ data: coacheeData, fetching, error }] = useQuery({
+        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        variables: {
+            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
+
+    const [editedBio, setEditedBio] = useState<string>(coacheeData?.findCoacheeByID.bio || '');
+    const [editedAddress, setEditedAddress] = useState<string>(coacheeData?.findCoacheeByID.address || '');
+
+
+
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token);
+                setUserToken(token);
+                console.log(coacheeData?.findCoacheeByID?.firstName)
+                console.log(coacheeData?.findCoacheeByID.lastName)
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+    
+        fetchUserToken();
+    }, []);
+
+    
+    
 
     const toggleDrawer = () => {
-        if (drawerPosition === 'right') {
-            drawer.current?.openDrawer();
-        } else {
-            drawer.current?.closeDrawer();
+        if (drawer.current) {
+            drawer.current.openDrawer();
         }
     };
+
+    const handleSaveChanges = async () => {
+        // Check if either bio or address is empty
+        if ((!editedBio.trim() && !editedAddress.trim()) || 
+            (editedBio.trim() === coacheeData?.findCoacheeByID.bio && editedAddress.trim() === coacheeData?.findCoacheeByID.address)) 
+            {
+            Alert.alert('No changes made.');
+            return;
+        }
+    
+        try {
+            await executeMutation({
+                updateCoacheeProfileId: parseInt(userToken),
+                input: {
+                    bio: editedBio.trim() ? editedBio : coacheeData?.findCoacheeByID.bio,
+                    address: editedAddress.trim() ? editedAddress : coacheeData?.findCoacheeByID.address,
+                    mantra: "new mantra",
+                    profilePicture: "new profile picture"
+                }
+            });
+    
+            // Update the original bio and address if they were changed
+            if (editedBio.trim()) {
+                setEditedBio(editedBio);
+            }
+            if (editedAddress.trim()) {
+                setEditedAddress(editedAddress);
+            }
+    
+            // Close the drawer
+            drawer.current?.closeDrawer();
+        } catch (error) {
+            console.error('Error saving changes:', error);
+            Alert.alert('Error saving changes. Please try again.');
+        }
+    };
+
 
     const goToPage = (page: number) => {
         pagerRef.current?.setPage(page);
@@ -59,36 +129,106 @@ const NewCoacheeProfile = () => {
 
     const handleNavigateBack = () => {
         navigation.goBack();
+        // Clear the editedBio and editedAddress inputs when navigating back
+        setEditedBio('');
+        setEditedAddress('');
     };
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
-            coacheeName: "Angelina Maverick",
-            mainSport: "Basketball",
+            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
+            // mainSport: "Basketball",
             imageSource: require('../../assets/angelina.jpg'),
-            about: "Angelina Maverick is a dedicated student with a passion for basketball. Despite facing challenges in taking basketball as part of her Physical Education curriculum, Angelina remains determined to improve her skills and overcome obstacles. She is committed to her goals and seeks guidance to excel in basketball and achieve her full potential both on and off the court.",
+            about: coacheeData?.findCoacheeByID.bio,
             achievements: "None at the moment",
-            address: "Apt. 5B, Oakwood Apartments, Park Avenue, Springfield, IL 62702, United States",
+            address: coacheeData?.findCoacheeByID.address,
             age: 19,
-            interests: {
-                movieGenres:["Romance, Comedy"],
-                hobbies: ["writing, reading"],
-                videoGames: ["valorant, pubg"]      
-            }
+            interests: coacheeData?.findCoacheeByID.interests.reduce((acc, interest) => {
+                if (interest.type === 'Movie Genre') {
+                  acc.movieGenres.push(interest.name);
+                } else if (interest.type === 'Hobby') {
+                  acc.hobbies.push(interest.name);
+                } else if (interest.type === 'Game') {
+                  acc.videoGames.push(interest.name);
+                }
+                return acc;
+              }, {
+                movieGenres: [],
+                hobbies: [],
+                videoGames: [],
+              }),
 
         },
     ]
+    const [isEditMode, setIsEditMode] = useState(false);
+    const slideAnimation = useRef(new Animated.Value(0)).current;
+    const opacityAnimation = useRef(new Animated.Value(0)).current;
+
+
+    useEffect(() => {
+        if (isEditMode) {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [isEditMode]);
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <Image source={CoacheeProfiles[0].imageSource} style={styles.circleImage}/>
-            <TouchableOpacity style={styles.drawerButton}> 
+            <Image source={CoacheeProfiles[0]?.imageSource} style={styles.circleImage}/>
+            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText}>Edit Profile</Text>
             </TouchableOpacity>
+            {isEditMode && (
+                <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
+                    <TextInput
+                        style={styles.input}
+                        value={editedBio}
+                        onChangeText={setEditedBio}
+                        placeholder="Edit Bio"
+                        multiline={true}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={editedAddress}
+                        onChangeText={setEditedAddress}
+                        placeholder="Edit Address"
+                    />
+                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+                        <Text style={styles.buttonText2}>Save Changes</Text>
+                    </TouchableOpacity>
+                </Animated.View>
+            )}
             <TouchableOpacity style={styles.drawerButton} > 
                 <Icon name="settings-outline" size={30} color="#7E3FF0" />
                 <Text style={styles.buttonText}>Account Settings</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.drawerButton} > 
+                <Icon name="pulse-outline" size={30} color="#7E3FF0" />
+                <Text style={styles.buttonText}>My Reviews</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
                 <Icon name="notifications-outline" size={30} color="#7E3FF0" />
@@ -124,7 +264,7 @@ const NewCoacheeProfile = () => {
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName},  {CoacheeProfiles[0].age}</Text>
-                    <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text>
+                    {/* <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text> */}
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
@@ -147,18 +287,18 @@ const NewCoacheeProfile = () => {
                             <Text style={styles.titleHeader}>Interests</Text>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Movies</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests.movieGenres.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>Movies:</Text>
+                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests?.movieGenres?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
                             <Text style={styles.subHeader}>Hobbies:</Text>
-                            <Text style={styles.subontentText}> {CoacheeProfiles[0].interests.hobbies.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subontentText}> {CoacheeProfiles[0].interests?.hobbies?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Video Games</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests.videoGames.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>   Video Games:</Text>
+                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests?.videoGames?.join(', ')}{"\n"}</Text>
                             </View>
                            </ScrollView>
                         </View>
@@ -318,6 +458,28 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#7E3FF0",
         zIndex: 3.
+    },
+    buttonText2: {
+        top: "2%",
+        marginLeft: "5%",
+        fontWeight: "600",
+        color: "white",
+        zIndex: 3.
+    },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+        width: 250,
+    },
+    saveButton: {
+        backgroundColor: '#7E3FF0',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        width: 250,
     },
   
 })

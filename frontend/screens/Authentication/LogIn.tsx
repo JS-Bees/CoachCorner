@@ -100,60 +100,67 @@ const LogIn = () => {
   };
   
 
-  const handleLoginError = () => {
-    setEmailPasswordError('Invalid Email or Password');
-    console.log("Invalid Email or Password")
+  const handleLoginErrorCoach = () => { 
+    const errorMessage = coachResult.error ? coachResult.error.message.replace('[GraphQL] ', '') : 'An error occurred';
+    setEmailPasswordError(errorMessage);
   };
-
-
-
+  
+  const handleLoginErrorCoachee = () => {
+    const errorMessage = coacheeResult.error ? coacheeResult.error.message.replace('[GraphQL] ', '') : 'An error occurred';
+    setEmailPasswordError(errorMessage);
+  };
   const onLogInPressed = async () => {
     if (!Email || !Password) {
-      handleLoginError();
-      console.log("error");
+      if (CoachOrCoachee === "coach") {
+        handleLoginErrorCoach();
+      } else if (CoachOrCoachee === "coachee") {
+        handleLoginErrorCoachee();
+      }
       return;
     }
   
     setLoading(true); // Start loading
   
-    if (CoachOrCoachee === "coach") {
-      await executeCoachQuery(); // Execute the coach query
-    } else {
-      await executeCoacheeQuery(); // Execute the coachee query
-    }
+    try {
+      if (CoachOrCoachee === "coach") {
+        await executeCoachQuery(); // Execute the coach query
+      } else {
+        await executeCoacheeQuery(); // Execute the coachee query
+      }
   
-    setTimeout(() => {
+      // After the queries finish, you can access the data
+      if (CoachOrCoachee === "coach" && coachResult.data) {
+        // Handle coach result
+        const coachData = coachResult.data.findCoachByEmailAndPassword;
+        if (coachData) {
+          const userId = coachData.id;
+          await storeToken(userId.toString()); // Store user ID as async token
+          navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
+        } else {
+          handleLoginErrorCoach();
+        }
+      } else if (CoachOrCoachee === "coachee" && coacheeResult.data) {
+        // Handle coachee result
+        const coacheeData = coacheeResult.data.findCoacheeByEmailAndPassword;
+        if (coacheeData) {
+          const userId = coacheeData.id;
+          await storeToken(userId.toString()); // Store user ID as async token
+          navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
+        } else {
+          handleLoginErrorCoachee();
+        }
+      } else {
+        // Handle login error for coachee
+        handleLoginErrorCoachee();
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      // Handle any errors here
+    } finally {
       setLoading(false); // Stop loading
-    }, 2000); // Adjust the delay time as needed
-    
-    // After the queries finish, you can access the data
-    if (CoachOrCoachee === "coach" && coachResult.data) {
-      // Handle coach result
-      const coachData = coachResult.data.findCoachByEmailAndPassword;
-      if (coachData) {
-        const userId = coachData.id;
-        storeToken(userId.toString()); // Store user ID as async token
-        navigation.navigate('CoachDashboard'); // Navigate to coach dashboard
-        console.log(coachData)
-      } else {
-        handleLoginError();
-      }
-    } else if (CoachOrCoachee === "trainee" && coacheeResult.data) {
-      // Handle coachee result
-      const coacheeData = coacheeResult.data.findCoacheeByEmailAndPassword;
-      if (coacheeData) {
-        const userId = coacheeData.id;
-        storeToken(userId.toString()); // Store user ID as async token
-        navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
-        console.log(coacheeData)
-      } else {
-        handleLoginError();
-      }
-    } else {
-      // Handle login error
-      handleLoginError();
     }
   };
+  
 
   const onForgotPressed = () => {
     // Add logic for password reset here
@@ -175,7 +182,7 @@ const LogIn = () => {
   };
 
   const handleTraineeButtonPress = () => {
-    setCoachOrCoachee('trainee');
+    setCoachOrCoachee('coachee');
     handleOpenSlideIn();
   };
 

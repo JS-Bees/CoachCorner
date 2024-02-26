@@ -14,7 +14,6 @@ export const findCoachByEmailAndPassword = queryField(
         },
         resolve: async (_, { email, password }, context: Context) => {
             // Search for a Coach with the provided email
-            console.log("Is it running?")
             const coach = await context.db.coach.findUnique({
                 where: { email, active: true }, // Include the 'active' condition
             });
