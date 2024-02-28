@@ -101,7 +101,6 @@ export const CreateCoacheeTaskInput = inputObjectType({
 export const CreateCoachInterestInput = inputObjectType({
     name: 'CreateCoachInterestInput',
     definition(t) {
-        // t.field(gqlTypes.CoachInterest.coachId);
         t.field(gqlTypes.CoachInterest.type);
         t.field(gqlTypes.CoachInterest.name);
     },
@@ -110,7 +109,6 @@ export const CreateCoachInterestInput = inputObjectType({
 export const CreateCoacheeInterestInput = inputObjectType({
     name: 'CreateCoacheeInterestInput',
     definition(t) {
-        // t.field(gqlTypes.CoacheeInterest.coacheeId);
         t.field(gqlTypes.CoacheeInterest.type);
         t.field(gqlTypes.CoacheeInterest.name);
     },
@@ -136,7 +134,6 @@ export const CreateMessageInput = inputObjectType({
 export const CreateSportInput = inputObjectType({
     name: 'CreateSportInput',
     definition(t) {
-        // t.field(gqlTypes.Sport.coachId);
         t.field(gqlTypes.Sport.type);
     },
 });
@@ -149,12 +146,37 @@ export const CreateSportsCredentialsInput = inputObjectType({
     },
 });
 
+export const CreateNewCoachInterestInput = inputObjectType({
+    name: 'CreateNewCoachInterestInput',
+    definition(t) {
+        t.field(gqlTypes.CoachInterest.coachId);
+        t.field(gqlTypes.CoachInterest.type);
+        t.field(gqlTypes.CoachInterest.name);
+    },
+});
+
+export const CreateNewCoacheeInterestInput = inputObjectType({
+    name: 'CreateNewCoacheeInterestInput',
+    definition(t) {
+        t.field(gqlTypes.CoacheeInterest.coacheeId);
+        t.field(gqlTypes.CoacheeInterest.type);
+        t.field(gqlTypes.CoacheeInterest.name);
+    },
+});
+
 // UPDATE INPUT TYPES
 
 export const UpdateBookingStatusInput = inputObjectType({
     name: 'UpdateBookingStatusInput',
     definition(t) {
         t.field(gqlTypes.Booking.status);
+    },
+});
+
+export const UpdateBookingSlotStatusInput = inputObjectType({
+    name: 'UpdateBookingSlotStatusInput',
+    definition(t) {
+        t.field(gqlTypes.BookingSlot.status);
     },
 });
 
@@ -182,5 +204,41 @@ export const UpdateContactedStatusInput = inputObjectType({
     name: 'UpdateContactedStatusInput',
     definition(t) {
         t.field(gqlTypes.Contact.contactedStatus);
+    },
+});
+
+export const UpdateCoachInterestInput = inputObjectType({
+    name: 'UpdateCoachInterestInput',
+    definition(t) {
+        t.field(gqlTypes.CoachInterest.type);
+        t.field(gqlTypes.CoachInterest.name);
+    },
+});
+
+export const UpdateCoacheeInterestInput = inputObjectType({
+    name: 'UpdateCoacheeInterestInput',
+    definition(t) {
+        t.field(gqlTypes.CoacheeInterest.type);
+        t.field(gqlTypes.CoacheeInterest.name);
+    },
+});
+
+export const UpdateCoachTaskInput = inputObjectType({
+    name: 'UpdateCoachTaskInput',
+    definition(t) {
+        t.field(gqlTypes.CoachTask.title);
+        t.field(gqlTypes.CoachTask.description);
+        t.field(gqlTypes.CoachTask.completionStatus);
+        t.field(gqlTypes.CoachTask.date);
+    },
+});
+
+export const UpdateCoacheeTaskInput = inputObjectType({
+    name: 'UpdateCoacheeTaskInput',
+    definition(t) {
+        t.field(gqlTypes.CoacheeTask.title);
+        t.field(gqlTypes.CoacheeTask.description);
+        t.field(gqlTypes.CoacheeTask.completionStatus);
+        t.field(gqlTypes.CoacheeTask.date);
     },
 });
