@@ -12,7 +12,6 @@ import { useQuery, useMutation} from 'urql';
 import { Picker } from '@react-native-picker/picker'; // Import the Picker component
 import dayjs from 'dayjs';
 
-
 const UPDATE_BOOKING_STATUS = `
   mutation UpdateBookingStatus($id: Int!, $status: BookingStatus!) {
     updateBookingStatus(id: $id, input: { status: $status }) {

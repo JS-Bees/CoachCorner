@@ -135,8 +135,6 @@ const ClientAppointments = () => {
         },
     ]);
 
-   
-
     useEffect(() => {
         setPage(0);
     }, []);
