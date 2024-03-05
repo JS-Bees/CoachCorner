@@ -7,25 +7,20 @@ import {
     TextInput,
     Pressable,
     Platform,
-    ActivityIndicator
+    ActivityIndicator,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
 import LogInButton from '../../components/Custom components/CustomButton';
 import { useMutation } from 'urql';
-import {
-    CreateCoachDocument,
-    Sport,
-    Games,
-    Hobbies,
-    MovieGenres,
-} from '../../generated-gql/graphql';
+import { CreateCoachDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RadioButton, Checkbox } from 'react-native-paper';
+// import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
 
-const SignUpForCoach = () => {
+
+const SignUpForCoach = ({route}) => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -40,15 +35,12 @@ const SignUpForCoach = () => {
     const [dateOfBirth, setDateofBirth] = useState('');
     const [profilePic] = useState('Fixed');
     const [mantra] = useState('Write mantra here');
-    const [bio] = useState('Enter Bio');   
-    const [affiliations] = useState('Enter Affilitations');
-    const [selectedSport, setSelectedSport] = useState<Sport[]>([]);
-    const [selectedGames, setSelectedGames] = useState<Games[]>([]);
-    const [selectedHobbies, setSelectedHobbies] = useState<Hobbies[]>([]);
-    const [selectedMovieGenres, setSelectedMovieGenres] = useState<MovieGenres[]>([]);
+    const [bio] = useState('Mt bio');   
+    const [coachingRole] = useState(false);
     const [, SignUpForCoach] = useMutation(CreateCoachDocument);
+      const [CoachorCoachee, setCoachOrCoachee] = useState('coach');
 
-    const [date, setdate] = useState(new Date());
+    const [Exact_Date, setdate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -58,9 +50,30 @@ const SignUpForCoach = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    
+
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
+   
     };
+
+    
+    // const navigateToHobbies = () => {
+    //     navigation.navigate('InterestPickingHobby', 
+    //     {  firstName: First_Name,
+    //         lastName: Last_Name,
+    //         birthday: date,
+    //         email: Email,
+    //         password: Password,
+    //         workplaceAddress: StreetAdd,
+    //         profilePic: profilePic,
+    //         mantra: mantra,
+    //         bio: bio,
+    //         coachingRole: coachingRole,
+            
+
+    //     }); 
+    // };
 
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -90,14 +103,14 @@ const SignUpForCoach = () => {
             toggleDatePicker();
       
             // Show an error message if the selected date is outside the allowed range
-            setErrorMessage(`Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
+            setErrorMessage(`Please select a valid date be tween ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
             setErrorModalVisible(true);
           }
         } else {
           toggleDatePicker();
         }
       };
-      
+
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
     const toggleCheckbox = (item: any, state: any, setState: any) => {
@@ -113,9 +126,7 @@ const SignUpForCoach = () => {
         return regex.test(First_Name) || regex.test(Last_Name);
     }
 
-
-    const onSignUpPressed = async () => {
-        try {
+    const onNext = async () => {
             // Validate the input fields
             if (
                 First_Name.trim() === '' ||
@@ -126,82 +137,101 @@ const SignUpForCoach = () => {
                 StreetAdd.trim() === '' ||
                 City.trim() === '' ||
                 Postal.trim() === '' ||
-                selectedSport.length === 0 ||
                 Password.trim() !== Repeat_Password.trim() 
-                // selectedGames.length === 0 ||
-                // selectedHobbies.length === 0 ||
-                // selectedMovieGenres.length === 0
+                
+                
             ) {
                 // Display an error message for incomplete fields
-                setErrorMessage('Please input the proper details.');
+                setErrorMessage('Please fill in all the required fields.');
                 setErrorModalVisible(true);
                 setIsLoading(false);
                 return; // Return early to prevent further execution
             }
 
-               // Check for integers in First_Name and Last_Name
+            
+            // Check for integers in First_Name and Last_Name
             if (containsInteger(First_Name, Last_Name)) {
                 setErrorMessage('First Name and Last Name cannot contain integers.');
                 setErrorModalVisible(true);
                 setIsLoading(false);
                 return; // Return early if validation fails
             }
-            setIsLoading(true); // Set isLoading to true when the signup process starts
+            // setIsLoading(true); // Set isLoading to true when the signup process starts
 
+      
 
             // Log the data before making the API call
             console.log("Signing up with data:", {
                 firstName: First_Name,
                 lastName: Last_Name,
-                birthday: date,
+                birthday: Exact_Date,
                 email: Email,
                 password: Password,
                 workplaceAddress: StreetAdd,
-                sport: selectedSport[0],
-                games: selectedGames,
-                hobbies: selectedHobbies,
-                moviesGenres: selectedMovieGenres,
+                CoachorCoachee: CoachorCoachee,
+                
             });
 
-            const { data, error, fetching } = await SignUpForCoach({
-                firstName: First_Name,
-                lastName: Last_Name,
-                birthday: date,
-                email: Email,
-                password: Password,
-                workplaceAddress: StreetAdd,
-                profilePicture: profilePic,
-                mantra: mantra,
-                bio: bio,
-                affiliations: affiliations,
-                sport: selectedSport[0],
-                games: selectedGames,
-                hobbies: selectedHobbies,
-                moviesGenres: selectedMovieGenres,
-            });
+            // const coachInput = {firstName: First_Name,
+            //     lastName: Last_Name,
+            //     birthday: date,
+            //     email: Email,
+            //     password: Password,
+            //     address: StreetAdd,
+            //     profilePicture: profilePic,
+            //     mantra: mantra,
+            //     bio: bio,
+            //     coachingRole: coachingRole}
 
-            if (error) {
-                console.error(error);
-            } else {
-                setSuccessMessage('Signed up successfully!');
-                toggleModal();
-                setFirst_Name('');
-                setLast_Name('');
-                setEmail('');
-                setPassword('');
-                setRepeat_Password('');
-                setStreetAddress('');
-                setCity('');
-                setPostal('');
-                setDateofBirth('');
-                setIsLoading(false);
-            }
-        } catch (err) {
-            console.error(err);
-            // Reset loading state to false in case of an error
-        } finally {
-            setIsLoading(false);
-        }
+            // const interestsInput = selectedHobbies.map(hobby => ({ hobby }));
+            
+            
+        //     const { data, error, fetching } = await SignUpForCoachee({
+        //         input: coachInput,
+        //         interestsInput: interestsInput,
+        //       });
+        //     navigateToHobbies()
+
+        //     if (Error) {
+        //         console.error(Error + "lol");
+
+        //     } else {
+        //         setSuccessMessage('Signed up successfully!');
+        //         toggleModal();
+        //         setFirst_Name('');
+        //         setLast_Name('');
+        //         setEmail('');
+        //         setPassword('');
+        //         setRepeat_Password('');
+        //         setStreetAddress('');
+        //         setCity('');
+        //         setPostal('');
+        //         setDateofBirth('');
+        //     }
+        // } catch (err) {
+        //     console.error(err);
+        //     // Reset loading state to false in case of an error
+        // } finally {
+        //     setIsLoading(false);
+        // }
+        console.log(Exact_Date)
+        navigation.navigate('SportPicking', 
+        {  firstName: First_Name,
+            lastName: Last_Name,
+            birthday: Exact_Date,
+            email: Email,
+            password: Password,
+            workplaceAddress: StreetAdd,
+            profilePic: profilePic,
+            mantra: mantra,
+            bio: bio,
+            coachingRole: coachingRole,
+            coachOrCoachee: CoachorCoachee
+            
+
+        }); 
+        
+            
     };
 
     return (
@@ -209,25 +239,28 @@ const SignUpForCoach = () => {
             <View style={styles.container}>
                 <View style={styles.iconContainer}>
                     <Text style={styles.textStyle}>Create Account</Text>
+                    <Text style={styles.subtitle}>Enter the required details to create an account</Text>
                 </View>
+
+
 
                 <View style={styles.customContainer}>
                     <InputSignUpPages
                         placeholder="Full Name"
                         value={First_Name}
-                        checkForInteger={true}
+                        checkForInteger
                         setValue={value => setFirst_Name(value.substring(0, 10))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="Last Name"
                         value={Last_Name}
-                        checkForInteger={true}
+                        checkForInteger
                         setValue={value => setLast_Name(value.substring(0, 10))} // Limit to 9 characters
                     />
                     <InputSignUpPages
-                        placeholder="Email"
+                        placeholder="johnsmith@gmail.com"
                         value={Email}
-                        checkEmailEnding={true}
+                        checkEmailEnding
                         setValue={setEmail}
                     />
                 </View>
@@ -237,14 +270,13 @@ const SignUpForCoach = () => {
                         placeholder="Password"
                         value={Password}
                         setValue={setPassword}
-                        secureTextEntry={true}
-                        passwordToMatch={Password}
+                        secureTextEntry
                     />
                     <InputSignUpPages
                         placeholder="Repeat Password"
                         value={Repeat_Password}
                         setValue={setRepeat_Password}
-                        secureTextEntry={true}
+                        secureTextEntry
                         passwordToMatch={Password}
                     />
                 </View>
@@ -256,7 +288,7 @@ const SignUpForCoach = () => {
                         <DateTimePicker
                             mode="date"
                             display="spinner"
-                            value={date}
+                            value={Exact_Date}
                             onChange={onChange}
                         />
                     )}
@@ -294,113 +326,12 @@ const SignUpForCoach = () => {
                         setValue={setPostal}
                         editable={false}
                     />
-                    <Text style={styles.choiceContainer}>Select Sport to coach:</Text>
-                    <View style={styles.radioContainer}>
-                        <View style={styles.radioButton}>
-                            <Text style={{ color: '#a19e9e' }}>Soccer</Text>
-                            <RadioButton
-                                value={Sport.Soccer}
-                                status={selectedSport[0] === Sport.Soccer ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedSport([Sport.Soccer])}
-                            />
-                        </View>
-                        <View style={styles.radioButton}>
-                            <Text style={{ color: '#a19e9e' }}>Basketball</Text>
-                            <RadioButton
-                                value={Sport.Basketball}
-                                status={selectedSport[0] === Sport.Basketball ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedSport([Sport.Basketball])}
-                            />
-                        </View>
-                        <View style={styles.radioButton}>
-                            <Text style={{ color: '#a19e9e' }}>Volleyball</Text>
-                            <RadioButton
-                                value={Sport.Volleyball}
-                                status={selectedSport[0] === Sport.Volleyball ? 'checked' : 'unchecked'}
-                                onPress={() => setSelectedSport([Sport.Volleyball])}
-                            />
-                        </View>
-                    </View>
-                    <Text style={styles.choiceContainer}>Select Video Games:</Text>
-                    <View style={styles.checkboxContainer}>
-                    <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>PUBG</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Pubg) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Pubg, selectedGames, setSelectedGames)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 15 }}>Dota</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Dota) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Dota, selectedGames, setSelectedGames)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 27 }}>LOL</Text>
-                            <Checkbox
-                                status={selectedGames.includes(Games.Lol) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Games.Lol, selectedGames, setSelectedGames)}
-                            />
-                        </View>
-                    </View>
-
-                    <Text style={styles.selectdHobbiesContainer}>Select Hobbies:</Text>
-                    <View style={styles.checkboxContainer}>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e' }}>Reading</Text>
-                            <Checkbox
-                                status={selectedHobbies.includes(Hobbies.Reading) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Hobbies.Reading, selectedHobbies, setSelectedHobbies)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: -1 }}>Singing</Text>
-                            <Checkbox
-                                status={selectedHobbies.includes(Hobbies.Singing) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Hobbies.Singing, selectedHobbies, setSelectedHobbies)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 7 }}>Writing</Text>
-                            <Checkbox
-                                status={selectedHobbies.includes(Hobbies.Writing) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(Hobbies.Writing, selectedHobbies, setSelectedHobbies)}
-                            />
-                        </View>
-                    </View>
-
-                    <Text style={styles.choiceContainer}>Select Movie Genres:</Text>
-                    <View style={styles.checkboxContainer}>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 9 }}>Action</Text>
-                            <Checkbox
-                                status={selectedMovieGenres.includes(MovieGenres.Action) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(MovieGenres.Action, selectedMovieGenres, setSelectedMovieGenres)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: -6 }}>Comedy</Text>
-                            <Checkbox
-                                status={selectedMovieGenres.includes(MovieGenres.Comedy) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(MovieGenres.Comedy, selectedMovieGenres, setSelectedMovieGenres)}
-                            />
-                        </View>
-                        <View style={styles.checkbox}>
-                            <Text style={{ color: '#a19e9e', marginLeft: 10 }}>Horror</Text>
-                            <Checkbox
-                                status={selectedMovieGenres.includes(MovieGenres.Horror) ? 'checked' : 'unchecked'}
-                                onPress={() => toggleCheckbox(MovieGenres.Horror, selectedMovieGenres, setSelectedMovieGenres)}
-                            />
-                        </View>
-                    </View>
                 </View>
                 <View style={styles.button}>
-                {isLoading ? (
+                    {isLoading ? (
                         <ActivityIndicator size="small" color="#915bc7" />
                     ) : (
-                        <LogInButton text="Sign Up" onPress={onSignUpPressed} />
+                        <LogInButton text="Next" onPress={onNext} />
                     )}
                 </View>
             </View>
@@ -447,7 +378,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#F9FBFC',
+        backgroundColor: 'white',
         zIndex: 0,
         paddingHorizontal: 20,
         paddingBottom: 20,
@@ -455,6 +386,7 @@ const styles = StyleSheet.create({
     customContainer: {
         alignItems: 'center',
         padding: 10,
+        marginRight: "7%"
     },
     button: {
         marginTop: 25,
@@ -509,11 +441,12 @@ const styles = StyleSheet.create({
         left: '-26%'
     },
     textStyle: {
-        fontSize: 24,
-        fontWeight: '900',
+        fontSize: 25,
+        paddingTop: 30,        
+        fontWeight: '200',
         fontFamily: 'Roboto',
-        color: '#915bc7',
-        textAlign: 'left',
+        color: '#7E3FF0',
+        textAlign: 'center',
     },
     // Modal styles
     modal: {
@@ -557,19 +490,10 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
     },
-    radioContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 10,
-    },
-    radioButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
     checkboxContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        marginTop: 10,
+        marginTop: 1,
     },
     checkbox: {
         flexDirection: 'row',
@@ -581,7 +505,14 @@ const styles = StyleSheet.create({
         marginTop: '7%',
         left: '-31%',
         justifyContent: 'flex-start',
+    },
+    subtitle: {
+        fontSize: 14,
+        fontWeight: '200',
+        fontFamily: 'Roboto',
+        color: '#656466',
     }
+  
 });
 
 export default SignUpForCoach;

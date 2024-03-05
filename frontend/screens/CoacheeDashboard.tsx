@@ -6,30 +6,32 @@ import {
     Image,
     Platform,
 } from 'react-native';
-import React, { useEffect, useState, } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+// import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
-import Profile from "../components/Profile Tiles/CoachProfileTile"
-import { SearchBar } from '@rneui/themed'; 
-import Icon from 'react-native-vector-icons/Ionicons'
-import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import Profile from '../components/Profile Tiles/CoachProfileTile';
+import { SearchBar } from '@rneui/themed';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+    ScrollView,
+    KeyboardAvoidingView,
+    TouchableOpacity,
+} from 'react-native';
+import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
-
-
-
-
 
 const CoacheeDashboard = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    // const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
@@ -42,18 +44,13 @@ const CoacheeDashboard = () => {
     const handleSeeAllPress = () => {
         setSeeAllCoaches(!seeAllCoaches);
         if (!seeAllCoaches) {
-          navigation.navigate('MyCoaches_alt'); 
+            navigation.navigate('MyCoaches_alt');
         }
     };
 
     const navigateToNotifications = () => {
-        navigation.navigate("NotificationPage");
-      };
-    
-    
-
-    
-
+        navigation.navigate('NotificationPage');
+    };
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -96,118 +93,147 @@ const CoacheeDashboard = () => {
         return null;
     }
 
-    const TopCoaches: Profile[] = [ //max 2
-        { //pictures should be in png so that it can be edited and put in smoothly
+    const TopCoaches: Profile[] = [
+        //max 2
+        {
+            //pictures should be in png so that it can be edited and put in smoothly
             name: 'Serena Williams',
             imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
             gainedStars: 3,
-            mainSport: "Tennis",
+            mainSport: 'Tennis',
             about: "Serena Jameka Williams is an American former professional tennis player.Widely regarded as one of the greatest tennis players of all time, she was ranked world No. 1 in singles by the Women's Tennis.",
-            workplaceAddress: "So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458"
-          
+            workplaceAddress:
+                'So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458',
         },
         {
             name: 'Kobe Brian',
             imageSource: require('../assets/Kobe_Brian.jpg'),
             gainedStars: 5,
-            mainSport: "Basketball",
-            about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
-            workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
+            mainSport: 'Basketball',
+            about: 'Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association',
+            workplaceAddress: '1551 N. Tustin Ave.Santa Ana, CA 92705',
         },
-        
     ];
 
-    const RecommendedCoaches: Profile[] = [ // max 2
+    const RecommendedCoaches: Profile[] = [
+        // max 2
         {
             name: 'John Doe',
-            imageSource: require('../assets/John_Doe.png'), 
+            imageSource: require('../assets/John_Doe.png'),
             gainedStars: 4,
-            mainSport: "Basketball",
-            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
-            workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
+            mainSport: 'Basketball',
+            about: 'John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.',
+            workplaceAddress:
+                '123 Main Street, Basketball Court City, Hoopsland, 56789',
         },
         {
             name: 'Kobe Brian',
             imageSource: require('../assets/Kobe_Brian.jpg'),
             gainedStars: 3,
-            mainSport: "Basketball",
-            about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
-            workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
+            mainSport: 'Basketball',
+            about: 'Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association',
+            workplaceAddress: '1551 N. Tustin Ave.Santa Ana, CA 92705',
         },
     ];
-
-   
 
     return (
         <View style={CoacheeDashboardStyle.container}>
             <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
-                <Text style={CoacheeDashboardStyle.greetings}>
-                    Welcome 
-                </Text>
+                <Text style={CoacheeDashboardStyle.greetings}>Welcome </Text>
                 <Text style={CoacheeDashboardStyle.name}>
                     {coacheeData?.findCoacheeByID?.firstName}!
                 </Text>
-                
             </View>
             <TouchableOpacity
-                onPress={() => navigation.navigate('NewCoacheeProfile')}>
-            <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'10%', marginTop: '-10%'}}/>
-            
-            </TouchableOpacity>
-           <TouchableOpacity onPress={navigateToNotifications}>
-           <View style={CoacheeDashboardStyle.iconContainer}>
-            <Icon name="notifications-outline" size={35} color='#7E3FF0' />
-            </View>
-           </TouchableOpacity>
-            <KeyboardAvoidingView
-            style={CoacheeDashboardStyle.container}
-            behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            <View style={CoacheeDashboardStyle.searchContainer}>
-                <SearchBar
-                 placeholder='Search for a sport'
-                 onChangeText={handleSearchChange}
-                 value={searchText}
-                 platform='android'
-                 containerStyle={CoacheeDashboardStyle.searchBarContainer}
-                 inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}/>
-            </View>
-
-
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 300}}>
-            <View style={CoacheeDashboardStyle.frameContainer}> 
-                <Text style={CoacheeDashboardStyle.frameText}>Find the right coach for you!</Text>
-                <Text style={CoacheeDashboardStyle.frameDescription}>Get trained by expert coaches in different sport fields</Text>
+                onPress={() => navigation.navigate('NewCoacheeProfile')}
+            >
                 <Image
-                    source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')} 
-                    style={{width: 120, height: 120, marginLeft:'65%', marginTop: '-15%'}}/>
-            </View>
+                    source={require('../assets/Woman.png')} // Add your profile image source here
+                    style={{
+                        width: 40,
+                        height: 40,
+                        marginLeft: '10%',
+                        marginTop: '-10%',
+                    }}
+                />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={navigateToNotifications}>
+                <View style={CoacheeDashboardStyle.iconContainer}>
+                    <Icon
+                        name="notifications-outline"
+                        size={35}
+                        color="#7E3FF0"
+                    />
+                </View>
+            </TouchableOpacity>
+            <KeyboardAvoidingView
+                style={CoacheeDashboardStyle.container}
+                behavior={Platform.OS === 'android' ? 'height' : 'padding'}
+            >
+                <View style={CoacheeDashboardStyle.searchContainer}>
+                    <SearchBar
+                        placeholder="Search for a sport"
+                        onChangeText={handleSearchChange}
+                        value={searchText}
+                        platform="android"
+                        containerStyle={
+                            CoacheeDashboardStyle.searchBarContainer
+                        }
+                        inputContainerStyle={
+                            CoacheeDashboardStyle.searchBarInputContainer
+                        }
+                    />
+                </View>
 
-            <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                <Text style={CoacheeDashboardStyle.greetings}> Top Coaches </Text>
+                <ScrollView
+                    contentInsetAdjustmentBehavior="scrollableAxes"
+                    style={{ marginTop: '1%', height: 300 }}
+                >
+                    <View style={CoacheeDashboardStyle.frameContainer}>
+                        <Text style={CoacheeDashboardStyle.frameText}>
+                            Find the right coach for you!
+                        </Text>
+                        <Text style={CoacheeDashboardStyle.frameDescription}>
+                            Get trained by expert coaches in different sport
+                            fields
+                        </Text>
+                        <Image
+                            source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')}
+                            style={{
+                                width: 120,
+                                height: 120,
+                                marginLeft: '65%',
+                                marginTop: '-15%',
+                            }}
+                        />
+                    </View>
 
-            </View>
-            <CoachProfiles profiles={ seeAllCoaches ? TopCoaches: TopCoaches.slice(0, 2)}/>
+                    <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                        <Text style={CoacheeDashboardStyle.greetings}>
+                            {' '}
+                            Top Coaches{' '}
+                        </Text>
+                    </View>
+                    <CoachProfiles
+                        profiles={
+                            seeAllCoaches ? TopCoaches : TopCoaches.slice(0, 2)
+                        }
+                    />
 
-    
-
-            <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                <Text style={CoacheeDashboardStyle.greetings}> Recommend for you </Text>
-                <TouchableOpacity onPress={handleSeeAllPress}>
-                <Text style={CoacheeDashboardStyle.seeAll}>
-                     See All
-                </Text>
-                </TouchableOpacity>
-            </View>
-            <CoachProfiles profiles={RecommendedCoaches}/>
-
-
-            </ScrollView>
-
+                    <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                        <Text style={CoacheeDashboardStyle.greetings}>
+                            {' '}
+                            Recommend for you{' '}
+                        </Text>
+                        <TouchableOpacity onPress={handleSeeAllPress}>
+                            <Text style={CoacheeDashboardStyle.seeAll}>
+                                See All
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <CoachProfiles profiles={RecommendedCoaches} />
+                </ScrollView>
             </KeyboardAvoidingView>
-
-
         </View>
     );
 };
@@ -227,19 +253,17 @@ const CoacheeDashboardStyle = StyleSheet.create({
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
 
-
     nameAndGreetingsContainer: {
-        paddingTop:"20%",
+        paddingTop: '20%',
         marginLeft: '25%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
 
-    topCoachesContainer:  {
-        paddingTop:"10%",
+    topCoachesContainer: {
+        paddingTop: '10%',
         marginLeft: '7%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
-    
 
     greetings: {
         fontFamily: 'Roboto',
@@ -250,9 +274,9 @@ const CoacheeDashboardStyle = StyleSheet.create({
         fontFamily: 'Roboto',
         fontSize: 18,
         color: '#7E3FF0',
-        marginLeft: '2%'
+        marginLeft: '2%',
     },
-  
+
     middleContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -277,16 +301,16 @@ const CoacheeDashboardStyle = StyleSheet.create({
         alignItems: 'center',
     },
     iconContainer: {
-        marginTop: "-10%",
+        marginTop: '-10%',
         marginLeft: '83%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
     imageLabel: {
         fontFamily: 'Roboto',
         fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        top: -2
+        top: -2,
     },
     imageStyle: {
         width: 65,
@@ -299,14 +323,16 @@ const CoacheeDashboardStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     searchContainer: {
-        borderWidth: 2, // Add a border
-        width: "85%",
+        borderWidth: 3, // Add a border
+        width: '85%',
         borderColor: '#7E3FF0', // Set the border color
         borderRadius: 15, // Add border radius to make it rounded
-        marginTop: "10%",
-        marginLeft: '7%',
-        paddingHorizontal: 10
+        marginTop: '10%',
+        marginLeft: 'auto', // Set left margin to auto
+        marginRight: 'auto', // Set right margin to auto
+        paddingHorizontal: 10,
     },
+    
     searchBarContainer: {
         // Set the dimensions of the SearchBar container
         width: 300, // Adjust the width as needed
@@ -314,55 +340,52 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
 
     searchBarInputContainer: {
-
         height: '100%', // Match the height of the container
     },
 
     frameContainer: {
-        backgroundColor: "#7E3FF0",
-        marginTop: "5%",
-        marginLeft: "7%",
+        backgroundColor: '#7E3FF0',
+        marginTop: '5%',
+        marginLeft: '7%',
         width: '85%',
-        height: "15%",
-        overflow: "hidden",
-        borderRadius: 16  
+        height: '15%',
+        overflow: 'hidden',
+        borderRadius: 16,
     },
     frameText: {
-        color: "white",
+        color: 'white',
         top: 16,
         left: 18,
         fontSize: 18,
         lineHeight: 24,
     },
     frameDescription: {
-        textAlign: "left",
+        textAlign: 'left',
         left: 18,
         top: 25,
         fontSize: 14,
         lineHeight: 18,
-        fontWeight: "500",
+        fontWeight: '500',
         color: 'white',
-        width: 206
+        width: 206,
     },
 
-    
     seeAll: {
-        color: "#7E3FF0",
+        color: '#7E3FF0',
         fontSize: 13,
         paddingTop: '1.5%',
-        marginLeft: '50%'
+        marginLeft: '50%',
     },
     seeAllRecommended: {
-        color: "#7E3FF0",
+        color: '#7E3FF0',
         fontSize: 13,
         paddingTop: '1.5%',
-        marginLeft: '25%'
+        marginLeft: '25%',
     },
     coachNameText: {
-       alignItems:'center',
-       justifyContent: "center",
-    }
-   
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
 
 export default CoacheeDashboard;

@@ -1,11 +1,11 @@
 import { mutationField, nonNull, arg } from 'nexus';
 import { Context } from '../context';
-import { Coachee, Coach, CoachingRelationship, Booking } from '../objectTypes';
+import { Coachee, Coach, Booking, Contact } from '../objectTypes';
 import {
-    MessagingStartedInput,
     UpdateBookingStatusInput,
     UpdateCoacheeProfileInput,
     UpdateCoachProfileInput,
+    UpdateContactedStatusInput,
 } from '../inputTypes';
 
 export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
@@ -60,40 +60,6 @@ export const updateCoachProfile = mutationField('updateCoachProfile', {
     },
 });
 
-// haven't tested
-export const updateMessagingStartedCoachingRelationship = mutationField(
-    'updateMessagingStartedCoachingRelationship',
-    {
-        type: CoachingRelationship,
-        args: {
-            id: nonNull(arg({ type: 'Int' })), // ID of the coaching relationship to update
-            input: nonNull(arg({ type: MessagingStartedInput })), // Input with messagingStarted field
-        },
-        resolve: async (_, { id, input }, context: Context) => {
-            // Check if the coaching relationship with the given ID exists
-            const existingRelationship =
-                await context.db.coachingRelationship.findUnique({
-                    where: { id },
-                });
-
-            if (!existingRelationship) {
-                throw new Error(
-                    `Coaching relationship with ID ${id} not found.`,
-                );
-            }
-
-            // Update the messagingStarted field
-            const updatedRelationship =
-                await context.db.coachingRelationship.update({
-                    where: { id },
-                    data: { messagingStarted: input.messagingStarted },
-                });
-
-            return updatedRelationship;
-        },
-    },
-);
-
 export const updateBookingStatus = mutationField('updateBookingStatus', {
     type: Booking,
     args: {
@@ -117,5 +83,33 @@ export const updateBookingStatus = mutationField('updateBookingStatus', {
         });
 
         return updatedBooking;
+    },
+});
+
+export const updateContactedStatus = mutationField('updateContactedStatus', {
+    type: Contact,
+    args: {
+        id: nonNull(arg({ type: 'Int' })), // ID of the contact to update
+        input: nonNull(arg({ type: UpdateContactedStatusInput })), // Input with fields to update
+    },
+    resolve: async (_, { id, input }, context: Context) => {
+        // Check if the contact with the given ID exists
+        const existingContact = await context.db.contact.findUnique({
+            where: { id },
+        });
+
+        if (!existingContact) {
+            throw new Error(`Contact with ID ${id} not found.`);
+        }
+
+        // Perform the update using Prisma
+        const updatedContact = await context.db.contact.update({
+            where: { id },
+            data: {
+                contactedStatus: input.contactedStatus,
+            },
+        });
+
+        return updatedContact;
     },
 });

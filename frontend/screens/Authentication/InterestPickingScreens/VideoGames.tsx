@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 type Game = 'PUBG' | 'DOTA' | 'LOL' | 'Valorant' | 'Overwatch';
 
-const ChooseVideoGames = () => {
+const ChooseVideoGames = ({route}) => {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -19,6 +19,11 @@ const ChooseVideoGames = () => {
         Valorant: false,
         Overwatch: false,
     });
+ 
+    const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
+    const { selectedHobbies } = route.params;
+    const { selectedSports } = route.params;
+
 
     const handleCheckboxChange = (game: Game) => {
       setCheckedGames((prevCheckedGames) => {
@@ -40,10 +45,32 @@ const ChooseVideoGames = () => {
     const areAnyChecked = Object.values(checkedGames).some((value) => value);
     const isMaxChecksReached = Object.values(checkedGames).filter((value) => value).length >= 4;
 
-  const handleButtonPress = () => {
-    navigation.navigate("InterestPickingHobby");
-  };
-  
+    const handleButtonPress = () => {
+      // Filter out the selected hobbies
+      const selectedGames = Object.keys(checkedGames)
+          .filter(game => checkedGames[game])
+          .map(game => ({
+              game
+          }));
+      
+      // Log the selected hobbies data
+      console.log(selectedGames);
+      console.log(firstName)
+      // Navigate to the next screen
+      navigation.navigate("InterestPickingMovie", 
+      { selectedSports,
+        selectedHobbies, 
+        selectedGames,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        birthday: birthday,
+        workplaceAddress: workplaceAddress,
+        coachOrCoachee: coachOrCoachee,
+      });
+    };
+    
 
   return (
     <View style={styles.container}>

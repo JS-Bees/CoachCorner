@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
+import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons
+import { AntDesign } from '@expo/vector-icons';
 
 const MyCoaches = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -16,7 +17,7 @@ const MyCoaches = () => {
   const [userID, setUserID] = useState<number>(Number); // Initialize userID state
 
   const navigateToCoachBookingPage = (item) => {
-    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee, coacheeId: item.coacheeId, coachId: item.coachId});
+    navigation.navigate('CoachBookingDrawer', { coachee: item.coachee, coacheeId: item.coacheeId, coachId: item.coachId, coacheeFirstName: item.coachee.firstName, coacheeLastName: item.coachee.lastName});
   };
   
   
@@ -57,6 +58,7 @@ const MyCoaches = () => {
     variables: { userID },
     requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
   });
+  
 
   if (fetching) {
     // Handle loading state here
@@ -112,10 +114,17 @@ const MyCoaches = () => {
           <DataTable.Cell>
             <Text>{item.coachee.firstName} {item.coachee.lastName} {" "}</Text>
           </DataTable.Cell>
-          <View style={{ marginRight: '-5%', marginTop: '1.4%' }}>
-            <Button onPress={() => toggleModal(item)}>
-              View Appointment
-            </Button>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                {/* Replace "View Appointments" button with chat and appointment icons */}
+                <TouchableOpacity onPress={() => navigateToCoachBookingPage(item)}>
+                <Ionicons name="chatbubble-ellipses-outline" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigateToCoachBookingPage(item)}>
+                <AntDesign name="book" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
+                </TouchableOpacity>
+                {/* <TouchableOpacity onPress={() => handleRemoveClick(item.id)}>
+                  <Ionicons name="trash-outline" size={24} color="red" />
+                  </TouchableOpacity> */}
           </View>
         </DataTable.Row>
           </TouchableOpacity>

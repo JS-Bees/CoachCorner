@@ -5,86 +5,95 @@ import {
     CreateBookingInput,
     CreateBookingSlotInput,
     CreateCoacheeInput,
-    CreateCoachingRelationshipInput,
+    CreateCoacheeInterestInput,
     CreateCoachInput,
+    CreateCoachInterestInput,
+    CreateCoachTaskInput,
+    CreateSportInput,
     CreateReviewInput,
+    CreateCoacheeTaskInput,
+    CreateSportsCredentialsInput,
+    CreateContactInput,
 } from '../inputTypes';
 import {
     Coachee,
     Coach,
-    CoachingRelationship,
     Booking,
     Review,
+    CoachTask,
+    CoacheeTask,
+    SportsCredential,
+    Contact,
 } from '../objectTypes';
 
+// Make this accept coachee interest input
 export const createCoachee = mutationField('createCoachee', {
     type: Coachee,
     args: {
         input: nonNull(arg({ type: CreateCoacheeInput })),
+        interestsInput: nonNull(
+            list(nonNull(arg({ type: CreateCoacheeInterestInput }))),
+        ),
+        // ^ not sure if this needs to be revised to not include arg
+        // if there's an issue with the args in the resolve portion start backend to generate interface
     },
-    resolve: async (_, { input }, context: Context) => {
-        const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with 10 salt rounds
+    resolve: async (_, { input, interestsInput }, context: Context) => {
+        const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
         const coacheeData = { ...input, password: hashedPassword };
-        return context.db.coachee.create({
-            data: coacheeData,
+        // Create the coachee and its interests in a single transaction
+        const coachee = await context.db.coachee.create({
+            data: {
+                ...coacheeData,
+                interests: {
+                    create: interestsInput,
+                },
+            },
+            include: {
+                interests: true,
+            },
         });
+
+        return coachee;
     },
 });
 
+// Make this accept coach interest and sports input
 export const createCoach = mutationField('createCoach', {
     type: Coach,
     args: {
         input: nonNull(arg({ type: CreateCoachInput })),
+        interestsInput: nonNull(
+            list(nonNull(arg({ type: CreateCoachInterestInput }))),
+        ),
+        sportsInput: nonNull(list(nonNull(arg({ type: CreateSportInput })))), // Add this line
     },
-    resolve: async (_, { input }, context: Context) => {
-        const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with 10 salt rounds
+    resolve: async (
+        _,
+        { input, interestsInput, sportsInput },
+        context: Context,
+    ) => {
+        const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with   10 salt rounds
         const coachData = { ...input, password: hashedPassword };
-        return context.db.coach.create({
-            data: coachData,
+        // Create the coach, its interests, and its sports in a single transaction
+        const coach = await context.db.coach.create({
+            data: {
+                ...coachData,
+                interests: {
+                    create: interestsInput,
+                },
+                sports: {
+                    create: sportsInput,
+                },
+            },
+            include: {
+                interests: true,
+                sports: true,
+            },
         });
+
+        return coach;
     },
 });
-
-// haven't tested yet
-export const createCoachingRelationship = mutationField(
-    'createCoachingRelationship',
-    {
-        type: CoachingRelationship,
-        args: {
-            input: nonNull(arg({ type: CreateCoachingRelationshipInput })),
-        },
-        resolve: async (_, { input }, context: Context) => {
-            // Perform validation and create the coaching relationship in your database.
-            // You can access input.coacheeId and input.coachId to create the relationship.
-
-            const { coacheeId, coachId } = input;
-
-            // Validate if the Coachee and Coach exist in your database, and other validation checks if needed.
-
-            const existingCoachee = await context.db.coachee.findUnique({
-                where: { id: coacheeId },
-            });
-            const existingCoach = await context.db.coach.findUnique({
-                where: { id: coachId },
-            });
-
-            if (!existingCoachee || !existingCoach) {
-                throw new Error('Coachee or Coach not found.');
-            }
-
-            // Create the coaching relationship
-            const coachingRelationship =
-                await context.db.coachingRelationship.create({
-                    data: {
-                        coacheeId,
-                        coachId,
-                    },
-                });
-
-            return coachingRelationship;
-        },
-    },
-);
 
 export const createBooking = mutationField('createBooking', {
     type: Booking,
@@ -93,7 +102,6 @@ export const createBooking = mutationField('createBooking', {
         slotsInput: nonNull(list(nonNull(CreateBookingSlotInput))),
     },
     resolve: async (_, { input, slotsInput }, context: Context) => {
-        // Create the booking in your database
         const booking = await context.db.booking.create({
             data: {
                 ...input,
@@ -129,65 +137,68 @@ export const createReview = mutationField('createReview', {
     },
 });
 
-// // HAVEN'T TESTED
-// export const createBooking = mutationField('createBooking', {
-//     type: Booking,
-//     args: {
-//         input: nonNull(arg({ type: CreateBookingInput })),
-//         slotsInput: nonNull(list(nonNull(CreateBookingSlotInput))),
-//     },
-//     resolve: async (_, { input, slotsInput }, context: Context) => {
-//         // Create the booking in your database
-//         const booking = await context.db.booking.create({
-//             data: {
-//                 coacheeId: input.coacheeId,
-//                 coachId: input.coachId,
-//                 serviceType: input.serviceType,
-//                 status: input.status,
-//                 additionalNotes: input.additionalNotes,
-//                 // Other relevant fields from input
-//             },
-//         });
+// createCoachTask
+export const createCoachTask = mutationField('createCoachTask', {
+    type: CoachTask,
+    args: {
+        input: nonNull(arg({ type: CreateCoachTaskInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        const coachTask = await context.db.coachTask.create({
+            data: input,
+        });
 
-//         // Create booking slots based on user input using a for loop
-//         const bookingSlots = [];
+        return coachTask;
+    },
+});
 
-//         for (const slotInput of slotsInput) {
-//             const createdSlot = await context.db.bookingSlot.create({
-//                 data: {
-//                     bookingId: booking.id,
-//                     date: slotInput.date,
-//                     startTime: slotInput.startTime,
-//                     endTime: slotInput.endTime,
-//                     // Other relevant fields from slotInput
-//                 },
-//             });
-//             bookingSlots.push(createdSlot);
-//         }
+// createCoacheeTask
+export const createCoacheeTask = mutationField('createCoacheeTask', {
+    type: CoacheeTask,
+    args: {
+        input: nonNull(arg({ type: CreateCoacheeTaskInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        // Create the coachee task in your database
+        const coacheeTask = await context.db.coacheeTask.create({
+            data: input,
+        });
 
-//         // Update the booking object with the associated booking slots in the database
-//         await context.db.booking.update({
-//             where: { id: booking.id },
-//             data: {
-//                 bookingSlots: {
-//                     connect: bookingSlots.map((slot) => ({ id: slot.id })),
-//                 },
-//             },
-//         });
+        return coacheeTask;
+    },
+});
 
-//         // Fetch the updated booking with booking slots
-//         const updatedBooking = await context.db.booking.findUnique({
-//             where: { id: booking.id },
-//             include: {
-//                 bookingSlots: true,
-//             },
-//         });
+// createSportCredentials
+export const createSportsCredentials = mutationField(
+    'createSportsCredentials',
+    {
+        type: SportsCredential,
+        args: {
+            input: nonNull(arg({ type: CreateSportsCredentialsInput })),
+        },
+        resolve: async (_, { input }, context: Context) => {
+            // Create the sports credentials in your database
+            const sportsCredentials = await context.db.sportsCredential.create({
+                data: input,
+            });
 
-//         if (!updatedBooking) {
-//             // Handle the case where the booking couldn't be retrieved
-//             throw new Error('Booking not found.');
-//         }
+            return sportsCredentials;
+        },
+    },
+);
 
-//         return updatedBooking;
-//     },
-// });
+// createContact
+export const createContact = mutationField('createContact', {
+    type: Contact,
+    args: {
+        input: nonNull(arg({ type: CreateContactInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        // Create the contact in your database
+        const contact = await context.db.contact.create({
+            data: input,
+        });
+
+        return contact;
+    },
+});

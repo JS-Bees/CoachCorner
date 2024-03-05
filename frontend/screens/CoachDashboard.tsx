@@ -16,21 +16,42 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-import { FindCoachByIdDocument } from '../generated-gql/graphql';
+// import { FindCoachByIdDocument } from '../generated-gql/graphql';
+import { BackHandler } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
-
 
 const CoachDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    // const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
-    
+
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+    useEffect(() => {
+        const backAction = () => {
+            if (useIsFocused()) {
+                // Prevent navigating back when the screen is focused
+                return true;
+            }
+            return false;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+
+        return () => {
+            backHandler.remove();
+        };
+    }, [useIsFocused]);
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -46,28 +67,28 @@ const CoachDashboard = () => {
     }, []);
 
     // Define a function to fetch coachee data by userID (token)
-    const useFetchCoachByUserID = (userID: any) => {
-        const [coachResult] = useQuery({
-            query: FindCoachByIdDocument, // Use the Coachee query document
-            variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-            },
-        });
+    // const useFetchCoachByUserID = (userID: any) => {
+    //     const [coachResult] = useQuery({
+    //         query: FindCoachByIdDocument, // Use the Coachee query document
+    //         variables: {
+    //             userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
+    //         },
+    //     });
 
-        return coachResult;
-    };
+    //     return coachResult;
+    // };
 
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
-    const {
-        data: coachData,
-        loading: coacheeLoading,
-        error: coacheeError,
-    } = useFetchCoachByUserID(userToken);
+    // // Example usage of the query function
+    // // Replace 'yourToken' with the actual token or userID you want to fetch
+    // const {
+    //     data: coachData,
+    //     loading: coacheeLoading,
+    //     error: coacheeError,
+    // } = useFetchCoachByUserID(userToken);
 
-    if (!fontsloaded) {
-        return null;
-    }
+    // if (!fontsloaded) {
+    //     return null;
+    // }
 
     return (
         <View style={CoachDashboardStyle.container}>
@@ -85,7 +106,7 @@ const CoachDashboard = () => {
                             Welcome Back!
                         </Text>
                         <Text style={CoachDashboardStyle.name}>
-                            {coachData?.findCoachByID?.firstName}
+                            {/* {coachData?.findCoachByID?.firstName} */}
                         </Text>
                     </View>
                 </View>
@@ -270,13 +291,13 @@ const CoachDashboardStyle = StyleSheet.create({
         fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        top: -2
+        top: -2,
     },
     imageStyle: {
         width: 65,
         height: 65,
         alignContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     buttonContainer: {
         flexDirection: 'row',

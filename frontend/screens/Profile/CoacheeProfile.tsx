@@ -175,6 +175,7 @@ const CoacheeProfile = () => {
     }, [isEditing]);
 
     const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument);
+
     const handleSaveButton = async () => {
         return await executeMutation({
             id: parseInt(userToken),
@@ -186,7 +187,7 @@ const CoacheeProfile = () => {
         })
             .then((res) => {
                 if (res) {
-                    setIsEditing(false);
+                    
                     console.log(
                         'affiliations',
                         res.data?.updateCoacheeProfile.affiliations,
@@ -200,7 +201,8 @@ const CoacheeProfile = () => {
                         'address',
                         res.data?.updateCoacheeProfile.address,
                     );
-                    return res.data;
+                    setIsEditing(false);
+
                 }
             })
             .catch((e) => {
@@ -224,12 +226,7 @@ const CoacheeProfile = () => {
                     onPress={showLogoutModal}
                 />
             </View>
-            {/* The Logout Confirmation Modal */}
-            <LogoutConfirmationModal
-                visible={isLogoutModalVisible}
-                onConfirm={onLogOutPressed} // This function logs out the user
-                onCancel={hideLogoutModal} // This function hides the modal
-            />
+
              <View style={styles.profileInfo}>
                 <Text
                     style={styles.normalText}
@@ -338,6 +335,13 @@ const CoacheeProfile = () => {
                     style={styles.image}
                 />
             </View>
+
+            {/* The Logout Confirmation Modal */}
+            <LogoutConfirmationModal
+                visible={isLogoutModalVisible}
+                onConfirm={onLogOutPressed} // This function logs out the user
+                onCancel={hideLogoutModal} // This function hides the modal
+            />
         </View>
     );
 };
