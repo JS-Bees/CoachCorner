@@ -7,71 +7,67 @@ import {
     ImageSourcePropType,
     TouchableOpacity
 } from 'react-native';
-import StarRating from '../StarRating';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 
-interface Profile {
-  id: string;
+interface CoacheeProfile {
   name: string;
   imageSource: ImageSourcePropType;
-  gainedStars: number;
   mainSport: string,
   about: string;
-  workplaceAddress: string;
-}
-
-interface CoachProfilesProp {
-  profiles: Profile[];
+  affliations: string; 
+  achievements: string;
 }
 
 
+interface CoacheeProfilesProp {
+  coacheeProfiles: CoacheeProfile[];
+}
 
-const CoachProfiles: React.FC<CoachProfilesProp> = ({ profiles }) => {
 
+
+const CoacheeProfile: React.FC<CoacheeProfilesProp> = ({ coacheeProfiles }) => {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showAll, setShowAll] = useState(false);
-  const visibleProfiles = showAll ? profiles : profiles.slice();
+  const visibleProfiles = showAll ? coacheeProfiles : coacheeProfiles.slice();
 
-  const handleProfileClick = (profile: Profile) => {
-    
-    navigation.navigate("PreviewPage", {
-      id: profile.id,
-      profile: profile,
-      gainedStars: profile.gainedStars,});
+  const handleProfileClick = (profile: CoacheeProfile) => {
+    navigation.navigate("CoacheePreviewPage", {
+      profile: profile,});
   };
   
 
     return (
-      <View style={CoachProfileStyle.coachProfiles}>
-      {visibleProfiles.map((profile, index) => (
+      <View style={CoacheeProfileStyle.coacheeProfiles}>
+      {visibleProfiles.map((coacheeProfiles, index) => (
         <TouchableOpacity
           key={index}
           style={[
-            CoachProfileStyle.coachBoxes,
+            CoacheeProfileStyle.coacheeBoxes,
             index % 2 === 1 ? { marginLeft: '9%' } : null, // Add marginLeft for every second tile
             index >= 2 ? { marginTop: '5%' } : null // Add marginTop for tiles starting from the third one
           ]}
-          onPress={() => handleProfileClick(profile)}
+            onPress={() => handleProfileClick(coacheeProfiles)}
         >
           <Image
-            source={profile.imageSource}
-            style={CoachProfileStyle.profileImage}
+            source={coacheeProfiles.imageSource}
+            style={CoacheeProfileStyle.profileImage}
           />
-          <Text style={CoachProfileStyle.coachNameText}>{profile.name}</Text>
-          <StarRating gainedStars={profile.gainedStars} starColor="#FECB2E" />
-          <Text style={CoachProfileStyle.sport}>{profile.mainSport}</Text>
+          <Text style={CoacheeProfileStyle.coacheeNameText}>{coacheeProfiles.name}</Text>
+          <Text style={CoacheeProfileStyle.sport}>{coacheeProfiles.mainSport}</Text>
         </TouchableOpacity>
       ))}
     </View>
     );
 };
 
-const CoachProfileStyle = StyleSheet.create({
-    coachProfiles: {
+const CoacheeProfileStyle = StyleSheet.create({
+    coacheeProfiles: {
         paddingBottom: '5%',
         flexDirection: 'row',
         flexWrap: "wrap",
@@ -91,7 +87,7 @@ const CoachProfileStyle = StyleSheet.create({
         marginTop: '1%',
         borderRadius: 20
     },
-    coachBoxes: {
+    coacheeBoxes: {
         backgroundColor: "white",
         marginTop: "4%",
         marginLeft: "4%",
@@ -103,7 +99,7 @@ const CoachProfileStyle = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center', 
     },
-    coachNameText: {
+    coacheeNameText: {
       textAlign: 'center',
         textAlignVertical: 'center',
     },
@@ -121,4 +117,4 @@ const CoachProfileStyle = StyleSheet.create({
 
 })
 
-export default CoachProfiles;
+export default CoacheeProfile;

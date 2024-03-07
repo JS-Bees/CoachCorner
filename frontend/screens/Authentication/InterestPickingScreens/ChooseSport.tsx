@@ -6,58 +6,53 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
 import Icon from 'react-native-vector-icons/Ionicons'
 
-type Hobby = 'Reading' | 'Singing' | 'Playing' | 'Writing';
+type Sports = 'Soccer' | 'Basketball' | 'Volleyball' | 'Badminton';
 
-const ChooseHobbies = ({route}) => {
+const ChooseSport = ({route}) => {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const [checkedHobby, setCheckedGames] = useState<Record<Hobby, boolean>>({
-        Reading: false,
-        Singing: false,
-        Playing: false,
-        Writing: false,  
+    const [checkedSport, setCheckedSport] = useState<Record<Sports, boolean>>({
+        Soccer: false,
+        Basketball: false,
+        Volleyball: false,
+        Badminton: false,  
     });
     const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
-    const { selectedSports } = route.params;
-
-    const handleCheckboxChange = (game: Hobby) => {
-      setCheckedGames((prevCheckedHobby) => {
-        const newCheckedHobby = { ...prevCheckedHobby };
-        const checkedCount = Object.values(newCheckedHobby).filter((value) => value).length;
+    
+    const handleCheckboxChange = (sport: Sports) => {
+      setCheckedSport((prevCheckedHobby) => {
+        const newCheckedSport = { ...prevCheckedHobby };
+        const checkedCount = Object.values(newCheckedSport).filter((value) => value).length;
   
-        if (checkedCount === 4 && !newCheckedHobby[game]) {
+        if (checkedCount === 2 && !newCheckedSport[sport]) {
           // If trying to check more than 4, uncheck the current checkbox
-          newCheckedHobby[game] = false;
+          newCheckedSport[sport] = false;
         } else {
           // Toggle the state of the clicked checkbox
-          newCheckedHobby[game] = !newCheckedHobby[game];
+          newCheckedSport[sport] = !newCheckedSport[sport];
         }
   
-        return newCheckedHobby;
+        return newCheckedSport;
       });
     };
 
-    const areAnyChecked = Object.values(checkedHobby).some((value) => value);
-    const isMaxChecksReached = Object.values(checkedHobby).filter((value) => value).length >= 4;
-
+    const areAnyChecked = Object.values(checkedSport).some((value) => value);
+    const isMaxChecksReached = Object.values(checkedSport).filter((value) => value).length >= 2;
+ 
 
 
 const handleButtonPress = () => {
   // Filter out the selected hobbies
-  const selectedHobbies = Object.keys(checkedHobby)
-      .filter(hobby => checkedHobby[hobby])
-      .map(hobby => ({
-          hobby
+  const selectedSports = Object.keys(checkedSport)
+      .filter(sport => checkedSport[sport])
+      .map(sport => ({
+          sport
       }));
-  
-  // Log the selected hobbies data
-  console.log(selectedHobbies);
-  console.log(selectedSports)
+
+  console.log(selectedSports);
   console.log(firstName)
-  console.log(birthday)
-  navigation.navigate("InterestPickingGames", 
-  { selectedHobbies, 
-    selectedSports,
+  navigation.navigate("InterestPickingHobby", 
+  { selectedSports,
     firstName: firstName,
     lastName: lastName,
     email: email,
@@ -76,13 +71,13 @@ const handleButtonPress = () => {
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
       <Text style={styles.header}> Which of these do you like to do during downtime?</Text>
-      <Text style={styles.subtitle}>Choose maximum of 3</Text>
+      <Text style={styles.subtitle}>Choose a sport</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedHobby.Reading} checkedColor='#7E3FF0' label="Reading books" onPress={() => handleCheckboxChange('Reading')} />
-        <CustomCheckBox checked={checkedHobby.Singing} checkedColor='#7E3FF0' label="Singing/Kareoke" onPress={() => handleCheckboxChange('Singing')} />
-        <CustomCheckBox checked={checkedHobby.Playing} checkedColor='#7E3FF0' label="Playing mobile games" onPress={() => handleCheckboxChange('Playing')} />
-        <CustomCheckBox checked={checkedHobby.Writing} checkedColor='#7E3FF0' label="Writing" onPress={() => handleCheckboxChange('Writing')} />
+        <CustomCheckBox checked={checkedSport.Soccer} checkedColor='#7E3FF0' label="Soccer" onPress={() => handleCheckboxChange('Soccer')} />
+        <CustomCheckBox checked={checkedSport.Basketball} checkedColor='#7E3FF0' label="Basketball" onPress={() => handleCheckboxChange('Basketball')} />
+        <CustomCheckBox checked={checkedSport.Volleyball} checkedColor='#7E3FF0' label="Volleyball" onPress={() => handleCheckboxChange('Volleyball')} />
+        <CustomCheckBox checked={checkedSport.Badminton} checkedColor='#7E3FF0' label="Badminton" onPress={() => handleCheckboxChange('Badminton')} />
     
       </View>
 
@@ -138,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChooseHobbies;
+export default ChooseSport;

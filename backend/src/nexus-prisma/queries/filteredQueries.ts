@@ -11,6 +11,8 @@ import {
     idAndSportSchema,
 } from '../validation';
 
+
+
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
     {
@@ -383,4 +385,7 @@ export const findContactsOfCoach = queryField('findContactsOfCoach', {
             throw error;
         }
     },
+
 });
+
+

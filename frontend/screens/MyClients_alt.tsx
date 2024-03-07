@@ -10,7 +10,7 @@ import React, { useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Session from '../components/Profile Tiles/CoachSessionsTiles';
+import CoacheeProfile from '../components/Profile Tiles/CoacheeProfileTile';
 import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
@@ -19,56 +19,71 @@ import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native
 
 const { width, height } = Dimensions.get('window');
 
-interface CoachSessionsProps {
-    sessions: Session[];
-    onSessionPress?: (session: Session) => void;
-}
 
 
 
 
-const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
+const MyClients_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
-    const [activeButton, setActiveButton] = useState('Upcoming'); 
- 
+    const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
     
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
 
- 
+    const handleNavigateBack = () => {
+        navigation.goBack();
+    };
+
+    const navigateToCoachProfile = () => {
+        navigation.navigate("NewCoachProfile");
+    };
 
 
-    const Upcoming: Session[] = [ //max 2
+
+
+    const AllTrainees: Profile[] = [ 
         {
-            coachName: 'Serena Williams',
-            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
-            sport: "Tennis",
-            time: [
-                { startTime: "9:00 AM", endTime: "10:00 AM" },
-                { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-            date: ["Fri 25 June", "Sat 26 June"],
-      }
-       
-
+            name: 'Angelina Maverick',
+            imageSource: require('../assets/angelina.jpg'),
+            mainSport: "Basketball",
+            achievements: "None at the moment",
+            affliations: "Basketball Charter",
+            about: "Angelina Maverick is a dedicated student with a passion for basketball. Despite facing challenges in taking basketball as part of her Physical Education curriculum, Angelina remains determined to improve her skills and overcome obstacles."
             
-    ];
-
-    const Pending: Session[] = [ // max 2
+        },
         {
-            coachName: 'Kobe Bryant',
-            imageSource: require('../assets/Kobe_Brian.jpg'),
-            sport: "Basketball",
-            time: [
-                { startTime: "9:00 AM", endTime: "10:00 AM" },
-                { startTime: "2:00 PM", endTime: "3:00 PM" }, ],
-            date: ["Fri 25 June", "Sat 26 June"],
+            name: 'Jane Smith',
+            imageSource: require('../assets/Jane_Smith.png'),
+            mainSport: "Basketball",
+            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+            affliations: "Basketball Charter, US Basketball Federation",
+           
         },
       
+
+    ];
+
+    const FavoriteTrainees: Profile[] = [ // max 2
+        {
+            name: 'John Doe',
+            imageSource: require('../assets/John_Doe.png'), 
+            mainSport: "Basketball",
+            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
+     
+        },
+        {
+            name: 'Jane Smith',
+            imageSource: require('../assets/Jane_Smith.png'),
+            mainSport: "Basketball",
+            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+            affliations: "Basketball Charter, US Basketball Federation",
+        },
+        
     ];
 
 
@@ -81,13 +96,12 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         
             </View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
+            <TouchableOpacity onPress={handleNavigateBack}>
             <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
             </TouchableOpacity>
             </View>
             
-            <TouchableOpacity
-                onPress={() => navigation.navigate('NewCoacheeProfile')}>
+            <TouchableOpacity onPress={navigateToCoachProfile}>
             <Image
                     source={require('../assets/Woman.png')} // Add your profile image source here
                     style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
@@ -100,7 +114,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
             <View style={MyCoaches.searchContainer}>
                 <SearchBar
-                 placeholder='Search for coach name'
+                 placeholder='Search for a sport'
                  onChangeText={handleSearchChange}
                  value={searchText}
                  platform='android'
@@ -111,28 +125,28 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             <TouchableOpacity 
             style={[
                 MyCoaches.AllCoachesButton,
-                activeButton === 'Upcoming' ? MyCoaches.activeButton : null, 
+                activeButton === 'All' ? MyCoaches.activeButton : null, 
             ]}
-                onPress={() => setActiveButton('Upcoming')}>
-            <Text style={MyCoaches.buttonText}>Upcoming</Text>
+                onPress={() => setActiveButton('All')}>
+            <Text style={MyCoaches.buttonText}>All Trainees</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
-            activeButton === 'Pending' ? MyCoaches.activeButton : null,
+            activeButton === 'Favorite' ? MyCoaches.activeButton : null,
             ]}
-                onPress={() => setActiveButton('Pending')}>
-            <Text style={MyCoaches.buttonText}>Pending</Text>
+                onPress={() => setActiveButton('Favorite')}>
+            <Text style={MyCoaches.buttonText}>Favorite Trainees</Text>
             </TouchableOpacity>
 
 
 
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
                <View>
-               <Session sessions={activeButton === 'Upcoming' ? Upcoming: Pending}
-             />
+               <CoacheeProfile coacheeProfiles={activeButton === 'All' ? AllTrainees : FavoriteTrainees}/>
                </View>
 
             </ScrollView>
+
             </KeyboardAvoidingView>
 
 
@@ -233,8 +247,6 @@ const MyCoaches = StyleSheet.create({
         overflow: "hidden",
         borderRadius: 16  
     },
-  
-    
     AllCoachesButton: {
         width: 110, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
@@ -246,10 +258,10 @@ const MyCoaches = StyleSheet.create({
         borderRadius: 10, // Adjust the border radius for rounded corners (optional)
     },
     FavoriteCoachesButton: {
-        width: 100, // Adjust the width to make it square
+        width: 140, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
         marginTop: '-13%',
-        marginLeft: '67%',
+        marginLeft: '55%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',
@@ -266,4 +278,4 @@ const MyCoaches = StyleSheet.create({
    
 });
 
-export default Booking_Sessions;
+export default MyClients_alt;

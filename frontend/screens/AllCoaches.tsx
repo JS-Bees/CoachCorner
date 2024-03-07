@@ -10,70 +10,103 @@ import React, { useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Session from '../components/Profile Tiles/CoachSessionsTiles';
+import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
-
-
+import { FindCoachesBySportDocument } from '../generated-gql/graphql';
+import { useQuery } from 'urql';
 
 const { width, height } = Dimensions.get('window');
 
-interface CoachSessionsProps {
-    sessions: Session[];
-    onSessionPress?: (session: Session) => void;
-}
 
 
 
 
-const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
+const AllCoaches = ({route}) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
-    const [activeButton, setActiveButton] = useState('Upcoming'); 
- 
+    const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
     
+    const { selectedSport } = route.params;
+
+    // Now you can use the selectedSport value in your component logic
+    console.log('Selected Sport:', selectedSport);
+
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
+    
+    const [result] = useQuery({
+        query: FindCoachesBySportDocument, // Pass the FindCoachesBySportDocument query
+        variables: { sportType: selectedSport }, // Pass the selectedSport as a variable
+    });
 
- 
+    const { fetching, data, error } = result;
+
+    if (fetching) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;
+
+    // Extract coaches data from the GraphQL response
+    const coaches = data.findCoachesBySport;
+
+        // Map over the coaches array to create a new array of Profile objects
+        const AllCoaches: Profile[] = coaches.map(coach => {
+            const totalStars = coach.reviews.reduce((acc, review) => acc + review.starRating, 0);
+            const averageStars = coach.reviews.length > 0 ? totalStars / coach.reviews.length : 0;
+    
+            return {
+                id: coach.id,
+                name: `${coach.firstName} ${coach.lastName}`,
+                imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
+                gainedStars: averageStars, // Use the calculated average stars
+                mainSport: selectedSport, // Assuming mainSport is the selected sport
+                about: coach.bio,
+                workplaceAddress: coach.address,
+            };
+        });
 
 
-    const Upcoming: Session[] = [ //max 2
-        {
-            coachName: 'Serena Williams',
-            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
-            sport: "Tennis",
-            time: [
-                { startTime: "9:00 AM", endTime: "10:00 AM" },
-                { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-            date: ["Fri 25 June", "Sat 26 June"],
-      }
-       
-
-            
-    ];
-
-    const Pending: Session[] = [ // max 2
-        {
-            coachName: 'Kobe Bryant',
-            imageSource: require('../assets/Kobe_Brian.jpg'),
-            sport: "Basketball",
-            time: [
-                { startTime: "9:00 AM", endTime: "10:00 AM" },
-                { startTime: "2:00 PM", endTime: "3:00 PM" }, ],
-            date: ["Fri 25 June", "Sat 26 June"],
-        },
+    // const AllCoaches: Profile[] = [ 
+    //     {
+    //         name: 'Serena Williams',
+    //         imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
+    //         gainedStars: 3,
+    //         mainSport: "Tennis",
+    //         about: "Serena Jameka Williams is an American former professional tennis player.Widely regarded as one of the greatest tennis players of all time, she was ranked world No. 1 in singles by the Women's Tennis.",
+    //         workplaceAddress: "So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458"
+    //     },
+    //     {
+    //         name: 'Kobe Brian',
+    //         imageSource: require('../assets/Kobe_Brian.jpg'),
+    //         gainedStars: 5,
+    //         mainSport: "Basketball",
+    //         about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
+    //         workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
+    //     },
+    //     {
+    //         name: 'Jane Smith',
+    //         imageSource: require('../assets/Jane_Smith.png'),
+    //         gainedStars: 3,
+    //         mainSport: "Basketball",
+    //         about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+    //         workplaceAddress: "Smith's Hoops Academy 456 Court Street Basketballville, Slam Dunk County Hoopsland, 98765"
+    //     },
+    //     {
+    //         name: 'John Doe',
+    //         imageSource: require('../assets/John_Doe.png'), 
+    //         gainedStars: 4,
+    //         mainSport: "Basketball",
+    //         about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
+    //         workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
+    //     },
       
-    ];
 
+    // ];
 
-
-   
 
     return (
         <View style={MyCoaches.container}>
@@ -100,7 +133,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
             <View style={MyCoaches.searchContainer}>
                 <SearchBar
-                 placeholder='Search for coach name'
+                 placeholder='Search Coach'
                  onChangeText={handleSearchChange}
                  value={searchText}
                  platform='android'
@@ -108,31 +141,13 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
 
-            <TouchableOpacity 
-            style={[
-                MyCoaches.AllCoachesButton,
-                activeButton === 'Upcoming' ? MyCoaches.activeButton : null, 
-            ]}
-                onPress={() => setActiveButton('Upcoming')}>
-            <Text style={MyCoaches.buttonText}>Upcoming</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
-            activeButton === 'Pending' ? MyCoaches.activeButton : null,
-            ]}
-                onPress={() => setActiveButton('Pending')}>
-            <Text style={MyCoaches.buttonText}>Pending</Text>
-            </TouchableOpacity>
-
-
-
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
                <View>
-               <Session sessions={activeButton === 'Upcoming' ? Upcoming: Pending}
-             />
+               <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
                </View>
 
             </ScrollView>
+
             </KeyboardAvoidingView>
 
 
@@ -245,16 +260,6 @@ const MyCoaches = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10, // Adjust the border radius for rounded corners (optional)
     },
-    FavoriteCoachesButton: {
-        width: 100, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
-        marginTop: '-13%',
-        marginLeft: '67%',
-        backgroundColor: '#e1d1f0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
-    },
     buttonText: {
         color: 'white',
         fontSize: 15,
@@ -266,4 +271,4 @@ const MyCoaches = StyleSheet.create({
    
 });
 
-export default Booking_Sessions;
+export default AllCoaches;

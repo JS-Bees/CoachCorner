@@ -1,10 +1,14 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View, Text, Modal, Button, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { CreateContactDocument } from '../generated-gql/graphql';
+import { useMutation } from 'urql';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect,useState } from 'react';
 
 type PreviewPageRouteProp = RouteProp<RootStackParams, 'PreviewPage'>;
 type PreviewPageNavigationProp = NativeStackNavigationProp<RootStackParams, 'PreviewPage'>;
@@ -17,10 +21,69 @@ interface PreviewPageProps {
 
 
 const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
+  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [, createContact] = useMutation(CreateContactDocument);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            console.log('token', token);
+            setUserToken(token);
+        } catch (error) {
+            console.error('Error fetching token:', error);
+        }
+    };
+
+    fetchUserToken();
+}, []);
+
+const handleAddToFavorites = async () => {
+  try {
+    // If already marked as favorite, return without adding again
+    if (isFavorite || isLoading) {
+      return;
+    }
+
+    // Set loading state to true
+    setIsLoading(true);
+
+    // Execute the mutation
+    const result = await createContact({
+      input: {
+        coachId: profile.id,
+        coacheeId: parseInt(userToken),
+        contactedStatus: false,
+      },
+    });
+
+    // Check if the mutation was successful
+    if (result) {
+      // Update the state to indicate that the coach is added to favorites
+      setIsFavorite(true);
+      setIsModalVisible(true); // Show the modal
+    }
+  } catch (error) {
+    console.error('Error adding coach to favorites:', error);
+  } finally {
+    // Set loading state back to false
+    setIsLoading(false);
+  }
+};
+
+
+
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const handleButtonPress = () => {
     navigation.navigate("ChatPage");
+  };
+
+  const handleNavigateBack = () => {
+    navigation.goBack();
   };
 
   const handleSeeReviewsPress = () => {
@@ -28,6 +91,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
       profile: profile
     });
   };
+
 
   const { profile, gainedStars,} = route.params || {};
 
@@ -46,15 +110,18 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     return stars;
   };
 
+  console.log("ID is " + profile.id + "" + isFavorite)
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image source={profile?.imageSource} style={styles.profileImage}/>
-        <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")} style={styles.iconContainer}>
+        <TouchableOpacity onPress={handleNavigateBack} style={styles.iconContainer}>
           <Icon name="arrow-back-circle" size={30} color='#FECB2E' />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.heartIconContainer}>
-          <Icon name="heart-outline" size={30} color='#FECB2E' />
+        <TouchableOpacity style={styles.heartIconContainer}
+        onPress={handleAddToFavorites}>
+          <Icon name="bookmark" size={30} color='#FECB2E' />
         </TouchableOpacity>
       </View>
       <View style={styles.header}>
@@ -101,6 +168,32 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         <Text style={{ color: 'white', fontSize: 15, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Message this Coach</Text>
       </TouchableOpacity>
       </View>
+      <Modal
+  animationType="slide"
+  transparent={true}
+  visible={isModalVisible}
+  onRequestClose={() => {
+    setIsModalVisible(false);
+  }}
+>
+  <View style={styles.centeredView}>
+    <View style={styles.modalView}>
+      <Text style={styles.modalText}>Coach is already added!</Text>
+      <Button
+        title="Close"
+        color="#7E3FF0" // Set the color to purple
+        onPress={() => setIsModalVisible(false)}
+      />
+    </View>
+  </View>
+</Modal>
+{
+  isLoading && (
+    <View style={styles.loader}>
+      <ActivityIndicator size="large" color="#7E3FF0" />
+    </View>
+  )
+}
       
 
     </View>
@@ -223,7 +316,39 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontWeight: '200',
     color: '#908D93',
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    fontSize: 15,
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  loader: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    zIndex: 9999,
+  },
 });
 
 export default PreviewPage;

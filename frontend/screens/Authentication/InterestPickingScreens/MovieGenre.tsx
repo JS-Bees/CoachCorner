@@ -5,25 +5,41 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
 import Icon from 'react-native-vector-icons/Ionicons'
+import { useMutation } from 'urql';
+import { CreateCoachDocument } from '../../../generated-gql/graphql';
+import { CreateCoacheeDocument } from '../../../generated-gql/graphql';
+import ProfilePicture from '../../../components/ProfilePictureSvg';
+import SignupSuccessModal from '../../../components/PopUpModal';
+
 
 
 type Movie = 'Action' | 'Comedy' | 'Horror' | 'Romance';
 
-const ChooseMovies = () => {
+const ChooseMovies = ({route}) => {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
-    const [checkedGames, setCheckedGames] = useState<Record<Movie, boolean>>({
+
+    const [checkedMovies, setCheckedGames] = useState<Record<Movie, boolean>>({
         Action: false,
         Comedy: false,
         Horror: false,
         Romance: false,
         
     });
+    const [modalVisible, setModalVisible] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const [,createCoach] = useMutation(CreateCoachDocument);
+    const [,createCoachee] = useMutation(CreateCoacheeDocument);
+    const { firstName, lastName, email, password, birthday, coachOrCoachee, workplaceAddress /* Add other data */ } = route.params;
+    const { selectedHobbies } = route.params;
+    const { selectedGames } = route.params;
+    const { selectedSports } = route.params;
 
     const handleCheckboxChange = (game: Movie) => {
-      setCheckedGames((prevCheckedGames) => {
-        const newCheckedHobby = { ...prevCheckedGames };
+      setCheckedGames((prevCheckedMovies) => {
+        const newCheckedHobby = { ...prevCheckedMovies };
         const checkedCount = Object.values(newCheckedHobby).filter((value) => value).length;
   
         if (checkedCount === 4 && !newCheckedHobby[game]) {
@@ -38,27 +54,156 @@ const ChooseMovies = () => {
       });
     };
 
-  const areAnyChecked = Object.values(checkedGames).some((value) => value);
-  const isMaxChecksReached = Object.values(checkedGames).filter((value) => value).length >= 4;
+  const areAnyChecked = Object.values(checkedMovies).some((value) => value);
+  const isMaxChecksReached = Object.values(checkedMovies).filter((value) => value).length >= 4;
 
-  const handleButtonPress = () => {
-    // Your logic when the button is pressed
-    console.log('Button pressed!');
+  const handleButtonPress = async () => {
+
+    if(coachOrCoachee == 'coachee') {
+      console.log(coachOrCoachee)
+      const selectedMovie = Object.keys(checkedMovies)
+        .filter(movie => checkedMovies[movie])
+        .map(movie => ({ movie }));
+  
+        const selectedGamesInterests = selectedGames.map(game => ({
+          type: 'Game',
+          name: game.game,
+        }));
+      
+        const selectedHobbiesInterests = selectedHobbies.map(hobby => ({
+          type: 'Hobby',
+          name: hobby.hobby,
+        }));
+      
+    
+      try {
+        const { data, errors, fetching } = await createCoachee({
+          input: {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            address: workplaceAddress,
+            bio: " nice",
+            birthday:  birthday,
+            mantra: "Cool",
+            profilePicture: "Profile",
+            coachingRole: false
+            // Add other fields as needed
+          },
+          interestsInput: [
+            ...selectedMovie.map(movie => ({
+              type: 'Movie Genre',
+              name: movie.movie,
+            })),
+            ...selectedGamesInterests,
+            ...selectedHobbiesInterests,
+          ],
+    
+        });
+    
+        if (errors) {
+          console.error('GraphQL errors:', errors);
+        } else if (data && data.createCoachee) {
+          console.log('Coachee created:', data.createCoachee);
+          // Navigate to the next screen or perform other actions upon successful signup
+        } else {
+          console.log("This is a coachee")
+          console.log(selectedGames, selectedHobbies, selectedMovie)
+          console.error('No data returned from mutation');
+        }
+      } catch (error) {
+        console.log(selectedGames, selectedHobbies, selectedMovie)
+        console.error('Error creating coachee:', error);
+        // Handle errors appropriately
+      }
+
+    } if(coachOrCoachee == 'coach'){ 
+      console.log(coachOrCoachee)
+      const selectedMovie = Object.keys(checkedMovies)
+        .filter(movie => checkedMovies[movie])
+        .map(movie => ({ movie }));
+
+        const selectedSport = selectedSports.map(sport => ({
+          type: sport.sport,
+        }));
+
+        // const selectedSport = sport.sport
+  
+        const selectedGamesInterests = selectedGames.map(game => ({
+          type: 'Game',
+          name: game.game,
+        }));
+      
+        const selectedHobbiesInterests = selectedHobbies.map(hobby => ({
+          type: 'Hobby',
+          name: hobby.hobby,
+        }));
+      
+    
+      try {
+        const { data, errors } = await createCoach({
+          input: {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            address: workplaceAddress,
+            bio: " nice",
+            birthday:  birthday,
+            mantra: "Cool",
+            profilePicture: "Profile",
+            coachingRole: false
+            // Add other fields as needed
+          },
+          interestsInput: [
+            ...selectedMovie.map(movie => ({
+              type: 'Movie Genre',
+              name: movie.movie,
+            })),
+            ...selectedGamesInterests,
+            ...selectedHobbiesInterests,
+          ],                                                                             
+          sportsInput: [
+            selectedSport[0]
+          ],
+
+        });
+    
+        if (errors) {
+          console.error('GraphQL errors:', errors);
+        } else if (data && data.createCoach) {
+          console.log('Coach created:', data.createCoach);
+          // Navigate to the next screen or perform other actions upon successful signup
+        } else {
+          console.log("This is coach")
+          console.log(selectedGames, selectedHobbies, selectedMovie, selectedSport)
+          console.error('No data returned from mutation');
+        }
+      } catch (error) {
+        console.log(selectedGames, selectedHobbies, selectedMovie, selectedSport)
+        console.error('Error creating coachee:', error);
+        // Handle errors appropriately
+      }
+
+    }
+    setSuccessMessage('Signup Successful!');
+    setModalVisible(true)
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate("InterestPickingHobby")} style={styles.iconContainer}>
+      <TouchableOpacity onPress={() => navigation.navigate("SignUpCoachee")} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
       <Text style={styles.header}> Which of these type of movies do you like?</Text>
       <Text style={styles.subtitle}>Choose maximum of 3</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedGames.Action} checkedColor='#7E3FF0' label="Action" onPress={() => handleCheckboxChange('Action')} />
-        <CustomCheckBox checked={checkedGames.Comedy} checkedColor='#7E3FF0' label="Comedy" onPress={() => handleCheckboxChange('Comedy')} />
-        <CustomCheckBox checked={checkedGames.Horror} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Horror')} />
-        <CustomCheckBox checked={checkedGames.Romance} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Romance')} />
+        <CustomCheckBox checked={checkedMovies.Action} checkedColor='#7E3FF0' label="Action" onPress={() => handleCheckboxChange('Action')} />
+        <CustomCheckBox checked={checkedMovies.Comedy} checkedColor='#7E3FF0' label="Comedy" onPress={() => handleCheckboxChange('Comedy')} />
+        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Horror')} />
+        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Romance')} />
     
       </View>
 
@@ -67,8 +212,9 @@ const ChooseMovies = () => {
         onPress={handleButtonPress}
         disabled={!areAnyChecked || isMaxChecksReached}
       >
-        <Text style={{ color: 'white', fontSize: 15, height: 40, paddingHorizontal: 10, paddingVertical: 10 }}>Submit</Text>
+        <Text style={{ color: 'white', fontSize: 15, height: 40, paddingHorizontal: 10, paddingVertical: 10 }}>Sign Up</Text>
       </TouchableOpacity>
+      <SignupSuccessModal visible={modalVisible} message={successMessage} />
     </View>
   );
 };

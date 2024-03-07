@@ -13,16 +13,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+// import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import Profile from '../components/Profile Tiles/CoachProfileTile';
-import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
     ScrollView,
     KeyboardAvoidingView,
     TouchableOpacity,
 } from 'react-native';
+import { FindCoacheeByIdDocument, GetSortedCoachesDocument} from '../generated-gql/graphql';
+import { RadioButton } from 'react-native-paper';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,7 +32,7 @@ const CoacheeDashboard = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const isFocused = useIsFocused();
+    // const isFocused = useIsFocused();
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
@@ -38,8 +40,24 @@ const CoacheeDashboard = () => {
     });
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const [searchText, setSearchText] = useState('');
     const [seeAllCoaches, setSeeAllCoaches] = useState(false);
+    const [sportsVisible, setSportsVisible] = useState(false);
+    const [selectedSport, setSelectedSport] = useState('');
+    const [checked, setChecked] = React.useState('second');
+
+    const sports = [
+        { label: 'Basketball', value: 'Basketball' },
+        { label: 'Soccer', value: 'Soccer' },
+        { label: 'Tennis', value: 'Tennis' },
+        { label: 'Swimming', value: 'Swimming' },                                                              
+
+    ];
+
+    const toggleSportsSelection = () => {
+        setSportsVisible(!sportsVisible);
+    };
+
+
     const handleSeeAllPress = () => {
         setSeeAllCoaches(!seeAllCoaches);
         if (!seeAllCoaches) {
@@ -50,6 +68,15 @@ const CoacheeDashboard = () => {
     const navigateToNotifications = () => {
         navigation.navigate('NotificationPage');
     };
+    const handleButtonClick = () => {
+        // If sportsVisible is true and a sport is checked, navigate to AllCoaches
+        if (sportsVisible && selectedSport) {
+            navigation.navigate('AllCoachesPage', { selectedSport: selectedSport });
+        } else {
+            toggleSportsSelection(); // Toggle the visibility of sports selection
+        }
+    };
+    
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -64,38 +91,73 @@ const CoacheeDashboard = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
+    // function to fetch coachee data by userID (token)
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
             query: FindCoacheeByIdDocument, // Use the Coachee query document
             variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
+                userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
             },
         });
 
         return coacheeResult;
     };
-
-    const handleSearchChange = (text: string) => {
-        setSearchText(text);
-    };
-
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
     const {
         data: coacheeData,
         loading: coacheeLoading,
         error: coacheeError,
     } = useFetchCoacheeByUserID(userToken);
 
+    // function to fetch coach data by userID (token)
+    const useFetchCoach = (userID: any) => {
+        const [coachResult] = useQuery({
+            query: GetSortedCoachesDocument, // Use the Coachee query document
+        });
+
+        return coachResult;
+    };
+    const {
+        data: coachData,
+        loading: coachLoading,
+        error: coachError,
+    } = useFetchCoach(userToken);
+
+
     if (!fontsloaded) {
         return null;
     }
+    
+    console.log('Interests:', JSON.stringify(coacheeData?.findCoacheeByID.interests, null, 2));
+
+    // Define interests of the coachee
+    const coacheeInterests = coacheeData?.findCoacheeByID.interests || [];
+    const coaches = coachData?.coaches || [];
+
+    console.log(coaches)
+    // Sort coaches by the number of matching interests in descending order
+    // Matching Algorithm and Hierarcy Recommendation Algorithm being applied
+    const sortedCoaches = coaches.map(coach => ({
+        coach,
+        matchingInterests: coach.interests.filter(coachInterest =>
+        coacheeInterests.some(coacheeInterest =>
+            coacheeInterest.type === coachInterest.type &&
+            coacheeInterest.name === coachInterest.name
+        )).length
+    })).sort((a, b) => b.matchingInterests - a.matchingInterests);
+
+// Ensure all coaches are considered for matching interests
+// This step might not be necessary if the sorting logic is correct,
+// but it's included here for clarity and to address the concern about initial order.
+
+// Select the top 2 coaches with the most matching interests
+const matchedCoaches = sortedCoaches.slice(0, 2);
+
+console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`));
+const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`);
 
     const TopCoaches: Profile[] = [
         //max 2
         {
-            //pictures should be in png so that it can be edited and put in smoothly
             name: 'Serena Williams',
             imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
             gainedStars: 3,
@@ -117,32 +179,32 @@ const CoacheeDashboard = () => {
     const RecommendedCoaches: Profile[] = [
         // max 2
         {
-            name: 'John Doe',
+            name: matchedCoachesNames[0],
             imageSource: require('../assets/John_Doe.png'),
-            gainedStars: 4,
-            mainSport: 'Basketball',
-            about: 'John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.',
-            workplaceAddress:
-                '123 Main Street, Basketball Court City, Hoopsland, 56789',
+            gainedStars: matchedCoaches[0]?.coach.reviews.reduce((totalStars, review) => totalStars + review.starRating, 0) / matchedCoaches[0]?.coach.reviews.length || 0, // Calculate average star rating
+            mainSport: matchedCoaches[0]?.coach.sports[0]?.type || 'Unknown',
+            about: matchedCoaches[0]?.coach.bio || 'No information available',
+            workplaceAddress: matchedCoaches[0]?.coach.address[0] || 'Unknown',
         },
         {
-            name: 'Kobe Brian',
+            name: matchedCoachesNames[1],
             imageSource: require('../assets/Kobe_Brian.jpg'),
-            gainedStars: 3,
-            mainSport: 'Basketball',
-            about: 'Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association',
-            workplaceAddress: '1551 N. Tustin Ave.Santa Ana, CA 92705',
+            gainedStars: matchedCoaches[1]?.coach.reviews.reduce((totalStars, review) => totalStars + review.starRating, 0) / matchedCoaches[1]?.coach.reviews.length || 0, // Calculate average star rating
+            mainSport: matchedCoaches[1]?.coach.sports[0]?.type || 'Unknown',
+            about: matchedCoaches[1]?.coach.bio || 'No information available',
+            workplaceAddress: matchedCoaches[1]?.coach.address[0] || 'Unknown',
         },
     ];
 
     return (
         <View style={CoacheeDashboardStyle.container}>
             <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
-                <Text style={CoacheeDashboardStyle.greetings}>Welcome</Text>
+                <Text style={CoacheeDashboardStyle.greetings}>Welcome </Text>
                 <Text style={CoacheeDashboardStyle.name}>
                     {coacheeData?.findCoacheeByID?.firstName}!
                 </Text>
             </View>
+            <View style={CoacheeDashboardStyle.imageContainer}>
             <TouchableOpacity
                 onPress={() => navigation.navigate('NewCoacheeProfile')}
             >
@@ -156,6 +218,7 @@ const CoacheeDashboard = () => {
                     }}
                 />
             </TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={navigateToNotifications}>
                 <View style={CoacheeDashboardStyle.iconContainer}>
                     <Icon
@@ -169,24 +232,42 @@ const CoacheeDashboard = () => {
                 style={CoacheeDashboardStyle.container}
                 behavior={Platform.OS === 'android' ? 'height' : 'padding'}
             >
-                <View style={CoacheeDashboardStyle.searchContainer}>
-                    <SearchBar
-                        placeholder="Search for a sport"
-                        onChangeText={handleSearchChange}
-                        value={searchText}
-                        platform="android"
-                        containerStyle={
-                            CoacheeDashboardStyle.searchBarContainer
-                        }
-                        inputContainerStyle={
-                            CoacheeDashboardStyle.searchBarInputContainer
-                        }
-                    />
+            <View style={{ flex: 1, justifyContent: 'center', padding: 30 }}>
+                <View style={{ alignItems: 'center' }}>
+                    <TouchableOpacity onPress={toggleSportsSelection} style={CoacheeDashboardStyle.sportSelectionContainer}>
+                        <Text style={{ color: sportsVisible ? 'grey' : 'grey' }}>
+                            {sportsVisible ? 'Swipe to the right for more' : 'Choose Sport'}
+                            <Icon name={sportsVisible ? 'chevron-up' : 'chevron-down'} size={15} color="#7E3FF0" />
+                        </Text>
+                    </TouchableOpacity>
+                    {sportsVisible && (
+                        <View style={CoacheeDashboardStyle.sportsContainer}>
+    <ScrollView
+        horizontal // Enable horizontal scrolling
+        showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
+    >
+        <View style={CoacheeDashboardStyle.rows}>
+            {sports.map((sport, index) => (
+                <RadioButton.Item
+                    key={index}
+                    label={sport.label}
+                    value={sport.value}
+                    status={selectedSport === sport.value ? 'checked' : 'unchecked'}
+                    labelStyle={CoacheeDashboardStyle.radioButtonLabel}
+                    style={CoacheeDashboardStyle.radioButton}
+                    onPress={() => setSelectedSport(sport.value)} // Update selectedSport state when clicked
+                    theme={{ colors: { accent: '#7E3FF0' } }} // Change accent color to purple (#7E3FF0)
+                />
+            ))}
+        </View>
+    </ScrollView>
+</View>
+                    )}
                 </View>
-
+            </View>
                 <ScrollView
                     contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 300 }}
+                    style={{ marginTop: '1%', height: 360 }}
                 >
                     <View style={CoacheeDashboardStyle.frameContainer}>
                         <Text style={CoacheeDashboardStyle.frameText}>
@@ -205,6 +286,9 @@ const CoacheeDashboard = () => {
                                 marginTop: '-15%',
                             }}
                         />
+                    <TouchableOpacity onPress={handleButtonClick} style={CoacheeDashboardStyle.buttonContainer2}>
+                        <Text style={CoacheeDashboardStyle.buttonText}>Find Coach</Text>
+                    </TouchableOpacity>
                     </View>
 
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
@@ -256,6 +340,9 @@ const CoacheeDashboardStyle = StyleSheet.create({
         paddingTop: '20%',
         marginLeft: '25%',
         flexDirection: 'row',
+        borderBlockColor: '#461a96',
+        // borderWidth: 1,
+        // width: '200%'
     },
 
     topCoachesContainer: {
@@ -322,14 +409,16 @@ const CoacheeDashboardStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     searchContainer: {
-        borderWidth: 2, // Add a border
-        width: '85%',
+        borderWidth: 3, // Add a border
+        width: '90%',
         borderColor: '#7E3FF0', // Set the border color
         borderRadius: 15, // Add border radius to make it rounded
         marginTop: '10%',
-        marginLeft: '7%',
-        paddingHorizontal: 10,
+        marginLeft: 'auto', // Set left margin to auto
+        marginRight: 'auto', // Set right margin to auto
+        paddingHorizontal: '2.6%',
     },
+    
     searchBarContainer: {
         // Set the dimensions of the SearchBar container
         width: 300, // Adjust the width as needed
@@ -341,11 +430,11 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
 
     frameContainer: {
-        backgroundColor: '#7E3FF0',
+        backgroundColor: '#461a96',
         marginTop: '5%',
         marginLeft: '7%',
         width: '85%',
-        height: '15%',
+        height: '22%',
         overflow: 'hidden',
         borderRadius: 16,
     },
@@ -383,6 +472,53 @@ const CoacheeDashboardStyle = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    buttonContainer2: {
+        backgroundColor: 'white',
+        borderRadius: 6,
+        paddingVertical: 6, // Add vertical padding
+        paddingHorizontal: 6, // Add horizontal padding
+        left: '-32%',
+        marginTop: -40,
+        alignSelf: 'center',
+    },
+    buttonText: {
+        color: '#7E3FF0',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    sportSelectionContainer: {
+        backgroundColor: 'white',
+        marginTop: '11%',
+        padding: 15,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#7E3FF0',
+        width: '100%',
+    },
+    sportsContainer: {
+        flexDirection: 'row', // Render items horizontally
+        flexWrap: 'wrap', // Allow items to wrap to the next line if space is not enough
+        alignItems: 'center', // Center items vertically
+        justifyContent: 'center', // Center items horizontally
+        paddingHorizontal: 10, // Add padding to the container
+        marginTop: 10, // Add some margin from the toggle button
+    },
+    rows: {
+        flexDirection: 'row',
+        position: 'relative',
+        paddingHorizontal: -20, // Adjusted horizontal padding to create less space between buttons
+        marginBottom: 10, // Add some margin to separate rows
+    },
+    radioButton: {
+        marginLeft: -17, // Adjusted margin to reduce the space between radio buttons and labels
+        fontSize: 10, // Adjust the font size of the label
+        borderColor: '#7E3FF0', // Add the desired border color for the radio buttons
+    },
+    radioButtonLabel: {
+        fontSize: 12, // Adjust the font size of the label
+        color: '#7E3FF0'
+    },
+    
 });
 
 export default CoacheeDashboard;
