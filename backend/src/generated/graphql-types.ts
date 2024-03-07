@@ -46,11 +46,9 @@ export interface NexusGenInputs {
     address: string; // String!
     bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
-    coachingRole: boolean; // Boolean!
     email: string; // String!
     firstName: string; // String!
     lastName: string; // String!
-    mantra: string; // String!
     password: string; // String!
     profilePicture: string; // String!
   }
@@ -69,11 +67,9 @@ export interface NexusGenInputs {
     address: string; // String!
     bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
-    coachingRole: boolean; // Boolean!
     email: string; // String!
     firstName: string; // String!
     lastName: string; // String!
-    mantra: string; // String!
     password: string; // String!
     profilePicture: string; // String!
   }
@@ -144,7 +140,6 @@ export interface NexusGenInputs {
   UpdateCoachProfileInput: { // input type
     address: string; // String!
     bio: string; // String!
-    mantra: string; // String!
     profilePicture: string; // String!
   }
   UpdateCoachTaskInput: { // input type
@@ -160,7 +155,6 @@ export interface NexusGenInputs {
   UpdateCoacheeProfileInput: { // input type
     address: string; // String!
     bio: string; // String!
-    mantra: string; // String!
     profilePicture: string; // String!
   }
   UpdateCoacheeTaskInput: { // input type
@@ -214,13 +208,11 @@ export interface NexusGenObjects {
     address: string; // String!
     bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
-    coachingRole: boolean; // Boolean!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     id: number; // Int!
     lastName: string; // String!
-    mantra: string; // String!
     password: string; // String!
     profilePicture: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -250,13 +242,11 @@ export interface NexusGenObjects {
     address: string; // String!
     bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
-    coachingRole: boolean; // Boolean!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     firstName: string; // String!
     id: number; // Int!
     lastName: string; // String!
-    mantra: string; // String!
     password: string; // String!
     profilePicture: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -369,7 +359,6 @@ export interface NexusGenFieldTypes {
     bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     bookings: NexusGenRootTypes['Booking'][]; // [Booking!]!
-    coachingRole: boolean; // Boolean!
     contacts: NexusGenRootTypes['Contact'][]; // [Contact!]!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -377,7 +366,6 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     interests: NexusGenRootTypes['CoachInterest'][]; // [CoachInterest!]!
     lastName: string; // String!
-    mantra: string; // String!
     password: string; // String!
     profilePicture: string; // String!
     reviews: NexusGenRootTypes['Review'][]; // [Review!]!
@@ -413,7 +401,6 @@ export interface NexusGenFieldTypes {
     bio: string; // String!
     birthday: NexusGenScalars['DateTime']; // DateTime!
     bookings: NexusGenRootTypes['Booking'][]; // [Booking!]!
-    coachingRole: boolean; // Boolean!
     contacts: NexusGenRootTypes['Contact'][]; // [Contact!]!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -421,7 +408,6 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     interests: NexusGenRootTypes['CoacheeInterest'][]; // [CoacheeInterest!]!
     lastName: string; // String!
-    mantra: string; // String!
     password: string; // String!
     profilePicture: string; // String!
     reviews: NexusGenRootTypes['Review'][]; // [Review!]!
@@ -480,6 +466,7 @@ export interface NexusGenFieldTypes {
     createContact: NexusGenRootTypes['Contact']; // Contact!
     createReview: NexusGenRootTypes['Review']; // Review!
     createSportsCredentials: NexusGenRootTypes['SportsCredential']; // SportsCredential!
+    deleteCoachTask: NexusGenRootTypes['CoachTask']; // CoachTask!
     updateBookingSlotStatus: NexusGenRootTypes['BookingSlot']; // BookingSlot!
     updateBookingStatus: NexusGenRootTypes['Booking']; // Booking!
     updateCoachInterest: NexusGenRootTypes['CoachInterest']; // CoachInterest!
@@ -488,6 +475,7 @@ export interface NexusGenFieldTypes {
     updateCoacheeInterest: NexusGenRootTypes['CoacheeInterest']; // CoacheeInterest!
     updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
     updateCoacheeTask: NexusGenRootTypes['CoacheeTask']; // CoacheeTask!
+    updateCoacheeTaskActiveStatus: NexusGenRootTypes['CoacheeTask']; // CoacheeTask!
     updateContactedStatus: NexusGenRootTypes['Contact']; // Contact!
     updatePendingBooking: NexusGenRootTypes['Booking']; // Booking!
   }
@@ -571,7 +559,6 @@ export interface NexusGenFieldTypeNames {
     bio: 'String'
     birthday: 'DateTime'
     bookings: 'Booking'
-    coachingRole: 'Boolean'
     contacts: 'Contact'
     createdAt: 'DateTime'
     email: 'String'
@@ -579,7 +566,6 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     interests: 'CoachInterest'
     lastName: 'String'
-    mantra: 'String'
     password: 'String'
     profilePicture: 'String'
     reviews: 'Review'
@@ -615,7 +601,6 @@ export interface NexusGenFieldTypeNames {
     bio: 'String'
     birthday: 'DateTime'
     bookings: 'Booking'
-    coachingRole: 'Boolean'
     contacts: 'Contact'
     createdAt: 'DateTime'
     email: 'String'
@@ -623,7 +608,6 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     interests: 'CoacheeInterest'
     lastName: 'String'
-    mantra: 'String'
     password: 'String'
     profilePicture: 'String'
     reviews: 'Review'
@@ -682,6 +666,7 @@ export interface NexusGenFieldTypeNames {
     createContact: 'Contact'
     createReview: 'Review'
     createSportsCredentials: 'SportsCredential'
+    deleteCoachTask: 'CoachTask'
     updateBookingSlotStatus: 'BookingSlot'
     updateBookingStatus: 'Booking'
     updateCoachInterest: 'CoachInterest'
@@ -690,6 +675,7 @@ export interface NexusGenFieldTypeNames {
     updateCoacheeInterest: 'CoacheeInterest'
     updateCoacheeProfile: 'Coachee'
     updateCoacheeTask: 'CoacheeTask'
+    updateCoacheeTaskActiveStatus: 'CoacheeTask'
     updateContactedStatus: 'Contact'
     updatePendingBooking: 'Booking'
   }
@@ -776,6 +762,9 @@ export interface NexusGenArgTypes {
     createSportsCredentials: { // args
       input: NexusGenInputs['CreateSportsCredentialsInput']; // CreateSportsCredentialsInput!
     }
+    deleteCoachTask: { // args
+      id: number; // Int!
+    }
     updateBookingSlotStatus: { // args
       id: number; // Int!
       input: NexusGenInputs['UpdateBookingSlotStatusInput']; // UpdateBookingSlotStatusInput!
@@ -807,6 +796,9 @@ export interface NexusGenArgTypes {
     updateCoacheeTask: { // args
       id: number; // Int!
       input: NexusGenInputs['UpdateCoacheeTaskInput']; // UpdateCoacheeTaskInput!
+    }
+    updateCoacheeTaskActiveStatus: { // args
+      id: number; // Int!
     }
     updateContactedStatus: { // args
       id: number; // Int!

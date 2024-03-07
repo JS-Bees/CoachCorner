@@ -70,9 +70,8 @@ export const coachSchema = yup.object().shape({
         .min(4, 'Password must be at least 4 characters.')
         .required('Password is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
-    mantra: yup.string().required('Mantra is required.'),
+
     bio: yup.string().required('Bio is required.'),
-    coachingRole: yup.boolean().required('Coaching role is required.'),
 });
 
 export const coacheeSchema = yup.object().shape({
@@ -89,9 +88,7 @@ export const coacheeSchema = yup.object().shape({
         .min(4, 'Password must be at least 4 characters.')
         .required('Password is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
-    mantra: yup.string().required('Mantra is required.'),
     bio: yup.string().required('Bio is required.'),
-    coachingRole: yup.boolean().required('Coaching role is required.'), // remove this
 });
 
 export const interestListSchema = yup
@@ -101,7 +98,7 @@ export const interestListSchema = yup
             type: yup
                 .string()
                 .oneOf(
-                    ['Movie Genre', 'Book Genre', 'Music Genre'],
+                    ['MovieGenre', 'BookGenre', 'MusicGenre'],
                     'Interest type value is invalid.',
                 )
                 .required('Interest type is required.'),
@@ -198,7 +195,7 @@ export const interestSchema = yup.object().shape({
     type: yup
         .string()
         .oneOf(
-            ['Movie Genre', 'Book Genre', 'Music Genre'],
+            ['MovieGenre', 'BookGenre', 'MusicGenre'],
             'Interest type value is invalid.',
         )
         .required('Interest type is required.'),
@@ -245,7 +242,6 @@ export const updateProfileSchema = yup.object().shape({
         .string()
         .required('Bio is required.')
         .max(1000, 'Bio cannot exceed 1000 characters.'),
-    mantra: yup.string().required('Mantra is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
 });
 
@@ -307,5 +303,3 @@ export const updateBookingSlotSchema = yup.object().shape({
         )
         .required('Status is required'),
 });
-
-export const booleanSchema = yup.boolean().required('Boolean is required.');
