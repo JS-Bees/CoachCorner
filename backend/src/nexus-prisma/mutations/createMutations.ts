@@ -1,6 +1,7 @@
 import { mutationField, nonNull, arg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
+import * as yup from 'yup';
 import {
     CreateBookingInput,
     CreateBookingSlotInput,
@@ -14,6 +15,8 @@ import {
     CreateCoacheeTaskInput,
     CreateSportsCredentialsInput,
     CreateContactInput,
+    CreateNewCoachInterestInput,
+    CreateNewCoacheeInterestInput,
 } from '../inputTypes';
 import {
     Coachee,
@@ -24,7 +27,23 @@ import {
     CoacheeTask,
     SportsCredential,
     Contact,
+    CoachInterest,
+    CoacheeInterest,
 } from '../objectTypes';
+import {
+    bookingSchema,
+    bookingSlotSchema,
+    coachSchema,
+    coachTaskSchema,
+    coacheeSchema,
+    coacheeTaskSchema,
+    contactSchema,
+    interestListSchema,
+    interestSchema,
+    reviewSchema,
+    sportSchema,
+    sportsCredentialsSchema,
+} from '../validation';
 
 // Make this accept coachee interest input
 export const createCoachee = mutationField('createCoachee', {
@@ -38,22 +57,38 @@ export const createCoachee = mutationField('createCoachee', {
         // if there's an issue with the args in the resolve portion start backend to generate interface
     },
     resolve: async (_, { input, interestsInput }, context: Context) => {
-        const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
-        const coacheeData = { ...input, password: hashedPassword };
-        // Create the coachee and its interests in a single transaction
-        const coachee = await context.db.coachee.create({
-            data: {
-                ...coacheeData,
-                interests: {
-                    create: interestsInput,
-                },
-            },
-            include: {
-                interests: true,
-            },
-        });
+        try {
+            // Validate the coachee input
+            coacheeSchema.validateSync(input);
 
-        return coachee;
+            // Validate the interests input
+            interestListSchema.validateSync(interestsInput);
+
+            const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
+            const coacheeData = { ...input, password: hashedPassword };
+            // Create the coachee and its interests in a single transaction
+            const coachee = await context.db.coachee.create({
+                data: {
+                    ...coacheeData,
+                    interests: {
+                        create: interestsInput,
+                    },
+                },
+                include: {
+                    interests: true,
+                },
+            });
+
+            return coachee;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -72,26 +107,47 @@ export const createCoach = mutationField('createCoach', {
         { input, interestsInput, sportsInput },
         context: Context,
     ) => {
-        const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with   10 salt rounds
-        const coachData = { ...input, password: hashedPassword };
-        // Create the coach, its interests, and its sports in a single transaction
-        const coach = await context.db.coach.create({
-            data: {
-                ...coachData,
-                interests: {
-                    create: interestsInput,
-                },
-                sports: {
-                    create: sportsInput,
-                },
-            },
-            include: {
-                interests: true,
-                sports: true,
-            },
-        });
+        try {
+            // Validate the coach input
+            coachSchema.validateSync(input);
 
-        return coach;
+            // Validate the interests input
+            interestListSchema.validateSync(interestsInput);
+
+            // Validate each sport in the sportsInput array
+            for (const sport of sportsInput) {
+                sportSchema.validateSync(sport);
+            }
+
+            const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
+            const coachData = { ...input, password: hashedPassword };
+            // Create the coach, its interests, and its sports in a single transaction
+            const coach = await context.db.coach.create({
+                data: {
+                    ...coachData,
+                    interests: {
+                        create: interestsInput,
+                    },
+                    sports: {
+                        create: sportsInput,
+                    },
+                },
+                include: {
+                    interests: true,
+                    sports: true,
+                },
+            });
+
+            return coach;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -102,19 +158,38 @@ export const createBooking = mutationField('createBooking', {
         slotsInput: nonNull(list(nonNull(CreateBookingSlotInput))),
     },
     resolve: async (_, { input, slotsInput }, context: Context) => {
-        const booking = await context.db.booking.create({
-            data: {
-                ...input,
-                bookingSlots: {
-                    create: slotsInput,
-                },
-            },
-            include: {
-                bookingSlots: true,
-            },
-        });
+        try {
+            // Validate the booking input
+            bookingSchema.validateSync(input);
 
-        return booking;
+            // Validate each slot in the slotsInput array
+            for (const slot of slotsInput) {
+                bookingSlotSchema.validateSync(slot);
+            }
+
+            // Create the booking and its slots in a single transaction
+            const booking = await context.db.booking.create({
+                data: {
+                    ...input,
+                    bookingSlots: {
+                        create: slotsInput,
+                    },
+                },
+                include: {
+                    bookingSlots: true,
+                },
+            });
+
+            return booking;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -124,6 +199,10 @@ export const createReview = mutationField('createReview', {
         input: nonNull(arg({ type: CreateReviewInput })),
     },
     resolve: async (_, { input }, context: Context) => {
+        try {
+            // Validate the review input
+            reviewSchema.validateSync(input);
+
             // Find a booking that matches both the coach ID and the coachee ID
             const booking = await context.db.booking.findFirst({
                 where: {
@@ -152,6 +231,15 @@ export const createReview = mutationField('createReview', {
             });
 
             return review;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -162,11 +250,25 @@ export const createCoachTask = mutationField('createCoachTask', {
         input: nonNull(arg({ type: CreateCoachTaskInput })),
     },
     resolve: async (_, { input }, context: Context) => {
-        const coachTask = await context.db.coachTask.create({
-            data: input,
-        });
+        try {
+            // Validate the task input
+            coachTaskSchema.validateSync(input);
 
-        return coachTask;
+            // Create the coach task in the database
+            const coachTask = await context.db.coachTask.create({
+                data: input,
+            });
+
+            return coachTask;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -177,12 +279,82 @@ export const createCoacheeTask = mutationField('createCoacheeTask', {
         input: nonNull(arg({ type: CreateCoacheeTaskInput })),
     },
     resolve: async (_, { input }, context: Context) => {
-        // Create the coachee task in your database
-        const coacheeTask = await context.db.coacheeTask.create({
-            data: input,
-        });
+        try {
+            // Validate the task input
+            coacheeTaskSchema.validateSync(input);
+            // Create the coachee task in the database
+            const coacheeTask = await context.db.coacheeTask.create({
+                data: input,
+            });
 
-        return coacheeTask;
+            return coacheeTask;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});
+
+// createCoachInterest
+export const createCoachInterest = mutationField('createCoachInterest', {
+    type: CoachInterest,
+    args: {
+        input: nonNull(arg({ type: CreateNewCoachInterestInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        try {
+            // Validate the interest input
+            interestSchema.validateSync(input);
+
+            // Create the coach interest in the database
+            const coachInterest = await context.db.coachInterest.create({
+                data: input,
+            });
+
+            return coachInterest;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});
+
+// createCoacheeInterest
+export const createCoacheeInterest = mutationField('createCoacheeInterest', {
+    type: CoacheeInterest,
+    args: {
+        input: nonNull(arg({ type: CreateNewCoacheeInterestInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        try {
+            // Validate the interest input
+            interestSchema.validateSync(input);
+
+            // Create the coachee interest in the database
+            const coacheeInterest = await context.db.coacheeInterest.create({
+                data: input,
+            });
+
+            return coacheeInterest;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -195,12 +367,26 @@ export const createSportsCredentials = mutationField(
             input: nonNull(arg({ type: CreateSportsCredentialsInput })),
         },
         resolve: async (_, { input }, context: Context) => {
-            // Create the sports credentials in your database
-            const sportsCredentials = await context.db.sportsCredential.create({
-                data: input,
-            });
+            try {
+                // Validate the sports credentials input
+                sportsCredentialsSchema.validateSync(input);
 
-            return sportsCredentials;
+                // Create the sports credentials in the database
+                const sportsCredentials =
+                    await context.db.sportsCredential.create({
+                        data: input,
+                    });
+
+                return sportsCredentials;
+            } catch (error) {
+                // Handle validation errors or other exceptions
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
+            }
         },
     },
 );
@@ -212,7 +398,9 @@ export const createContact = mutationField('createContact', {
         input: nonNull(arg({ type: CreateContactInput })),
     },
     resolve: async (_, { input }, context: Context) => {
-  
+        try {
+            // Validate the contact input
+            contactSchema.validateSync(input);
 
             const existingContact = await context.db.contact.findFirst({
                 where: {
@@ -232,5 +420,14 @@ export const createContact = mutationField('createContact', {
             });
 
             return contact;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });

@@ -1,8 +1,17 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
-import { Context } from '../context';
 import bcrypt from 'bcrypt';
+import * as yup from 'yup';
 import { Coachee, Coach, Booking, Contact } from '../objectTypes';
-// import { SportEnum, BookingStatusEnum } from '../enums';
+import { Context } from '../context';
+import {
+    loginSchema,
+    idSchema,
+    idAndStatusSchema,
+    sportSchema,
+    idAndSportSchema,
+} from '../validation';
+
+
 
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
@@ -13,25 +22,35 @@ export const findCoachByEmailAndPassword = queryField(
             password: nonNull(stringArg()),
         },
         resolve: async (_, { email, password }, context: Context) => {
-            // Search for a Coach with the provided email
-            const coach = await context.db.coach.findUnique({
-                where: { email, active: true }, // Include the 'active' condition
-            });
+            try {
+                // Validate arguments using the yup schema
+                loginSchema.validateSync({ email, password });
 
-            if (coach) {
-                // If a Coach is found, compare the password
-                const passwordMatch = await bcrypt.compare(
-                    password,
-                    coach.password,
-                );
-                if (passwordMatch) {
-                    console.log(coach.firstName);
-                    return coach;
+                const coach = await context.db.coach.findUnique({
+                    where: { email, active: true },
+                });
+
+                if (coach) {
+                    const passwordMatch = await bcrypt.compare(
+                        password,
+                        coach.password,
+                    );
+                    if (passwordMatch) {
+                        return coach;
+                    } else {
+                        throw new Error('Incorrect password.');
+                    }
                 } else {
-                    throw new Error('Incorrect password.');
+                    throw new Error('User not found.');
                 }
-            } else {
-                throw new Error('User not found.');
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
             }
         },
     },
@@ -46,23 +65,37 @@ export const findCoacheeByEmailAndPassword = queryField(
             password: nonNull(stringArg()),
         },
         resolve: async (_, { email, password }, context: Context) => {
-            // Search for a Coachee with the provided email
-            const coachee = await context.db.coachee.findUnique({
-                where: { email, active: true }, // Include the 'active' condition
-            });
-            if (coachee) {
-                // If a Coachee is found, compare the password
-                const passwordMatch = await bcrypt.compare(
-                    password,
-                    coachee.password,
-                );
-                if (passwordMatch) {
-                    return coachee;
+            try {
+                // Validate arguments using the yup schema
+                loginSchema.validateSync({ email, password });
+
+                // Search for a Coachee with the provided email
+                const coachee = await context.db.coachee.findUnique({
+                    where: { email, active: true }, // Include the 'active' condition
+                });
+
+                if (coachee) {
+                    // If a Coachee is found, compare the password
+                    const passwordMatch = await bcrypt.compare(
+                        password,
+                        coachee.password,
+                    );
+                    if (passwordMatch) {
+                        return coachee;
+                    } else {
+                        throw new Error('Incorrect password.');
+                    }
                 } else {
-                    throw new Error('Incorrect password.');
+                    throw new Error('User not found.');
                 }
-            } else {
-                throw new Error('User not found.');
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
             }
         },
     },
@@ -74,15 +107,28 @@ export const findCoachByID = queryField('findCoachByID', {
         userID: nonNull(intArg()), // Changed the argument to intArg for ID
     },
     resolve: async (_, { userID }, context: Context) => {
-        // Search for a Coach by ID
-        const coach = await context.db.coach.findUnique({
-            where: { id: userID, active: true }, // Include the 'active' condition
-        });
+        try {
+            // Validate userID using the idSchema
+            idSchema.validateSync({ id: userID });
 
-        if (coach) {
-            return coach;
-        } else {
-            throw new Error(`Coach with ID ${userID} does not exist.`);
+            // Search for a Coach by ID
+            const coach = await context.db.coach.findUnique({
+                where: { id: userID, active: true }, // Include the 'active' condition
+            });
+
+            if (coach) {
+                return coach;
+            } else {
+                throw new Error(`Coach with ID ${userID} does not exist.`);
+            }
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
         }
     },
 });
@@ -93,35 +139,31 @@ export const findCoacheeByID = queryField('findCoacheeByID', {
         userID: nonNull(intArg()), // Changed the argument to intArg for ID
     },
     resolve: async (_, { userID }, context: Context) => {
-        // Search for a Coachee by ID
-        const coachee = await context.db.coachee.findUnique({
-            where: { id: userID, active: true }, // Include the 'active' condition
-        });
-        if (coachee) {
-            return coachee;
-        } else {
-            throw new Error(`Coachee with ID ${userID} does not exist.`);
+        try {
+            // Validate id using the idSchema
+            idSchema.validateSync({ id: userID });
+
+            // Search for a Coach by ID
+            const coach = await context.db.coach.findUnique({
+                where: { id: userID, active: true }, // Include the 'active' condition
+            });
+
+            if (coach) {
+                return coach;
+            } else {
+                throw new Error(`Coach with ID ${userID} does not exist.`);
+            }
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
         }
     },
 });
-
-// export const findCoachesBySport = queryField('findCoachesBySport', {
-//     type: list(Coach), // Return a list of coaches
-//     args: {
-//         sport: SportEnum,
-//     },
-//     resolve: async (_, { sport }, context: Context) => {
-//         // Search for coaches who are associated with the specified sport
-//         const coaches = await context.db.coach.findMany({
-//             where: {
-//                 sport: sport,
-//                 active: true, // Include the 'active' condition
-//             },
-//         });
-
-//         return coaches;
-//     },
-// });
 
 export const findBookingByID = queryField('findBookingByID', {
     type: Booking,
@@ -129,49 +171,31 @@ export const findBookingByID = queryField('findBookingByID', {
         bookingID: nonNull(intArg()),
     },
     resolve: async (_, { bookingID }, context: Context) => {
-        // Search for a Booking by ID
-        const booking = await context.db.booking.findUnique({
-            where: { id: bookingID, active: true }, // Include the 'active' condition
-        });
+        try {
+            // Validate bookingID using the idSchema
+            idSchema.validateSync({ id: bookingID });
 
-        if (booking) {
-            return booking;
-        } else {
-            throw new Error(`Booking with ID ${bookingID} does not exist.`);
+            // Search for a Booking by ID
+            const booking = await context.db.booking.findUnique({
+                where: { id: bookingID, active: true }, // Include the 'active' condition
+            });
+
+            if (booking) {
+                return booking;
+            } else {
+                throw new Error(`Booking with ID ${bookingID} does not exist.`);
+            }
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
         }
     },
 });
-
-// export const findUnaddedCoachesBySport = queryField(
-//     'findUnaddedCoachesBySport',
-//     {
-//         type: list(Coach), // Return a list of available coaches
-//         args: {
-//             sport: SportEnum, // Required sport argument
-//             coacheeID: nonNull(intArg()), // Required coacheeID argument
-//         },
-//         resolve: async (_, { sport, coacheeID }, context: Context) => {
-//             // Search for coaches who are associated with the specified sport
-//             // and do not have a coaching relationship with the given coacheeID
-//             const coaches = await context.db.coach.findMany({
-//                 where: {
-//                     sport: sport,
-//                     active: true, // Include the 'active' condition
-//                     NOT: {
-//                         coachingRelationships: {
-//                             some: {
-//                                 coacheeId: coacheeID,
-//                                 active: true, // Check for an active coaching relationship with coachee
-//                             },
-//                         },
-//                     },
-//                 },
-//             });
-
-//             return coaches;
-//         },
-//     },
-// );
 
 export const findBookingsByStatusAndCoachID = queryField(
     'findBookingsByStatusAndCoachID',
@@ -182,16 +206,29 @@ export const findBookingsByStatusAndCoachID = queryField(
             coachID: nonNull(intArg()), // Argument for Coach ID
         },
         resolve: async (_, { status, coachID }, context: Context) => {
-            // Search for bookings based on the where condition
-            const bookings = await context.db.booking.findMany({
-                where: {
-                    status: status,
-                    coachId: coachID,
-                    active: true, // Include the 'active' condition
-                },
-            });
+            try {
+                // Validate arguments using the idAndStatusSchema
+                idAndStatusSchema.validateSync({ status, id: coachID });
 
-            return bookings;
+                // Search for bookings based on the where condition
+                const bookings = await context.db.booking.findMany({
+                    where: {
+                        status: status,
+                        coachId: coachID,
+                        active: true,
+                    },
+                });
+
+                return bookings;
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
+            }
         },
     },
 );
@@ -201,20 +238,33 @@ export const findBookingsByStatusAndCoacheeID = queryField(
     {
         type: list(Booking),
         args: {
-            status: nonNull(stringArg()), // Argument for BookingStatus
-            coacheeID: nonNull(intArg()), // Argument for Coachee ID
+            status: nonNull(stringArg()),
+            coacheeID: nonNull(intArg()),
         },
         resolve: async (_, { status, coacheeID }, context: Context) => {
-            // Search for bookings based on the where condition
-            const bookings = await context.db.booking.findMany({
-                where: {
-                    status: status,
-                    coacheeId: coacheeID,
-                    active: true, // Include the 'active' condition
-                },
-            });
+            try {
+                // Validate arguments using the idAndStatusSchema
+                idAndStatusSchema.validateSync({ status, id: coacheeID });
 
-            return bookings;
+                // Search for bookings based on the where condition
+                const bookings = await context.db.booking.findMany({
+                    where: {
+                        status: status,
+                        coacheeId: coacheeID,
+                        active: true,
+                    },
+                });
+
+                return bookings;
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
+            }
         },
     },
 );
@@ -227,19 +277,32 @@ export const findCoachesBySport = queryField('findCoachesBySport', {
         sportType: nonNull(stringArg()),
     },
     resolve: async (_, { sportType }, context: Context) => {
-        // Use the context-aware Prisma client to search for coaches
-        const coaches = await context.db.coach.findMany({
-            where: {
-                sports: {
-                    some: {
-                        type: sportType,
-                    },
-                },
-                active: true,
-            },
-        });
+        try {
+            // Validate sport using the sportSchema
+            sportSchema.validateSync({ type: sportType });
 
-        return coaches;
+            // Search for coaches by sport
+            const coaches = await context.db.coach.findMany({
+                where: {
+                    sports: {
+                        some: {
+                            type: sportType,
+                        },
+                    },
+                    active: true,
+                },
+            });
+
+            return coaches;
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
 });
 
@@ -252,34 +315,56 @@ export const findNonContactCoachesBySport = queryField(
             coacheeID: nonNull(intArg()),
         },
         resolve: async (_, { sportType, coacheeID }, context: Context) => {
-            const coaches = await context.db.coach.findMany({
-                where: {
-                    sports: {
-                        some: {
-                            type: sportType,
+            try {
+                // Validate id and sport using the idAndSportSchema
+                idAndSportSchema.validateSync({
+                    id: coacheeID,
+                    type: sportType,
+                });
+
+                // Search for coaches by sport who are not in contact with the current user
+                const coaches = await context.db.coach.findMany({
+                    where: {
+                        sports: {
+                            some: {
+                                type: sportType,
+                            },
                         },
-                    },
-                    contacts: {
-                        none: {
-                            coachee: {
-                                id: coacheeID,
+                        active: true,
+                        contacts: {
+                            none: {
+                                coachee: {
+                                    id: coacheeID,
+                                },
                             },
                         },
                     },
-                    active: true,
-                },
-            });
+                });
 
-            return coaches;
+                return coaches;
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
+            }
         },
     },
 );
+
 export const findContactsOfCoach = queryField('findContactsOfCoach', {
     type: list(Contact),
     args: {
         coachId: nonNull(intArg()),
     },
     resolve: async (_, { coachId }, context: Context) => {
+        try {
+            // Validate coachId using the idSchema
+            idSchema.validateSync({ id: coachId });
+
             // Search for contacts of the coach with contactedStatus set to true
             const contacts = await context.db.contact.findMany({
                 where: {
@@ -290,5 +375,17 @@ export const findContactsOfCoach = queryField('findContactsOfCoach', {
             });
 
             return contacts;
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
     },
+
 });
+
+
