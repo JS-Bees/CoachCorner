@@ -120,6 +120,17 @@ export interface NexusGenInputs {
     credentialPicture: string; // String!
     sportId: number; // Int!
   }
+  UpdateBookingInput: { // input type
+    additionalNotes: string; // String!
+    serviceType: string; // String!
+  }
+  UpdateBookingSlotInput: { // input type
+    date: NexusGenScalars['DateTime']; // DateTime!
+    endTime: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    startTime: NexusGenScalars['DateTime']; // DateTime!
+    status: string; // String!
+  }
   UpdateBookingSlotStatusInput: { // input type
     status: string; // String!
   }
@@ -478,6 +489,7 @@ export interface NexusGenFieldTypes {
     updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
     updateCoacheeTask: NexusGenRootTypes['CoacheeTask']; // CoacheeTask!
     updateContactedStatus: NexusGenRootTypes['Contact']; // Contact!
+    updatePendingBooking: NexusGenRootTypes['Booking']; // Booking!
   }
   Query: { // field return type
     coachees: NexusGenRootTypes['Coachee'][]; // [Coachee!]!
@@ -490,6 +502,7 @@ export interface NexusGenFieldTypes {
     findCoacheeByEmailAndPassword: NexusGenRootTypes['Coachee']; // Coachee!
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
     findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findContactsOfCoach: NexusGenRootTypes['Contact'][]; // [Contact!]!
     findNonContactCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
   Review: { // field return type
@@ -678,6 +691,7 @@ export interface NexusGenFieldTypeNames {
     updateCoacheeProfile: 'Coachee'
     updateCoacheeTask: 'CoacheeTask'
     updateContactedStatus: 'Contact'
+    updatePendingBooking: 'Booking'
   }
   Query: { // field return type name
     coachees: 'Coachee'
@@ -690,6 +704,7 @@ export interface NexusGenFieldTypeNames {
     findCoacheeByEmailAndPassword: 'Coachee'
     findCoacheeByID: 'Coachee'
     findCoachesBySport: 'Coach'
+    findContactsOfCoach: 'Contact'
     findNonContactCoachesBySport: 'Coach'
   }
   Review: { // field return type name
@@ -797,6 +812,14 @@ export interface NexusGenArgTypes {
       id: number; // Int!
       input: NexusGenInputs['UpdateContactedStatusInput']; // UpdateContactedStatusInput!
     }
+    updatePendingBooking: { // args
+      addSlots: NexusGenInputs['CreateBookingSlotInput'][]; // [CreateBookingSlotInput!]!
+      bookingData: NexusGenInputs['UpdateBookingInput']; // UpdateBookingInput!
+      bookingId: number; // Int!
+      deleteSlotsIds: number[]; // [Int!]!
+      updateSlots: NexusGenInputs['UpdateBookingSlotInput'][]; // [UpdateBookingSlotInput!]!
+      updateSlotsIds: number[]; // [Int!]!
+    }
   }
   Query: {
     findBookingByID: { // args
@@ -826,6 +849,9 @@ export interface NexusGenArgTypes {
     }
     findCoachesBySport: { // args
       sportType: string; // String!
+    }
+    findContactsOfCoach: { // args
+      coachId: number; // Int!
     }
     findNonContactCoachesBySport: { // args
       coacheeID: number; // Int!

@@ -1,4 +1,4 @@
-import { mutationField, nonNull, arg } from 'nexus';
+import { mutationField, nonNull, arg, list } from 'nexus';
 import * as yup from 'yup';
 import { Context } from '../context';
 import {
@@ -13,6 +13,9 @@ import {
     CoacheeTask,
 } from '../objectTypes';
 import {
+    CreateBookingSlotInput,
+    UpdateBookingInput,
+    UpdateBookingSlotInput,
     UpdateBookingSlotStatusInput,
     UpdateBookingStatusInput,
     UpdateCoacheeInterestInput,
@@ -24,8 +27,11 @@ import {
     UpdateContactedStatusInput,
 } from '../inputTypes';
 import {
+    bookingSlotSchema,
     idSchema,
     interestSchema,
+    updateBookingSchema,
+    updateBookingSlotSchema,
     updateBookingSlotStatusSchema,
     updateBookingStatusSchema,
     updateContactedStatusSchema,
@@ -408,6 +414,117 @@ export const updateCoacheeTask = mutationField('updateCoacheeTask', {
             });
 
             return updatedCoacheeTask;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});
+
+export const updatePendingBooking = mutationField('updatePendingBooking', {
+    type: Booking,
+    args: {
+        bookingId: nonNull(arg({ type: 'Int' })),
+        updateSlotsIds: list(arg({ type: 'Int' })),
+        deleteSlotsIds: list(arg({ type: 'Int' })),
+        bookingData: nonNull(arg({ type: UpdateBookingInput })),
+        updateSlots: list(arg({ type: UpdateBookingSlotInput })),
+        addSlots: list(arg({ type: CreateBookingSlotInput })),
+    },
+    resolve: async (
+        _,
+        {
+            bookingId,
+            updateSlotsIds,
+            deleteSlotsIds,
+            bookingData,
+            updateSlots,
+            addSlots,
+        },
+        context: Context,
+    ) => {
+        try {
+            // Validate the booking ID using the idSchema
+            idSchema.validateSync({ id: bookingId });
+
+            if (updateSlotsIds) {
+                updateSlotsIds.forEach((slotId: number) => {
+                    idSchema.validateSync({ id: slotId });
+                });
+            }
+
+            if (deleteSlotsIds) {
+                deleteSlotsIds.forEach((slotId: number) => {
+                    idSchema.validateSync({ id: slotId });
+                });
+            }
+
+            updateBookingSchema.validateSync(bookingData);
+
+            if (updateSlots) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                updateSlots.forEach((slot: any) => {
+                    updateBookingSlotSchema.validateSync(slot);
+                });
+            }
+
+            if (addSlots) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                addSlots.forEach((slot: any) => {
+                    bookingSlotSchema.validateSync(slot);
+                });
+            }
+
+            // should have conditionals incase an arg is empty
+            // Start a transaction to ensure all operations are atomic
+            const transaction = await context.db.$transaction([
+                context.db.booking.update({
+                    where: { id: bookingId },
+                    data: bookingData,
+                }),
+
+                ...(updateSlotsIds && updateSlotsIds.length > 0
+                    ? updateSlotsIds.map((slotId: number) =>
+                          context.db.bookingSlot.update({
+                              where: { id: slotId },
+                              data:
+                                  updateSlots.find(
+                                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                      (slot: any) => slot.id === slotId,
+                                  ) ?? {},
+                          }),
+                      )
+                    : []),
+
+                ...(addSlots && addSlots.length > 0
+                    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      addSlots.map((slot: any) =>
+                          context.db.bookingSlot.create({
+                              data: {
+                                  ...slot,
+                                  bookingId: bookingId,
+                              },
+                          }),
+                      )
+                    : []),
+
+                ...(deleteSlotsIds && deleteSlotsIds.length > 0
+                    ? deleteSlotsIds.map((slotId: number) =>
+                          context.db.bookingSlot.delete({
+                              where: { id: slotId },
+                          }),
+                      )
+                    : []),
+            ]);
+
+            // Assuming the first operation in the transaction is the booking update
+            // and you want to return the updated booking
+            return transaction[0];
         } catch (error) {
             // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {

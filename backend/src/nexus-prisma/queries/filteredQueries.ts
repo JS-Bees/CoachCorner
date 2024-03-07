@@ -1,7 +1,7 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import bcrypt from 'bcrypt';
 import * as yup from 'yup';
-import { Coachee, Coach, Booking } from '../objectTypes';
+import { Coachee, Coach, Booking, Contact } from '../objectTypes';
 import { Context } from '../context';
 import {
     loginSchema,
@@ -139,7 +139,7 @@ export const findCoacheeByID = queryField('findCoacheeByID', {
     resolve: async (_, { userID }, context: Context) => {
         try {
             // Validate id using the idSchema
-            idSchema.validateSync({ userID });
+            idSchema.validateSync({ id: userID });
 
             // Search for a Coach by ID
             const coach = await context.db.coach.findUnique({
@@ -171,7 +171,7 @@ export const findBookingByID = queryField('findBookingByID', {
     resolve: async (_, { bookingID }, context: Context) => {
         try {
             // Validate bookingID using the idSchema
-            idSchema.validateSync({ bookingID });
+            idSchema.validateSync({ id: bookingID });
 
             // Search for a Booking by ID
             const booking = await context.db.booking.findUnique({
@@ -206,7 +206,7 @@ export const findBookingsByStatusAndCoachID = queryField(
         resolve: async (_, { status, coachID }, context: Context) => {
             try {
                 // Validate arguments using the idAndStatusSchema
-                idAndStatusSchema.validateSync({ status, coachID });
+                idAndStatusSchema.validateSync({ status, id: coachID });
 
                 // Search for bookings based on the where condition
                 const bookings = await context.db.booking.findMany({
@@ -242,7 +242,7 @@ export const findBookingsByStatusAndCoacheeID = queryField(
         resolve: async (_, { status, coacheeID }, context: Context) => {
             try {
                 // Validate arguments using the idAndStatusSchema
-                idAndStatusSchema.validateSync({ status, coacheeID });
+                idAndStatusSchema.validateSync({ status, id: coacheeID });
 
                 // Search for bookings based on the where condition
                 const bookings = await context.db.booking.findMany({
@@ -277,7 +277,7 @@ export const findCoachesBySport = queryField('findCoachesBySport', {
     resolve: async (_, { sportType }, context: Context) => {
         try {
             // Validate sport using the sportSchema
-            sportSchema.validateSync({ sportType });
+            sportSchema.validateSync({ type: sportType });
 
             // Search for coaches by sport
             const coaches = await context.db.coach.findMany({
@@ -315,7 +315,10 @@ export const findNonContactCoachesBySport = queryField(
         resolve: async (_, { sportType, coacheeID }, context: Context) => {
             try {
                 // Validate id and sport using the idAndSportSchema
-                idAndSportSchema.validateSync({ coacheeID, sportType });
+                idAndSportSchema.validateSync({
+                    id: coacheeID,
+                    type: sportType,
+                });
 
                 // Search for coaches by sport who are not in contact with the current user
                 const coaches = await context.db.coach.findMany({
@@ -349,3 +352,35 @@ export const findNonContactCoachesBySport = queryField(
         },
     },
 );
+
+export const findContactsOfCoach = queryField('findContactsOfCoach', {
+    type: list(Contact),
+    args: {
+        coachId: nonNull(intArg()),
+    },
+    resolve: async (_, { coachId }, context: Context) => {
+        try {
+            // Validate coachId using the idSchema
+            idSchema.validateSync({ id: coachId });
+
+            // Search for contacts of the coach with contactedStatus set to true
+            const contacts = await context.db.contact.findMany({
+                where: {
+                    coachId: coachId,
+                    contactedStatus: true,
+                    active: true,
+                },
+            });
+
+            return contacts;
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});

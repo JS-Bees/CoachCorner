@@ -33,7 +33,7 @@ export const idAndStatusSchema = yup.object().shape({
 });
 
 export const sportSchema = yup.object().shape({
-    sport: yup
+    type: yup
         .string()
         .oneOf(
             ['Basketball', 'Tennis', 'Soccer', 'Volleyball', 'Swimming'],
@@ -47,7 +47,7 @@ export const idAndSportSchema = yup.object().shape({
         .number()
         .integer('ID must be an integer')
         .required('ID is required'),
-    sport: yup
+    type: yup
         .string()
         .oneOf(
             ['Basketball', 'Tennis', 'Soccer', 'Volleyball', 'Swimming'],
@@ -56,7 +56,6 @@ export const idAndSportSchema = yup.object().shape({
         .required('Sport is required'),
 });
 
-// Create Validations
 export const coachSchema = yup.object().shape({
     address: yup.string().required('Address is required.'),
     birthday: yup.date().required('Birthday is required.'),
@@ -143,7 +142,7 @@ export const bookingSchema = yup.object().shape({
         .string()
         .oneOf(
             ['PENDING', 'COMPLETED', 'UPCOMING', 'CANCELLED'],
-            'Invalid status value.',
+            'Invalid booking status value.',
         )
         .required('Booking status is required.'),
 });
@@ -154,7 +153,10 @@ export const bookingSlotSchema = yup.object().shape({
     endTime: yup.date().required('End time is required.'),
     status: yup
         .string()
-        .oneOf(['COMPLETED', 'UPCOMING', 'CANCELLED'], 'Invalid status value.')
+        .oneOf(
+            ['COMPLETED', 'UPCOMING', 'CANCELLED'],
+            'Invalid booking slot status value.',
+        )
         .required('Booking slot status is required.'),
 });
 
@@ -170,8 +172,19 @@ export const reviewSchema = yup.object().shape({
     coachId: yup.number().integer().required('Coach ID is required.'),
 });
 
-export const taskSchema = yup.object().shape({
-    id: yup.number().integer().required('ID is required.'),
+export const coachTaskSchema = yup.object().shape({
+    coachId: yup.number().integer().required('ID is required.'),
+    title: yup.string().required('Title is required.'),
+    description: yup.string().required('Description is required.'),
+    completionStatus: yup
+        .string()
+        .oneOf(['COMPLETED', 'UNCOMPLETED'], 'Invalid completion status value.')
+        .required('Completion status is required.'),
+    date: yup.date().required('Date is required.'),
+});
+
+export const coacheeTaskSchema = yup.object().shape({
+    coacheeId: yup.number().integer().required('ID is required.'),
     title: yup.string().required('Title is required.'),
     description: yup.string().required('Description is required.'),
     completionStatus: yup
@@ -231,7 +244,7 @@ export const updateProfileSchema = yup.object().shape({
     bio: yup
         .string()
         .required('Bio is required.')
-        .max(1000, 'Bio cannot exceed  1000 characters.'),
+        .max(1000, 'Bio cannot exceed 1000 characters.'),
     mantra: yup.string().required('Mantra is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
 });
@@ -251,7 +264,7 @@ export const updateBookingSlotStatusSchema = yup.object().shape({
         .string()
         .oneOf(
             ['COMPLETED', 'UPCOMING', 'CANCELLED'],
-            'Slot status value is invalid.',
+            'Booking slot status value is invalid.',
         )
         .required('Slot status is required.'),
 });
@@ -269,3 +282,30 @@ export const updateTaskSchema = yup.object().shape({
         .required('Completion status is required.'),
     date: yup.date().required('Date is required.'),
 });
+
+export const updateBookingSchema = yup.object().shape({
+    serviceType: yup
+        .string()
+        .max(100, 'Service type cannot exceed 100 characters.')
+        .required('Service type is required'),
+    additionalNotes: yup
+        .string()
+        .max(1000, 'Additional notes cannot exceed  1000 characters.')
+        .required('Additional notes are required'),
+});
+
+export const updateBookingSlotSchema = yup.object().shape({
+    id: yup.number().integer().required('ID is required'),
+    date: yup.date().required('Date is required'),
+    startTime: yup.date().required('Start time is required'),
+    endTime: yup.date().required('End time is required'),
+    status: yup
+        .string()
+        .oneOf(
+            ['COMPLETED', 'UPCOMING', 'CANCELLED'],
+            'Invalid booking slot status value',
+        )
+        .required('Status is required'),
+});
+
+export const booleanSchema = yup.boolean().required('Boolean is required.');

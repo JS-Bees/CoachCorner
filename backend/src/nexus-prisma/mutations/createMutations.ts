@@ -34,14 +34,15 @@ import {
     bookingSchema,
     bookingSlotSchema,
     coachSchema,
+    coachTaskSchema,
     coacheeSchema,
+    coacheeTaskSchema,
     contactSchema,
     interestListSchema,
     interestSchema,
     reviewSchema,
     sportSchema,
     sportsCredentialsSchema,
-    taskSchema,
 } from '../validation';
 
 // Make this accept coachee interest input
@@ -251,7 +252,7 @@ export const createCoachTask = mutationField('createCoachTask', {
     resolve: async (_, { input }, context: Context) => {
         try {
             // Validate the task input
-            taskSchema.validateSync(input);
+            coachTaskSchema.validateSync(input);
 
             // Create the coach task in the database
             const coachTask = await context.db.coachTask.create({
@@ -280,7 +281,7 @@ export const createCoacheeTask = mutationField('createCoacheeTask', {
     resolve: async (_, { input }, context: Context) => {
         try {
             // Validate the task input
-            taskSchema.validateSync(input);
+            coacheeTaskSchema.validateSync(input);
             // Create the coachee task in the database
             const coacheeTask = await context.db.coacheeTask.create({
                 data: input,
@@ -400,6 +401,18 @@ export const createContact = mutationField('createContact', {
         try {
             // Validate the contact input
             contactSchema.validateSync(input);
+
+            const existingContact = await context.db.contact.findFirst({
+                where: {
+                    coachId: input.coachId,
+                    coacheeId: input.coacheeId,
+                    active: true,
+                },
+            });
+
+            if (existingContact) {
+                throw new Error('Already added this coach to contacts!');
+            }
 
             // Create the contact in the database
             const contact = await context.db.contact.create({

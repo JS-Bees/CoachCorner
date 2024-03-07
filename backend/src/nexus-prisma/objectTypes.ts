@@ -16,10 +16,7 @@ export const Coachee = objectType({
         t.field(gqlTypes.Coachee.lastName);
         t.field(gqlTypes.Coachee.password);
         t.field(gqlTypes.Coachee.profilePicture);
-        t.field(gqlTypes.Coachee.mantra);
         t.field(gqlTypes.Coachee.bio);
-        // coachingRole might not be necessary
-        t.field(gqlTypes.Coachee.coachingRole);
 
         // t.field(gqlTypes.Coachee.interests);
         t.list.field('interests', {
@@ -89,10 +86,7 @@ export const Coach = objectType({
         t.field(gqlTypes.Coach.lastName);
         t.field(gqlTypes.Coach.password);
         t.field(gqlTypes.Coach.profilePicture);
-        t.field(gqlTypes.Coach.mantra);
         t.field(gqlTypes.Coach.bio);
-        // coachingRole might not be necessary
-        t.field(gqlTypes.Coach.coachingRole);
 
         // t.field(gqlTypes.Coach.interests);
         t.list.field('interests', {

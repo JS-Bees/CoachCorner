@@ -22,9 +22,7 @@ async function seedDatabase() {
                     birthday: new Date(),
                     // add sport and 3 interests
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: true,
                 },
                 {
                     email: 'coach2@example.com',
@@ -34,9 +32,7 @@ async function seedDatabase() {
                     address: 'address 2',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: true,
                 },
                 {
                     email: 'coach3@example.com',
@@ -46,9 +42,7 @@ async function seedDatabase() {
                     address: 'address 3',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: true,
                 },
                 {
                     email: 'coach4@example.com',
@@ -58,9 +52,7 @@ async function seedDatabase() {
                     address: 'address 4',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: true,
                 },
                 {
                     email: 'coach5@example.com',
@@ -70,9 +62,7 @@ async function seedDatabase() {
                     address: 'address 5',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: true,
                 },
             ],
         });
@@ -88,9 +78,7 @@ async function seedDatabase() {
                     address: 'Coachee Address 1',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: false,
                 },
                 {
                     email: 'coachee2@example.com',
@@ -100,9 +88,7 @@ async function seedDatabase() {
                     address: 'Coachee Address 2',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: false,
                 },
                 {
                     email: 'coachee3@example.com',
@@ -112,9 +98,7 @@ async function seedDatabase() {
                     address: 'Coachee Address 3',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: false,
                 },
                 {
                     email: 'coachee4@example.com',
@@ -124,9 +108,7 @@ async function seedDatabase() {
                     address: 'Coachee Address 4',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: false,
                 },
                 {
                     email: 'coachee5@example.com',
@@ -136,9 +118,7 @@ async function seedDatabase() {
                     address: 'Coachee Address 5',
                     birthday: new Date(),
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
-                    coachingRole: false,
                 },
             ],
         });

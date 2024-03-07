@@ -11,10 +11,7 @@ export const CreateCoacheeInput = inputObjectType({
         t.field(gqlTypes.Coachee.lastName);
         t.field(gqlTypes.Coachee.password);
         t.field(gqlTypes.Coachee.profilePicture);
-        t.field(gqlTypes.Coachee.mantra);
         t.field(gqlTypes.Coachee.bio);
-        // coachingRole might not be necessary
-        t.field(gqlTypes.Coachee.coachingRole);
 
         // Handle the generation of the sport and interest objects in the mutations
     },
@@ -30,19 +27,9 @@ export const CreateCoachInput = inputObjectType({
         t.field(gqlTypes.Coach.lastName);
         t.field(gqlTypes.Coach.password);
         t.field(gqlTypes.Coach.profilePicture);
-        t.field(gqlTypes.Coach.mantra);
         t.field(gqlTypes.Coach.bio);
-        // coachingRole might not be necessary
-        t.field(gqlTypes.Coach.coachingRole);
     },
 });
-
-// export const MessagingStartedInput = inputObjectType({
-//     name: 'MessagingStartedInput',
-//     definition(t) {
-//         t.field(gqlTypes.CoachingRelationship.messagingStarted);
-//     },
-// });
 
 export const CreateBookingInput = inputObjectType({
     name: 'CreateBookingInput',
@@ -185,7 +172,6 @@ export const UpdateCoacheeProfileInput = inputObjectType({
     definition(t) {
         t.field(gqlTypes.Coachee.address);
         t.field(gqlTypes.Coachee.bio);
-        t.field(gqlTypes.Coachee.mantra);
         t.field(gqlTypes.Coachee.profilePicture);
     },
 });
@@ -195,7 +181,6 @@ export const UpdateCoachProfileInput = inputObjectType({
     definition(t) {
         t.field(gqlTypes.Coach.address);
         t.field(gqlTypes.Coach.bio);
-        t.field(gqlTypes.Coach.mantra);
         t.field(gqlTypes.Coach.profilePicture);
     },
 });
@@ -240,5 +225,24 @@ export const UpdateCoacheeTaskInput = inputObjectType({
         t.field(gqlTypes.CoacheeTask.description);
         t.field(gqlTypes.CoacheeTask.completionStatus);
         t.field(gqlTypes.CoacheeTask.date);
+    },
+});
+
+export const UpdateBookingInput = inputObjectType({
+    name: 'UpdateBookingInput',
+    definition(t) {
+        t.field(gqlTypes.Booking.serviceType);
+        t.field(gqlTypes.Booking.additionalNotes);
+    },
+});
+
+export const UpdateBookingSlotInput = inputObjectType({
+    name: 'UpdateBookingSlotInput',
+    definition(t) {
+        t.field(gqlTypes.BookingSlot.id);
+        t.field(gqlTypes.BookingSlot.date);
+        t.field(gqlTypes.BookingSlot.startTime);
+        t.field(gqlTypes.BookingSlot.endTime);
+        t.field(gqlTypes.BookingSlot.status);
     },
 });
