@@ -16,3 +16,21 @@ mutation CreateCoachee($input: CreateCoacheeInput!, $interestsInput: [CreateCoac
     email
   }
 }
+
+mutation CreateReview($input: CreateReviewInput!) {
+  createReview(input: $input) {
+    coach {
+      firstName
+      lastName
+      reviews {
+        coachee {
+          id
+          firstName
+          lastName
+        }
+        starRating
+        comment
+      }
+    }
+  }
+}

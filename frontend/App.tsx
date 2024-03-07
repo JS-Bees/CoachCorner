@@ -15,7 +15,7 @@ import NewCoacheeProfile from './screens/Profile/NewCoacheeProfile';
 import NewCoachDashboard from './screens/NewCoachDashboard';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
-import MyCoaches_alt from './screens/MyCoaches_alt';
+import CoachSearchPage from './screens/MyCoaches_alt';
 import MyClients_alt from './screens/MyClients_alt';
 import Booking_Sessions from './screens/Sessions';
 import SplashScreen from './screens/Authentication/SplashScreen';
@@ -30,6 +30,7 @@ import CoacheePreviewPage from './screens/CoacheePreviewPage';
 import ReviewsPage from './screens/ReviewsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
+import AllCoaches from './screens/AllCoaches';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -46,12 +47,14 @@ import {
     cacheExchange,
     fetchExchange,
 } from 'urql';
+import MyCoaches_alt from './screens/MyCoaches_alt';
 
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.14:5050/graphql',
+    // url: 'http://192.168.1.14:5050/graphql',//Apartment Ip Address
+    url: 'http://192.168.254.142:5050/graphql',//GMRX Ip Address
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -91,6 +94,7 @@ export type RootStackParams = {
     BookingSessions: any,
     NotificationPage: any,
     CoacheePreviewPage: any, 
+    AllCoaches: any,
     
 };
 
@@ -200,7 +204,7 @@ export default function App() {
                     />
                     <RootStack.Screen 
                         name="MyCoaches_alt" 
-                        component={MyCoaches_alt} 
+                        component={CoachSearchPage} 
                         options={{headerShown: false}}
                         />
                         <RootStack.Screen
@@ -234,6 +238,11 @@ export default function App() {
                         options={{headerShown: false}}
                         />
                     <RootStack.Screen 
+                        name="AllCoachesPage" 
+                        component={AllCoaches} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
                         name="PreviewPage" 
                         component={PreviewPage} 
                         options={{headerShown: false}}
@@ -264,7 +273,7 @@ function TabNavigator() {
       switch (routeName) {
         case 'Home':
           return 'home';
-        case 'Coaches':
+        case 'My Coaches':
           return 'sports';
         case 'Sessions':
           return 'schedule';
@@ -292,7 +301,7 @@ function TabNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
-        <Tab.Screen name="Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
+        <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
         <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
         <Tab.Screen name="Chats" component={ChatPage} options={{ headerShown: false }} />
       </Tab.Navigator>

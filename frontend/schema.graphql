@@ -269,6 +269,7 @@ type Query {
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
   findCoacheeByID(userID: Int!): Coachee!
   findCoachesBySport(sportType: String!): [Coach!]!
+  findContactsOfCoach(coachId: Int!): [Contact!]!
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
 }
 

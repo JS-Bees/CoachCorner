@@ -32,7 +32,7 @@ const ChooseMovies = ({route}) => {
 
     const [,createCoach] = useMutation(CreateCoachDocument);
     const [,createCoachee] = useMutation(CreateCoacheeDocument);
-    const { firstName, lastName, email, password, birthday, coachOrCoachee /* Add other data */ } = route.params;
+    const { firstName, lastName, email, password, birthday, coachOrCoachee, workplaceAddress /* Add other data */ } = route.params;
     const { selectedHobbies } = route.params;
     const { selectedGames } = route.params;
     const { selectedSports } = route.params;
@@ -83,7 +83,7 @@ const ChooseMovies = ({route}) => {
             lastName: lastName,
             email: email,
             password: password,
-            address: "Here",
+            address: workplaceAddress,
             bio: " nice",
             birthday:  birthday,
             mantra: "Cool",
@@ -148,7 +148,7 @@ const ChooseMovies = ({route}) => {
             lastName: lastName,
             email: email,
             password: password,
-            address: "Here",
+            address: workplaceAddress,
             bio: " nice",
             birthday:  birthday,
             mantra: "Cool",

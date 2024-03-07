@@ -1,7 +1,7 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
-import { Coachee, Coach, Booking } from '../objectTypes';
+import { Coachee, Coach, Booking, Contact } from '../objectTypes';
 // import { SportEnum, BookingStatusEnum } from '../enums';
 
 export const findCoachByEmailAndPassword = queryField(
@@ -274,3 +274,21 @@ export const findNonContactCoachesBySport = queryField(
         },
     },
 );
+export const findContactsOfCoach = queryField('findContactsOfCoach', {
+    type: list(Contact),
+    args: {
+        coachId: nonNull(intArg()),
+    },
+    resolve: async (_, { coachId }, context: Context) => {
+            // Search for contacts of the coach with contactedStatus set to true
+            const contacts = await context.db.contact.findMany({
+                where: {
+                    coachId: coachId,
+                    contactedStatus: true,
+                    active: true,
+                },
+            });
+
+            return contacts;
+    },
+});

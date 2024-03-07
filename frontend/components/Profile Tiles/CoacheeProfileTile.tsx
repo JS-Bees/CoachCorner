@@ -89,8 +89,8 @@ const CoacheeProfileStyle = StyleSheet.create({
     },
     coacheeBoxes: {
         backgroundColor: "white",
-        marginTop: "5%",
-        marginLeft: "7%",
+        marginTop: "4%",
+        marginLeft: "4%",
         width: 150,
         height: 140,
         borderRadius: 16,  

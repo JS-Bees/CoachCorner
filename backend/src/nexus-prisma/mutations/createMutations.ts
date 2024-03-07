@@ -124,16 +124,34 @@ export const createReview = mutationField('createReview', {
         input: nonNull(arg({ type: CreateReviewInput })),
     },
     resolve: async (_, { input }, context: Context) => {
-        const createdReview = await context.db.review.create({
-            data: {
-                starRating: input.starRating,
-                comment: input.comment,
-                coacheeId: input.coacheeId,
-                coachId: input.coachId,
-            },
-        });
+            // Find a booking that matches both the coach ID and the coachee ID
+            const booking = await context.db.booking.findFirst({
+                where: {
+                    coachId: input.coachId,
+                    coacheeId: input.coacheeId,
+                },
+                include: {
+                    bookingSlots: {
+                        where: {
+                            status: 'COMPLETED',
+                        },
+                    },
+                },
+            });
 
-        return createdReview;
+            // Check if the booking exists and has a completed booking slot
+            if (!booking || booking.bookingSlots.length === 0) {
+                throw new Error(
+                    'A completed booking slot is required to create a review.',
+                );
+            }
+
+            // Create the review in the database
+            const review = await context.db.review.create({
+                data: input,
+            });
+
+            return review;
     },
 });
 
@@ -194,11 +212,25 @@ export const createContact = mutationField('createContact', {
         input: nonNull(arg({ type: CreateContactInput })),
     },
     resolve: async (_, { input }, context: Context) => {
-        // Create the contact in your database
-        const contact = await context.db.contact.create({
-            data: input,
-        });
+  
 
-        return contact;
+            const existingContact = await context.db.contact.findFirst({
+                where: {
+                    coachId: input.coachId,
+                    coacheeId: input.coacheeId,
+                    active: true,
+                },
+            });
+
+            if (existingContact) {
+                throw new Error('Already added this coach to contacts!');
+            }
+
+            // Create the contact in the database
+            const contact = await context.db.contact.create({
+                data: input,
+            });
+
+            return contact;
     },
 });

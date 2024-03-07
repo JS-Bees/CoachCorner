@@ -59,7 +59,7 @@ const style = StyleSheet.create({
     },
     sessionBoxes: {
         marginTop: "4%",
-        marginLeft: "8%",
+        marginLeft: "4%",
         bottom: "-1%",
         backgroundColor: "white",
         borderRadius:  10,   

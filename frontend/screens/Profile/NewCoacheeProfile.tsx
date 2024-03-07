@@ -60,8 +60,6 @@ const NewCoacheeProfile = () => {
                 const token = await AsyncStorage.getItem('userToken');
                 console.log('token', token);
                 setUserToken(token);
-                console.log(coacheeData?.findCoacheeByID?.firstName)
-                console.log(coacheeData?.findCoacheeByID.lastName)
             } catch (error) {
                 console.error('Error fetching token:', error);
             }
@@ -200,7 +198,7 @@ const NewCoacheeProfile = () => {
             <Image source={CoacheeProfiles[0]?.imageSource} style={styles.circleImage}/>
             <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
-                <Text style={styles.buttonText}>Edit Profile</Text>
+                <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
             {isEditMode && (
                 <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
@@ -223,23 +221,23 @@ const NewCoacheeProfile = () => {
                 </Animated.View>
             )}
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="settings-outline" size={30} color="#7E3FF0" />
+                <Icon name="settings-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Account Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="pulse-outline" size={30} color="#7E3FF0" />
+                <Icon name="pulse-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>My Reviews</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="notifications-outline" size={30} color="#7E3FF0" />
+                <Icon name="notifications-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Manage notifications</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="information-circle-outline" size={30} color="#7E3FF0" />
+                <Icon name="information-circle-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Privacy Policy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.logOutButton} > 
-                <Icon name="log-out-outline" size={30} color="#7E3FF0" />
+                <Icon name="log-out-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
         </View>
@@ -456,7 +454,7 @@ const styles = StyleSheet.create({
         top: "2%",
         marginLeft: "5%",
         fontWeight: "600",
-        color: "#7E3FF0",
+        color: "grey",
         zIndex: 3.
     },
     buttonText2: {
@@ -464,6 +462,13 @@ const styles = StyleSheet.create({
         marginLeft: "5%",
         fontWeight: "600",
         color: "white",
+        zIndex: 3.
+    },
+    buttonText3: {
+        top: "2%",
+        marginLeft: "5%",
+        fontWeight: "600",
+        color: "#7E3FF0",
         zIndex: 3.
     },
     input: {

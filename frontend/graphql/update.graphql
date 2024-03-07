@@ -15,3 +15,11 @@ mutation UpdateCoachProfile($updateCoachProfileId: Int!, $input: UpdateCoachProf
     profilePicture
   }
 }
+
+mutation CreateContact($input: CreateContactInput!) {
+  createContact(input: $input) {
+    coachId
+    coacheeId
+    contactedStatus
+  }
+}

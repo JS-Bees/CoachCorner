@@ -203,15 +203,15 @@ const MyCoaches = StyleSheet.create({
         width: 65,
         height: 65,
     },
-
     searchContainer: {
-        borderWidth: 2, // Add a border
-        width: "85%",
+        borderWidth: 3, // Add a border
+        width: '90%',
         borderColor: '#7E3FF0', // Set the border color
         borderRadius: 15, // Add border radius to make it rounded
-        marginTop: "10%",
-        marginLeft: '7%',
-        paddingHorizontal: 10
+        marginTop: '10%',
+        marginLeft: 'auto', // Set left margin to auto
+        marginRight: 'auto', // Set right margin to auto
+        paddingHorizontal: '2.6%',
     },
     searchBarContainer: {
         // Set the dimensions of the SearchBar container

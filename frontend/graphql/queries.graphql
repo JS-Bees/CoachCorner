@@ -31,6 +31,10 @@ query FindCoacheeByID($userId: Int!) {
       type
       name
     }
+    reviews {
+      starRating
+      comment
+    }
   }
 }
 
@@ -50,5 +54,82 @@ query FindCoachByID($userId: Int!) {
     sports {
       type  
     }
+    reviews {
+      starRating
+      comment
+    }
   }
 }
+
+query FindCoachesBySport($sportType: String!) {
+  findCoachesBySport(sportType: $sportType) {
+    id
+    firstName
+    lastName
+    bio
+    address
+    reviews {
+      starRating
+      comment
+    }
+  }
+}
+
+query FindFavoriteCoaches($userId: Int!) {
+  findCoacheeByID(userID: $userId) {
+  contacts {
+    coachId
+    contactedStatus
+    coach {
+      firstName
+      lastName
+      bio
+      address
+      sports {
+        type
+      }
+      reviews {
+        starRating
+        comment
+      }
+    }
+  }
+  }
+}
+
+query GetCoachReviews($userId: Int!) {
+  findCoachByID(userID: $userId) {
+    firstName
+    lastName
+    reviews {
+      coachee {
+        firstName
+        lastName
+      }
+      starRating
+      comment
+    }
+  }
+}
+
+query GetSortedCoaches {
+  coaches {
+    id
+    firstName
+    lastName
+    bio
+    address
+    sports {
+      type
+    }
+
+    reviews {
+      starRating
+      comment
+    }
+    interests {
+      type
+      name
+    }
+  }  
+  }
