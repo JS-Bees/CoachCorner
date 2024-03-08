@@ -55,7 +55,6 @@ export type Coach = {
   bio: Scalars['String']['output'];
   birthday: Scalars['DateTime']['output'];
   bookings: Array<Booking>;
-  coachingRole: Scalars['Boolean']['output'];
   contacts: Array<Contact>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
@@ -63,7 +62,6 @@ export type Coach = {
   id: Scalars['Int']['output'];
   interests: Array<CoachInterest>;
   lastName: Scalars['String']['output'];
-  mantra: Scalars['String']['output'];
   password: Scalars['String']['output'];
   profilePicture: Scalars['String']['output'];
   reviews: Array<Review>;
@@ -105,7 +103,6 @@ export type Coachee = {
   bio: Scalars['String']['output'];
   birthday: Scalars['DateTime']['output'];
   bookings: Array<Booking>;
-  coachingRole: Scalars['Boolean']['output'];
   contacts: Array<Contact>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
@@ -113,7 +110,6 @@ export type Coachee = {
   id: Scalars['Int']['output'];
   interests: Array<CoacheeInterest>;
   lastName: Scalars['String']['output'];
-  mantra: Scalars['String']['output'];
   password: Scalars['String']['output'];
   profilePicture: Scalars['String']['output'];
   reviews: Array<Review>;
@@ -180,11 +176,9 @@ export type CreateCoachInput = {
   address: Scalars['String']['input'];
   bio: Scalars['String']['input'];
   birthday: Scalars['DateTime']['input'];
-  coachingRole: Scalars['Boolean']['input'];
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
-  mantra: Scalars['String']['input'];
   password: Scalars['String']['input'];
   profilePicture: Scalars['String']['input'];
 };
@@ -206,11 +200,9 @@ export type CreateCoacheeInput = {
   address: Scalars['String']['input'];
   bio: Scalars['String']['input'];
   birthday: Scalars['DateTime']['input'];
-  coachingRole: Scalars['Boolean']['input'];
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
-  mantra: Scalars['String']['input'];
   password: Scalars['String']['input'];
   profilePicture: Scalars['String']['input'];
 };
@@ -237,6 +229,18 @@ export type CreateContactInput = {
 export type CreateMessageInput = {
   contactId: Scalars['Int']['input'];
   content: Scalars['String']['input'];
+};
+
+export type CreateNewCoachInterestInput = {
+  coachId: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+};
+
+export type CreateNewCoacheeInterestInput = {
+  coacheeId: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
 };
 
 export type CreateReviewInput = {
@@ -268,16 +272,24 @@ export type Mutation = {
   __typename?: 'Mutation';
   createBooking: Booking;
   createCoach: Coach;
+  createCoachInterest: CoachInterest;
   createCoachTask: CoachTask;
   createCoachee: Coachee;
+  createCoacheeInterest: CoacheeInterest;
   createCoacheeTask: CoacheeTask;
   createContact: Contact;
   createReview: Review;
   createSportsCredentials: SportsCredential;
+  updateBookingSlotStatus: BookingSlot;
   updateBookingStatus: Booking;
+  updateCoachInterest: CoachInterest;
   updateCoachProfile: Coach;
+  updateCoachTask: CoachTask;
+  updateCoacheeInterest: CoacheeInterest;
   updateCoacheeProfile: Coachee;
+  updateCoacheeTask: CoacheeTask;
   updateContactedStatus: Contact;
+  updatePendingBooking: Booking;
 };
 
 
@@ -294,6 +306,11 @@ export type MutationCreateCoachArgs = {
 };
 
 
+export type MutationCreateCoachInterestArgs = {
+  input: CreateNewCoachInterestInput;
+};
+
+
 export type MutationCreateCoachTaskArgs = {
   input: CreateCoachTaskInput;
 };
@@ -302,6 +319,11 @@ export type MutationCreateCoachTaskArgs = {
 export type MutationCreateCoacheeArgs = {
   input: CreateCoacheeInput;
   interestsInput: Array<CreateCoacheeInterestInput>;
+};
+
+
+export type MutationCreateCoacheeInterestArgs = {
+  input: CreateNewCoacheeInterestInput;
 };
 
 
@@ -325,9 +347,21 @@ export type MutationCreateSportsCredentialsArgs = {
 };
 
 
+export type MutationUpdateBookingSlotStatusArgs = {
+  id: Scalars['Int']['input'];
+  input: UpdateBookingSlotStatusInput;
+};
+
+
 export type MutationUpdateBookingStatusArgs = {
   id: Scalars['Int']['input'];
   input: UpdateBookingStatusInput;
+};
+
+
+export type MutationUpdateCoachInterestArgs = {
+  id: Scalars['Int']['input'];
+  input: UpdateCoachInterestInput;
 };
 
 
@@ -337,15 +371,43 @@ export type MutationUpdateCoachProfileArgs = {
 };
 
 
+export type MutationUpdateCoachTaskArgs = {
+  id: Scalars['Int']['input'];
+  input: UpdateCoachTaskInput;
+};
+
+
+export type MutationUpdateCoacheeInterestArgs = {
+  id: Scalars['Int']['input'];
+  input: UpdateCoacheeInterestInput;
+};
+
+
 export type MutationUpdateCoacheeProfileArgs = {
   id: Scalars['Int']['input'];
   input: UpdateCoacheeProfileInput;
 };
 
 
+export type MutationUpdateCoacheeTaskArgs = {
+  id: Scalars['Int']['input'];
+  input: UpdateCoacheeTaskInput;
+};
+
+
 export type MutationUpdateContactedStatusArgs = {
   id: Scalars['Int']['input'];
   input: UpdateContactedStatusInput;
+};
+
+
+export type MutationUpdatePendingBookingArgs = {
+  addSlots: Array<CreateBookingSlotInput>;
+  bookingData: UpdateBookingInput;
+  bookingId: Scalars['Int']['input'];
+  deleteSlotsIds: Array<Scalars['Int']['input']>;
+  updateSlots: Array<UpdateBookingSlotInput>;
+  updateSlotsIds: Array<Scalars['Int']['input']>;
 };
 
 export type Query = {
@@ -456,22 +518,61 @@ export type SportsCredential = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type UpdateBookingInput = {
+  additionalNotes: Scalars['String']['input'];
+  serviceType: Scalars['String']['input'];
+};
+
+export type UpdateBookingSlotInput = {
+  date: Scalars['DateTime']['input'];
+  endTime: Scalars['DateTime']['input'];
+  id: Scalars['Int']['input'];
+  startTime: Scalars['DateTime']['input'];
+  status: Scalars['String']['input'];
+};
+
+export type UpdateBookingSlotStatusInput = {
+  status: Scalars['String']['input'];
+};
+
 export type UpdateBookingStatusInput = {
   status: Scalars['String']['input'];
+};
+
+export type UpdateCoachInterestInput = {
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
 };
 
 export type UpdateCoachProfileInput = {
   address: Scalars['String']['input'];
   bio: Scalars['String']['input'];
-  mantra: Scalars['String']['input'];
   profilePicture: Scalars['String']['input'];
+};
+
+export type UpdateCoachTaskInput = {
+  completionStatus: Scalars['String']['input'];
+  date: Scalars['DateTime']['input'];
+  description: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+export type UpdateCoacheeInterestInput = {
+  name: Scalars['String']['input'];
+  type: Scalars['String']['input'];
 };
 
 export type UpdateCoacheeProfileInput = {
   address: Scalars['String']['input'];
   bio: Scalars['String']['input'];
-  mantra: Scalars['String']['input'];
   profilePicture: Scalars['String']['input'];
+};
+
+export type UpdateCoacheeTaskInput = {
+  completionStatus: Scalars['String']['input'];
+  date: Scalars['DateTime']['input'];
+  description: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type UpdateContactedStatusInput = {
@@ -564,7 +665,7 @@ export type UpdateCoacheeProfileMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCoacheeProfileMutation = { __typename?: 'Mutation', updateCoacheeProfile: { __typename?: 'Coachee', address: string, bio: string, mantra: string, profilePicture: string } };
+export type UpdateCoacheeProfileMutation = { __typename?: 'Mutation', updateCoacheeProfile: { __typename?: 'Coachee', address: string, bio: string, profilePicture: string } };
 
 export type UpdateCoachProfileMutationVariables = Exact<{
   updateCoachProfileId: Scalars['Int']['input'];
@@ -572,7 +673,7 @@ export type UpdateCoachProfileMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCoachProfileMutation = { __typename?: 'Mutation', updateCoachProfile: { __typename?: 'Coach', address: string, bio: string, mantra: string, profilePicture: string } };
+export type UpdateCoachProfileMutation = { __typename?: 'Mutation', updateCoachProfile: { __typename?: 'Coach', address: string, bio: string, profilePicture: string } };
 
 export type CreateContactMutationVariables = Exact<{
   input: CreateContactInput;
@@ -593,6 +694,6 @@ export const FindCoachesBySportDocument = {"kind":"Document","definitions":[{"ki
 export const FindFavoriteCoachesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindFavoriteCoaches"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findCoacheeByID"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contacts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coachId"}},{"kind":"Field","name":{"kind":"Name","value":"contactedStatus"}},{"kind":"Field","name":{"kind":"Name","value":"coach"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"sports"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"starRating"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<FindFavoriteCoachesQuery, FindFavoriteCoachesQueryVariables>;
 export const GetCoachReviewsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoachReviews"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findCoachByID"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"reviews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coachee"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"starRating"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}}]}}]}}]}}]} as unknown as DocumentNode<GetCoachReviewsQuery, GetCoachReviewsQueryVariables>;
 export const GetSortedCoachesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSortedCoaches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coaches"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"sports"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}}]}},{"kind":"Field","name":{"kind":"Name","value":"reviews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"starRating"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"interests"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<GetSortedCoachesQuery, GetSortedCoachesQueryVariables>;
-export const UpdateCoacheeProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoacheeProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateCoacheeProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoacheeProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCoacheeProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateCoacheeProfileId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"mantra"}},{"kind":"Field","name":{"kind":"Name","value":"profilePicture"}}]}}]}}]} as unknown as DocumentNode<UpdateCoacheeProfileMutation, UpdateCoacheeProfileMutationVariables>;
-export const UpdateCoachProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoachProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateCoachProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoachProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCoachProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateCoachProfileId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"mantra"}},{"kind":"Field","name":{"kind":"Name","value":"profilePicture"}}]}}]}}]} as unknown as DocumentNode<UpdateCoachProfileMutation, UpdateCoachProfileMutationVariables>;
+export const UpdateCoacheeProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoacheeProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateCoacheeProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoacheeProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCoacheeProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateCoacheeProfileId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"profilePicture"}}]}}]}}]} as unknown as DocumentNode<UpdateCoacheeProfileMutation, UpdateCoacheeProfileMutationVariables>;
+export const UpdateCoachProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoachProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateCoachProfileId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoachProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCoachProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateCoachProfileId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"bio"}},{"kind":"Field","name":{"kind":"Name","value":"profilePicture"}}]}}]}}]} as unknown as DocumentNode<UpdateCoachProfileMutation, UpdateCoachProfileMutationVariables>;
 export const CreateContactDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateContact"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateContactInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createContact"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coachId"}},{"kind":"Field","name":{"kind":"Name","value":"coacheeId"}},{"kind":"Field","name":{"kind":"Name","value":"contactedStatus"}}]}}]}}]} as unknown as DocumentNode<CreateContactMutation, CreateContactMutationVariables>;

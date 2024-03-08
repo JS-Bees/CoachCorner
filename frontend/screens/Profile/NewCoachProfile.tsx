@@ -17,17 +17,18 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 interface CoachProfile {
     coachName: string;
-    mainSport:  string[],
+    mainSport: string[];
     imageSource: ImageSourcePropType;
     about: string;
     achievements: string;
     workplaceAddress: string;
     interests: {
-        movieGenres: string[];
-        hobbies: string[];
-        videoGames: string[];
+        MovieGenre: string[];
+        BookGenre: string[];
+        MusicGenre: string[];
     };
 }
+
 
 
 
@@ -108,9 +109,8 @@ const NewCoachProfile = () => {
             await executeMutation({
                 updateCoachProfileId: parseInt(userToken),
                 input: {
-                    bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio,
-                    address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address,
-                    mantra: "new mantra",
+                    bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio || '',
+                    address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address || '',
                     profilePicture: "new profile picture"
                 }
             });
@@ -152,26 +152,18 @@ const NewCoachProfile = () => {
     const CoachProfiles: CoachProfile[] = [
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
-            mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', '), // Map over sports array and join them"V 
+            mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
             imageSource: require('../../assets/Jane_Smith.png'),
-            about: coachData?.findCoachByID.bio,
+            about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",
-            workplaceAddress: coachData?.findCoachByID.address,
-            interests: coachData?.findCoachByID.interests.reduce((acc, interest) => {
-                if (interest.type === 'Movie Genre') {
-                  acc.movieGenres.push(interest.name);
-                } else if (interest.type === 'Hobby') {
-                  acc.hobbies.push(interest.name);
-                } else if (interest.type === 'Game') {
-                  acc.videoGames.push(interest.name);
-                }
-                return acc;
-              }, {
-                movieGenres: [],
-                hobbies: [],
-                videoGames: [],
-              }),
+            workplaceAddress: coachData?.findCoachByID.address || '',
+            interests: {
+                MovieGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'MovieGenre').map(interest => interest.name) || [],
+                BookGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'BookGenre').map(interest => interest.name) || [],
+                MusicGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'MusicGenre').map(interest => interest.name) || [],
             },
+        },
+
     ]
 
     const [isEditMode, setIsEditMode] = useState(false);
@@ -302,18 +294,18 @@ const NewCoachProfile = () => {
                             <Text style={styles.titleHeader}> Interests</Text>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Movies:</Text>
-                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.movieGenres?.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>   Movies Genre:</Text>
+                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.MovieGenre?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Hobbies:</Text>
-                            <Text style={styles.subontentText}> {CoachProfiles[0].interests?.hobbies?.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>  Book Genre:</Text>
+                            <Text style={styles.subontentText}> {CoachProfiles[0].interests?.BookGenre?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>   Video Games:</Text>
-                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.videoGames?.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>  Music Genre:</Text>
+                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.MusicGenre?.join(', ')}{"\n"}</Text>
                             </View>
              
                            </ScrollView>

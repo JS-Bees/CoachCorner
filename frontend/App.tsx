@@ -53,8 +53,7 @@ import MyCoaches_alt from './screens/MyCoaches_alt';
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    // url: 'http://192.168.1.14:5050/graphql',//Apartment Ip Address
-    url: 'http://192.168.254.142:5050/graphql',//GMRX Ip Address
+    url: 'http://192.168.1.10:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });

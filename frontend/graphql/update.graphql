@@ -2,7 +2,6 @@ mutation UpdateCoacheeProfile($updateCoacheeProfileId: Int!, $input: UpdateCoach
   updateCoacheeProfile(id: $updateCoacheeProfileId, input: $input) {
     address
     bio
-    mantra
     profilePicture
   }
 }
@@ -11,7 +10,6 @@ mutation UpdateCoachProfile($updateCoachProfileId: Int!, $input: UpdateCoachProf
   updateCoachProfile(id: $updateCoachProfileId, input: $input) {
     address
     bio
-    mantra
     profilePicture
   }
 }

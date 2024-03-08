@@ -36,7 +36,6 @@ type Coach {
   bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
-  coachingRole: Boolean!
   contacts: [Contact!]!
   createdAt: DateTime!
   email: String!
@@ -44,7 +43,6 @@ type Coach {
   id: Int!
   interests: [CoachInterest!]!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
   reviews: [Review!]!
@@ -83,7 +81,6 @@ type Coachee {
   bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
-  coachingRole: Boolean!
   contacts: [Contact!]!
   createdAt: DateTime!
   email: String!
@@ -91,7 +88,6 @@ type Coachee {
   id: Int!
   interests: [CoacheeInterest!]!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
   reviews: [Review!]!
@@ -155,11 +151,9 @@ input CreateCoachInput {
   address: String!
   bio: String!
   birthday: DateTime!
-  coachingRole: Boolean!
   email: String!
   firstName: String!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
 }
@@ -181,11 +175,9 @@ input CreateCoacheeInput {
   address: String!
   bio: String!
   birthday: DateTime!
-  coachingRole: Boolean!
   email: String!
   firstName: String!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
 }
@@ -275,6 +267,7 @@ type Mutation {
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
   updateCoacheeTask(id: Int!, input: UpdateCoacheeTaskInput!): CoacheeTask!
   updateContactedStatus(id: Int!, input: UpdateContactedStatusInput!): Contact!
+  updatePendingBooking(addSlots: [CreateBookingSlotInput!]!, bookingData: UpdateBookingInput!, bookingId: Int!, deleteSlotsIds: [Int!]!, updateSlots: [UpdateBookingSlotInput!]!, updateSlotsIds: [Int!]!): Booking!
 }
 
 type Query {
@@ -326,6 +319,19 @@ type SportsCredential {
   updatedAt: DateTime!
 }
 
+input UpdateBookingInput {
+  additionalNotes: String!
+  serviceType: String!
+}
+
+input UpdateBookingSlotInput {
+  date: DateTime!
+  endTime: DateTime!
+  id: Int!
+  startTime: DateTime!
+  status: String!
+}
+
 input UpdateBookingSlotStatusInput {
   status: String!
 }
@@ -342,7 +348,6 @@ input UpdateCoachInterestInput {
 input UpdateCoachProfileInput {
   address: String!
   bio: String!
-  mantra: String!
   profilePicture: String!
 }
 
@@ -361,7 +366,6 @@ input UpdateCoacheeInterestInput {
 input UpdateCoacheeProfileInput {
   address: String!
   bio: String!
-  mantra: String!
   profilePicture: String!
 }
 

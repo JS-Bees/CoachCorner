@@ -90,9 +90,8 @@ const NewCoacheeProfile = () => {
             await executeMutation({
                 updateCoacheeProfileId: parseInt(userToken),
                 input: {
-                    bio: editedBio.trim() ? editedBio : coacheeData?.findCoacheeByID.bio,
-                    address: editedAddress.trim() ? editedAddress : coacheeData?.findCoacheeByID.address,
-                    mantra: "new mantra",
+                    bio: editedBio.trim() ? editedBio : coacheeData?.findCoacheeByID.bio || '',
+                    address: editedAddress.trim() ? editedAddress : coacheeData?.findCoacheeByID.address || '',
                     profilePicture: "new profile picture"
                 }
             });
@@ -132,6 +131,7 @@ const NewCoacheeProfile = () => {
         setEditedAddress('');
     };
 
+
     const CoacheeProfiles: CoacheeProfile[] = [
         {
             coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
@@ -142,11 +142,11 @@ const NewCoacheeProfile = () => {
             address: coacheeData?.findCoacheeByID.address,
             age: 19,
             interests: coacheeData?.findCoacheeByID.interests.reduce((acc, interest) => {
-                if (interest.type === 'Movie Genre') {
+                if (interest.type === 'MovieGenre') {
                   acc.movieGenres.push(interest.name);
-                } else if (interest.type === 'Hobby') {
+                } else if (interest.type === 'BookGenre') {
                   acc.hobbies.push(interest.name);
-                } else if (interest.type === 'Game') {
+                } else if (interest.type === 'MusicGenre') {
                   acc.videoGames.push(interest.name);
                 }
                 return acc;
@@ -155,8 +155,7 @@ const NewCoacheeProfile = () => {
                 hobbies: [],
                 videoGames: [],
               }),
-
-        },
+            },
     ]
     const [isEditMode, setIsEditMode] = useState(false);
     const slideAnimation = useRef(new Animated.Value(0)).current;
@@ -285,17 +284,17 @@ const NewCoacheeProfile = () => {
                             <Text style={styles.titleHeader}>Interests</Text>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Movies:</Text>
+                            <Text style={styles.subHeader}>  Movies Genre:</Text>
                             <Text style={styles.subontentText}>{CoacheeProfiles[0].interests?.movieGenres?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Hobbies:</Text>
+                            <Text style={styles.subHeader}>  Book Genre:</Text>
                             <Text style={styles.subontentText}> {CoacheeProfiles[0].interests?.hobbies?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>   Video Games:</Text>
+                            <Text style={styles.subHeader}>  Music Genre:</Text>
                             <Text style={styles.subontentText}>{CoacheeProfiles[0].interests?.videoGames?.join(', ')}{"\n"}</Text>
                             </View>
                            </ScrollView>
