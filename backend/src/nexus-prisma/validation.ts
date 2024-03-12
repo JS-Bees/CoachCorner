@@ -1,14 +1,8 @@
 import * as yup from 'yup';
 
 export const loginSchema = yup.object().shape({
-    email: yup
-        .string()
-        .email('Please enter a valid email address.')
-        .required('Email is required.'),
-    password: yup
-        .string()
-        .min(4, 'Password must be at least  4 characters.')
-        .required('Password is required.'),
+    email: yup.string().required('Email is required.'),
+    password: yup.string().required('Password is required.'),
 });
 
 export const idSchema = yup.object().shape({
@@ -59,16 +53,10 @@ export const idAndSportSchema = yup.object().shape({
 export const coachSchema = yup.object().shape({
     address: yup.string().required('Address is required.'),
     birthday: yup.date().required('Birthday is required.'),
-    email: yup
-        .string()
-        .email('Please enter a valid email address.')
-        .required('Email is required.'),
+    email: yup.string().required('Email is required.'),
     firstName: yup.string().required('First name is required.'),
     lastName: yup.string().required('Last name is required.'),
-    password: yup
-        .string()
-        .min(4, 'Password must be at least 4 characters.')
-        .required('Password is required.'),
+    password: yup.string().required('Password is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
 
     bio: yup.string().required('Bio is required.'),
@@ -77,16 +65,10 @@ export const coachSchema = yup.object().shape({
 export const coacheeSchema = yup.object().shape({
     address: yup.string().required('Address is required.'),
     birthday: yup.date().required('Birthday is required.'),
-    email: yup
-        .string()
-        .email('Please enter a valid email address.')
-        .required('Email is required.'),
+    email: yup.string().required('Email is required.'),
     firstName: yup.string().required('First name is required.'),
     lastName: yup.string().required('Last name is required.'),
-    password: yup
-        .string()
-        .min(4, 'Password must be at least 4 characters.')
-        .required('Password is required.'),
+    password: yup.string().required('Password is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
     bio: yup.string().required('Bio is required.'),
 });

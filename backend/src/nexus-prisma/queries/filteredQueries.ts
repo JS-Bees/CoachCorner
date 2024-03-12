@@ -141,15 +141,15 @@ export const findCoacheeByID = queryField('findCoacheeByID', {
             // Validate id using the idSchema
             idSchema.validateSync({ id: userID });
 
-            // Search for a Coach by ID
-            const coach = await context.db.coach.findUnique({
+            // Search for a Coachee by ID
+            const coachee = await context.db.coachee.findUnique({
                 where: { id: userID, active: true }, // Include the 'active' condition
             });
 
-            if (coach) {
-                return coach;
+            if (coachee) {
+                return coachee;
             } else {
-                throw new Error(`Coach with ID ${userID} does not exist.`);
+                throw new Error(`Coachee with ID ${userID} does not exist.`);
             }
         } catch (error) {
             // Handle validation errors
