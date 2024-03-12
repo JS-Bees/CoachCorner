@@ -8,17 +8,17 @@ import { useState,useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoachByIdDocument, UpdateCoachProfileDocument } from '../../generated-gql/graphql';
 import { useMutation, useQuery } from 'urql';
-
-
-
 import PagerView from 'react-native-pager-view';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+// import  Cloudinary  from "cloudinary-react-native";
+
 
 interface CoachProfile {
     coachName: string;
     mainSport: string[];
-    imageSource: ImageSourcePropType;
+    imageSource: string;
     about: string;
     achievements: string;
     workplaceAddress: string;
@@ -28,10 +28,6 @@ interface CoachProfile {
         MusicGenre: string[];
     };
 }
-
-
-
-
 
 
 
@@ -46,6 +42,64 @@ const NewCoachProfile = () => {
 
     const [, executeMutation] = useMutation(UpdateCoachProfileDocument);
 
+    
+    // Function to upload image to Cloudinary
+const uploadImageToCloudinary = async (imageObject: any) => {
+    try {
+      const uploadPreset = 'coachcorner';
+      const formData = new FormData();
+      formData.append('file', imageObject); // Append the Blob directly
+      formData.append('upload_preset', uploadPreset);
+
+
+      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudinaryData = await cloudinaryResponse.json();
+      
+      return cloudinaryData.secure_url;
+    } catch (error) {
+      console.error('Error uploading image to Cloudinary:', error);
+      throw error;
+    }
+ };
+
+ const selectImage = async () => {
+    try {
+       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+       if (!permissionResult.granted) {
+         alert('Permission to access camera roll is required!');
+         return;
+       }
+   
+       const pickerResult = await ImagePicker.launchImageLibraryAsync();
+       if (pickerResult.canceled) {
+         return;
+       }
+       // Ensure you're accessing the first asset's uri
+       const imageUri = pickerResult.assets[0].uri;
+       
+       const imageObject = {
+        uri: imageUri,
+        type: `test/${imageUri.split('.')[1]}`,
+        name: `test.${imageUri.split('.')[1]}`
+       }
+
+       // Upload the selected image to Cloudinary
+       const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
+       setEditedProfilePicture(uploadedImageUrl)
+       console.log('Uploaded image URL:', uploadedImageUrl);
+   
+       // Here you can use the uploadedImageUrl as needed, e.g., updating your state or database
+   
+    } catch (error) {
+       console.error('Error picking an image:', error);
+    }
+   };
+    
+
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
         variables: {
@@ -56,7 +110,7 @@ const NewCoachProfile = () => {
 
     const [editedBio, setEditedBio] = useState<string>(coachData?.findCoachByID.bio || '');
     const [editedAddress, setEditedAddress] = useState<string>(coachData?.findCoachByID.address || '');
-
+    const [editedProfilePicture, setEditedProfilePicture] = useState<string>(coachData?.findCoachByID.profilePicture || '');
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -89,6 +143,7 @@ const NewCoachProfile = () => {
         fetchUserToken();
     }, []);
     
+    
 
     const toggleDrawer = () => {
         if (drawer.current) {
@@ -98,12 +153,14 @@ const NewCoachProfile = () => {
 
     const handleSaveChanges = async () => {
         // Check if either bio or address is empty
-        if ((!editedBio.trim() && !editedAddress.trim()) || 
-            (editedBio.trim() === coachData?.findCoachByID.bio && editedAddress.trim() === coachData?.findCoachByID.address)) 
+        if ((!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) || 
+            (editedBio.trim() === coachData?.findCoachByID.bio && 
+             editedAddress.trim() === coachData?.findCoachByID.address &&
+             editedProfilePicture.trim() === coachData?.findCoachByID.profilePicture)) 
             {
             Alert.alert('No changes made.');
             return;
-        }
+        } 
     
         try {
             await executeMutation({
@@ -111,7 +168,7 @@ const NewCoachProfile = () => {
                 input: {
                     bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio || '',
                     address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address || '',
-                    profilePicture: "new profile picture"
+                    profilePicture: editedProfilePicture
                 }
             });
     
@@ -148,12 +205,12 @@ const NewCoachProfile = () => {
         setEditedBio('');
         setEditedAddress('');
     };
-
+    console.log(coachData?.findCoachByID.address)
     const CoachProfiles: CoachProfile[] = [
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
             mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
-            imageSource: require('../../assets/Jane_Smith.png'),
+            imageSource: coachData?.findCoachByID.profilePicture,
             about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",
             workplaceAddress: coachData?.findCoachByID.address || '',
@@ -165,7 +222,6 @@ const NewCoachProfile = () => {
         },
 
     ]
-
     const [isEditMode, setIsEditMode] = useState(false);
     const slideAnimation = useRef(new Animated.Value(0)).current;
     const opacityAnimation = useRef(new Animated.Value(0)).current;
@@ -203,31 +259,39 @@ const NewCoachProfile = () => {
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <Image source={CoachProfiles[0]?.imageSource} style={styles.circleImage}/>
             <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
             {isEditMode && (
-                <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
-                    <TextInput
-                        style={styles.input}
-                        value={editedBio}
-                        onChangeText={setEditedBio}
-                        placeholder="Edit Bio"
-                        multiline={true}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        value={editedAddress}
-                        onChangeText={setEditedAddress}
-                        placeholder="Edit Address"
-                    />
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-                        <Text style={styles.buttonText2}>Save Changes</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-            )}
+    <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
+        <TouchableOpacity onPress={selectImage}>
+        <Image 
+    source={editedProfilePicture ? { uri: editedProfilePicture } : require('../../assets/add-image.png')}
+    style={styles.circleImage}
+/>
+        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+            <TextInput
+                style={styles.input}
+                value={editedBio}
+                onChangeText={setEditedBio}
+                placeholder="Edit Bio"
+                multiline={true}
+            />
+            <TextInput
+                style={styles.input}
+                value={editedAddress}
+                onChangeText={setEditedAddress}
+                placeholder="Edit Address"
+            />
+        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+            <Text style={styles.buttonText2}>Save Changes</Text>
+        </TouchableOpacity>
+    </Animated.View>
+)}
+
             <TouchableOpacity style={styles.drawerButton} > 
                 <Icon name="settings-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Account Settings</Text>
@@ -260,8 +324,8 @@ const NewCoachProfile = () => {
             renderNavigationView={navigationView}
         >
             <View style={styles.container}>
-                <View style={styles.subContainer}>
-                    <Image source={CoachProfiles[0].imageSource} style={styles.profileImage}/>
+            <View style={styles.subContainer}>
+                    <Image source={{uri: CoachProfiles[0].imageSource}} style={styles.profileImage}/>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={handleNavigateBack}>
                             <Icon name="arrow-back-circle" size={30} color="#FDDE6E" />
@@ -446,11 +510,14 @@ const styles = StyleSheet.create({
         marginLeft: "10%"
     },
     circleImage: {
-        width: 60,
-        height: 60,
-        bottom: "8%",
-        left: "60%",
-        borderRadius: 30
+        width: 80, // Adjust width as needed
+        height: 80, // Adjust height as needed
+        position: 'absolute',
+        bottom: '100%', // Adjusted to center vertically
+        left: '50%', // Adjusted to center horizontally
+        marginLeft: -50, // Half of the width
+        marginBottom: -80, // Half of the height
+        borderRadius: 10,
     },
     drawerButton: {
         paddingTop: "10%",
@@ -496,6 +563,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 250,
     },
+    inputContainer: {
+        marginTop: 90, // Adjust as needed to create space between the image and text inputs
+    },
+  
   
 })
 export default NewCoachProfile;

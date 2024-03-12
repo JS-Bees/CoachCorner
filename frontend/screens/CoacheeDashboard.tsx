@@ -127,55 +127,77 @@ const CoacheeDashboard = () => {
         return null;
     }
     
-const coacheeInterests = coacheeData?.findCoacheeByID.interests || [];
+    // console.log('Interests:', JSON.stringify(coacheeData?.findCoacheeByID.interests, null, 2));
+
+//     // Define interests of the coachee
+//     const coacheeInterests = coacheeData?.findCoacheeByID.interests || [];
+//     const coaches = coachData?.coaches || [];
+
+//     // console.log(coaches)
+//     // Sort coaches by the number of matching interests in descending order
+//     // Matching Algorithm and Hierarcy Recommendation Algorithm being applied
+//     const sortedCoaches = coaches.map(coach => ({
+//         coach,
+//         matchingInterests: coach.interests.filter(coachInterest =>
+//         coacheeInterests.some(coacheeInterest =>
+//             coacheeInterest.type === coachInterest.type &&
+//             coacheeInterest.name === coachInterest.name
+//         )).length
+//     })).sort((a, b) => b.matchingInterests - a.matchingInterests);
+
+// // Ensure all coaches are considered for matching interests
+// // This step might not be necessary if the sorting logic is correct,
+// // but it's included here for clarity and to address the concern about initial order.
+
+// // Select the top 2 coaches with the most matching interests
+// const matchedCoaches = sortedCoaches.slice(0, 2);
+
+// console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`));
+// const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`);
+const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
 const coaches = coachData?.coaches || [];
 
-// Define the priority order for matching genres
 const genrePriority = ['Movie Genre', 'Book Genre', 'Music Genre'];
-
-// Function to find the first matching interest of a given type
-const findFirstMatchingInterest = (interests, type) => {
-    return interests.find(interest => interest.type === type);
-};
-
-// Define weights for different genre types
 const genreWeights = {
     'Movie Genre': 3,
     'Book Genre': 2,
     'Music Genre': 1
 };
 
-// Sort coaches by the weighted sum of matching interests
-const sortedCoaches = coaches.map(coach => {
-    let weightedMatchingInterests = 0;
+const findFirstMatchingInterest = (interests, type) => {
+    return interests.find(interest => interest.type === type);
+};
 
-    // Iterate through each priority genre
+const sortedCoaches = coaches.map(coach => {
+    if (!coach) {
+        console.log("Coach data is undefined.");
+        return null;
+    }
+
+    let weightedMatchingInterests = 0;
     genrePriority.forEach(type => {
         const coacheeInterest = findFirstMatchingInterest(coacheeInterests, type);
         const coachInterest = findFirstMatchingInterest(coach.interests, type);
 
-        // Check if both coachee and coach have interests of the same type
         if (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name) {
             weightedMatchingInterests += genreWeights[type];
         }
     });
 
     return { coach, weightedMatchingInterests };
-}).sort((a, b) => b.weightedMatchingInterests - a.weightedMatchingInterests);
+}).filter(coach => coach !== null).sort((a, b) => b.weightedMatchingInterests - a.weightedMatchingInterests);
 
-// Select the top 2 coaches with the most matching interests
-let matchedCoaches = sortedCoaches.slice(0, 2);
+const matchedCoaches = sortedCoaches.slice(0, 2);
 
-// If no coaches are found with matching interests, choose randomly from available coaches
 if (matchedCoaches.length === 0) {
-    // Choose a random coach from available coaches
     const randomIndex = Math.floor(Math.random() * coaches.length);
     const randomCoach = coaches[randomIndex];
     matchedCoaches.push({ coach: randomCoach, weightedMatchingInterests: 0 });
 }
 
-console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`));
-const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`);
+// Use optional chaining and nullish coalescing to safely access properties
+console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`));
+const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`);
 
     const TopCoaches: Profile[] = [
         //max 2
@@ -201,22 +223,22 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName
     const RecommendedCoaches: Profile[] = [
         // max 2
         {   
-            id: matchedCoaches[0]?.coach.id,
+            id: matchedCoaches[0]?.coach?.id || 0, 
             name: matchedCoachesNames[0],
             imageSource: require('../assets/John_Doe.png'),
-            gainedStars: matchedCoaches[0]?.coach.reviews.reduce((totalStars, review) => totalStars + review.starRating, 0) / matchedCoaches[0]?.coach.reviews.length || 0, // Calculate average star rating
-            mainSport: matchedCoaches[0]?.coach.sports[0]?.type || 'Unknown',
-            about: matchedCoaches[0]?.coach.bio || 'No information available',
-            workplaceAddress: matchedCoaches[0]?.coach.address || 'Unknown',
+            gainedStars: matchedCoaches[0]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
+            mainSport: matchedCoaches[0]?.coach?.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
+            about: matchedCoaches[0]?.coach?.bio,
+            workplaceAddress: matchedCoaches[0]?.coach?.address,
         },
         {   
-            id: matchedCoaches[1]?.coach.id,
+            id: matchedCoaches[1]?.coach?.id || 0, 
             name: matchedCoachesNames[1],
             imageSource: require('../assets/Kobe_Brian.jpg'),
-            gainedStars: matchedCoaches[1]?.coach.reviews.reduce((totalStars, review) => totalStars + review.starRating, 0) / matchedCoaches[1]?.coach.reviews.length || 0, // Calculate average star rating
-            mainSport: matchedCoaches[1]?.coach.sports[0]?.type || 'Unknown',
-            about: matchedCoaches[1]?.coach.bio || 'No information available',
-            workplaceAddress: matchedCoaches[1]?.coach.address || 'Unknown',
+            gainedStars: matchedCoaches[1]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
+            mainSport: matchedCoaches[1]?.coach?.sports.length > 0 ? matchedCoaches[1].coach.sports[0].type : "Unknown",
+            about: matchedCoaches[1]?.coach?.bio,
+            workplaceAddress: matchedCoaches[1]?.coach?.address,
         },
     ];
 
@@ -233,12 +255,13 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName
                 onPress={() => navigation.navigate('NewCoacheeProfile')}
             >
                 <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
+                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
                     style={{
                         width: 40,
                         height: 40,
                         marginLeft: '10%',
                         marginTop: '-10%',
+                        borderRadius: 20,
                     }}
                 />
             </TouchableOpacity>

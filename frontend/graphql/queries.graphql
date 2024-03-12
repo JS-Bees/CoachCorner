@@ -27,6 +27,7 @@ query FindCoacheeByID($userId: Int!) {
     password
     bio
     address
+    profilePicture
     interests {
       type
       name
@@ -47,6 +48,7 @@ query FindCoachByID($userId: Int!) {
     password
     bio
     address
+    profilePicture
     interests {
       type
       name

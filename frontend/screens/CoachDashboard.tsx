@@ -96,10 +96,16 @@ const CoachDashboard = () => {
             <View style={CoachDashboardStyle.topContainer}>
                 <View style={[CoachDashboardStyle.topMiniContainer]}>
                     <View style={CoachDashboardStyle.profileImageContainer}>
-                        <Image
-                            source={require('../assets/Man.png')} // Add your profile image source here
-                            style={CoachDashboardStyle.profileImage}
-                        />
+                    <Image
+                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
+                    style={{
+                        width: 40,
+                        height: 40,
+                        marginLeft: '10%',
+                        marginTop: '-10%',
+                        borderRadius: 20,
+                    }}
+                />
                     </View>
                     <View style={CoachDashboardStyle.nameAndGreetingsContainer}>
                         <Text style={CoachDashboardStyle.greetings}>

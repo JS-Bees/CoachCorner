@@ -144,16 +144,7 @@ const MyCoaches_alt = () => {
                  containerStyle={MyCoaches.searchBarContainer}
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
-
-            <TouchableOpacity 
-            style={[
-                MyCoaches.AllCoachesButton,
-                activeButton === 'Favorite' ? MyCoaches.activeButton : null, 
-            ]}
-                onPress={() => setActiveButton('All')}>
             <Text style={MyCoaches.buttonText}>Favorite Coaches</Text>
-            </TouchableOpacity>
-
 
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
                <View>

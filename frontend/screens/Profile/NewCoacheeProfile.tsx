@@ -13,11 +13,14 @@ import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Alert } from 'react-native';
 import { Animated } from 'react-native';
+import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+// import  Cloudinary  from "cloudinary-react-native";
+
 
 interface CoacheeProfile {
     coacheeName: string;
     // mainSport: string;
-    imageSource: ImageSourcePropType;
+    imageSource: string;
     about: string;
     achievements: string;
     address: string;
@@ -41,6 +44,67 @@ const NewCoacheeProfile = () => {
 
     const [, executeMutation] = useMutation(UpdateCoacheeProfileDocument);
 
+   
+
+// Function to upload image to Cloudinary
+const uploadImageToCloudinary = async (imageObject: any) => {
+    try {
+      const uploadPreset = 'coachcorner';
+      const formData = new FormData();
+      formData.append('file', imageObject); // Append the Blob directly
+      formData.append('upload_preset', uploadPreset);
+
+
+      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudinaryData = await cloudinaryResponse.json();
+      
+      return cloudinaryData.secure_url;
+    } catch (error) {
+      console.error('Error uploading image to Cloudinary:', error);
+      throw error;
+    }
+ };
+
+ const selectImage = async () => {
+    try {
+       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+       if (!permissionResult.granted) {
+         alert('Permission to access camera roll is required!');
+         return;
+       }
+   
+       const pickerResult = await ImagePicker.launchImageLibraryAsync();
+       if (pickerResult.canceled) {
+         return;
+       }
+       // Ensure you're accessing the first asset's uri
+       const imageUri = pickerResult.assets[0].uri;
+       
+       const imageObject = {
+        uri: imageUri,
+        type: `test/${imageUri.split('.')[1]}`,
+        name: `test.${imageUri.split('.')[1]}`
+       }
+
+       // Upload the selected image to Cloudinary
+       const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
+       setEditedProfilePicture(uploadedImageUrl)
+       console.log('Uploaded image URL:', uploadedImageUrl);
+   
+       // Here you can use the uploadedImageUrl as needed, e.g., updating your state or database
+   
+    } catch (error) {
+       console.error('Error picking an image:', error);
+    }
+   };
+    
+
+
+
     const [{ data: coacheeData, fetching, error }] = useQuery({
         query: FindCoacheeByIdDocument, // Use the Coachee query document
         variables: {
@@ -51,7 +115,7 @@ const NewCoacheeProfile = () => {
 
     const [editedBio, setEditedBio] = useState<string>(coacheeData?.findCoacheeByID.bio || '');
     const [editedAddress, setEditedAddress] = useState<string>(coacheeData?.findCoacheeByID.address || '');
-
+    const [editedProfilePicture, setEditedProfilePicture] = useState<string>(coacheeData?.findCoacheeByID.profilePicture || '');
 
 
     useEffect(() => {
@@ -78,13 +142,15 @@ const NewCoacheeProfile = () => {
     };
 
     const handleSaveChanges = async () => {
-        // Check if either bio or address is empty
-        if ((!editedBio.trim() && !editedAddress.trim()) || 
-            (editedBio.trim() === coacheeData?.findCoacheeByID.bio && editedAddress.trim() === coacheeData?.findCoacheeByID.address)) 
+        // Check if either bio or address or profile picture is empty
+        if ((!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) || 
+            (editedBio.trim() === coacheeData?.findCoacheeByID.bio && 
+             editedAddress.trim() === coacheeData?.findCoacheeByID.address &&
+             editedProfilePicture.trim() === coacheeData?.findCoacheeByID.profilePicture)) 
             {
             Alert.alert('No changes made.');
             return;
-        }
+        } 
     
         try {
             await executeMutation({
@@ -92,7 +158,7 @@ const NewCoacheeProfile = () => {
                 input: {
                     bio: editedBio.trim() ? editedBio : coacheeData?.findCoacheeByID.bio || '',
                     address: editedAddress.trim() ? editedAddress : coacheeData?.findCoacheeByID.address || '',
-                    profilePicture: "new profile picture"
+                    profilePicture: editedProfilePicture
                 }
             });
     
@@ -136,7 +202,7 @@ const NewCoacheeProfile = () => {
         {
             coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
             // mainSport: "Basketball",
-            imageSource: require('../../assets/angelina.jpg'),
+            imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
             achievements: "None at the moment",
             address: coacheeData?.findCoacheeByID.address,
@@ -194,31 +260,39 @@ const NewCoacheeProfile = () => {
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <Image source={CoacheeProfiles[0]?.imageSource} style={styles.circleImage}/>
             <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
             {isEditMode && (
-                <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
-                    <TextInput
-                        style={styles.input}
-                        value={editedBio}
-                        onChangeText={setEditedBio}
-                        placeholder="Edit Bio"
-                        multiline={true}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        value={editedAddress}
-                        onChangeText={setEditedAddress}
-                        placeholder="Edit Address"
-                    />
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-                        <Text style={styles.buttonText2}>Save Changes</Text>
-                    </TouchableOpacity>
-                </Animated.View>
-            )}
+    <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
+        <TouchableOpacity onPress={selectImage}>
+        <Image 
+    source={editedProfilePicture ? { uri: editedProfilePicture } : require('../../assets/add-image.png')}
+    style={styles.circleImage}
+/>
+        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+            <TextInput
+                style={styles.input}
+                value={editedBio}
+                onChangeText={setEditedBio}
+                placeholder="Edit Bio"
+                multiline={true}
+            />
+            <TextInput
+                style={styles.input}
+                value={editedAddress}
+                onChangeText={setEditedAddress}
+                placeholder="Edit Address"
+            />
+        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+            <Text style={styles.buttonText2}>Save Changes</Text>
+        </TouchableOpacity>
+    </Animated.View>
+)}
+
             <TouchableOpacity style={styles.drawerButton} > 
                 <Icon name="settings-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Account Settings</Text>
@@ -251,7 +325,7 @@ const NewCoacheeProfile = () => {
         >
             <View style={styles.container}>
                 <View style={styles.subContainer}>
-                    <Image source={CoacheeProfiles[0].imageSource} style={styles.profileImage}/>
+                    <Image source={{uri: CoacheeProfiles[0].imageSource}} style={styles.profileImage}/>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={handleNavigateBack}>
                             <Icon name="arrow-back-circle" size={30} color="#FDDE6E" />
@@ -435,11 +509,14 @@ const styles = StyleSheet.create({
         marginLeft: "10%"
     },
     circleImage: {
-        width: 60,
-        height: 60,
-        bottom: "8%",
-        left: "60%",
-        borderRadius: 30
+        width: 80, // Adjust width as needed
+        height: 80, // Adjust height as needed
+        position: 'absolute',
+        bottom: '100%', // Adjusted to center vertically
+        left: '50%', // Adjusted to center horizontally
+        marginLeft: -50, // Half of the width
+        marginBottom: -80, // Half of the height
+        borderRadius: 10,
     },
     drawerButton: {
         paddingTop: "10%",
@@ -484,6 +561,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         width: 250,
+    },
+    inputContainer: {
+        marginTop: 90, // Adjust as needed to create space between the image and text inputs
     },
   
 })

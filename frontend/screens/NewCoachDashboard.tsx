@@ -15,7 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import { FindCoachByIdDocument } from '../generated-gql/graphql';
 import UpcomingSession from '../components/Profile Tiles/UpcomingSessionTiles';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed'; 
@@ -59,14 +59,14 @@ const NewCoachDashboard = () => {
     // Define a function to fetch coachee data by userID (token)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const useFetchCoachByUserID = (userID: any) => {
-        const [coacheeResult] = useQuery({
-            query: FindCoacheeByIdDocument, // Use the Coachee query document
+        const [coachResult] = useQuery({
+            query: FindCoachByIdDocument, // Use the Coachee query document
             variables: {
-                userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
+                userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
             },
         });
 
-        return coacheeResult;
+        return coachResult;
     };
 
     
@@ -153,9 +153,16 @@ const NewCoachDashboard = () => {
                 
             </View>
             <TouchableOpacity onPress={navigateToCoachProfile}>
-            <Image 
-                    source={require('../assets/Woman.png')} 
-                    style={{width: 40, height: 40, marginLeft:'10%', marginTop: '-10%'}}/>
+            <Image
+                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
+                    style={{
+                        width: 40,
+                        height: 40,
+                        marginLeft: '10%',
+                        marginTop: '-10%',
+                        borderRadius: 20,
+                    }}
+                />
             
             </TouchableOpacity>
            <TouchableOpacity onPress={navigateToNotifications}>
@@ -184,10 +191,6 @@ const NewCoachDashboard = () => {
                     </View>
                     <UpcomingSession upcoming={upcoming} />
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                        <Text style={CoacheeDashboardStyle.topRatedHeader}> Top Rated Coaches </Text>
-                    </View>
-                    <View style={CoacheeDashboardStyle.topRatedContainer}>
-                        <CoachProfiles profiles={profiles}/>
                     </View>
                 
                 </ScrollView>

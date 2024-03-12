@@ -21,6 +21,7 @@
     "@react-navigation/stack": "^6.3.20",
     "moment": "^2.29.4",
     "react-native-elements": "^3.4.3",
+    "react-native-image-picker": "^7.1.0",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.10.6",
     "react-native-paper-dates": "^0.19.7",
