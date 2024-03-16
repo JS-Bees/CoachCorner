@@ -18,6 +18,7 @@ import MyCoaches from './screens/MyCoaches';
 import MyCoaches_alt from './screens/MyCoaches_alt';
 import MyClients_alt from './screens/MyClients_alt';
 import Booking_Sessions from './screens/Sessions';
+import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import SplashScreen from './screens/Authentication/SplashScreen';
 import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
@@ -28,6 +29,7 @@ import PreviewPage from './screens/PreviewPage';
 import CoacheePreviewPage from './screens/CoacheePreviewPage';
 import ReviewsPage from './screens/ReviewsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
+import EditInterests from './screens/EditInterests';
 import NotificationPage from './screens/NotificationPage';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
@@ -50,7 +52,7 @@ import ChooseSport from './screens/Authentication/InterestPickingScreens/ChooseS
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.14:5050/graphql',
+    url: 'http://192.168.1.4:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -89,7 +91,9 @@ export type RootStackParams = {
     ReviewsPage: any,
     BookingSessions: any,
     NotificationPage: any,
-    CoacheePreviewPage: any, 
+    CoacheePreviewPage: any,
+    NewBookingPage: any,
+    EditInterests: any,
     
 };
 
@@ -101,7 +105,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="SignupCoachee">
+                <RootStack.Navigator initialRouteName="CoacheeDashboard">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
@@ -250,6 +254,16 @@ export default function App() {
                     <RootStack.Screen 
                         name="NotificationPage" 
                         component={NotificationPage} 
+                        options={{headerShown: false}}
+                        />
+                      <RootStack.Screen 
+                        name="NewBookingPage" 
+                        component={NewBookingPage} 
+                        options={{headerShown: false}}
+                        />
+                      <RootStack.Screen 
+                        name="EditInterests" 
+                        component={EditInterests} 
                         options={{headerShown: false}}
                         />
                 </RootStack.Navigator>

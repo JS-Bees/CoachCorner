@@ -7,6 +7,7 @@ import { useRef } from 'react';
 import { useState } from 'react';
 
 
+
 import PagerView from 'react-native-pager-view';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -60,6 +61,10 @@ const NewCoacheeProfile = () => {
     const handleNavigateBack = () => {
         navigation.goBack();
     };
+
+    // const handleNavigateToEditInterests = () => {
+    //     navigation.navigate("EditInterests")
+    // };
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
