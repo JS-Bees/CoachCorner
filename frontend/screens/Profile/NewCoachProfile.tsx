@@ -205,6 +205,11 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         setEditedBio('');
         setEditedAddress('');
     };
+
+    const handleNavigatetoEditInterests= () => {
+        navigation.navigate("EditProfile")
+    };
+ 
     console.log(coachData?.findCoachByID.address)
     const CoachProfiles: CoachProfile[] = [
         {
@@ -259,7 +264,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
+            <TouchableOpacity style={styles.drawerButton} onPress={handleNavigatetoEditInterests}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>

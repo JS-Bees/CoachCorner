@@ -9,7 +9,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoacheeByIdDocument, UpdateCoacheeProfileDocument } from '../../generated-gql/graphql';
 import { useMutation, useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
-
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Alert } from 'react-native';
 import { Animated } from 'react-native';
@@ -197,6 +196,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         setEditedAddress('');
     };
 
+    const handleNavigatetoEditInterests= () => {
+       navigation.navigate("EditProfile")
+    };
+
+
+
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
@@ -259,8 +264,9 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     }, [isEditMode]);
 
     const navigationView = () => (
+        // onPress={() => setIsEditMode(prevMode => !prevMode)}
         <View style={styles.drawerContainer}>
-            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
+            <TouchableOpacity style={styles.drawerButton} onPress={handleNavigatetoEditInterests}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>

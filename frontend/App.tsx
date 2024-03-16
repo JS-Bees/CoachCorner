@@ -31,6 +31,9 @@ import ReviewsPage from './screens/ReviewsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
 import AllCoaches from './screens/AllCoaches';
+import EditInterests from './screens/EditInterests';
+import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
+import ChatListPage from './screens/ChatLists';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -53,7 +56,7 @@ import MyCoaches_alt from './screens/MyCoaches_alt';
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.2:5050/graphql',
+    url: 'http://192.168.1.9:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -94,6 +97,9 @@ export type RootStackParams = {
     NotificationPage: any,
     CoacheePreviewPage: any, 
     AllCoaches: any,
+    NewBookingPage: any,
+    EditInterests: any,
+    ChatList: any,
     
 };
 
@@ -217,6 +223,11 @@ export default function App() {
                         options={{headerShown: false}}
                         />
                     <RootStack.Screen 
+                        name="ChatList" 
+                        component={ChatListPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
                         name="SportPicking" 
                         component={ChooseSport} 
                         options={{headerShown: false}}
@@ -261,6 +272,17 @@ export default function App() {
                         component={NotificationPage} 
                         options={{headerShown: false}}
                         />
+                    <RootStack.Screen 
+                        name="NewBookingPage" 
+                        component={NewBookingPage} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="EditProfile" 
+                        component={EditInterests} 
+                        options={{headerShown: false}}
+                        />
+
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
@@ -302,7 +324,7 @@ function TabNavigator() {
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
         <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
         <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
-        <Tab.Screen name="Chats" component={ChatPage} options={{ headerShown: false }} />
+        <Tab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </Tab.Navigator>
     );
 
@@ -340,8 +362,7 @@ function NewCoachTabNavigator() {
         <CoachTab.Screen name="Home" component={NewCoachDashboard} options={{ headerShown: false }} />
         <CoachTab.Screen name="Trainees" component={MyClients_alt} options={{ headerShown: false }} />
         <CoachTab.Screen name="Sessions" component={ClientAppointments} options={{ headerShown: false }} />
-        <CoachTab.Screen name="Chats" component={ChatPage} options={{ headerShown: false }} />
+        <CoachTab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </CoachTab.Navigator>
     );
-  }
-
+}
