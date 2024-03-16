@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView, Alert, TextInput, Animated} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
@@ -15,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
 // import  Cloudinary  from "cloudinary-react-native";
 
 
-interface CoacheeProfile {
+interface CoachProfile {
     coachName: string;
     mainSport: string[];
     imageSource: string;
@@ -182,6 +182,9 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     
             // Close the drawer
             drawer.current?.closeDrawer();
+        } catch (error) {
+            console.error('Error saving changes:', error);
+            Alert.alert('Error saving changes. Please try again.');
         }
     };
 
@@ -198,7 +201,15 @@ const uploadImageToCloudinary = async (imageObject: any) => {
 
     const handleNavigateBack = () => {
         navigation.goBack();
+        // Clear the editedBio and editedAddress inputs when navigating back
+        setEditedBio('');
+        setEditedAddress('');
     };
+
+    const handleNavigatetoEditInterests= () => {
+        navigation.navigate("EditProfile")
+    };
+ 
     console.log(coachData?.findCoachByID.address)
     const CoachProfiles: CoachProfile[] = [
         {
@@ -253,7 +264,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
+            <TouchableOpacity style={styles.drawerButton} onPress={handleNavigatetoEditInterests}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
@@ -308,7 +319,8 @@ const uploadImageToCloudinary = async (imageObject: any) => {
             </TouchableOpacity>
         </View>
     );
-
+    
+    
     return (
         <DrawerLayoutAndroid
             ref={drawer}
@@ -327,8 +339,8 @@ const uploadImageToCloudinary = async (imageObject: any) => {
                             <Icon name="settings-outline" size={30} color="#FDDE6E" style={styles.settingsIcon} />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.headerText}>{CoacheeProfiles[0].coachName}</Text>
-                    <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text>
+                    <Text style={styles.headerText}>{CoachProfiles[0].coachName}</Text>
+                    <Text style={styles.subText}>{CoachProfiles[0].mainSport}</Text>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
@@ -343,12 +355,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>
                         <View key="1">
                            <ScrollView>
-                           <Text style={styles.titleHeader}>Bio</Text>
-                            <Text style={styles.contentText}>{CoacheeProfiles[0].about}</Text>
+                           <Text style={styles.titleHeader}>  Bio</Text>
+                            <Text style={styles.contentText}>{CoachProfiles[0].about}</Text>
                             <Text style={styles.titleHeader}> Workplace Address</Text>
-                            <Text style={styles.contentText}>{CoacheeProfiles[0].workplaceAddress}</Text>
+                            <Text style={styles.contentText}>{CoachProfiles[0].workplaceAddress}</Text>
                             
-                            <Text style={styles.titleHeader}>Interests</Text>
+                            <Text style={styles.titleHeader}> Interests</Text>
 
                             <View style={styles.subcontentContainer}>
                             <Text style={styles.subHeader}>   Movies Genre:</Text>
@@ -364,13 +376,14 @@ const uploadImageToCloudinary = async (imageObject: any) => {
                             <Text style={styles.subHeader}>  Music Genre:</Text>
                             <Text style={styles.subontentText}>{CoachProfiles[0].interests?.MusicGenre?.join(', ')}{"\n"}</Text>
                             </View>
+             
                            </ScrollView>
                         </View>
                         <View key="2">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
+                            <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
                         </View>
                         <View key="3">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
+                            <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
                         </View>
                     </PagerView>
                 </View>
@@ -412,17 +425,14 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     headerText: {
-        position: "absolute",
         paddingTop: "5%",
-        top: "34%",
-        right: "59%",
+        right: "18%",
         fontSize: 25,
         fontWeight: "400",
         color: "#7E3FF0"
     },
     subText: {
         paddingTop: "1%",
-        top: "5%",
         right: "30%",
         fontSize: 18,
         fontWeight: "300",
@@ -441,7 +451,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         paddingVertical: 10,
-        top: "10%",
         width: '100%',
     },
     tabButton: {
@@ -451,7 +460,6 @@ const styles = StyleSheet.create({
     pagerView: {
         flex: 1,
         width: '100%',
-        top: "2%"
     },
     drawerContainer: {
         flex: 1,
@@ -521,7 +529,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     logOutButton: {
-        top: "80%", 
+        top: "105%", 
         flexDirection: "row",
     },
     buttonText: {
@@ -566,5 +574,4 @@ const styles = StyleSheet.create({
   
   
 })
-
 export default NewCoachProfile;

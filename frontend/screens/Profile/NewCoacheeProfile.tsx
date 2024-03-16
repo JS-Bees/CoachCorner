@@ -1,15 +1,14 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView, TextInput} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { useRef } from 'react';
-import { useState } from 'react';
-
-
-
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FindCoacheeByIdDocument, UpdateCoacheeProfileDocument } from '../../generated-gql/graphql';
+import { useMutation, useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
-
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Alert } from 'react-native';
 import { Animated } from 'react-native';
@@ -31,9 +30,6 @@ interface CoacheeProfile {
         videoGames: string[];
     };
 }
-
-
-
 
 
 
@@ -175,8 +171,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     
             // Close the drawer
             drawer.current?.closeDrawer();
+        } catch (error) {
+            console.error('Error saving changes:', error);
+            Alert.alert('Error saving changes. Please try again.');
         }
     };
+
 
     const goToPage = (page: number) => {
         pagerRef.current?.setPage(page);
@@ -191,7 +191,16 @@ const uploadImageToCloudinary = async (imageObject: any) => {
 
     const handleNavigateBack = () => {
         navigation.goBack();
+        // Clear the editedBio and editedAddress inputs when navigating back
+        setEditedBio('');
+        setEditedAddress('');
     };
+
+    const handleNavigatetoEditInterests= () => {
+       navigation.navigate("EditProfile")
+    };
+
+
 
 
     const CoacheeProfiles: CoacheeProfile[] = [
@@ -201,7 +210,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
             achievements: "None at the moment",
-            address: "Apt. 5B, Oakwood Apartments, Park Avenue, Springfield, IL 62702, United States",
+            address: coacheeData?.findCoacheeByID.address,
             age: 19,
             interests: coacheeData?.findCoacheeByID.interests.reduce((acc, interest) => {
                 if (interest.type === 'MovieGenre') {
@@ -219,10 +228,46 @@ const uploadImageToCloudinary = async (imageObject: any) => {
               }),
             },
     ]
+    const [isEditMode, setIsEditMode] = useState(false);
+    const slideAnimation = useRef(new Animated.Value(0)).current;
+    const opacityAnimation = useRef(new Animated.Value(0)).current;
+
+
+    useEffect(() => {
+        if (isEditMode) {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [isEditMode]);
+
 
     const navigationView = () => (
+        // onPress={() => setIsEditMode(prevMode => !prevMode)}
         <View style={styles.drawerContainer}>
-            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
+            <TouchableOpacity style={styles.drawerButton} onPress={handleNavigatetoEditInterests}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
@@ -297,7 +342,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName},  {CoacheeProfiles[0].age}</Text>
-                    <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text>
+                    {/* <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text> */}
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
