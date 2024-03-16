@@ -154,6 +154,7 @@ const CoacheeDashboard = () => {
 
 // console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`));
 // const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`);
+
 const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
 const coaches = coachData?.coaches || [];
 
