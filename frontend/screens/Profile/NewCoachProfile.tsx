@@ -4,29 +4,30 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { useRef } from 'react';
-import { useState } from 'react';
-
-
+import { useState,useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FindCoachByIdDocument, UpdateCoachProfileDocument } from '../../generated-gql/graphql';
+import { useMutation, useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+// import  Cloudinary  from "cloudinary-react-native";
+
 
 interface CoacheeProfile {
     coachName: string;
-    mainSport: string;
-    imageSource: ImageSourcePropType;
+    mainSport: string[];
+    imageSource: string;
     about: string;
     achievements: string;
     workplaceAddress: string;
     interests: {
-        movieGenres: string[];
-        hobbies: string[];
-        videoGames: string[];
+        MovieGenre: string[];
+        BookGenre: string[];
+        MusicGenre: string[];
     };
 }
-
-
-
 
 
 
@@ -36,11 +37,150 @@ const NewCoachProfile = () => {
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition] = useState<'left' | 'right'>('right');
     const [activeTab, setActiveTab] = useState(0);
+    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
+
+    const [, executeMutation] = useMutation(UpdateCoachProfileDocument);
+
+    
+    // Function to upload image to Cloudinary
+const uploadImageToCloudinary = async (imageObject: any) => {
+    try {
+      const uploadPreset = 'coachcorner';
+      const formData = new FormData();
+      formData.append('file', imageObject); // Append the Blob directly
+      formData.append('upload_preset', uploadPreset);
+
+
+      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const cloudinaryData = await cloudinaryResponse.json();
+      
+      return cloudinaryData.secure_url;
+    } catch (error) {
+      console.error('Error uploading image to Cloudinary:', error);
+      throw error;
+    }
+ };
+
+ const selectImage = async () => {
+    try {
+       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+       if (!permissionResult.granted) {
+         alert('Permission to access camera roll is required!');
+         return;
+       }
+   
+       const pickerResult = await ImagePicker.launchImageLibraryAsync();
+       if (pickerResult.canceled) {
+         return;
+       }
+       // Ensure you're accessing the first asset's uri
+       const imageUri = pickerResult.assets[0].uri;
+       
+       const imageObject = {
+        uri: imageUri,
+        type: `test/${imageUri.split('.')[1]}`,
+        name: `test.${imageUri.split('.')[1]}`
+       }
+
+       // Upload the selected image to Cloudinary
+       const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
+       setEditedProfilePicture(uploadedImageUrl)
+       console.log('Uploaded image URL:', uploadedImageUrl);
+   
+       // Here you can use the uploadedImageUrl as needed, e.g., updating your state or database
+   
+    } catch (error) {
+       console.error('Error picking an image:', error);
+    }
+   };
+    
+
+    const [{ data: coachData, fetching, error }] = useQuery({
+        query: FindCoachByIdDocument, // Use the Coachee query document
+        variables: {
+            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+        },
+        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    });
+
+    const [editedBio, setEditedBio] = useState<string>(coachData?.findCoachByID.bio || '');
+    const [editedAddress, setEditedAddress] = useState<string>(coachData?.findCoachByID.address || '');
+    const [editedProfilePicture, setEditedProfilePicture] = useState<string>(coachData?.findCoachByID.profilePicture || '');
+
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token);
+                setUserToken(token);
+                console.log(coachData?.findCoachByID?.firstName)
+                console.log(coachData?.findCoachByID.lastName)
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+    
+        fetchUserToken();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('token', token);
+                setUserToken(token);
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
+    
+        fetchUserToken();
+    }, []);
+    
+    
 
     const toggleDrawer = () => {
-        if (drawerPosition === 'right') {
-            drawer.current?.openDrawer();
-        } else {
+        if (drawer.current) {
+            drawer.current.openDrawer();
+        }
+    };
+
+    const handleSaveChanges = async () => {
+        // Check if either bio or address is empty
+        if ((!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) || 
+            (editedBio.trim() === coachData?.findCoachByID.bio && 
+             editedAddress.trim() === coachData?.findCoachByID.address &&
+             editedProfilePicture.trim() === coachData?.findCoachByID.profilePicture)) 
+            {
+            Alert.alert('No changes made.');
+            return;
+        } 
+    
+        try {
+            await executeMutation({
+                updateCoachProfileId: parseInt(userToken),
+                input: {
+                    bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio || '',
+                    address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address || '',
+                    profilePicture: editedProfilePicture
+                }
+            });
+    
+            // Update the original bio and address if they were changed
+            if (editedBio.trim()) {
+                setEditedBio(editedBio);
+            }
+            if (editedAddress.trim()) {
+                setEditedAddress(editedAddress);
+            }
+    
+            // Close the drawer
             drawer.current?.closeDrawer();
         }
     };
@@ -59,45 +199,107 @@ const NewCoachProfile = () => {
     const handleNavigateBack = () => {
         navigation.goBack();
     };
-
-    const CoacheeProfiles: CoacheeProfile[] = [
+    console.log(coachData?.findCoachByID.address)
+    const CoachProfiles: CoachProfile[] = [
         {
-            coachName: "Jane Smith",
-            mainSport: "Basketball",
-            imageSource: require('../../assets/Jane_Smith.png'),
-            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
+            coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
+            mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
+            imageSource: coachData?.findCoachByID.profilePicture,
+            about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",
-            workplaceAddress: "Apt. 5B, Oakwood Apartments, Park Avenue, Springfield, IL 62702, United States",
+            workplaceAddress: coachData?.findCoachByID.address || '',
             interests: {
-                movieGenres:["Romance, Comedy"],
-                hobbies: ["writing, reading"],
-                videoGames: ["valorant, pubg"]      
-            }
-
+                MovieGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'MovieGenre').map(interest => interest.name) || [],
+                BookGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'BookGenre').map(interest => interest.name) || [],
+                MusicGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'MusicGenre').map(interest => interest.name) || [],
+            },
         },
+
     ]
+    const [isEditMode, setIsEditMode] = useState(false);
+    const slideAnimation = useRef(new Animated.Value(0)).current;
+    const opacityAnimation = useRef(new Animated.Value(0)).current;
+
+
+    useEffect(() => {
+        if (isEditMode) {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(slideAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnimation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [isEditMode]);
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
-            <Image source={CoacheeProfiles[0].imageSource} style={styles.circleImage}/>
-            <TouchableOpacity style={styles.drawerButton}> 
+            <TouchableOpacity style={styles.drawerButton} onPress={() => setIsEditMode(prevMode => !prevMode)}> 
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
-                <Text style={styles.buttonText}>Edit Profile</Text>
+                <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
+            {isEditMode && (
+    <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
+        <TouchableOpacity onPress={selectImage}>
+        <Image 
+    source={editedProfilePicture ? { uri: editedProfilePicture } : require('../../assets/add-image.png')}
+    style={styles.circleImage}
+/>
+        </TouchableOpacity>
+        <View style={styles.inputContainer}>
+            <TextInput
+                style={styles.input}
+                value={editedBio}
+                onChangeText={setEditedBio}
+                placeholder="Edit Bio"
+                multiline={true}
+            />
+            <TextInput
+                style={styles.input}
+                value={editedAddress}
+                onChangeText={setEditedAddress}
+                placeholder="Edit Address"
+            />
+        </View>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+            <Text style={styles.buttonText2}>Save Changes</Text>
+        </TouchableOpacity>
+    </Animated.View>
+)}
+
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="settings-outline" size={30} color="#7E3FF0" />
+                <Icon name="settings-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Account Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="pulse-outline" size={30} color="#7E3FF0" />
+                <Icon name="pulse-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>My Reviews</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="notifications-outline" size={30} color="#7E3FF0" />
+                <Icon name="notifications-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Manage notifications</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton} > 
-                <Icon name="information-circle-outline" size={30} color="#7E3FF0" />
+                <Icon name="information-circle-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Privacy Policy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.logOutButton} > 
@@ -115,8 +317,8 @@ const NewCoachProfile = () => {
             renderNavigationView={navigationView}
         >
             <View style={styles.container}>
-                <View style={styles.subContainer}>
-                    <Image source={CoacheeProfiles[0].imageSource} style={styles.profileImage}/>
+            <View style={styles.subContainer}>
+                    <Image source={{uri: CoachProfiles[0].imageSource}} style={styles.profileImage}/>
                     <View style={styles.iconContainer}>
                         <TouchableOpacity onPress={handleNavigateBack}>
                             <Icon name="arrow-back-circle" size={30} color="#FDDE6E" />
@@ -149,18 +351,18 @@ const NewCoachProfile = () => {
                             <Text style={styles.titleHeader}>Interests</Text>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Movies</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests.movieGenres.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>   Movies Genre:</Text>
+                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.MovieGenre?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Hobbies:</Text>
-                            <Text style={styles.subontentText}> {CoacheeProfiles[0].interests.hobbies.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>  Book Genre:</Text>
+                            <Text style={styles.subontentText}> {CoachProfiles[0].interests?.BookGenre?.join(', ')}{"\n"}</Text>
                             </View>
 
                             <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>Video Games</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests.videoGames.join(', ')}{"\n"}</Text>
+                            <Text style={styles.subHeader}>  Music Genre:</Text>
+                            <Text style={styles.subontentText}>{CoachProfiles[0].interests?.MusicGenre?.join(', ')}{"\n"}</Text>
                             </View>
                            </ScrollView>
                         </View>
@@ -305,11 +507,14 @@ const styles = StyleSheet.create({
         marginLeft: "10%"
     },
     circleImage: {
-        width: 60,
-        height: 60,
-        bottom: "8%",
-        left: "60%",
-        borderRadius: 30
+        width: 80, // Adjust width as needed
+        height: 80, // Adjust height as needed
+        position: 'absolute',
+        bottom: '100%', // Adjusted to center vertically
+        left: '50%', // Adjusted to center horizontally
+        marginLeft: -50, // Half of the width
+        marginBottom: -80, // Half of the height
+        borderRadius: 10,
     },
     drawerButton: {
         paddingTop: "10%",
@@ -323,9 +528,42 @@ const styles = StyleSheet.create({
         top: "2%",
         marginLeft: "5%",
         fontWeight: "600",
+        color: "grey",
+        zIndex: 3.
+    },
+    buttonText2: {
+        top: "2%",
+        marginLeft: "5%",
+        fontWeight: "600",
+        color: "white",
+        zIndex: 3.
+    },
+    buttonText3: {
+        top: "2%",
+        marginLeft: "5%",
+        fontWeight: "600",
         color: "#7E3FF0",
         zIndex: 3.
     },
+    input: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+        width: 250,
+    },
+    saveButton: {
+        backgroundColor: '#7E3FF0',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        width: 250,
+    },
+    inputContainer: {
+        marginTop: 90, // Adjust as needed to create space between the image and text inputs
+    },
+  
   
 })
 

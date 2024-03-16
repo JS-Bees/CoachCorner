@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 
 interface Profile {
+  id: string;
   name: string;
   imageSource: ImageSourcePropType;
   gainedStars: number;
@@ -20,7 +21,6 @@ interface Profile {
   about: string;
   workplaceAddress: string;
 }
-
 
 interface CoachProfilesProp {
   profiles: Profile[];
@@ -39,6 +39,7 @@ const CoachProfiles: React.FC<CoachProfilesProp> = ({ profiles }) => {
   const handleProfileClick = (profile: Profile) => {
     
     navigation.navigate("PreviewPage", {
+      id: profile.id,
       profile: profile,
       gainedStars: profile.gainedStars,});
   };
@@ -92,8 +93,8 @@ const CoachProfileStyle = StyleSheet.create({
     },
     coachBoxes: {
         backgroundColor: "white",
-        marginTop: "5%",
-        marginLeft: "7%",
+        marginTop: "4%",
+        marginLeft: "4%",
         width: 150,
         height: 140,
         borderRadius: 16,  

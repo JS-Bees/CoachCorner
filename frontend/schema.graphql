@@ -36,7 +36,6 @@ type Coach {
   bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
-  coachingRole: Boolean!
   contacts: [Contact!]!
   createdAt: DateTime!
   email: String!
@@ -44,7 +43,6 @@ type Coach {
   id: Int!
   interests: [CoachInterest!]!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
   reviews: [Review!]!
@@ -83,7 +81,6 @@ type Coachee {
   bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
-  coachingRole: Boolean!
   contacts: [Contact!]!
   createdAt: DateTime!
   email: String!
@@ -91,7 +88,6 @@ type Coachee {
   id: Int!
   interests: [CoacheeInterest!]!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
   reviews: [Review!]!
@@ -155,11 +151,9 @@ input CreateCoachInput {
   address: String!
   bio: String!
   birthday: DateTime!
-  coachingRole: Boolean!
   email: String!
   firstName: String!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
 }
@@ -181,11 +175,9 @@ input CreateCoacheeInput {
   address: String!
   bio: String!
   birthday: DateTime!
-  coachingRole: Boolean!
   email: String!
   firstName: String!
   lastName: String!
-  mantra: String!
   password: String!
   profilePicture: String!
 }
@@ -212,6 +204,18 @@ input CreateContactInput {
 input CreateMessageInput {
   contactId: Int!
   content: String!
+}
+
+input CreateNewCoachInterestInput {
+  coachId: Int!
+  name: String!
+  type: String!
+}
+
+input CreateNewCoacheeInterestInput {
+  coacheeId: Int!
+  name: String!
+  type: String!
 }
 
 input CreateReviewInput {
@@ -246,16 +250,24 @@ type Message {
 type Mutation {
   createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking!
   createCoach(input: CreateCoachInput!, interestsInput: [CreateCoachInterestInput!]!, sportsInput: [CreateSportInput!]!): Coach!
+  createCoachInterest(input: CreateNewCoachInterestInput!): CoachInterest!
   createCoachTask(input: CreateCoachTaskInput!): CoachTask!
   createCoachee(input: CreateCoacheeInput!, interestsInput: [CreateCoacheeInterestInput!]!): Coachee!
+  createCoacheeInterest(input: CreateNewCoacheeInterestInput!): CoacheeInterest!
   createCoacheeTask(input: CreateCoacheeTaskInput!): CoacheeTask!
   createContact(input: CreateContactInput!): Contact!
   createReview(input: CreateReviewInput!): Review!
   createSportsCredentials(input: CreateSportsCredentialsInput!): SportsCredential!
+  updateBookingSlotStatus(id: Int!, input: UpdateBookingSlotStatusInput!): BookingSlot!
   updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
+  updateCoachInterest(id: Int!, input: UpdateCoachInterestInput!): CoachInterest!
   updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
+  updateCoachTask(id: Int!, input: UpdateCoachTaskInput!): CoachTask!
+  updateCoacheeInterest(id: Int!, input: UpdateCoacheeInterestInput!): CoacheeInterest!
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
+  updateCoacheeTask(id: Int!, input: UpdateCoacheeTaskInput!): CoacheeTask!
   updateContactedStatus(id: Int!, input: UpdateContactedStatusInput!): Contact!
+  updatePendingBooking(addSlots: [CreateBookingSlotInput!]!, bookingData: UpdateBookingInput!, bookingId: Int!, deleteSlotsIds: [Int!]!, updateSlots: [UpdateBookingSlotInput!]!, updateSlotsIds: [Int!]!): Booking!
 }
 
 type Query {
@@ -269,6 +281,7 @@ type Query {
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
   findCoacheeByID(userID: Int!): Coachee!
   findCoachesBySport(sportType: String!): [Coach!]!
+  findContactsOfCoach(coachId: Int!): [Contact!]!
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
 }
 
@@ -306,22 +319,61 @@ type SportsCredential {
   updatedAt: DateTime!
 }
 
+input UpdateBookingInput {
+  additionalNotes: String!
+  serviceType: String!
+}
+
+input UpdateBookingSlotInput {
+  date: DateTime!
+  endTime: DateTime!
+  id: Int!
+  startTime: DateTime!
+  status: String!
+}
+
+input UpdateBookingSlotStatusInput {
+  status: String!
+}
+
 input UpdateBookingStatusInput {
   status: String!
+}
+
+input UpdateCoachInterestInput {
+  name: String!
+  type: String!
 }
 
 input UpdateCoachProfileInput {
   address: String!
   bio: String!
-  mantra: String!
   profilePicture: String!
+}
+
+input UpdateCoachTaskInput {
+  completionStatus: String!
+  date: DateTime!
+  description: String!
+  title: String!
+}
+
+input UpdateCoacheeInterestInput {
+  name: String!
+  type: String!
 }
 
 input UpdateCoacheeProfileInput {
   address: String!
   bio: String!
-  mantra: String!
   profilePicture: String!
+}
+
+input UpdateCoacheeTaskInput {
+  completionStatus: String!
+  date: DateTime!
+  description: String!
+  title: String!
 }
 
 input UpdateContactedStatusInput {

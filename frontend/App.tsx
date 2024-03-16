@@ -15,7 +15,7 @@ import NewCoacheeProfile from './screens/Profile/NewCoacheeProfile';
 import NewCoachDashboard from './screens/NewCoachDashboard';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
-import MyCoaches_alt from './screens/MyCoaches_alt';
+import CoachSearchPage from './screens/MyCoaches_alt';
 import MyClients_alt from './screens/MyClients_alt';
 import Booking_Sessions from './screens/Sessions';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
@@ -31,6 +31,7 @@ import ReviewsPage from './screens/ReviewsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import EditInterests from './screens/EditInterests';
 import NotificationPage from './screens/NotificationPage';
+import AllCoaches from './screens/AllCoaches';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -94,7 +95,7 @@ export type RootStackParams = {
     CoacheePreviewPage: any,
     NewBookingPage: any,
     EditInterests: any,
-    
+    AllCoaches: any,  
 };
 
 const RootStack = createNativeStackNavigator();
@@ -203,7 +204,7 @@ export default function App() {
                     />
                     <RootStack.Screen 
                         name="MyCoaches_alt" 
-                        component={MyCoaches_alt} 
+                        component={CoachSearchPage} 
                         options={{headerShown: false}}
                         />
                         <RootStack.Screen
@@ -234,6 +235,11 @@ export default function App() {
                     <RootStack.Screen 
                         name="InterestPickingMovie" 
                         component={ChooseMovies} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="AllCoachesPage" 
+                        component={AllCoaches} 
                         options={{headerShown: false}}
                         />
                     <RootStack.Screen 
@@ -277,7 +283,7 @@ function TabNavigator() {
       switch (routeName) {
         case 'Home':
           return 'home';
-        case 'Coaches':
+        case 'My Coaches':
           return 'sports';
         case 'Sessions':
           return 'schedule';
@@ -305,7 +311,7 @@ function TabNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
-        <Tab.Screen name="Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
+        <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
         <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
         <Tab.Screen name="Chats" component={ChatPage} options={{ headerShown: false }} />
       </Tab.Navigator>

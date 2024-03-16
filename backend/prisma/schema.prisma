@@ -20,9 +20,8 @@ model Coach {
   lastName            String            @map("last_name")
   password            String   
   profilePicture      String            @map("profile_picture")
-  mantra              String
   bio                 String
-  coachingRole        Boolean           @map("coaching_role")
+
 
   interests           CoachInterest[]
   tasks               CoachTask[]
@@ -47,9 +46,7 @@ model Coachee {
   lastName            String            @map("last_name")
   password            String   
   profilePicture      String            @map("profile_picture")
-  mantra              String
   bio                 String
-  coachingRole        Boolean           @map("coaching_role")
 
   interests           CoacheeInterest[]
   tasks               CoacheeTask[]
@@ -214,7 +211,7 @@ model Contact {
   coachee             Coachee           @relation(fields: [coacheeId], references: [id]) 
   coachId             Int               @map("coach_id")
   coacheeId           Int               @map("coachee_id")
-  contactedStatus     Boolean           @map("contacted_status")
+  contactedStatus     Boolean           @map("contacted_status")   @default(false) 
 
   messages            Message[]
 

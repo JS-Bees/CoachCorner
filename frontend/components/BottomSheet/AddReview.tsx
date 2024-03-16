@@ -2,16 +2,39 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, TextInput} from 'react-native';
 import { BottomSheet } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
+import { useMutation } from 'urql';
+import { CreateReviewDocument } from '../../generated-gql/graphql';
 
 interface AddReviewProps {
     isVisible: boolean;
     onClose: () => void;
 }
 
-const AddReviewBottomSheet: React.FC<AddReviewProps> = ({isVisible, onClose}) => {
+const AddReviewBottomSheet: React.FC<AddReviewProps> = ({isVisible, onClose, coachId}) => {
+
+    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [text, onChangeText] = React.useState('Your review');
     const [rating, setRating] = useState(0);
     const [isFocused, setIsFocused] = useState(false);
+
+    console.log(coachId)
+    
+  useEffect(() => {
+    const fetchUserToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            console.log('token', token);
+            setUserToken(token);
+        } catch (error) {
+            console.error('Error fetching token:', error);
+        }
+    };
+
+    fetchUserToken();
+}, []);
+
 
     const handleFocus = () => {
       setIsFocused(true);
@@ -43,6 +66,28 @@ const AddReviewBottomSheet: React.FC<AddReviewProps> = ({isVisible, onClose}) =>
         return stars;
     };
 
+      // Urql Mutation
+      const [, createReview] = useMutation(CreateReviewDocument);
+
+      const handleSendReview = async () => {
+          try {
+              // Execute the mutation
+              await createReview({
+                input: {
+                    coachId: coachId,
+                    coacheeId: parseInt(userToken),
+                    comment: text,
+                    starRating: rating
+                }
+              });
+              console.log('Review submitted successfully!');
+              // Close the bottom sheet
+              onClose();
+          } catch (error) {
+              console.error('Error submitting review:', error);
+          }
+      };
+
     return (
         <BottomSheet isVisible={isVisible}>
             <View style={[styles.container, styles.bottomSheetContent]}>
@@ -70,7 +115,7 @@ const AddReviewBottomSheet: React.FC<AddReviewProps> = ({isVisible, onClose}) =>
 
                 <View style={styles.buttonContainer}>
 
-                 <TouchableOpacity style={styles.button}>
+                <TouchableOpacity onPress={handleSendReview} style={styles.button}>
                         <Text style={{ color: 'white', fontSize: 15, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Send Review</Text>
                     </TouchableOpacity>
                 </View>

@@ -6,31 +6,34 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
 import Icon from 'react-native-vector-icons/Ionicons'
 
-type Hobby = 'Reading' | 'Singing' | 'Playing' | 'Writing';
+type Music = 'Rock' | 'Jazz' | 'Classical' | 'Pop' | 'K-Pop' | 'OPM';
 
 const ChooseHobbies = ({route}) => {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const [checkedHobby, setCheckedGames] = useState<Record<Hobby, boolean>>({
-        Reading: false,
-        Singing: false,
-        Playing: false,
-        Writing: false,  
+    const [checkedHobby, setCheckedGames] = useState<Record<Music, boolean>>({
+        Rock: false,
+        Jazz: false,
+        Classical: false,
+        Pop: false,  
+        "K-Pop": false,  
+        OPM: false,  
+        
     });
     const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
     const { selectedSports } = route.params;
 
-    const handleCheckboxChange = (game: Hobby) => {
+    const handleCheckboxChange = (MusicGenre: Music) => {
       setCheckedGames((prevCheckedHobby) => {
         const newCheckedHobby = { ...prevCheckedHobby };
         const checkedCount = Object.values(newCheckedHobby).filter((value) => value).length;
   
-        if (checkedCount === 4 && !newCheckedHobby[game]) {
+        if (checkedCount === 4 && !newCheckedHobby[MusicGenre]) {
           // If trying to check more than 4, uncheck the current checkbox
-          newCheckedHobby[game] = false;
+          newCheckedHobby[MusicGenre] = false;
         } else {
           // Toggle the state of the clicked checkbox
-          newCheckedHobby[game] = !newCheckedHobby[game];
+          newCheckedHobby[MusicGenre] = !newCheckedHobby[MusicGenre];
         }
   
         return newCheckedHobby;
@@ -45,9 +48,9 @@ const ChooseHobbies = ({route}) => {
 const handleButtonPress = () => {
   // Filter out the selected hobbies
   const selectedHobbies = Object.keys(checkedHobby)
-      .filter(hobby => checkedHobby[hobby])
-      .map(hobby => ({
-          hobby
+      .filter(MusicGenre => checkedHobby[MusicGenre])
+      .map(MusicGenre => ({
+        MusicGenre
       }));
   
   // Log the selected hobbies data
@@ -75,14 +78,16 @@ const handleButtonPress = () => {
       <TouchableOpacity onPress={() => navigation.navigate("SignUpCoachee")} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-      <Text style={styles.header}> Which of these do you like to do during downtime?</Text>
+      <Text style={styles.header}> Which genre of music do you prefer to enjoy during your downtime?</Text>
       <Text style={styles.subtitle}>Choose maximum of 3</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedHobby.Reading} checkedColor='#7E3FF0' label="Reading books" onPress={() => handleCheckboxChange('Reading')} />
-        <CustomCheckBox checked={checkedHobby.Singing} checkedColor='#7E3FF0' label="Singing/Kareoke" onPress={() => handleCheckboxChange('Singing')} />
-        <CustomCheckBox checked={checkedHobby.Playing} checkedColor='#7E3FF0' label="Playing mobile games" onPress={() => handleCheckboxChange('Playing')} />
-        <CustomCheckBox checked={checkedHobby.Writing} checkedColor='#7E3FF0' label="Writing" onPress={() => handleCheckboxChange('Writing')} />
+        <CustomCheckBox checked={checkedHobby.Rock} checkedColor='#7E3FF0' label="Rock" onPress={() => handleCheckboxChange('Rock')} />
+        <CustomCheckBox checked={checkedHobby.Jazz} checkedColor='#7E3FF0' label="Jazz" onPress={() => handleCheckboxChange('Jazz')} />
+        <CustomCheckBox checked={checkedHobby.Classical} checkedColor='#7E3FF0' label="Classical" onPress={() => handleCheckboxChange('Classical')} />
+        <CustomCheckBox checked={checkedHobby.Pop} checkedColor='#7E3FF0' label="Pop" onPress={() => handleCheckboxChange('Pop')} />
+        <CustomCheckBox checked={checkedHobby['K-Pop']} checkedColor='#7E3FF0' label="Pop" onPress={() => handleCheckboxChange('K-Pop')} />
+        <CustomCheckBox checked={checkedHobby.OPM} checkedColor='#7E3FF0' label="OPM" onPress={() => handleCheckboxChange('OPM')} />
     
       </View>
 

@@ -13,7 +13,7 @@ import SignupSuccessModal from '../../../components/PopUpModal';
 
 
 
-type Movie = 'Action' | 'Comedy' | 'Horror' | 'Romance';
+type Movie = 'Romance' | 'Horror' | 'Action' | 'Comedy' | 'Thriller' | 'Drama';
 
 const ChooseMovies = ({route}) => {
   const navigation =
@@ -21,10 +21,12 @@ const ChooseMovies = ({route}) => {
 
 
     const [checkedMovies, setCheckedGames] = useState<Record<Movie, boolean>>({
+        Romance: false,
+        Horror: false,
         Action: false,
         Comedy: false,
-        Horror: false,
-        Romance: false,
+        Thriller: false,
+        Drama: false,
         
     });
     const [modalVisible, setModalVisible] = useState(false);
@@ -32,22 +34,22 @@ const ChooseMovies = ({route}) => {
 
     const [,createCoach] = useMutation(CreateCoachDocument);
     const [,createCoachee] = useMutation(CreateCoacheeDocument);
-    const { firstName, lastName, email, password, birthday, coachOrCoachee /* Add other data */ } = route.params;
+    const { firstName, lastName, email, password, birthday, coachOrCoachee, workplaceAddress /* Add other data */ } = route.params;
     const { selectedHobbies } = route.params;
     const { selectedGames } = route.params;
     const { selectedSports } = route.params;
 
-    const handleCheckboxChange = (game: Movie) => {
+    const handleCheckboxChange = (MovieGenre: Movie) => {
       setCheckedGames((prevCheckedMovies) => {
         const newCheckedHobby = { ...prevCheckedMovies };
         const checkedCount = Object.values(newCheckedHobby).filter((value) => value).length;
   
-        if (checkedCount === 4 && !newCheckedHobby[game]) {
+        if (checkedCount === 4 && !newCheckedHobby[MovieGenre]) {
           // If trying to check more than 4, uncheck the current checkbox
-          newCheckedHobby[game] = false;
+          newCheckedHobby[MovieGenre] = false;
         } else {
           // Toggle the state of the clicked checkbox
-          newCheckedHobby[game] = !newCheckedHobby[game];
+          newCheckedHobby[MovieGenre] = !newCheckedHobby[MovieGenre];
         }
   
         return newCheckedHobby;
@@ -62,17 +64,17 @@ const ChooseMovies = ({route}) => {
     if(coachOrCoachee == 'coachee') {
       console.log(coachOrCoachee)
       const selectedMovie = Object.keys(checkedMovies)
-        .filter(movie => checkedMovies[movie])
-        .map(movie => ({ movie }));
+        .filter(MovieGenre => checkedMovies[MovieGenre])
+        .map(MovieGenre => ({ MovieGenre }));
   
-        const selectedGamesInterests = selectedGames.map(game => ({
-          type: 'Game',
-          name: game.game,
+        const selectedGamesInterests = selectedGames.map(BookGenre => ({
+          type: 'BookGenre',
+          name: BookGenre.BookGenre,
         }));
       
-        const selectedHobbiesInterests = selectedHobbies.map(hobby => ({
-          type: 'Hobby',
-          name: hobby.hobby,
+        const selectedHobbiesInterests = selectedHobbies.map(MusicGenre => ({
+          type: 'MusicGenre',
+          name: MusicGenre.MusicGenre,
         }));
       
     
@@ -83,18 +85,16 @@ const ChooseMovies = ({route}) => {
             lastName: lastName,
             email: email,
             password: password,
-            address: "Here",
-            bio: " nice",
+            address: workplaceAddress,
+            bio: "Enter Bio",
             birthday:  birthday,
-            mantra: "Cool",
             profilePicture: "Profile",
-            coachingRole: false
             // Add other fields as needed
           },
           interestsInput: [
-            ...selectedMovie.map(movie => ({
-              type: 'Movie Genre',
-              name: movie.movie,
+            ...selectedMovie.map(MovieGenre => ({
+              type: 'MovieGenre',
+              name: MovieGenre.MovieGenre,
             })),
             ...selectedGamesInterests,
             ...selectedHobbiesInterests,
@@ -110,7 +110,8 @@ const ChooseMovies = ({route}) => {
         } else {
           console.log("This is a coachee")
           console.log(selectedGames, selectedHobbies, selectedMovie)
-          console.error('No data returned from mutation');
+          console.log(firstName, lastName, email, password , workplaceAddress,birthday)
+          console.error('No  data returned from mutation');
         }
       } catch (error) {
         console.log(selectedGames, selectedHobbies, selectedMovie)
@@ -121,8 +122,8 @@ const ChooseMovies = ({route}) => {
     } if(coachOrCoachee == 'coach'){ 
       console.log(coachOrCoachee)
       const selectedMovie = Object.keys(checkedMovies)
-        .filter(movie => checkedMovies[movie])
-        .map(movie => ({ movie }));
+        .filter(MovieGenre => checkedMovies[MovieGenre])
+        .map(MovieGenre => ({ MovieGenre }));
 
         const selectedSport = selectedSports.map(sport => ({
           type: sport.sport,
@@ -130,14 +131,14 @@ const ChooseMovies = ({route}) => {
 
         // const selectedSport = sport.sport
   
-        const selectedGamesInterests = selectedGames.map(game => ({
-          type: 'Game',
-          name: game.game,
+        const selectedGamesInterests = selectedGames.map(BookGenre => ({
+          type: 'BookGenre',
+          name: BookGenre.BookGenre,
         }));
       
-        const selectedHobbiesInterests = selectedHobbies.map(hobby => ({
-          type: 'Hobby',
-          name: hobby.hobby,
+        const selectedHobbiesInterests = selectedHobbies.map(MusicGenre => ({
+          type: 'MusicGenre',
+          name: MusicGenre.MusicGenre,
         }));
       
     
@@ -148,25 +149,23 @@ const ChooseMovies = ({route}) => {
             lastName: lastName,
             email: email,
             password: password,
-            address: "Here",
+            address: workplaceAddress,
             bio: " nice",
             birthday:  birthday,
-            mantra: "Cool",
             profilePicture: "Profile",
-            coachingRole: false
             // Add other fields as needed
-          },
-          interestsInput: [
-            ...selectedMovie.map(movie => ({
-              type: 'Movie Genre',
-              name: movie.movie,
-            })),
-            ...selectedGamesInterests,
-            ...selectedHobbiesInterests,
-          ],                                                                             
+          },                                                                           
           sportsInput: [
             selectedSport[0]
           ],
+          interestsInput: [
+            ...selectedMovie.map(MovieGenre => ({
+              type: 'MovieGenre',
+              name: MovieGenre.MovieGenre,
+            })),
+            ...selectedGamesInterests,
+            ...selectedHobbiesInterests,
+          ],  
 
         });
     
@@ -176,8 +175,9 @@ const ChooseMovies = ({route}) => {
           console.log('Coach created:', data.createCoach);
           // Navigate to the next screen or perform other actions upon successful signup
         } else {
-          console.log("This is coach")
-          console.log(selectedGames, selectedHobbies, selectedMovie, selectedSport)
+          console.log("This is a coach")
+          console.log(selectedSport, selectedGames, selectedHobbies, selectedMovie)
+          console.log(firstName, lastName, email, password , workplaceAddress,birthday)
           console.error('No data returned from mutation');
         }
       } catch (error) {
@@ -196,15 +196,16 @@ const ChooseMovies = ({route}) => {
       <TouchableOpacity onPress={() => navigation.navigate("SignUpCoachee")} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-      <Text style={styles.header}> Which of these type of movies do you like?</Text>
+      <Text style={styles.header}> Which genre of movies do you prefer to enjoy during your downtime?</Text>
       <Text style={styles.subtitle}>Choose maximum of 3</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedMovies.Action} checkedColor='#7E3FF0' label="Action" onPress={() => handleCheckboxChange('Action')} />
-        <CustomCheckBox checked={checkedMovies.Comedy} checkedColor='#7E3FF0' label="Comedy" onPress={() => handleCheckboxChange('Comedy')} />
-        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Horror')} />
-        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Romance')} />
-    
+        <CustomCheckBox checked={checkedMovies.Action} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Action')} />
+        <CustomCheckBox checked={checkedMovies.Comedy} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Comedy')} />
+        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Action" onPress={() => handleCheckboxChange('Horror')} />
+        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Comedy" onPress={() => handleCheckboxChange('Romance')} />
+        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Thriller" onPress={() => handleCheckboxChange('Horror')} />
+        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Drama" onPress={() => handleCheckboxChange('Romance')} />
       </View>
 
       <TouchableOpacity

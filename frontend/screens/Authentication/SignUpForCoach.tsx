@@ -34,9 +34,7 @@ const SignUpForCoach = ({route}) => {
     const [Postal, setPostal] = useState('5000');
     const [dateOfBirth, setDateofBirth] = useState('');
     const [profilePic] = useState('Fixed');
-    const [mantra] = useState('Write mantra here');
     const [bio] = useState('Mt bio');   
-    const [coachingRole] = useState(false);
     const [, SignUpForCoach] = useMutation(CreateCoachDocument);
       const [CoachorCoachee, setCoachOrCoachee] = useState('coach');
 
@@ -218,14 +216,12 @@ const SignUpForCoach = ({route}) => {
         navigation.navigate('SportPicking', 
         {  firstName: First_Name,
             lastName: Last_Name,
-            birthday: Exact_Date,
             email: Email,
+            birthday: Exact_Date.toISOString(),
             password: Password,
             workplaceAddress: StreetAdd,
             profilePic: profilePic,
-            mantra: mantra,
             bio: bio,
-            coachingRole: coachingRole,
             coachOrCoachee: CoachorCoachee
             
 

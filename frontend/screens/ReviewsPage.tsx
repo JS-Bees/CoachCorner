@@ -6,8 +6,9 @@ import { RootStackParams } from '../App';
 import ReviewTile from '../components/Profile Tiles/ReviewProfileTiles';
 import { useState } from 'react';
 import AddReviewBottomSheet from '../components/BottomSheet/AddReview';
-
-
+import { useQuery } from 'urql';
+import { GetCoachReviewsDocument } from '../generated-gql/graphql';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -39,27 +40,31 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
     setBottomSheetVisible(false);
   };
 
-  const reviews = [
-    { name: 'John Doe', imageSource: require('../assets/John_Doe.png'), stars: 3, reviewText: 'Great experience with this coach!' },
-    { name: 'Jane Smith', imageSource: require('../assets/Jane_Smith.png'), stars: 5, reviewText: 'Highly recommended!' },
-    { name: 'Kobe the Mamba', imageSource: require('../assets/Kobe_Brian.jpg'), stars: 3, reviewText: 'So and so, an okay coach' },
-    { name: 'John Doe', imageSource: require('../assets/John_Doe.png'), stars: 4, reviewText: 'Great experience with this coach!' },
-    { name: 'Jane Smith', imageSource: require('../assets/Jane_Smith.png'), stars: 5, reviewText: 'Highly recommended!' },
-    { name: 'Serena Williams', imageSource: require('../assets/Jane_Smith.png'), stars: 2, reviewText: 'He bulled me' },
-  ];
-
-  // Calculate the number of reviews for each star rating
-  const numReviewsByRating: { [key: number]: number } = {};
-  reviews.forEach(review => {
-    numReviewsByRating[review.stars] = (numReviewsByRating[review.stars] || 0) + 1;
-  });
-
-  // Calculate the total number of reviews and the average rating
-  const totalReviews = reviews.length;
-  const totalStars = reviews.reduce((sum, review) => sum + review.stars, 0);
-  const averageRating = totalStars / totalReviews;
-
-  const maxBarWidth = 150; // Adjust as needed
+    // Fetch reviews using urql useQuery hook
+    const [result] = useQuery({
+      query: GetCoachReviewsDocument,
+      variables: { userId: profile.id }, // Provide your user ID here
+    });
+  
+    const { data, fetching, error } = result;
+  
+    if (fetching) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;
+  
+    const reviews = data?.findCoachByID?.reviews || [];
+  
+    // Calculate the number of reviews for each star rating
+    const numReviewsByRating: { [key: number]: number } = {};
+    reviews.forEach(review => {
+      numReviewsByRating[review.starRating] = (numReviewsByRating[review.starRating] || 0) + 1;
+    });
+  
+    // Calculate the total number of reviews and the average rating
+    const totalReviews = reviews.length;
+    const totalStars = reviews.reduce((sum, review) => sum + review.starRating, 0);
+    const averageRating = totalStars / totalReviews;
+  
+    const maxBarWidth = 150; // Adjust as needed
 
   return (
     <View style={styles.container}>
@@ -88,17 +93,24 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
       </View>
 
       <ScrollView style={styles.reviewsContainer}>
-        {reviews.map((review, index) => (
-          <ReviewTile key={index} review={review} />
-        ))}
-      </ScrollView>
+      {reviews.map((review, index) => (
+  <ReviewTile
+    key={index}
+    review={{
+      imageSource: require('../assets/John_Doe.png'),
+      name: `${review.coachee.firstName} ${review.coachee.lastName}`,
+      stars: review.starRating,
+      reviewText: review.comment,
+    }}
+  />
+))}
+</ScrollView>
 
       <TouchableOpacity style={styles.addReview} onPress={handleAddReviewPress}>
         <Icon name="add-circle-outline" size={50} color='#7E3FF0' />
       </TouchableOpacity>
 
-      <AddReviewBottomSheet isVisible={bottomSheetVisible} onClose={handleCloseBottomSheet} />
-
+      <AddReviewBottomSheet isVisible={bottomSheetVisible} onClose={handleCloseBottomSheet} coachId={profile.id} />
     </View>
   );
 };
