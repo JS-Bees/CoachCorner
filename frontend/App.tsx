@@ -34,6 +34,8 @@ import AllCoaches from './screens/AllCoaches';
 import EditInterests from './screens/EditInterests';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
+import ProgressTracker from './screens/ProgressTracker';
+import AddTaskPage from './screens/AddTask';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -56,7 +58,7 @@ import MyCoaches_alt from './screens/MyCoaches_alt';
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.9:5050/graphql',
+    url: 'http://192.168.1.5:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -100,7 +102,8 @@ export type RootStackParams = {
     NewBookingPage: any,
     EditInterests: any,
     ChatList: any,
-    
+    ProgressTracker: any,
+    AddTaskPage: any,
 };
 
 const RootStack = createNativeStackNavigator();
@@ -111,7 +114,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="LogIn">
+                <RootStack.Navigator initialRouteName="CoacheeDashboard">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
@@ -282,6 +285,11 @@ export default function App() {
                         component={EditInterests} 
                         options={{headerShown: false}}
                         />
+                    <RootStack.Screen 
+                        name="AddTaskPage" 
+                        component={AddTaskPage} 
+                        options={{headerShown: false}}
+                        />
 
                 </RootStack.Navigator>
             </NavigationContainer>
@@ -298,6 +306,8 @@ function TabNavigator() {
           return 'sports';
         case 'Sessions':
           return 'schedule';
+        case 'Taskboard':
+          return 'list';
         case 'Chats':
           return 'chat';
         default:
@@ -324,6 +334,7 @@ function TabNavigator() {
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
         <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
         <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
+        <Tab.Screen name="Taskboard" component={ProgressTracker} options={{ headerShown: false }} />
         <Tab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </Tab.Navigator>
     );
@@ -341,6 +352,8 @@ function NewCoachTabNavigator() {
             return 'sports';
           case 'Sessions':
             return 'schedule';
+          case 'Taskboard':
+            return 'list';
           case 'Chats':
             return 'chat';
           default:
@@ -362,6 +375,7 @@ function NewCoachTabNavigator() {
         <CoachTab.Screen name="Home" component={NewCoachDashboard} options={{ headerShown: false }} />
         <CoachTab.Screen name="Trainees" component={MyClients_alt} options={{ headerShown: false }} />
         <CoachTab.Screen name="Sessions" component={ClientAppointments} options={{ headerShown: false }} />
+        <Tab.Screen name="Taskboard" component={ProgressTracker} options={{ headerShown: false }} />
         <CoachTab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </CoachTab.Navigator>
     );
