@@ -114,7 +114,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="CoacheeDashboard">
+                <RootStack.Navigator initialRouteName="LogIn">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
