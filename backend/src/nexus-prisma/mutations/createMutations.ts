@@ -17,6 +17,7 @@ import {
     CreateContactInput,
     CreateNewCoachInterestInput,
     CreateNewCoacheeInterestInput,
+    CreateMessageInput,
 } from '../inputTypes';
 import {
     Coachee,
@@ -29,6 +30,7 @@ import {
     Contact,
     CoachInterest,
     CoacheeInterest,
+    Message,
 } from '../objectTypes';
 import {
     bookingSchema,
@@ -44,6 +46,7 @@ import {
     sportSchema,
     sportsCredentialsSchema,
 } from '../validation';
+import { publishNewMessage } from '../subscriptions/subscriptions';
 
 // Make this accept coachee interest input
 export const createCoachee = mutationField('createCoachee', {
@@ -420,6 +423,37 @@ export const createContact = mutationField('createContact', {
             });
 
             return contact;
+        } catch (error) {
+            // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});
+
+// createMessage
+export const createMessage = mutationField('createMessage', {
+    type: Message,
+    args: {
+        input: nonNull(arg({ type: CreateMessageInput })),
+    },
+    resolve: async (_, { input }, context: Context) => {
+        try {
+            // Create the message in the database
+            const message = await context.db.message.create({
+                data: input,
+            });
+
+            // Publish the new message to all subscribed clients
+            // have to specify this to only work with specific coach and coachee
+            publishNewMessage(message);
+            console.log('Publishing message:', message);
+
+            return message;
         } catch (error) {
             // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {

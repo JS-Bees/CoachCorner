@@ -2,6 +2,8 @@ import { makeSchema, fieldAuthorizePlugin } from 'nexus';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import path from 'path';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { WebSocketServer } from 'ws';
 
 import * as objectTypes from './nexus-prisma/objectTypes';
 import * as inputTypes from './nexus-prisma/inputTypes';
@@ -10,6 +12,7 @@ import * as filteredQueries from './nexus-prisma/queries/filteredQueries';
 import * as createMutation from './nexus-prisma/mutations/createMutations';
 import * as updateMutation from './nexus-prisma/mutations/updateMutations';
 // import * as fauxDeleteMutations from './nexus-prisma/mutations/fauxDeleteMutations';
+import * as subscriptions from './nexus-prisma/subscriptions/subscriptions';
 
 import './generated/graphql-types'; // import types as side-effect
 // .d.ts files can only be "auto-imported" if they have no exports
@@ -38,6 +41,7 @@ const schema = makeSchema({
         createMutation,
         updateMutation,
         // fauxDeleteMutations,
+        subscriptions,
     ],
     outputs: {
         typegen: path.join(__dirname, 'generated/graphql-types.ts'),
@@ -63,10 +67,28 @@ server
     .start() // start Apollo Server first
     .then(() => {
         server.applyMiddleware({ app });
-        app.listen(PORT, () => {
-            // then start Express
+
+        // app.listen(PORT, () => {
+        //     // then start Express
+        //     console.log(
+        //         `Apollo server has started at http://localhost:${PORT}`,
+        //     );
+        // });
+
+        // Start the Express server and capture the HTTP server instance
+        const httpServer = app.listen(PORT, () => {
             console.log(
                 `Apollo server has started at http://localhost:${PORT}`,
             );
         });
+
+        // Create a WebSocket server for subscriptions using the HTTP server instance
+        const wsServer = new WebSocketServer({
+            server: httpServer, // Use the HTTP server instance
+            path: '/graphql',
+            // path: '/graphql', // This should match the path you use for Apollo Server
+        });
+
+        // Integrate the WebSocket server with Apollo Server
+        useServer({ schema }, wsServer);
     });

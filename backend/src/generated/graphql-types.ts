@@ -314,6 +314,7 @@ export interface NexusGenObjects {
     sportId: number; // Int!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
+  Subscription: {};
 }
 
 export interface NexusGenInterfaces {
@@ -464,6 +465,7 @@ export interface NexusGenFieldTypes {
     createCoacheeInterest: NexusGenRootTypes['CoacheeInterest']; // CoacheeInterest!
     createCoacheeTask: NexusGenRootTypes['CoacheeTask']; // CoacheeTask!
     createContact: NexusGenRootTypes['Contact']; // Contact!
+    createMessage: NexusGenRootTypes['Message']; // Message!
     createReview: NexusGenRootTypes['Review']; // Review!
     createSportsCredentials: NexusGenRootTypes['SportsCredential']; // SportsCredential!
     updateBookingSlotStatus: NexusGenRootTypes['BookingSlot']; // BookingSlot!
@@ -521,6 +523,9 @@ export interface NexusGenFieldTypes {
     sport: NexusGenRootTypes['Sport']; // Sport!
     sportId: number; // Int!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  Subscription: { // field return type
+    newMessage: NexusGenRootTypes['Message']; // Message!
   }
 }
 
@@ -662,6 +667,7 @@ export interface NexusGenFieldTypeNames {
     createCoacheeInterest: 'CoacheeInterest'
     createCoacheeTask: 'CoacheeTask'
     createContact: 'Contact'
+    createMessage: 'Message'
     createReview: 'Review'
     createSportsCredentials: 'SportsCredential'
     updateBookingSlotStatus: 'BookingSlot'
@@ -720,6 +726,9 @@ export interface NexusGenFieldTypeNames {
     sportId: 'Int'
     updatedAt: 'DateTime'
   }
+  Subscription: { // field return type name
+    newMessage: 'Message'
+  }
 }
 
 export interface NexusGenArgTypes {
@@ -751,6 +760,9 @@ export interface NexusGenArgTypes {
     }
     createContact: { // args
       input: NexusGenInputs['CreateContactInput']; // CreateContactInput!
+    }
+    createMessage: { // args
+      input: NexusGenInputs['CreateMessageInput']; // CreateMessageInput!
     }
     createReview: { // args
       input: NexusGenInputs['CreateReviewInput']; // CreateReviewInput!
@@ -838,6 +850,11 @@ export interface NexusGenArgTypes {
     findNonContactCoachesBySport: { // args
       coacheeID: number; // Int!
       sportType: string; // String!
+    }
+  }
+  Subscription: {
+    newMessage: { // args
+      channelName: string; // String!
     }
   }
 }

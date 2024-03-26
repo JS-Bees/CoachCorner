@@ -256,6 +256,7 @@ type Mutation {
   createCoacheeInterest(input: CreateNewCoacheeInterestInput!): CoacheeInterest!
   createCoacheeTask(input: CreateCoacheeTaskInput!): CoacheeTask!
   createContact(input: CreateContactInput!): Contact!
+  createMessage(input: CreateMessageInput!): Message!
   createReview(input: CreateReviewInput!): Review!
   createSportsCredentials(input: CreateSportsCredentialsInput!): SportsCredential!
   updateBookingSlotStatus(id: Int!, input: UpdateBookingSlotStatusInput!): BookingSlot!
@@ -317,6 +318,10 @@ type SportsCredential {
   sport: Sport!
   sportId: Int!
   updatedAt: DateTime!
+}
+
+type Subscription {
+  newMessage(channelName: String!): Message!
 }
 
 input UpdateBookingInput {
