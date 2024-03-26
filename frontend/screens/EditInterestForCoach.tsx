@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoachByIdDocument, UpdateCoachProfileDocument } from '../generated-gql/graphql';
 import { useMutation, useQuery } from 'urql';
-import { Text, View, TouchableOpacity, Animated, LayoutAnimation, StyleSheet, FlatList, Image, TextInput, Alert} from 'react-native';
+import { Text, View, TouchableOpacity, Animated, LayoutAnimation, StyleSheet, FlatList, Image, TextInput, Alert, ScrollView} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
@@ -48,9 +48,12 @@ const EditInterestsForCoach = () => {
 }, []);
 
 
-  const handleNavigateBack = () => {
-    navigation.goBack();
-  };
+const handleNavigateBack = () => {
+  navigation.reset({
+    routes: [{ name: 'NewCoachProfile' }],
+  });
+};
+
 
   const uploadImageToCloudinary = async (imageObject: any) => {
     try {
@@ -273,7 +276,7 @@ const EditInterestsForCoach = () => {
   
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <TouchableOpacity onPress={handleNavigateBack} style={styles.arrowBack}>
         <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0" />
       </TouchableOpacity>
@@ -316,7 +319,7 @@ const EditInterestsForCoach = () => {
         {lists.map((list, index) => renderList(list, index))}
       </View>
       
-    </View>
+    </ScrollView>
   );
 };
 
@@ -327,11 +330,11 @@ const styles = StyleSheet.create({
     paddingBottom: "5%"
   },
   arrowBack: {
-    top: "10%",
+    marginTop: "10%",
     marginLeft: "10%"
   },
   headerText: {
-    top: "6%",
+    marginTop: "10%",
     marginLeft: "25%",
     fontSize: 20,
     fontWeight: "500",

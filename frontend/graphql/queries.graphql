@@ -36,6 +36,16 @@ query FindCoacheeByID($userId: Int!) {
       starRating
       comment
     }
+    tasks {
+      active
+      completionStatus
+      createdAt
+      date
+      description
+      id
+      title
+      updatedAt
+    }
   }
 }
 
@@ -59,6 +69,16 @@ query FindCoachByID($userId: Int!) {
     reviews {
       starRating
       comment
+    }
+    tasks {
+      active
+      completionStatus
+      createdAt
+      date
+      description
+      id
+      title
+      updatedAt
     }
   }
 }
