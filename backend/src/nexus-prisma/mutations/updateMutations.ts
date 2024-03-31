@@ -253,38 +253,34 @@ export const updateContactedStatus = mutationField('updateContactedStatus', {
     },
 });
 
-export const updateCoacheeInterest = mutationField('updateCoacheeInterest', {
-    type: CoacheeInterest,
+export const updateCoacheeInterest = mutationField('updateCoacheeInterests', {
+    type: list(CoacheeInterest),
     args: {
-        id: nonNull(arg({ type: 'Int' })),
-        input: nonNull(arg({ type: UpdateCoacheeInterestInput })),
+        input: nonNull(arg({ type: list(UpdateCoacheeInterestInput) })),
     },
-    resolve: async (_, { id, input }, context: Context) => {
+    resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
-            idSchema.validateSync({ id });
-
             // Validate the input using the interestSchema
-            interestSchema.validateSync(input);
-
-            // Check if the coachee interest with the given ID exists
-            const existingCoacheeInterest =
-                await context.db.coacheeInterest.findUnique({
-                    where: { id },
-                });
-
-            if (!existingCoacheeInterest) {
-                throw new Error(`Coachee interest with ID ${id} not found.`);
-            }
-
-            // Perform the update using Prisma
-            const updatedCoacheeInterest =
-                await context.db.coacheeInterest.update({
-                    where: { id },
-                    data: input,
-                });
-
-            return updatedCoacheeInterest;
+            input.forEach((interest) => interestSchema.validateSync(interest));
+            // Perform the updates using Prisma
+            const updatedCoacheeInterests = await Promise.all(
+                input.map(async ({ id, ...data }) => {
+                    const existingCoacheeInterest =
+                        await context.db.coacheeInterest.findUnique({
+                            where: { id },
+                        });
+                    if (!existingCoacheeInterest) {
+                        throw new Error(
+                            `Coachee interest with ID ${id} not found.`,
+                        );
+                    }
+                    return context.db.coacheeInterest.update({
+                        where: { id },
+                        data,
+                    });
+                }),
+            );
+            return updatedCoacheeInterests;
         } catch (error) {
             // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {
@@ -297,37 +293,34 @@ export const updateCoacheeInterest = mutationField('updateCoacheeInterest', {
     },
 });
 
-export const updateCoachInterest = mutationField('updateCoachInterest', {
-    type: CoachInterest,
+export const updateCoachInterest = mutationField('updateCoachInterests', {
+    type: list(CoachInterest),
     args: {
-        id: nonNull(arg({ type: 'Int' })),
-        input: nonNull(arg({ type: UpdateCoachInterestInput })),
+        input: nonNull(arg({ type: list(UpdateCoachInterestInput) })),
     },
-    resolve: async (_, { id, input }, context: Context) => {
+    resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
-            idSchema.validateSync({ id });
-
             // Validate the input using the interestSchema
-            interestSchema.validateSync(input);
-
-            // Check if the coach interest with the given ID exists
-            const existingCoachInterest =
-                await context.db.coachInterest.findUnique({
-                    where: { id },
-                });
-
-            if (!existingCoachInterest) {
-                throw new Error(`Coach interest with ID ${id} not found.`);
-            }
-
-            // Perform the update using Prisma
-            const updatedCoachInterest = await context.db.coachInterest.update({
-                where: { id },
-                data: input,
-            });
-
-            return updatedCoachInterest;
+            input.forEach((interest) => interestSchema.validateSync(interest));
+            // Perform the updates using Prisma
+            const updatedCoachInterests = await Promise.all(
+                input.map(async ({ id, ...data }) => {
+                    const existingCoachInterest =
+                        await context.db.coachInterest.findUnique({
+                            where: { id },
+                        });
+                    if (!existingCoachInterest) {
+                        throw new Error(
+                            `Coach interest with ID ${id} not found.`,
+                        );
+                    }
+                    return context.db.coachInterest.update({
+                        where: { id },
+                        data,
+                    });
+                }),
+            );
+            return updatedCoachInterests;
         } catch (error) {
             // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {
@@ -350,25 +343,20 @@ export const updateCoachTask = mutationField('updateCoachTask', {
         try {
             // Validate the ID using the idSchema
             idSchema.validateSync({ id });
-
             // Validate the input using the updateTaskSchema
             updateTaskSchema.validateSync(input);
-
             // Check if the coach task with the given ID exists
             const existingCoachTask = await context.db.coachTask.findUnique({
                 where: { id },
             });
-
             if (!existingCoachTask) {
                 throw new Error(`Coach task with ID ${id} not found.`);
             }
-
             // Perform the update using Prisma
             const updatedCoachTask = await context.db.coachTask.update({
                 where: { id },
                 data: input,
             });
-
             return updatedCoachTask;
         } catch (error) {
             // Handle validation errors or other exceptions

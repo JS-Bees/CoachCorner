@@ -1,36 +1,63 @@
-mutation CreateCoach($input: CreateCoachInput!, $interestsInput: [CreateCoachInterestInput!]!, $sportsInput: [CreateSportInput!]!) {
-  createCoach(input: $input, interestsInput: $interestsInput, sportsInput: $sportsInput) {
-    id
-    firstName
-    lastName
-  }
+mutation CreateCoach(
+    $input: CreateCoachInput!
+    $interestsInput: [CreateCoachInterestInput!]!
+    $sportsInput: [CreateSportInput!]!
+) {
+    createCoach(
+        input: $input
+        interestsInput: $interestsInput
+        sportsInput: $sportsInput
+    ) {
+        id
+        firstName
+        lastName
+    }
 }
 
-
-
-mutation CreateCoachee($input: CreateCoacheeInput!, $interestsInput: [CreateCoacheeInterestInput!]!) {
-  createCoachee(input: $input, interestsInput: $interestsInput) {
-    id
-    firstName
-    lastName
-    email
-  }
+mutation CreateCoachee(
+    $input: CreateCoacheeInput!
+    $interestsInput: [CreateCoacheeInterestInput!]!
+) {
+    createCoachee(input: $input, interestsInput: $interestsInput) {
+        id
+        firstName
+        lastName
+        email
+    }
 }
 
 mutation CreateReview($input: CreateReviewInput!) {
-  createReview(input: $input) {
-    coach {
-      firstName
-      lastName
-      reviews {
-        coachee {
-          id
-          firstName
-          lastName
+    createReview(input: $input) {
+        coach {
+            firstName
+            lastName
+            reviews {
+                coachee {
+                    id
+                    firstName
+                    lastName
+                }
+                starRating
+                comment
+            }
         }
-        starRating
-        comment
-      }
     }
-  }
+}
+
+subscription NewMessage($channelName: String!) {
+    newMessage(channelName: $channelName) {
+        contactId
+        content
+        createdAt
+        id
+    }
+}
+
+mutation CreateMessage($input: CreateMessageInput!) {
+    createMessage(input: $input) {
+        contactId
+        content
+        createdAt
+        id
+    }
 }

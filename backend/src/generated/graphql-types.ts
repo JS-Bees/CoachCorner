@@ -134,6 +134,7 @@ export interface NexusGenInputs {
     status: string; // String!
   }
   UpdateCoachInterestInput: { // input type
+    id: number; // Int!
     name: string; // String!
     type: string; // String!
   }
@@ -149,6 +150,7 @@ export interface NexusGenInputs {
     title: string; // String!
   }
   UpdateCoacheeInterestInput: { // input type
+    id: number; // Int!
     name: string; // String!
     type: string; // String!
   }
@@ -470,10 +472,10 @@ export interface NexusGenFieldTypes {
     createSportsCredentials: NexusGenRootTypes['SportsCredential']; // SportsCredential!
     updateBookingSlotStatus: NexusGenRootTypes['BookingSlot']; // BookingSlot!
     updateBookingStatus: NexusGenRootTypes['Booking']; // Booking!
-    updateCoachInterest: NexusGenRootTypes['CoachInterest']; // CoachInterest!
+    updateCoachInterests: NexusGenRootTypes['CoachInterest'][]; // [CoachInterest!]!
     updateCoachProfile: NexusGenRootTypes['Coach']; // Coach!
     updateCoachTask: NexusGenRootTypes['CoachTask']; // CoachTask!
-    updateCoacheeInterest: NexusGenRootTypes['CoacheeInterest']; // CoacheeInterest!
+    updateCoacheeInterests: NexusGenRootTypes['CoacheeInterest'][]; // [CoacheeInterest!]!
     updateCoacheeProfile: NexusGenRootTypes['Coachee']; // Coachee!
     updateCoacheeTask: NexusGenRootTypes['CoacheeTask']; // CoacheeTask!
     updateContactedStatus: NexusGenRootTypes['Contact']; // Contact!
@@ -672,10 +674,10 @@ export interface NexusGenFieldTypeNames {
     createSportsCredentials: 'SportsCredential'
     updateBookingSlotStatus: 'BookingSlot'
     updateBookingStatus: 'Booking'
-    updateCoachInterest: 'CoachInterest'
+    updateCoachInterests: 'CoachInterest'
     updateCoachProfile: 'Coach'
     updateCoachTask: 'CoachTask'
-    updateCoacheeInterest: 'CoacheeInterest'
+    updateCoacheeInterests: 'CoacheeInterest'
     updateCoacheeProfile: 'Coachee'
     updateCoacheeTask: 'CoacheeTask'
     updateContactedStatus: 'Contact'
@@ -778,9 +780,8 @@ export interface NexusGenArgTypes {
       id: number; // Int!
       input: NexusGenInputs['UpdateBookingStatusInput']; // UpdateBookingStatusInput!
     }
-    updateCoachInterest: { // args
-      id: number; // Int!
-      input: NexusGenInputs['UpdateCoachInterestInput']; // UpdateCoachInterestInput!
+    updateCoachInterests: { // args
+      input: NexusGenInputs['UpdateCoachInterestInput'][]; // [UpdateCoachInterestInput!]!
     }
     updateCoachProfile: { // args
       id: number; // Int!
@@ -790,9 +791,8 @@ export interface NexusGenArgTypes {
       id: number; // Int!
       input: NexusGenInputs['UpdateCoachTaskInput']; // UpdateCoachTaskInput!
     }
-    updateCoacheeInterest: { // args
-      id: number; // Int!
-      input: NexusGenInputs['UpdateCoacheeInterestInput']; // UpdateCoacheeInterestInput!
+    updateCoacheeInterests: { // args
+      input: NexusGenInputs['UpdateCoacheeInterestInput'][]; // [UpdateCoacheeInterestInput!]!
     }
     updateCoacheeProfile: { // args
       id: number; // Int!

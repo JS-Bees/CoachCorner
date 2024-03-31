@@ -261,10 +261,10 @@ type Mutation {
   createSportsCredentials(input: CreateSportsCredentialsInput!): SportsCredential!
   updateBookingSlotStatus(id: Int!, input: UpdateBookingSlotStatusInput!): BookingSlot!
   updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
-  updateCoachInterest(id: Int!, input: UpdateCoachInterestInput!): CoachInterest!
+  updateCoachInterests(input: [UpdateCoachInterestInput!]!): [CoachInterest!]!
   updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
   updateCoachTask(id: Int!, input: UpdateCoachTaskInput!): CoachTask!
-  updateCoacheeInterest(id: Int!, input: UpdateCoacheeInterestInput!): CoacheeInterest!
+  updateCoacheeInterests(input: [UpdateCoacheeInterestInput!]!): [CoacheeInterest!]!
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
   updateCoacheeTask(id: Int!, input: UpdateCoacheeTaskInput!): CoacheeTask!
   updateContactedStatus(id: Int!, input: UpdateContactedStatusInput!): Contact!
@@ -346,6 +346,7 @@ input UpdateBookingStatusInput {
 }
 
 input UpdateCoachInterestInput {
+  id: Int!
   name: String!
   type: String!
 }
@@ -364,6 +365,7 @@ input UpdateCoachTaskInput {
 }
 
 input UpdateCoacheeInterestInput {
+  id: Int!
   name: String!
   type: String!
 }

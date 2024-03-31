@@ -34,8 +34,8 @@ import AllCoaches from './screens/AllCoaches';
 import EditInterests from './screens/EditInterests';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
-import { enGB, registerTranslation } from 'react-native-paper-dates'
-registerTranslation('en-GB', enGB)
+import { enGB, registerTranslation } from 'react-native-paper-dates';
+registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -52,11 +52,10 @@ import {
 } from 'urql';
 import MyCoaches_alt from './screens/MyCoaches_alt';
 
-
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.9:5050/graphql',
+    url: 'http://192.168.1.2:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -80,39 +79,38 @@ export type RootStackParams = {
     ClientBookingDrawer: any;
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
-    ClientAppointments: any, 
-    NewCoachDashboard: any, 
-    NewCoachProfile: any,
-    MyCoaches_alt: any,
-    BookingPage: any,
-    ChatPage: any,
-    chooseSport: any,
-    ChooseVideoGames: any,
-    ChooseHobbies: any,
-    ChooseMovies: any,
-    SplashScreen: any,
-    PreviewPage: any,
-    ReviewsPage: any,
-    BookingSessions: any,
-    NotificationPage: any,
-    CoacheePreviewPage: any, 
-    AllCoaches: any,
-    NewBookingPage: any,
-    EditInterests: any,
-    ChatList: any,
-    
+    ClientAppointments: any;
+    NewCoachDashboard: any;
+    NewCoachProfile: any;
+    MyCoaches_alt: any;
+    BookingPage: any;
+    ChatPage: any;
+    chooseSport: any;
+    ChooseVideoGames: any;
+    ChooseHobbies: any;
+    ChooseMovies: any;
+    SplashScreen: any;
+    PreviewPage: any;
+    ReviewsPage: any;
+    BookingSessions: any;
+    NotificationPage: any;
+    CoacheePreviewPage: any;
+    AllCoaches: any;
+    NewBookingPage: any;
+    EditInterests: any;
+    ChatList: any;
 };
 
 const RootStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-const CoachTab =  createBottomTabNavigator();
+const CoachTab = createBottomTabNavigator();
 
 export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
                 <RootStack.Navigator initialRouteName="LogIn">
-                <RootStack.Screen
+                    <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
                         options={{ headerShown: false }}
@@ -177,7 +175,7 @@ export default function App() {
                         component={ClientAppointments}
                         options={{ headerShown: false }}
                     />
-                      <RootStack.Screen
+                    <RootStack.Screen
                         name="NewCoacheeProfile"
                         component={NewCoacheeProfile}
                         options={{ headerShown: false }}
@@ -207,82 +205,81 @@ export default function App() {
                         component={ClientBookingDrawer}
                         options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="MyCoaches_alt" 
-                        component={CoachSearchPage} 
-                        options={{headerShown: false}}
-                        />
-                        <RootStack.Screen
+                    <RootStack.Screen
+                        name="MyCoaches_alt"
+                        component={CoachSearchPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
                         name="MyClients_alt"
                         component={MyClients_alt}
                         options={{ headerShown: false }}
                     />
-                    <RootStack.Screen 
-                        name="ChatPage" 
-                        component={ChatPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="ChatList" 
-                        component={ChatListPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="SportPicking" 
-                        component={ChooseSport} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="InterestPickingGames" 
-                        component={ChooseVideoGames} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="InterestPickingHobby" 
-                        component={ChooseHobbies} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="InterestPickingMovie" 
-                        component={ChooseMovies} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="AllCoachesPage" 
-                        component={AllCoaches} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="PreviewPage" 
-                        component={PreviewPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="CoacheePreviewPage" 
-                        component={CoacheePreviewPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="ReviewsPage" 
-                        component={ReviewsPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="NotificationPage" 
-                        component={NotificationPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="NewBookingPage" 
-                        component={NewBookingPage} 
-                        options={{headerShown: false}}
-                        />
-                    <RootStack.Screen 
-                        name="EditProfile" 
-                        component={EditInterests} 
-                        options={{headerShown: false}}
-                        />
-
+                    <RootStack.Screen
+                        name="ChatPage"
+                        component={ChatPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ChatList"
+                        component={ChatListPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="SportPicking"
+                        component={ChooseSport}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="InterestPickingGames"
+                        component={ChooseVideoGames}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="InterestPickingHobby"
+                        component={ChooseHobbies}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="InterestPickingMovie"
+                        component={ChooseMovies}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="AllCoachesPage"
+                        component={AllCoaches}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="PreviewPage"
+                        component={PreviewPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CoacheePreviewPage"
+                        component={CoacheePreviewPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ReviewsPage"
+                        component={ReviewsPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="NotificationPage"
+                        component={NotificationPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="NewBookingPage"
+                        component={NewBookingPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="EditProfile"
+                        component={EditInterests}
+                        options={{ headerShown: false }}
+                    />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
@@ -291,78 +288,114 @@ export default function App() {
 
 function TabNavigator() {
     const getTabBarIcon = (routeName: string) => {
-      switch (routeName) {
-        case 'Home':
-          return 'home';
-        case 'My Coaches':
-          return 'sports';
-        case 'Sessions':
-          return 'schedule';
-        case 'Chats':
-          return 'chat';
-        default:
-          return null;
-      }
-    };
-
- 
-  
-
-    
-  
-    return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            const iconName = getTabBarIcon(route.name);
-            return iconName ? <MaterialIcons name={iconName} size={size} color={color} /> : null;
-          },
-          tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
-          tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
-        })}
-      >
-        <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
-        <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
-        <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
-        <Tab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
-      </Tab.Navigator>
-    );
-
-
-}
-
-function NewCoachTabNavigator() {
-
-    const coachTabBarIcon= (routeName: string) => {
         switch (routeName) {
-          case 'Home':
-            return 'home';
-          case 'Trainees':
-            return 'sports';
-          case 'Sessions':
-            return 'schedule';
-          case 'Chats':
-            return 'chat';
-          default:
-            return null;
+            case 'Home':
+                return 'home';
+            case 'My Coaches':
+                return 'sports';
+            case 'Sessions':
+                return 'schedule';
+            case 'Chats':
+                return 'chat';
+            default:
+                return null;
         }
     };
 
     return (
-      <CoachTab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            const iconName = coachTabBarIcon(route.name);
-            return iconName ? <MaterialIcons name={iconName} size={size} color={color} /> : null;
-          },
-          tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
-          tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
-        })}
-      >
-        <CoachTab.Screen name="Home" component={NewCoachDashboard} options={{ headerShown: false }} />
-        <CoachTab.Screen name="Trainees" component={MyClients_alt} options={{ headerShown: false }} />
-        <CoachTab.Screen name="Sessions" component={ClientAppointments} options={{ headerShown: false }} />
-        <CoachTab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
-      </CoachTab.Navigator>
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    const iconName = getTabBarIcon(route.name);
+                    return iconName ? (
+                        <MaterialIcons
+                            name={iconName}
+                            size={size}
+                            color={color}
+                        />
+                    ) : null;
+                },
+                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
+                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+            })}
+        >
+            <Tab.Screen
+                name="Home"
+                component={CoacheeDashboard}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="My Coaches"
+                component={MyCoaches_alt}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Sessions"
+                component={Booking_Sessions}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Chats"
+                component={ChatListPage}
+                options={{ headerShown: false }}
+            />
+        </Tab.Navigator>
+    );
+}
+
+function NewCoachTabNavigator() {
+    const coachTabBarIcon = (routeName: string) => {
+        switch (routeName) {
+            case 'Home':
+                return 'home';
+            case 'Trainees':
+                return 'sports';
+            case 'Sessions':
+                return 'schedule';
+            case 'Chats':
+                return 'chat';
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <CoachTab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    const iconName = coachTabBarIcon(route.name);
+                    return iconName ? (
+                        <MaterialIcons
+                            name={iconName}
+                            size={size}
+                            color={color}
+                        />
+                    ) : null;
+                },
+                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
+                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+            })}
+        >
+            <CoachTab.Screen
+                name="Home"
+                component={NewCoachDashboard}
+                options={{ headerShown: false }}
+            />
+            <CoachTab.Screen
+                name="Trainees"
+                component={MyClients_alt}
+                options={{ headerShown: false }}
+            />
+            <CoachTab.Screen
+                name="Sessions"
+                component={ClientAppointments}
+                options={{ headerShown: false }}
+            />
+            <CoachTab.Screen
+                name="Chats"
+                component={ChatListPage}
+                options={{ headerShown: false }}
+            />
+        </CoachTab.Navigator>
     );
 }

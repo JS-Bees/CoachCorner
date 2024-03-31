@@ -195,6 +195,7 @@ export const UpdateContactedStatusInput = inputObjectType({
 export const UpdateCoachInterestInput = inputObjectType({
     name: 'UpdateCoachInterestInput',
     definition(t) {
+        t.field(gqlTypes.CoachInterest.id);
         t.field(gqlTypes.CoachInterest.type);
         t.field(gqlTypes.CoachInterest.name);
     },
@@ -203,6 +204,7 @@ export const UpdateCoachInterestInput = inputObjectType({
 export const UpdateCoacheeInterestInput = inputObjectType({
     name: 'UpdateCoacheeInterestInput',
     definition(t) {
+        t.field(gqlTypes.CoacheeInterest.id);
         t.field(gqlTypes.CoacheeInterest.type);
         t.field(gqlTypes.CoacheeInterest.name);
     },
