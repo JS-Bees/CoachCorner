@@ -1,140 +1,216 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  SafeAreaView,
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+    SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
+import { useMutation, useSubscription } from 'urql';
+import {
+    NewMessageDocument,
+    CreateMessageDocument,
+    NewMessageSubscriptionVariables,
+    CreateMessageMutationVariables,
+} from '../generated-gql/graphql';
 
 const ChatPage = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
-  const [isFocused, setIsFocused] = useState(false);
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    // const [message, setMessage] = useState('');
+    const [isFocused, setIsFocused] = useState(false);
 
+    const [messages, setMessages] = useState<string[]>([]);
+    const [currentMessage, setCurrentMessage] = useState('');
+    const [result] = useSubscription<NewMessageSubscriptionVariables>({
+        query: NewMessageDocument,
+        variables: { channelName: 'ChannelofContact1' },
+    });
 
-  const handleNavigateBack = () => {
-    navigation.goBack();
-  };
+    const [, createMessage] = useMutation<CreateMessageMutationVariables>(
+        CreateMessageDocument,
+    );
 
-  const handleNavigateToBooking = () => {
-    navigation.navigate("NewBookingPage");
-  };
+    useEffect(() => {
+        if (result.data) {
+            // Handle the new message, e.g., add it to the chat
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                result.data.newMessage.content,
+            ]);
+        }
 
-  const handleSendMessage = () => {
-    if (message.trim() !== '') {
-      // Log the message
-      console.log('Message sent:', message);
-      
-      // Add the message to the messages array
-      setMessages([...messages, message]);
-      
-      // Clear the message input
-      setMessage('');
-    }
-  };
+        // // Log each message to the console
+        // messages.forEach((message) => {
+        //     console.log(message);
+        // });
+    }, [result.data]);
 
-  
+    const handleNavigateBack = () => {
+        navigation.goBack();
+    };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleNavigateBack}>
-          <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0"  style={styles.arrowIcon} />
-        </TouchableOpacity>
-        <Image
-          source={require('../assets/Woman.png')} 
-          style={styles.profileImage}
-        />
-        <Text style={styles.headerText}>Jane Smith</Text>
-        <TouchableOpacity style={styles.bookmark} onPress={handleNavigateToBooking}>
-          <MaterialIcons name="bookmark-outline" size={30} color="#7E3FF0" />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.messageContainer}>
-        <SafeAreaView style={styles.safeArea}>
-          <TextInput
-            style={[styles.input, isFocused ? styles.focusedInput : null]}
-            placeholder="Type a message..."
-            onChangeText={setMessage}
-            value={message}
-            multiline={true}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-          />
-          <TouchableOpacity onPress={handleSendMessage}>
-             <Icon name="send-outline" size={30} color="#7E3FF0"  style={styles.sendIcon} />
-          </TouchableOpacity>
-        </SafeAreaView>
-      </View>
-    </View>
-  );
+    const handleNavigateToBooking = () => {
+        navigation.navigate('NewBookingPage');
+    };
+
+    // const handleSendMessage = () => {
+    //     if (message.trim() !== '') {
+    //         // Log the message
+    //         console.log('Message sent:', message);
+
+    //         // Add the message to the messages array
+    //         setMessages([...messages, message]);
+
+    //         // Clear the message input
+    //         setMessage('');
+    //     }
+    // };
+
+    const handleSendMessage = async (content: string) => {
+        try {
+            await createMessage({
+                variables: {
+                    input: {
+                        contactId: '1', // Replace with the actual contact ID
+                        content,
+                    },
+                },
+            });
+            // Clear the input field after a successful message send
+            setCurrentMessage('');
+        } catch (error) {
+            // Handle error, e.g., show an error message
+            console.log(error);
+        }
+    };
+
+    if (result.fetching) return <Text>Loading... Why</Text>;
+    if (result.error) return <Text>Error</Text>;
+    if (!result.data) return <Text>No data received yet.</Text>;
+
+    // ... rest of the component ...
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={handleNavigateBack}>
+                    <Icon
+                        name="arrow-back-circle-outline"
+                        size={30}
+                        color="#7E3FF0"
+                        style={styles.arrowIcon}
+                    />
+                </TouchableOpacity>
+                <Image
+                    source={require('../assets/Woman.png')}
+                    style={styles.profileImage}
+                />
+                <Text style={styles.headerText}>Jane Smith</Text>
+                <TouchableOpacity
+                    style={styles.bookmark}
+                    onPress={handleNavigateToBooking}
+                >
+                    <MaterialIcons
+                        name="bookmark-outline"
+                        size={30}
+                        color="#7E3FF0"
+                    />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.messageContainer}>
+                <SafeAreaView style={styles.safeArea}>
+                    <TextInput
+                        style={[
+                            styles.input,
+                            isFocused ? styles.focusedInput : null,
+                        ]}
+                        placeholder="Type a message..."
+                        onChangeText={setCurrentMessage} // Update currentMessage instead of messages
+                        value={currentMessage} // Use currentMessage for the value
+                        multiline={true}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                    />
+                    <TouchableOpacity
+                        onPress={() => handleSendMessage(currentMessage)}
+                    >
+                        <Icon
+                            name="send-outline"
+                            size={30}
+                            color="#7E3FF0"
+                            style={styles.sendIcon}
+                        />
+                    </TouchableOpacity>
+                </SafeAreaView>
+            </View>
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    top: "15%",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  arrowIcon: {
-    marginLeft: "25%"
-  },
-  sendIcon: {
-    marginLeft: "25%",
-    bottom: "45%"
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    marginLeft: '-10%',
-  },
-  headerText: {
-    fontSize: 18,
-    marginLeft: 10,
-  },
-  bookmark: {
-    marginLeft: 'auto',
-    marginRight: 10,
-  },
-  messageContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  safeArea: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-  },
-  input: {
-    height: 55,
-    width: "75%",
-    marginLeft: "5%",
-    bottom: "10%",
-    borderColor: '#D4C5ED',
-    borderWidth: 1.5,
-    borderRadius: 15,
-    marginBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  focusedInput: {
-    borderColor: '#7E3FF0', // Change the border color to your desired color
-  },
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        top: '15%',
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    arrowIcon: {
+        marginLeft: '25%',
+    },
+    sendIcon: {
+        marginLeft: '25%',
+        bottom: '45%',
+    },
+    profileImage: {
+        width: 40,
+        height: 40,
+        marginLeft: '-10%',
+    },
+    headerText: {
+        fontSize: 18,
+        marginLeft: 10,
+    },
+    bookmark: {
+        marginLeft: 'auto',
+        marginRight: 10,
+    },
+    messageContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+    },
+    safeArea: {
+        backgroundColor: 'white',
+        flexDirection: 'row',
+    },
+    input: {
+        height: 55,
+        width: '75%',
+        marginLeft: '5%',
+        bottom: '10%',
+        borderColor: '#D4C5ED',
+        borderWidth: 1.5,
+        borderRadius: 15,
+        marginBottom: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
+    },
+    focusedInput: {
+        borderColor: '#7E3FF0', // Change the border color to your desired color
+    },
 });
 
 export default ChatPage;

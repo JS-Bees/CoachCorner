@@ -49,15 +49,39 @@ import {
     Provider as UrqlProvider,
     cacheExchange,
     fetchExchange,
+    // dedupExchange,
+    subscriptionExchange,
 } from 'urql';
 import MyCoaches_alt from './screens/MyCoaches_alt';
+import { createClient as createWSClient, SubscribePayload } from 'graphql-ws';
+const wsClient = createWSClient({
+    url: 'ws://192.168.1.2:5050/graphql',
+});
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
     url: 'http://192.168.1.2:5050/graphql',
     // url: apiUrl!,
-    exchanges: [cacheExchange, fetchExchange],
+    exchanges: [
+        cacheExchange,
+        fetchExchange,
+        subscriptionExchange({
+            forwardSubscription(operation) {
+                return {
+                    subscribe: (sink) => {
+                        const dispose = wsClient.subscribe(
+                            operation as SubscribePayload,
+                            sink,
+                        );
+                        return {
+                            unsubscribe: dispose,
+                        };
+                    },
+                };
+            },
+        }),
+    ],
 });
 
 export type RootStackParams = {
