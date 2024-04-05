@@ -493,6 +493,7 @@ export interface NexusGenFieldTypes {
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
     findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
     findContactsOfCoach: NexusGenRootTypes['Contact'][]; // [Contact!]!
+    findMessagesByContactId: NexusGenRootTypes['Message'][]; // [Message!]!
     findNonContactCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
   }
   Review: { // field return type
@@ -695,6 +696,7 @@ export interface NexusGenFieldTypeNames {
     findCoacheeByID: 'Coachee'
     findCoachesBySport: 'Coach'
     findContactsOfCoach: 'Contact'
+    findMessagesByContactId: 'Message'
     findNonContactCoachesBySport: 'Coach'
   }
   Review: { // field return type name
@@ -846,6 +848,9 @@ export interface NexusGenArgTypes {
     }
     findContactsOfCoach: { // args
       coachId: number; // Int!
+    }
+    findMessagesByContactId: { // args
+      contactId: number; // Int!
     }
     findNonContactCoachesBySport: { // args
       coacheeID: number; // Int!

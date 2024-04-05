@@ -1,7 +1,7 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import bcrypt from 'bcrypt';
 import * as yup from 'yup';
-import { Coachee, Coach, Booking, Contact } from '../objectTypes';
+import { Coachee, Coach, Booking, Contact, Message } from '../objectTypes';
 import { Context } from '../context';
 import {
     loginSchema,
@@ -10,8 +10,6 @@ import {
     sportSchema,
     idAndSportSchema,
 } from '../validation';
-
-
 
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
@@ -385,7 +383,21 @@ export const findContactsOfCoach = queryField('findContactsOfCoach', {
             throw error;
         }
     },
-
 });
 
+export const findMessagesByContactId = queryField('findMessagesByContactId', {
+    type: list(Message), // Assuming Message is the type for your messages
+    args: {
+        contactId: nonNull(intArg()), // The contact ID to filter messages by
+    },
+    resolve: async (_, { contactId }, context: Context) => {
+        // Use Prisma to fetch messages associated with the contact
+        const messages = await context.db.message.findMany({
+            where: {
+                contactId: contactId, // Filter messages by the provided contact ID
+            },
+        });
 
+        return messages;
+    },
+});

@@ -283,6 +283,7 @@ type Query {
   findCoacheeByID(userID: Int!): Coachee!
   findCoachesBySport(sportType: String!): [Coach!]!
   findContactsOfCoach(coachId: Int!): [Contact!]!
+  findMessagesByContactId(contactId: Int!): [Message!]!
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
 }
 

@@ -34,23 +34,27 @@ const ChatPage = () => {
         variables: { channelName: 'ChannelofContact1' },
     });
 
-    const [, createMessage] = useMutation<CreateMessageMutationVariables>(
-        CreateMessageDocument,
-    );
+    // const [, createMessage] = useMutation<CreateMessageMutationVariables>(
+    //     CreateMessageDocument,
+    // );
+    const [, createMessage] = useMutation(CreateMessageDocument);
 
     useEffect(() => {
+        console.log('use effect ran');
         if (result.data) {
             // Handle the new message, e.g., add it to the chat
             setMessages((prevMessages) => [
                 ...prevMessages,
                 result.data.newMessage.content,
             ]);
+            console.log('result.data true');
+            console.log(result.data);
         }
 
         // // Log each message to the console
-        // messages.forEach((message) => {
-        //     console.log(message);
-        // });
+        messages.forEach((message) => {
+            console.log(message);
+        });
     }, [result.data]);
 
     const handleNavigateBack = () => {
@@ -76,14 +80,26 @@ const ChatPage = () => {
 
     const handleSendMessage = async (content: string) => {
         try {
-            await createMessage({
-                variables: {
-                    input: {
-                        contactId: '1', // Replace with the actual contact ID
-                        content,
-                    },
+            // const response = await createMessage({
+            //     variables: {
+            //         input: {
+            //             contactId: 1, // Replace with the actual contact ID
+            //             content,
+            //         },
+            //     },
+            // });
+            const response = await createMessage({
+                input: {
+                    contactId: 1, // Replace with the actual contact ID
+                    content,
                 },
             });
+            console.log('Mutation response:', response.data);
+            // const message = response.data?.content; // Adjust 'createMessage' based on your mutation's return type
+            // console.log('Created message:', message);
+
+            console.log('sent message');
+            console.log('content', content);
             // Clear the input field after a successful message send
             setCurrentMessage('');
         } catch (error) {
@@ -92,9 +108,9 @@ const ChatPage = () => {
         }
     };
 
-    if (result.fetching) return <Text>Loading... Why</Text>;
-    if (result.error) return <Text>Error</Text>;
-    if (!result.data) return <Text>No data received yet.</Text>;
+    // if (result.fetching) return <Text>Loading... Why</Text>;
+    // if (result.error) return <Text>Error</Text>;
+    // if (!result.data) return <Text>No data received yet.</Text>;
 
     // ... rest of the component ...
 
