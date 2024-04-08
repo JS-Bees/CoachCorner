@@ -285,6 +285,7 @@ type Query {
   findContactsOfCoach(coachId: Int!): [Contact!]!
   findMessagesByContactId(contactId: Int!): [Message!]!
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
+  findfilteredMessagesByContactId(contactId: Int!, numberOfMessages: Int!): [Message!]!
 }
 
 type Review {

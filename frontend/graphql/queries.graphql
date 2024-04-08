@@ -3,135 +3,166 @@
 # New queries
 
 query FindCoachByEmailAndPassword($email: String!, $password: String!) {
-  findCoachByEmailAndPassword(email: $email, password: $password) {
-    id
-    firstName
-    lastName
-  }
+    findCoachByEmailAndPassword(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+    }
 }
 
 query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
-  findCoacheeByEmailAndPassword(email: $email, password: $password) {
-    id
-    firstName
-    lastName  
-  }
+    findCoacheeByEmailAndPassword(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+    }
 }
 
 query FindCoacheeByID($userId: Int!) {
-  findCoacheeByID(userID: $userId) {
-    id
-    firstName
-    lastName
-    email
-    password
-    bio
-    address
-    profilePicture
-    interests {
-      type
-      name
+    findCoacheeByID(userID: $userId) {
+        id
+        firstName
+        lastName
+        email
+        password
+        bio
+        address
+        profilePicture
+        interests {
+            type
+            name
+        }
+        reviews {
+            starRating
+            comment
+        }
     }
-    reviews {
-      starRating
-      comment
-    }
-  }
 }
 
 query FindCoachByID($userId: Int!) {
-  findCoachByID(userID: $userId) {
-    id
-    firstName
-    lastName
-    email
-    password
-    bio
-    address
-    profilePicture
-    interests {
-      type
-      name
+    findCoachByID(userID: $userId) {
+        id
+        firstName
+        lastName
+        email
+        password
+        bio
+        address
+        profilePicture
+        interests {
+            type
+            name
+        }
+        sports {
+            type
+        }
+        reviews {
+            starRating
+            comment
+        }
     }
-    sports {
-      type  
-    }
-    reviews {
-      starRating
-      comment
-    }
-  }
 }
 
 query FindCoachesBySport($sportType: String!) {
-  findCoachesBySport(sportType: $sportType) {
-    id
-    firstName
-    lastName
-    bio
-    address
-    reviews {
-      starRating
-      comment
+    findCoachesBySport(sportType: $sportType) {
+        id
+        firstName
+        lastName
+        bio
+        address
+        reviews {
+            starRating
+            comment
+        }
     }
-  }
 }
 
 query FindFavoriteCoaches($userId: Int!) {
-  findCoacheeByID(userID: $userId) {
-  contacts {
-    coachId
-    contactedStatus
-    coach {
-      firstName
-      lastName
-      bio
-      address
-      sports {
-        type
-      }
-      reviews {
-        starRating
-        comment
-      }
+    findCoacheeByID(userID: $userId) {
+        contacts {
+            coachId
+            contactedStatus
+            coach {
+                firstName
+                lastName
+                bio
+                address
+                sports {
+                    type
+                }
+                reviews {
+                    starRating
+                    comment
+                }
+            }
+        }
     }
-  }
-  }
 }
 
 query GetCoachReviews($userId: Int!) {
-  findCoachByID(userID: $userId) {
-    firstName
-    lastName
-    reviews {
-      coachee {
+    findCoachByID(userID: $userId) {
         firstName
         lastName
-      }
-      starRating
-      comment
+        reviews {
+            coachee {
+                firstName
+                lastName
+            }
+            starRating
+            comment
+        }
     }
-  }
 }
 
 query GetSortedCoaches {
-  coaches {
-    id
-    firstName
-    lastName
-    bio
-    address
-    sports {
-      type
-    }
+    coaches {
+        id
+        firstName
+        lastName
+        bio
+        address
+        sports {
+            type
+        }
 
-    reviews {
-      starRating
-      comment
+        reviews {
+            starRating
+            comment
+        }
+        interests {
+            type
+            name
+        }
     }
-    interests {
-      type
-      name
+}
+
+query FindfilteredMessagesByContactId(
+    $contactId: Int!
+    $numberOfMessages: Int!
+) {
+    findfilteredMessagesByContactId(
+        contactId: $contactId
+        numberOfMessages: $numberOfMessages
+    ) {
+        contactId
+        content
+        createdAt
+        id
     }
-  }  
-  }
+}
+
+query FindCoacheeContactsByID($userId: Int!) {
+    findCoacheeByID(userID: $userId) {
+        id
+        contacts {
+            id
+            contactedStatus
+            coach {
+                id
+                firstName
+                lastName
+                profilePicture
+            }
+        }
+    }
+}

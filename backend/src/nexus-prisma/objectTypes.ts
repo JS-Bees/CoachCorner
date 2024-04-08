@@ -5,6 +5,10 @@ import { Context } from './context';
 
 export const custom = DateTime; // this is for the dateTime fields in all files
 
+interface Args {
+    take?: number; // The '?' makes the property optional
+}
+
 export const Coachee = objectType({
     name: 'Coachee',
     definition(t) {
@@ -444,7 +448,7 @@ export const Contact = objectType({
         // t.field(gqlTypes.Contact.messages);
         t.list.field('messages', {
             type: 'Message',
-            resolve: (contact, _args, ctx) => {
+            resolve: (contact, _args: Args, ctx) => {
                 return ctx.db.message.findMany({
                     where: { contactId: contact.id },
                 });

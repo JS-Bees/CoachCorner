@@ -11,6 +11,11 @@ import {
     idAndSportSchema,
 } from '../validation';
 
+interface LatestMessage {
+    contact_id: number;
+    latest_message: string;
+}
+
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
     {
@@ -401,3 +406,165 @@ export const findMessagesByContactId = queryField('findMessagesByContactId', {
         return messages;
     },
 });
+
+// export const findCoacheeContactsAndMessagesById = queryField(
+//     'findCoacheeContactsAndMessagesById',
+//     {
+//         type: 'Coachee', // Assuming you have a Coachee type defined elsewhere
+//         args: {
+//             userID: nonNull(intArg()), // Changed the argument to intArg for ID
+//         },
+//         resolve: async (_, { userID }, context: Context) => {
+//             try {
+//                 // Validate userID using the idSchema
+//                 // Assuming you have an idSchema validation defined elsewhere
+//                 // idSchema.validateSync({ id: userID });
+
+//                 // Execute the raw SQL query
+//                 const latestMessagesQuery = (
+//                     strings: TemplateStringsArray,
+//                     userID: number,
+//                 ) => {
+//                     // Construct the SQL query string with userID
+//                     const queryString = strings[0].replace(
+//                         '${userID}',
+//                         userID.toString(),
+//                     );
+//                     // Execute the query using Prisma or another database client
+//                     // This is a placeholder for the actual query execution
+//                     // You need to replace this with the actual code to execute the query
+//                     console.log('Executing query:', queryString);
+//                     // Return the result of the query execution
+//                     // This should be replaced with the actual query result
+//                     return [];
+//                 };
+//                 // Execute the raw SQL query and assign the result to latestMessages
+//                 // const latestMessages: LatestMessage[] =
+//                 const latestMessages: LatestMessage[] =
+//                     await latestMessagesQuery`
+//             SELECT c.id AS contact_id, m.content AS latest_message
+//             FROM contacts c
+//             JOIN (
+//                 SELECT contact_id, content, ROW_NUMBER() OVER(PARTITION BY contact_id ORDER BY created_at DESC) AS rn
+//                 FROM messages
+//             ) m ON c.id = m.contact_id
+//             WHERE m.rn = 1 AND c.coachee_id = ${userID}
+//         `;
+
+//                 console.log('latest message array', latestMessages);
+//                 // Fetch the coachee with their contacts
+//                 const coachee = await context.db.coachee.findUnique({
+//                     where: { id: userID, active: true },
+//                     include: {
+//                         contacts: true, // Include contacts without messages
+//                     },
+//                 });
+
+//                 if (!coachee) {
+//                     throw new Error(
+//                         `Coachee with ID ${userID} does not exist.`,
+//                     );
+//                 }
+
+//                 // Transform the data to include the latest message for each contact
+//                 coachee.contacts = coachee.contacts.map((contact) => {
+//                     // Find the latest message for this contact
+//                     const latestMessage =
+//                         latestMessages.find(
+//                             (msg: LatestMessage) =>
+//                                 msg.contact_id === contact.id,
+//                         )?.latest_message || 'No messages yet';
+//                     // Return the contact with the latest message
+//                     return {
+//                         ...contact,
+//                         latestMessage,
+//                     };
+//                 });
+
+//                 console.log(coachee);
+//                 return coachee;
+//             } catch (error) {
+//                 // Handle validation errors
+//                 if (error instanceof yup.ValidationError) {
+//                     // You can customize the error message based on the validation error
+//                     throw new Error(error.message);
+//                 }
+//                 // Rethrow other errors
+//                 throw error;
+//             }
+//         },
+//     },
+// );
+
+// export const findCoacheeMessagesByID = queryField('findCoacheeMessagesByID', {
+//     type: Coachee,
+//     args: {
+//         userID: nonNull(intArg()), // Changed the argument to intArg for ID
+//     },
+//     resolve: async (_, { userID }, context: Context) => {
+//         try {
+//             // Validate id using the idSchema
+//             idSchema.validateSync({ id: userID });
+
+//             // Search for a Coachee by ID
+//             const coachee = await context.db.coachee.findUnique({
+//                 where: { id: userID, active: true }, // Include the 'active' condition
+//                 include: {
+//                     contacts: {
+//                         include: {
+//                             messages: {
+//                                 take: 1, // Limit to the most recent message
+//                                 orderBy: { createdAt: 'desc' }, // Order by creation date in descending order
+//                             },
+//                         },
+//                     },
+//                 },
+//             });
+
+//             console.log(coachee);
+
+//             if (coachee) {
+//                 return coachee;
+//             } else {
+//                 throw new Error('Coachee with ID ${userID} does not exist.');
+//             }
+//         } catch (error) {
+//             // Handle validation errors
+//             if (error instanceof yup.ValidationError) {
+//                 // You can customize the error message based on the validation error
+//                 throw new Error(error.message);
+//             }
+//             // Rethrow other errors
+//             throw error;
+//         }
+//     },
+// });
+
+export const findFilteredMessagesByContactId = queryField(
+    'findfilteredMessagesByContactId',
+    {
+        type: list(Message), // Assuming Message is the type for your messages
+        args: {
+            contactId: nonNull(intArg()), // The contact ID to filter messages by
+            numberOfMessages: nonNull(intArg()),
+        },
+        resolve: async (
+            _,
+            { contactId, numberOfMessages },
+            context: Context,
+        ) => {
+            // Use Prisma to fetch messages associated with the contact
+            const messages = await context.db.message.findMany({
+                where: {
+                    contactId: contactId, // Filter messages by the provided contact ID
+                },
+                orderBy: {
+                    createdAt: 'desc', // Order by creation date in descending order
+                },
+                take: numberOfMessages,
+            });
+
+            return messages;
+        },
+    },
+);
