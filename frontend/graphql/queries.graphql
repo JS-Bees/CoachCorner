@@ -166,3 +166,12 @@ query FindCoacheeContactsByID($userId: Int!) {
         }
     }
 }
+
+query FindMessagesForCoachList($coacheeId: Int!) {
+    findMessagesForCoachList(coacheeId: $coacheeId) {
+        contactId
+        content
+        createdAt
+        id
+    }
+}

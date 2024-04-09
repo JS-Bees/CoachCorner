@@ -37,13 +37,7 @@ const ChatListPage: React.FC = () => {
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
-    const [coacheeData, setCoacheeData] = useState();
-
-    // Replace '1' with the actual coachee ID based on token
-    // const { data, error } = useQuery({
-    //     query: FindCoacheeContactsByIdDocument,
-    //     variables: { userId: 1 },
-    // });
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -68,6 +62,7 @@ const ChatListPage: React.FC = () => {
 
         return coacheeResult;
     };
+
     const {
         data: coacheeData,
         loading: coacheeLoading,
@@ -76,43 +71,93 @@ const ChatListPage: React.FC = () => {
 
     useEffect(() => {
         console.log('coacheeData:', coacheeData);
+        const contacts = coacheeData?.findCoacheeByID.contacts;
+
+        // Log all contacts
+        console.log(JSON.stringify(contacts, null, 2));
+        console.log('contacts');
+
+        // Map over contacts and set chatMessages
+        if (contacts) {
+            const chatMessages = contacts.map((contact) => {
+                const sender = `${contact.coach.firstName} ${contact.coach.lastName}`;
+                let imageUrl;
+
+                // Check if the profilePicture URL starts with 'https:'
+                if (contact.coach.profilePicture.startsWith('https:')) {
+                    imageUrl = { uri: contact.coach.profilePicture };
+                } else {
+                    // Use the fallback image if the URL does not start with 'https:'
+                    imageUrl = require('../assets/Jane_Smith.png');
+                }
+
+                return {
+                    id: contact.id.toString(), // Ensure id is a string
+                    message:
+                        'Contacted Status: ' +
+                        (contact.contactedStatus
+                            ? 'Contacted'
+                            : 'Not Contacted'),
+                    sender: sender,
+                    imageUrl: imageUrl,
+                };
+            });
+
+            setChatMessages(chatMessages);
+        }
     }, [coacheeData]);
-    // if (error) {
-    //     console.error('Query error:', error);
-    // }
 
     // useEffect(() => {
-    //     console.log(data);
-    //     if (data) {
-    //         // Save the coachee data in the state
-    //         console.log('Chatlist did use effect run');
-    //         console.log(data.findCoacheeContactsByID);
-    //         setCoacheeData(data.findCoacheeContactsByID);
-    //     }
-    // }, [data]);
+    //     console.log('coacheeData:', coacheeData);
+    //     const contacts = coacheeData?.findCoacheeByID.contacts;
 
-    // console.log('coachee data', data.findCoacheeByID);
+    //     // Log all contacts
+    //     console.log(JSON.stringify(contacts, null, 2));
+    //     console.log('contacts');
+    // }, [coacheeData]);
 
-    const [chatMessages] = useState<ChatMessage[]>([
-        {
-            id: '1',
-            message: 'Hello!',
-            sender: 'Jane Smith',
-            imageUrl: require('../assets/Jane_Smith.png'),
-        },
-        {
-            id: '2',
-            message: 'Practice Today',
-            sender: 'Serena Williams',
-            imageUrl: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
-        },
-        {
-            id: '3',
-            message: 'You should work on it',
-            sender: 'Kobe Bryan',
-            imageUrl: require('../assets/Kobe_Brian.jpg'),
-        },
-    ]);
+    // const [chatMessages, setChatMessages] = useState<ChatMessage[]>(
+    //     contacts.map(contact => {
+    //        const sender = `${contact.coach.firstName} ${contact.coach.lastName}`;
+    //        let imageUrl;
+
+    //        // Check if the profilePicture URL starts with 'https:'
+    //        if (contact.coach.profilePicture.startsWith('https:')) {
+    //          imageUrl = contact.coach.profilePicture;
+    //        } else {
+    //          // Use the fallback image if the URL does not start with 'https:'
+    //          imageUrl = require('../assets/Jane_Smith.png');
+    //        }
+
+    //        return {
+    //          id: contact.id.toString(), // Ensure id is a string
+    //          message: 'Contacted Status: ' + (contact.contactedStatus ? 'Contacted' : 'Not Contacted'),
+    //          sender: sender,
+    //          imageUrl: imageUrl,
+    //        };
+    //     })
+    //    );
+
+    // const [chatMessages] = useState<ChatMessage[]>([
+    //     {
+    //         id: '1',
+    //         message: 'Hello!',
+    //         sender: 'Jane Smith',
+    //         imageUrl: require('../assets/Jane_Smith.png'),
+    //     },
+    //     {
+    //         id: '2',
+    //         message: 'Practice Today',
+    //         sender: 'Serena Williams',
+    //         imageUrl: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
+    //     },
+    //     {
+    //         id: '3',
+    //         message: 'You should work on it',
+    //         sender: 'Kobe Bryan',
+    //         imageUrl: require('../assets/Kobe_Brian.jpg'),
+    //     },
+    // ]);
 
     const renderChatMessage = ({ item }: { item: ChatMessage }) => (
         <TouchableOpacity
