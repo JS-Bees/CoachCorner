@@ -7,12 +7,12 @@ import {
     ImageSourcePropType,
     TouchableOpacity
 } from 'react-native';
-import PendingModal from '../Modals/CoachPendingSessionModal';
-import UpcomingModal from '../Modals/CoachUpcomingSessionModal';
+import PendingModal from '../components/Modals/CoachPendingSessionModal';
+import UpcomingModal from '../components/Modals/CoachUpcomingSessionModal';
 import { format} from 'date-fns';
 
 interface Session {
-  coachName: string;
+  coacheeName: string;
   bookingId: number;
   status: string; 
   serviceType: string;
@@ -22,13 +22,13 @@ interface Session {
 }
 
 
-interface CoachSessionsProp {
+interface CoacheeSessionsProp {
   sessions: Session[];
 }
 
 
 
-const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
+const CoacheeSessions: React.FC<CoacheeSessionsProp> = ({ sessions =[] }) => {
 
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false);
@@ -74,7 +74,7 @@ const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
             source={session.imageSource}
             style={CoachProfileStyle.profileImage}
           />
-          <Text style={CoachProfileStyle.coachNameText}>{session.coachName}</Text>
+          <Text style={CoachProfileStyle.coachNameText}>{session.coacheeName}</Text>
           <View style={CoachProfileStyle.subtitleContainer}>
           {session.time.length > 0 && (
           <Text style={CoachProfileStyle.subtitleText}>
@@ -163,4 +163,4 @@ const CoachProfileStyle = StyleSheet.create({
   
 })
 
-export default CoachSessions;
+export default CoacheeSessions;

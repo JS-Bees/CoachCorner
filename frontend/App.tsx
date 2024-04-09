@@ -36,6 +36,9 @@ import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
 import ProgressTracker from './screens/ProgressTracker';
 import AddTaskPage from './screens/AddTask';
+import Trainee_Sessions from './screens/TraineeSessions';
+import MyCoaches_alt from './screens/MyCoaches_alt';
+import ReschedulePage from './screens/BookingDrawers.tsx/ReschedulePage';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -52,7 +55,6 @@ import {
     cacheExchange,
     fetchExchange,
 } from 'urql';
-import MyCoaches_alt from './screens/MyCoaches_alt';
 
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
@@ -104,6 +106,8 @@ export type RootStackParams = {
     ChatList: any,
     ProgressTracker: any,
     AddTaskPage: any,
+    Trainee_Sessions: any,
+    ReschedulePage: any,
 };
 
 const RootStack = createNativeStackNavigator();
@@ -114,7 +118,7 @@ export default function App() {
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
-                <RootStack.Navigator initialRouteName="CoacheeDashboard">
+                <RootStack.Navigator initialRouteName="LogIn">
                 <RootStack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
@@ -290,6 +294,11 @@ export default function App() {
                         component={AddTaskPage} 
                         options={{headerShown: false}}
                         />
+                    <RootStack.Screen 
+                        name="ReschedulePage" 
+                        component={ReschedulePage} 
+                        options={{headerShown: false}}
+                        />
 
                 </RootStack.Navigator>
             </NavigationContainer>
@@ -333,7 +342,7 @@ function TabNavigator() {
       >
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
         <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
-        <Tab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
+        <Tab.Screen name="Sessions" component={Trainee_Sessions}  options={{ headerShown: false }} />
         <Tab.Screen name="Taskboard" component={ProgressTracker} options={{ headerShown: false }} />
         <Tab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </Tab.Navigator>
@@ -374,7 +383,7 @@ function NewCoachTabNavigator() {
       >
         <CoachTab.Screen name="Home" component={NewCoachDashboard} options={{ headerShown: false }} />
         <CoachTab.Screen name="Trainees" component={MyClients_alt} options={{ headerShown: false }} />
-        <CoachTab.Screen name="Sessions" component={ClientAppointments} options={{ headerShown: false }} />
+        <CoachTab.Screen name="Sessions" component={Booking_Sessions} options={{ headerShown: false }} />
         <Tab.Screen name="Taskboard" component={ProgressTracker} options={{ headerShown: false }} />
         <CoachTab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </CoachTab.Navigator>

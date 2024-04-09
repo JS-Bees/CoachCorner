@@ -7,8 +7,8 @@ import {
     ImageSourcePropType,
     TouchableOpacity
 } from 'react-native';
-import PendingModal from '../Modals/CoachPendingSessionModal';
-import UpcomingModal from '../Modals/CoachUpcomingSessionModal';
+import CoacheePendingModal from '../Modals/CoacheePendingModal';
+import CoacheeUpcomingModal from '../Modals/CoacheeUpcomingModal';
 import { format} from 'date-fns';
 
 interface Session {
@@ -22,13 +22,13 @@ interface Session {
 }
 
 
-interface CoachSessionsProp {
+interface CoacheeSessionsProp {
   sessions: Session[];
 }
 
 
 
-const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
+const CoachSessions: React.FC<CoacheeSessionsProp> = ({ sessions }) => {
 
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false);
@@ -89,12 +89,12 @@ const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
         </TouchableOpacity>
       ))}
         
-        <PendingModal
+     <CoacheePendingModal
         visible={isPendingModalVisible}
         session={selectedSession}
         toggleOverlay={() => setPendingModalVisible(false)}
       />
-      <UpcomingModal
+      <CoacheeUpcomingModal
         visible={isUpcomingModalVisible}
         session={selectedSession}
         toggleOverlay={() => setUpcomingModalVisible(false)}

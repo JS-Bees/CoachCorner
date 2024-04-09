@@ -21,3 +21,31 @@ mutation CreateContact($input: CreateContactInput!) {
     contactedStatus
   }
 }
+
+mutation UpdateBookingStatus($updateBookingStatusId: Int!, $input: UpdateBookingStatusInput!) {
+  updateBookingStatus(id: $updateBookingStatusId, input: $input) {
+    id
+    status
+    bookingSlots {
+      endTime
+      startTime
+      date
+    }
+    serviceType
+    additionalNotes
+  }
+}
+
+mutation UpdateBookingData($bookingId: Int!, $updateSlotsIds: [Int!]!, $deleteSlotsIds: [Int!]!, $bookingData: UpdateBookingInput!, $updateSlots: [UpdateBookingSlotInput!]!, $addSlots: [CreateBookingSlotInput!]!) {
+  updatePendingBooking(bookingId: $bookingId, updateSlotsIds: $updateSlotsIds, deleteSlotsIds: $deleteSlotsIds, bookingData: $bookingData, updateSlots: $updateSlots, addSlots: $addSlots) {
+    id
+    bookingSlots {
+      id
+      date
+      endTime
+      startTime
+    }
+    serviceType
+    additionalNotes
+  }
+}
