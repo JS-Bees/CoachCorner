@@ -27,6 +27,7 @@
     "react-native-paper-dates": "^0.19.7",
     "react-native-screens": "^3.27.0",
     "react-native-text": "^1.2.2",
-    "react-native-vector-icons": "^10.0.0"
+    "react-native-vector-icons": "^10.0.0",
+    "yup": "^1.4.0"
   }
 }
