@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoachByIdDocument, UpdateCoachProfileDocument } from '../generated-gql/graphql';
+import { FindCoachByIdDocument, UpdateCoachProfileDocument, UpdateCoachInterestsDocument } from '../generated-gql/graphql';
 import { useMutation, useQuery } from 'urql';
 import { Text, View, TouchableOpacity, Animated, LayoutAnimation, StyleSheet, FlatList, Image, TextInput, Alert, ScrollView} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
@@ -26,6 +26,7 @@ interface List {
 const EditInterestsForCoach = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [, executeMutation] = useMutation(UpdateCoachProfileDocument);
+  const [, executeMutationUpdateInterest] = useMutation(UpdateCoachInterestsDocument);
   const [userToken, setUserToken] = useState<string | null>(null);
   const [editedBio, setEditedBio] = useState<string>('');
   const [editedAddress, setEditedAddress] = useState<string>('');
@@ -110,6 +111,7 @@ const handleNavigateBack = () => {
     }
    };
 
+
    const handleSaveChanges = async () => {
     // Check if either bio or address or profile picture is empty
     if (
@@ -151,9 +153,52 @@ const handleNavigateBack = () => {
       console.error('Error saving changes:', error);
       Alert.alert('Error saving changes. Please try again.');
     }
+    
+    // Step 1: Retrieve all selected genres
+    const selectedGenres = lists.flatMap(list => list.items.filter(item => item.checked));
+    
+    // Step 2: Count the total number of checked items
+    const totalChecked = selectedGenres.length;
+    
+    // Step 3: Check if the user has selected exactly 9 items
+    if (totalChecked !== 9) {
+      Alert.alert('Please select exactly 9 genres in total.');
+      return;
+    } else {
+      Alert.alert('Passed');
+    }
+  
+    // Step 4: Retrieve stored interest IDs
+    const interestIds = coachData?.findCoachByID.interests.map(interest => interest.id) || [];
+    
+    // Step 5: Extract names and types of selected genres
+    const interestsInput = selectedGenres.map((genre, index) => ({
+      id: interestIds[index], // Assign the corresponding interest ID from the stored IDs
+      name: genre.text,
+      type: lists.find(list => list.items.some(item => item.text === genre.text))?.title || '', // Find the title of the item
+    }));
+
+
+    console.log(interestsInput)
+  
+    try {
+      // Step 6: Perform the mutation to update interests
+      const result = await executeMutationUpdateInterest({
+        input: interestsInput,
+      });
+  
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+  
+      Alert.alert('Interests updated successfully.');
+  
+    } catch (error) {
+      console.error('Error updating interests:', error);
+      Alert.alert('Error updating interests. Please try again.');
+    }
   };
   
-
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
         variables: {
@@ -162,22 +207,16 @@ const handleNavigateBack = () => {
         requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
 
-    useEffect(() => {
-      const fetchUserToken = async () => {
-          try {
-              const token = await AsyncStorage.getItem('userToken');
-              console.log('token', token);
-              setUserToken(token);
-          } catch (error) {
-              console.error('Error fetching token:', error);
-          }
-      };
-  
-      fetchUserToken();
-  }, []);
+      useEffect(() => {
+    if (coachData && coachData.findCoachByID) {
+      // Set editedProfilePicture to the existing profile picture if it exists
+      if (!editedProfilePicture && coachData.findCoachByID.profilePicture) {
+        setEditedProfilePicture(coachData.findCoachByID.profilePicture);
+      }
+    }
+  }, [coachData]);
 
-  
-
+    
   const spinValue = new Animated.Value(0);
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
@@ -186,18 +225,7 @@ const handleNavigateBack = () => {
 
   const [lists, setLists] = useState([
     {
-      title: 'Music',
-      items: [
-        {text: 'Jazz', checked: false },
-        {text: 'Classical', checked: false },
-        {text: 'Pop', checked: false },
-        {text: 'KPop', checked: false },
-        {text: 'OPM', checked: false },
-      ],
-      isExpanded: false,
-    },
-    {
-      title: 'Movie Genre',
+      title: 'MovieGenre',
       items: [
         {text: 'Action', checked: false },
         {text: 'Thriller', checked: false },
@@ -210,29 +238,86 @@ const handleNavigateBack = () => {
       isExpanded: false,
     },
     {
-      title: 'Book',
+      title: 'BookGenre',
       items: [
-        { text: 'Science Fiction', checked: false },
-        { text: 'Young Adult', checked: false },
-        { text: 'Fantasy', checked: false },
-        { text: 'Romance', checked: false },
-        { text: 'Mystery', checked: false },
-        { text: 'Horror', checked: false }
+        {text: 'Science Fiction', checked: false },
+        {text: 'Young Adult', checked: false },
+        {text: 'Fantasy', checked: false },
+        {text: 'Romance', checked: false },
+        {text: 'Mystery', checked: false },
+        {text: 'Horror', checked: false },
+      ],
+      isExpanded: false,
+    },
+    {
+      title: 'MusicGenre',
+      items: [
+        {text: 'Jazz', checked: false },
+        {text: 'Classical', checked: false },
+        {text: 'Pop', checked: false },
+        {text: 'KPop', checked: false },
+        {text: 'OPM', checked: false },
       ],
       isExpanded: false,
     },
   ]);
 
-  const toggleCheckbox = (listIndex: number, itemIndex: number) => {
-    setLists((prevLists) => {
-      const updatedLists = [...prevLists];
-      const checkedCount = updatedLists[listIndex].items.filter((item) => item.checked).length;
-      if (updatedLists[listIndex].items[itemIndex].checked || checkedCount < 3) {
-        updatedLists[listIndex].items[itemIndex].checked = !updatedLists[listIndex].items[itemIndex].checked;
-      }
-      return updatedLists;
+const toggleCheckbox = (listIndex: number, itemIndex: number) => {
+  setLists((prevLists) => {
+    const updatedLists = [...prevLists];
+    let movieGenreCount = 0;
+    let bookGenreCount = 0;
+    let musicGenreCount = 0;
+
+    // Count the number of checked items in each category
+    updatedLists.forEach(list => {
+      list.items.forEach(item => {
+        if (item.checked) {
+          switch (list.title) {
+            case 'Movie Genre':
+              movieGenreCount++;
+              break;
+            case 'Book Genre':
+              bookGenreCount++;
+              break;
+            case 'Music Genre':
+              musicGenreCount++;
+              break;
+            default:
+              break;
+          }
+        }
+      });
     });
-  };
+
+    // Check if the maximum limit (3) is reached for the respective category
+    switch (updatedLists[listIndex].title) {
+      case 'Movie Genre':
+        if (movieGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
+          return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
+        }
+        break;
+      case 'Book Genre':
+        if (bookGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
+          return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
+        }
+        break;
+      case 'Music Genre':
+        if (musicGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
+          return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
+        }
+        break;
+      default:
+        break;
+    }
+
+    // Toggle the checkbox
+    updatedLists[listIndex].items[itemIndex].checked = !updatedLists[listIndex].items[itemIndex].checked;
+    
+    return updatedLists;
+  });
+};
+
 
   const toggleList = (index: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -245,8 +330,9 @@ const handleNavigateBack = () => {
 
   
 
+
   const renderList = (list: List, index: number) => (
-    <View key={index}>
+    <View key={index} style={styles.listContainer}>
       <TouchableOpacity onPress={() => toggleList(index)}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: "2%",}}>
           <Text style={{ fontSize: 20, color: "#7E3FF0", fontWeight: "400"}}>{list.title}</Text>
@@ -272,11 +358,10 @@ const handleNavigateBack = () => {
       )}
     </View>
   );
-
   
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <TouchableOpacity onPress={handleNavigateBack} style={styles.arrowBack}>
         <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0" />
       </TouchableOpacity>
@@ -289,37 +374,37 @@ const handleNavigateBack = () => {
       
       <Text style={styles.subHeaderText}>Profile Picture</Text>
       <TouchableOpacity onPress={selectImage}>
-      <Image source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')} style={styles.circleImage}/>
+        <Image source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')} style={styles.circleImage}/>
       </TouchableOpacity>
 
       <Text style={styles.subHeaderText}>Profile</Text>
       <TouchableOpacity>
         <View>
-        <TextInput
-                style={styles.input}
-                value={editedBio}
-                onChangeText={setEditedBio}
-                placeholder="Edit Bio"
-                multiline={true}
-            />
           <TextInput
-                style={styles.input}
-                value={editedAddress}
-                onChangeText={setEditedAddress}
-                placeholder="Edit Address"
-            />
+            style={styles.input}
+            value={editedBio}
+            onChangeText={setEditedBio}
+            placeholder="Edit Bio"
+            multiline={true}
+          />
+          <TextInput
+            style={styles.input}
+            value={editedAddress}
+            onChangeText={setEditedAddress}
+            placeholder="Edit Address"
+          />
         </View>
       </TouchableOpacity>
       
-
       <Text style={styles.subHeaderInterests}>Interests</Text>
       <Text style={styles.subTitle}> Please choose at most 3 </Text>
 
-      <View style={styles.listContainer}>
-        {lists.map((list, index) => renderList(list, index))}
-      </View>
-      
-    </ScrollView>
+      <FlatList
+        data={lists}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => renderList(item, index)}
+      />
+    </View>
   );
 };
 
@@ -365,7 +450,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   saveText: {
-    color: 'red',
+    color: 'white',
     fontSize: 15,
   },
   subTitle: {

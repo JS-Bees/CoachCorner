@@ -29,6 +29,7 @@ query FindCoacheeByID($userId: Int!) {
     address
     profilePicture
     interests {
+      id
       type
       name
     }
@@ -60,6 +61,7 @@ query FindCoachByID($userId: Int!) {
     address
     profilePicture
     interests {
+      id
       type
       name
     }

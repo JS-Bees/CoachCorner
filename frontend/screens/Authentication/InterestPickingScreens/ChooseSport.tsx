@@ -39,6 +39,9 @@ const ChooseSport = ({route}) => {
     const areAnyChecked = Object.values(checkedSport).some((value) => value);
     const isMaxChecksReached = Object.values(checkedSport).filter((value) => value).length >= 2;
  
+    const handleGoBack = () => {
+      navigation.goBack();
+    };
 
 
 const handleButtonPress = () => {
@@ -67,7 +70,7 @@ const handleButtonPress = () => {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity onPress={() => navigation.navigate("SignUpCoachee")} style={styles.iconContainer}>
+      <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
       <Text style={styles.header}> Which of these do you like to do during downtime?</Text>

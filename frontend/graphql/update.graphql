@@ -65,3 +65,21 @@ mutation UpdateCoacheeTask($updateCoachTaskId: Int!, $input: UpdateCoacheeTaskIn
     active
   }
 }
+
+mutation UpdateCoachInterests($input: [UpdateCoachInterestInput!]!) {
+  updateCoachInterests(input: $input) {
+    id
+    name
+    type
+    updatedAt
+  }
+}
+
+mutation UpdateCoacheeInterests($input: [UpdateCoacheeInterestInput!]!) {
+  updateCoacheeInterests(input: $input) {
+    id
+    name
+    type
+    updatedAt
+  }
+}
