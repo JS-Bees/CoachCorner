@@ -7,12 +7,17 @@ import {
     ImageSourcePropType,
     TouchableOpacity
 } from 'react-native';
-import SessionModal from '../Modals/UpcomingSessionModal';
+import PendingModal from '../Modals/CoachPendingSessionModal';
+import UpcomingModal from '../Modals/CoachUpcomingSessionModal'
+import { format} from 'date-fns';
 
 interface Session {
-  coachName: string;
+  coacheeName: string;
+  bookingId: number;
+  slotsId: number;
+  status: string; 
+  serviceType: string;
   imageSource: ImageSourcePropType;
-  sport: string;
   time: { startTime: string; endTime: string }[]; // Array of objects with startTime and endTime
   date: string[]; // Array of strings for multiple dates
 }
@@ -24,15 +29,30 @@ interface CoachSessionsProp {
 
 
 
-const Session: React.FC<CoachSessionsProp> = ({ sessions }) => {
+const CoacheeSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
 
-  const [visibleOverlay, setVisibleOverlay] = useState(false);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [isPendingModalVisible, setPendingModalVisible] = useState(false);
+  const [isUpcomingModalVisible, setUpcomingModalVisible] = useState(false);
 
   const toggleOverlay = (session: Session | null) => {
     setSelectedSession(session);
-    setVisibleOverlay(!visibleOverlay);
+    if (session) {
+      if (session.status === 'PENDING') {
+        setPendingModalVisible(true);
+        setUpcomingModalVisible(false);
+      } else if (session.status === 'UPCOMING') {
+        setPendingModalVisible(false);
+        setUpcomingModalVisible(true);
+      }
+    } else {
+      setPendingModalVisible(false);
+      setUpcomingModalVisible(false);
+    }
   };
+  
+  
+
  
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showAll, setShowAll] = useState(false);
@@ -55,25 +75,30 @@ const Session: React.FC<CoachSessionsProp> = ({ sessions }) => {
             source={session.imageSource}
             style={CoachProfileStyle.profileImage}
           />
-          <Text style={CoachProfileStyle.coachNameText}>{session.coachName}</Text>
+          <Text style={CoachProfileStyle.coachNameText}>{session.coacheeName}</Text>
           <View style={CoachProfileStyle.subtitleContainer}>
-          <Text style={CoachProfileStyle.sportText}>{session.sport}</Text>
           {session.time.length > 0 && (
           <Text style={CoachProfileStyle.subtitleText}>
-            {session.time[0].startTime} - {session.time[0].endTime}
+             {`${format(new Date(session.time[0].startTime), 'h:mma')} - ${format(new Date(session.time[0].endTime), 'h:mma')}`}
           </Text>)}
           {session.date.length > 0 && (
           <Text style={[CoachProfileStyle.subtitleText, { textAlign: 'center' }]}>
-            {session.date[0]}
+             {format(new Date(session.date[0]), 'MMMM d, EEEE')}
           </Text>)}
        
           </View>
         </TouchableOpacity>
       ))}
-        <SessionModal 
-        visible={visibleOverlay} 
-        session={selectedSession} 
-        toggleOverlay={toggleOverlay}
+        
+        <PendingModal
+        visible={isPendingModalVisible}
+        session={selectedSession}
+        toggleOverlay={() => setPendingModalVisible(false)}
+      />
+      <UpcomingModal
+        visible={isUpcomingModalVisible}
+        session={selectedSession}
+        toggleOverlay={() => setUpcomingModalVisible(false)}
       />
     </View>
     );
@@ -139,4 +164,4 @@ const CoachProfileStyle = StyleSheet.create({
   
 })
 
-export default Session;
+export default CoacheeSessions;

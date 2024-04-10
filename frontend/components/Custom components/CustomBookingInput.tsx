@@ -5,9 +5,13 @@ interface CustomInputProps {
     style?: object; 
     textAlignVertical?: 'top' | 'center' | 'bottom'
     multiline?: boolean;
+    value?: string;
+    editable?: boolean;
+    onChangeText: (text: string) => void;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({style, textAlignVertical, multiline}) => {
+const CustomInput: React.FC<CustomInputProps> = ({style, textAlignVertical, multiline, value, editable, onChangeText}) => {
+  
 
   const [isFocused, setIsFocused] = useState(false)
   return (
@@ -18,7 +22,9 @@ const CustomInput: React.FC<CustomInputProps> = ({style, textAlignVertical, mult
         textAlignVertical={textAlignVertical}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-
+        value={value}
+        editable={editable}
+        onChangeText={onChangeText}
       />
     </View>
   );

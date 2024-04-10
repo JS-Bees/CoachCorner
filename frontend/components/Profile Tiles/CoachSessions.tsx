@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import PendingModal from '../Modals/CoachPendingSessionModal';
 import UpcomingModal from '../Modals/CoachUpcomingSessionModal';
+
 import { format} from 'date-fns';
 
 interface Session {

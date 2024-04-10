@@ -19,8 +19,13 @@ interface PreviewPageProps {
 const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  
   const handleButtonPress = () => {
-    navigation.navigate("ChatPage");
+    navigation.navigate("ChatPage", {
+      coacheeId: profile.id,
+      name: profile?.name,
+      profileImage: profile?.imageSource,
+    });
   };
 
   const handleNavigateBack = () => {

@@ -74,9 +74,6 @@ const handleAddToFavorites = async () => {
   }
 };
 
-
-
-
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const handleButtonPress = () => {
     navigation.navigate("ChatPage");

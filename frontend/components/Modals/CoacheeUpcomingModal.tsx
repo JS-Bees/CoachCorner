@@ -1,26 +1,47 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Overlay, Icon } from '@rneui/themed';
-import Session from '../Profile Tiles/CoachSessionsTiles';
+import CoacheeSessions from '../Profile Tiles/CoacheeSessionsTiles';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UpdateBookingStatusDocument } from '../../generated-gql/graphql';
+import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
+import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
+import {format} from 'date-fns';
 
 interface SessionModalProps {
   visible: boolean;
-  session: Session | null;
+  session: CoacheeSessions | null;
   toggleOverlay: (session: Session | null) => void;
 }
 
 //make a component for custom start and end time 
 //make another component for multiple dates 
 
-const SessionModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
+const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  const [result, updateBookingStatus] = useMutation<UpdateBookingStatusMutation>(UpdateBookingStatusDocument);
+
+  
 
   const navigateToChat = () => {
     navigation.navigate('ChatPage');
   };
+  
+  
+  useEffect(() => {
+    if (result.error) {
+      console.error('Error updating booking status:', result.error.message);
+    } else if (result.data) {
+      console.log('Booking status updated successfully:', result.data.updateBookingStatus);
+      // Optionally, you can perform actions based on the result, such as updating local state or displaying a success message
+    }
+  }, [result]);
+
+  console.log("Session in modal:", session)
+
+  
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
@@ -36,14 +57,14 @@ const SessionModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
               </View>
             </TouchableOpacity>
           </View>
-            <Text style={styles.sessionName}>{session.coachName}</Text>
+            <Text style={styles.sessionName}>{session.coacheeName}</Text>
             <Text style={styles.subtitleText}>  Upcoming sessions with this coach</Text>
           </>
         )}
 
         <View style={styles.contentContainer}>
-            <Text style={styles.titleText}>Sport</Text>
-            <Text style={styles.subtitleText}>{session?.sport}</Text>
+            <Text style={styles.titleText}>Service Type</Text>
+            <Text style={styles.subtitleText}>{session?.serviceType}</Text>
 
             <View style={styles.contentText}>
             <Text style={styles.titleText}>Time</Text>
@@ -57,13 +78,13 @@ const SessionModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
             renderItem={({ item }) => (
             <View style={styles.timeRow}>
             <Text style={styles.subcontentText}>
-            {item.startTime} - {item.endTime}
+              {format(new Date(item.startTime), 'h:mm a')} - {format(new Date(item.endTime), 'h:mm a')}
             </Text>
       </View>
     )}
   />
          <FlatList
-    data={session?.date}
+    data={session?.date.map(item => format(new Date(item), 'MMMM d, EEEE'))}
     keyExtractor={(item, index) => index.toString()}
     renderItem={({ item }) => (
       <View style={styles.dateRow}>
@@ -78,11 +99,8 @@ const SessionModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
 
 <View style={styles.buttons}>
   <View style={styles.buttonContainer}>
-    <TouchableOpacity style={styles.cancelButton}>
-      <Text style={styles.cancelText}>Cancel schedule</Text>
-    </TouchableOpacity>
     <TouchableOpacity style={styles.button}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }}>Re-Schedule</Text>
+      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }} >Re-Schedule</Text>
     </TouchableOpacity>
   </View>
 </View>
@@ -211,4 +229,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SessionModal;
+export default CoacheeUpcomingModal;
+

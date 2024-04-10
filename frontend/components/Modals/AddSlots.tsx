@@ -6,9 +6,10 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 interface AddSlotModalProps {
   visible: boolean;
   onClose: () => void;
+  onAddSlot: (startTime: string, endTime: string, date: string) => void;
 }
 
-const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose }) => {
+const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot }) => {
   const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -43,6 +44,12 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose }) => {
     hideStartDatePicker();
   };
 
+  const handleSave = () => {
+    if (startDate && endDate && selectedDate) {
+      onAddSlot(format(startDate, "hh:mm a"), format(endDate, "hh:mm a"), format(selectedDate, "EEEE, do MMMM"));
+    }
+  };
+
   const handleEndDateConfirm = (date: Date) => {
     if (startDate && date <= startDate) {
       setEndTimeError('End time must be after start time');
@@ -62,6 +69,11 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose }) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
+
+  const handleClose = () => {
+    onClose(); // Close the modal
+  };
+
 
   const handleConfirm = (date: Date) => {
     const currentDate = new Date();
@@ -118,9 +130,15 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose }) => {
           {dateError ? <Text style={styles.error}>{dateError}</Text> : null}
           
         </View>
-        <TouchableOpacity onPress={onClose} style={[styles.saveButton, isSaveDisabled && styles.disabledButton]} disabled={isSaveDisabled}>
+        <TouchableOpacity onPress={handleSave} style={[styles.saveButton, isSaveDisabled && styles.disabledButton]} disabled={isSaveDisabled}>
             <Text style={styles.saveText}>Save</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+          <Text>Close</Text>
+        </TouchableOpacity>
+
+
 
       </View>
     </Modal>
@@ -169,8 +187,11 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5,
-  
-  }
+  },
+  closeButton: {
+   bottom: "10%",
+   right: "30%",
+  },
 });
 
 export default AddSlotModal;

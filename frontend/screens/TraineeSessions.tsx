@@ -10,41 +10,40 @@ import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import CoacheeProfile from '../components/Profile Tiles/CoacheeProfileTile';
 import { SearchBar } from '@rneui/themed';
+import CoachSessions from '../components/Profile Tiles/CoachSessionTiles';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import { FindBookingsOfCoacheeDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoacheesOfCoachDocument } from '../generated-gql/graphql';
-
+import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 
 
 
 
 const { width, height } = Dimensions.get('window');
 
+interface CoacheeSessionsProps {
+    sessions: CoacheeSessionsProps[];
+    onSessionPress?: (session: CoacheeSessionsProps) => void;
+}
 
 
 
-const MyClients_alt = () => {
+
+const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const [userToken, setUserToken] = useState<string | null>(null);
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
-    const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
-    
+    const [activeButton, setActiveButton] = useState('Upcoming'); 
+    const [userToken, setUserToken] = useState<string | null>(null);
+ 
+
+
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
-    };
-
-    const handleNavigateBack = () => {
-        navigation.goBack();
-    };
-
-    const navigateToCoacheeProfile = () => {
-        navigation.navigate("CoacheePreviewPage");
     };
 
     useEffect(() => {
@@ -61,49 +60,37 @@ const MyClients_alt = () => {
     }, []);
 
     const [result] = useQuery({
-        query: FindCoacheesOfCoachDocument, 
+        query: FindBookingsOfCoacheeDocument, 
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
     });
 
-
     const { fetching, data, error } = result;
     if (fetching) return <Text>Loading...</Text>;
     if (error) return <Text>Error: {error.message}</Text>
 
-    const contacts = data?.findCoachByID.contacts;
-    if (!contacts) return <Text>No contacts found.</Text>;
+    const bookings = data?.findCoacheeByID.bookings;
+    if (!bookings) return <Text>No bookings found.</Text>;
 
+    const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
+    const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
+
+    const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
     
-
-   const FavoriteCoachees: Profile[] = contacts.map(contact => {
-        const coachee = contact.coachee;
-    
-        return {
-            id: contact.coacheeId,
-            name: `${coachee.firstName} ${coachee.lastName}`,
-            imageSource: {uri: coachee.profilePicture}
-        };
-    });
-    console.log(contacts)
-
-
-
-   
-
     return (
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}>
         
             </View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={handleNavigateBack}>
+            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
             <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
             </TouchableOpacity>
             </View>
             
-            <TouchableOpacity onPress={navigateToCoacheeProfile}>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('NewCoacheeProfile')}>
             <Image
                     source={require('../assets/Woman.png')} // Add your profile image source here
                     style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
@@ -116,7 +103,7 @@ const MyClients_alt = () => {
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
             <View style={MyCoaches.searchContainer}>
                 <SearchBar
-                 placeholder='Search for a sport'
+                 placeholder='Search for coach name'
                  onChangeText={handleSearchChange}
                  value={searchText}
                  platform='android'
@@ -124,14 +111,39 @@ const MyClients_alt = () => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
 
+            <TouchableOpacity 
+            style={[
+                MyCoaches.AllCoachesButton,
+                activeButton === 'Upcoming' ? MyCoaches.activeButton : null, 
+            ]}
+                onPress={() => setActiveButton('Upcoming')}>
+            <Text style={MyCoaches.buttonText}>Upcoming</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
+            activeButton === 'Pending' ? MyCoaches.activeButton : null,
+            ]}
+                onPress={() => setActiveButton('Pending')}>
+            <Text style={MyCoaches.buttonText}>Pending</Text>
+            </TouchableOpacity>
 
 
-        <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
-           <View>
-               <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
-           </View>
-        </ScrollView>
 
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
+               <View>
+               <CoachSessions sessions={sessionsToShow.map(booking => ({
+                    coachName: `${booking.coach.firstName} ${booking.coach.lastName}`,
+                    bookingId: Number(booking.id), // Convert string to number
+                    serviceType: `${booking.serviceType}`,
+                    status: `${booking.status}`,
+                    imageSource: { uri: booking.coach.profilePicture },
+                    time: booking.bookingSlots.map(slot => ({
+                     startTime: slot.startTime,
+                    endTime: slot.endTime})),
+                    date: booking.bookingSlots.map(slot => slot.date)}))} />
+                </View>
+
+            </ScrollView>
             </KeyboardAvoidingView>
 
 
@@ -232,6 +244,8 @@ const MyCoaches = StyleSheet.create({
         overflow: "hidden",
         borderRadius: 16  
     },
+  
+    
     AllCoachesButton: {
         width: 110, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
@@ -243,10 +257,10 @@ const MyCoaches = StyleSheet.create({
         borderRadius: 10, // Adjust the border radius for rounded corners (optional)
     },
     FavoriteCoachesButton: {
-        width: 140, // Adjust the width to make it square
+        width: 100, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
         marginTop: '-13%',
-        marginLeft: '55%',
+        marginLeft: '67%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',
@@ -263,4 +277,4 @@ const MyCoaches = StyleSheet.create({
    
 });
 
-export default MyClients_alt;
+export default Trainee_Sessions;

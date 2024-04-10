@@ -121,6 +121,66 @@ query FindFavoriteCoaches($userId: Int!) {
   }
 }
 
+query FindCoacheesOfCoach($userId: Int!) {
+  findCoachByID(userID: $userId) {
+  contacts {
+    coacheeId
+    contactedStatus
+    coachee {
+      firstName
+      lastName
+      profilePicture
+    }
+  }
+  }
+}
+
+
+query FindBookingsOfCoach($userId: Int!) {
+  findCoachByID(userID: $userId) {
+  bookings {
+    id
+    status
+    coacheeId
+    coachee {
+      firstName
+      lastName
+      profilePicture
+    }
+    serviceType
+    additionalNotes
+    bookingSlots {
+      id
+      date
+      startTime
+      endTime
+    }
+  }
+  }
+}
+
+query FindBookingsOfCoachee($userId: Int!) {
+  findCoacheeByID(userID: $userId) {
+  bookings {
+    id
+    status
+    coachId
+    coach {
+      firstName
+      lastName
+      profilePicture
+    }
+    serviceType
+    additionalNotes
+    bookingSlots {
+      date
+      startTime
+      endTime
+    }
+  }
+  }
+}
+
 query GetCoachReviews($userId: Int!) {
   findCoachByID(userID: $userId) {
     firstName

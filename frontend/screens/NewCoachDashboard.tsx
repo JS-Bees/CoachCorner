@@ -93,53 +93,53 @@ const NewCoachDashboard = () => {
         navigation.navigate("NewCoachProfile");
     };
 
-    const upcoming = [ // only max two to show 
-       {
-        traineeName: 'Angelina Maverick',
-        imageSource: require('../assets/angelina.jpg'),
-        time: [
-            { startTime: "9:00 AM", endTime: "10:00 AM" }, // the first of the upcoming time  and date should be displayed
-            { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-        date: ["Fri 25 June", "Sat 26 June"],
-       },
-       {
-        traineeName: 'Jane Smith',
-        imageSource: require('../assets/Jane_Smith.png'),
-        time: [
-            { startTime: "9:00 AM", endTime: "10:00 AM" },
-            { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-        date: ["Fri 25 June", "Sat 26 June"],
-       },
-       {
-        traineeName: 'Jane Smith',
-        imageSource: require('../assets/Jane_Smith.png'),
-        time: [
-            { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-        date: ["Sat 26 June"],
-       },
+    // const upcoming = [ // only max two to show 
+    //    {
+    //     traineeName: 'Angelina Maverick',
+    //     imageSource: require('../assets/angelina.jpg'),
+    //     time: [
+    //         { startTime: "9:00 AM", endTime: "10:00 AM" }, // the first of the upcoming time  and date should be displayed
+    //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
+    //     date: ["Fri 25 June", "Sat 26 June"],
+    //    },
+    //    {
+    //     traineeName: 'Jane Smith',
+    //     imageSource: require('../assets/Jane_Smith.png'),
+    //     time: [
+    //         { startTime: "9:00 AM", endTime: "10:00 AM" },
+    //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
+    //     date: ["Fri 25 June", "Sat 26 June"],
+    //    },
+    //    {
+    //     traineeName: 'Jane Smith',
+    //     imageSource: require('../assets/Jane_Smith.png'),
+    //     time: [
+    //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
+    //     date: ["Sat 26 June"],
+    //    },
       
-    ]
+    // ]
 
-    const profiles = [ // only max four to show 
-       {
-            name: 'Kobe Brian',
-            imageSource: require('../assets/Kobe_Brian.jpg'),
-            gainedStars: 5,
-            mainSport: "Basketball",
-            about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
-            workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
-        },
-        {
-            name: 'John Doe',
-            imageSource: require('../assets/John_Doe.png'), 
-            gainedStars: 4,
-            mainSport: "Basketball",
-            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
-            workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
-        },
+    // const profiles = [ // only max four to show 
+    //    {
+    //         name: 'Kobe Brian',
+    //         imageSource: require('../assets/Kobe_Brian.jpg'),
+    //         gainedStars: 5,
+    //         mainSport: "Basketball",
+    //         about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
+    //         workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
+    //     },
+    //     {
+    //         name: 'John Doe',
+    //         imageSource: require('../assets/John_Doe.png'), 
+    //         gainedStars: 4,
+    //         mainSport: "Basketball",
+    //         about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
+    //         workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
+    //     },
         
       
-    ]
+    // ]
     
 
     
@@ -189,7 +189,7 @@ const NewCoachDashboard = () => {
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
                     </View>
-                    <UpcomingSession upcoming={upcoming} />
+                    {/* <UpcomingSession upcoming={upcoming} /> */}
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                     </View>
                 

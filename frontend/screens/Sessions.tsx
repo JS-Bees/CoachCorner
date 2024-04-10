@@ -6,22 +6,27 @@ import {
     Image,
     Platform,
 } from 'react-native';
-import React, { useState, } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Session from '../components/Profile Tiles/CoachSessionsTiles';
 import { SearchBar } from '@rneui/themed';
+import CoacheeSessions from '../components/Profile Tiles/CoacheeSessionsTiles';
 import Icon from 'react-native-vector-icons/Ionicons'
+import { FindBookingsOfCoachDocument } from '../generated-gql/graphql';
+import { FindCoachByIdDocument } from '../generated-gql/graphql';
+import { useQuery } from 'urql';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+
 
 
 
 const { width, height } = Dimensions.get('window');
 
 interface CoachSessionsProps {
-    sessions: Session[];
-    onSessionPress?: (session: Session) => void;
+    sessions: CoachSessionsProps[];
+    onSessionPress?: (session: CoachSessionsProps) => void;
 }
 
 
@@ -33,64 +38,91 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
+    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+
  
-    
+
+
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
 
- 
+    
+    const handleNavigateBack = () => {
+     navigation.goBack();
+    };
 
+     const navigateToCoachProfile = () => {
+        navigation.navigate("NewCoachProfile");
+    };
 
-    const Upcoming: Session[] = [ //max 2
-        {
-            coachName: 'Serena Williams',
-            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
-            sport: "Tennis",
-            time: [
-                { startTime: "9:00 AM", endTime: "10:00 AM" },
-                { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-            date: ["Fri 25 June", "Sat 26 June"],
-      }
-       
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                setUserToken(token);
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
 
-            
-    ];
+        fetchUserToken();
+    }, []);
 
-    const Pending: Session[] = [ // max 2
-        {
-            coachName: 'Kobe Bryant',
-            imageSource: require('../assets/Kobe_Brian.jpg'),
-            sport: "Basketball",
-            time: [
-                { startTime: "9:00 AM", endTime: "10:00 AM" },
-                { startTime: "2:00 PM", endTime: "3:00 PM" }, ],
-            date: ["Fri 25 June", "Sat 26 June"],
+    const [result] = useQuery({
+        query: FindBookingsOfCoachDocument, 
+        variables: {
+            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
-      
-    ];
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const useFetchCoachByUserID = (userID: any) => {
+        const [coachResult] = useQuery({
+            query: FindCoachByIdDocument, // Use the Coachee query document
+            variables: {
+                userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
+            },
+        });
+
+        return coachResult;
+    };
+
+    const {
+        data: coachData,
+    } = useFetchCoachByUserID(userToken);
+
+    const { fetching, data, error } = result;
+    if (fetching) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>
 
 
 
-   
+    const bookings = data?.findCoachByID.bookings;
+    if (!bookings) return <Text>No bookings found.</Text>;
 
+    const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
+    const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
+
+    const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+    
     return (
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}>
         
             </View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
+            <TouchableOpacity onPress={handleNavigateBack}>
             <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
             </TouchableOpacity>
             </View>
             
             <TouchableOpacity
-                onPress={() => navigation.navigate('NewCoacheeProfile')}>
+                onPress={navigateToCoachProfile}>
             <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
+                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%', borderRadius: 30}}/>
             
             </TouchableOpacity>
             
@@ -128,9 +160,19 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
 
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
                <View>
-               <Session sessions={activeButton === 'Upcoming' ? Upcoming: Pending}
-             />
-               </View>
+               <CoacheeSessions sessions={sessionsToShow.map(booking => ({
+                    coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                    bookingId: Number(booking.id), // Convert string to number
+                    serviceType: `${booking.serviceType}`,
+                    additionalNotes: `${booking.additionalNotes}`,
+                    status: `${booking.status}`,
+                    imageSource: { uri: booking.coachee.profilePicture },
+                    slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
+                    time: booking.bookingSlots.map(slot => ({
+                     startTime: slot.startTime,
+                    endTime: slot.endTime})),
+                    date: booking.bookingSlots.map(slot => slot.date)}))} />
+                </View>
 
             </ScrollView>
             </KeyboardAvoidingView>

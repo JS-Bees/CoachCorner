@@ -35,6 +35,29 @@ mutation CreateReview($input: CreateReviewInput!) {
   }
 }
 
+mutation CreateBooking($input: CreateBookingInput!, $slotsInput: [CreateBookingSlotInput!]!) {
+  createBooking(input: $input, slotsInput: $slotsInput) {
+    id
+    coach {
+      firstName
+      lastName
+    }
+    coachee {
+      firstName
+      lastName
+    }
+    serviceType
+    additionalNotes
+    status
+    bookingSlots {
+      id
+      date
+      startTime
+      endTime
+      status
+    }
+  }
+}
 mutation CreateCoachTask($input: CreateCoachTaskInput!) {
   createCoachTask(input: $input) {
     coach {

@@ -9,16 +9,33 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
+import { ImageSourcePropType } from 'react-native';
 
-const ChatPage = () => {
+interface RouteParams {
+  route: {
+    params: {
+      name: string;
+      profileImage: ImageSourcePropType;
+      coacheeId: string; 
+    };
+  };
+}
+
+
+const ChatPage = ({route}: {route: RouteParams['route']}) => {
+  const { name, profileImage} = route.params || {}
+  console.log('Name:', name);
+  console.log('Profile Image:', profileImage);
+
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<string[]>([]);
   const [isFocused, setIsFocused] = useState(false);
+
+  
 
 
   const handleNavigateBack = () => {
@@ -26,8 +43,14 @@ const ChatPage = () => {
   };
 
   const handleNavigateToBooking = () => {
-    navigation.navigate("NewBookingPage");
+    navigation.navigate("NewBookingPage", {
+      coacheeId: route.params?.coacheeId,
+      coacheeName: route.params?.name
+    });
   };
+
+  console.log("Coachee ID from Preview Page:", route.params?.coacheeId); // to check if its the right id 
+
 
   const handleSendMessage = () => {
     if (message.trim() !== '') {
@@ -51,12 +74,11 @@ const ChatPage = () => {
           <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0"  style={styles.arrowIcon} />
         </TouchableOpacity>
         <Image
-          source={require('../assets/Woman.png')} 
-          style={styles.profileImage}
-        />
-        <Text style={styles.headerText}>Jane Smith</Text>
+            source={profileImage}
+            style={styles.profileImage}/>
+        <Text style={styles.headerText}>{name}</Text>
         <TouchableOpacity style={styles.bookmark} onPress={handleNavigateToBooking}>
-          <MaterialIcons name="bookmark-outline" size={30} color="#7E3FF0" />
+          <Icon name="bookmark-outline" size={27} color="#7E3FF0"  style={styles.arrowIcon} />
         </TouchableOpacity>
       </View>
       <View style={styles.messageContainer}>
@@ -100,8 +122,9 @@ const styles = StyleSheet.create({
     bottom: "45%"
   },
   profileImage: {
-    width: 40,
-    height: 40,
+    width: 45,
+    height: 45,
+    borderRadius: 30,
     marginLeft: '-10%',
   },
   headerText: {
@@ -110,7 +133,7 @@ const styles = StyleSheet.create({
   },
   bookmark: {
     marginLeft: 'auto',
-    marginRight: 10,
+    marginRight: -50,
   },
   messageContainer: {
     flex: 1,
