@@ -13,7 +13,10 @@ import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoacheeContactsByIdDocument } from '../generated-gql/graphql';
+import {
+    FindCoacheeContactsByIdDocument,
+    FindfilteredMessagesByContactIdDocument,
+} from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 
 interface ChatMessage {
