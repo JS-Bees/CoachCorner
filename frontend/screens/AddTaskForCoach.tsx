@@ -1,18 +1,37 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect,useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { CreateCoachTaskDocument } from '../generated-gql/graphql';
+import { useMutation } from 'urql';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AddTaskPage = () => {
+const AddTaskPageForCoach = () => {
 
    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  const [, executeMutation] = useMutation(CreateCoachTaskDocument);
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            setUserToken(token);
+        } catch (error) {
+            console.error('Error fetching token:', error);
+        }
+    };
+
+    fetchUserToken();
+}, []);
+
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -33,15 +52,33 @@ const AddTaskPage = () => {
   };
 
   const handleSave = () => {
-    // Implement logic to add task to the list
-    console.log('Title:', title);
-    console.log('Description:', description);
-    console.log('Date:', date);
+    // Execute mutation to create a new task
+    executeMutation({
+      input: {
+        coachId: parseInt(userToken),
+        completionStatus: "UNCOMPLETED",
+        date: date.toISOString(), // Format date to ISO string
+        description: description,
+        title: title,
+      }
+    }).then((result) => {
+      // Handle result if needed
+      console.log('Mutation result:', result);
+      // Show success alert
+      Alert.alert('Success', 'Task successfully added');
+    }).catch((error) => {
+      // Handle error if needed
+      console.error('Mutation error:', error);
+      // Show error alert
+      Alert.alert('Error', 'Failed to add task. Please try again.');
+    });
+    
     // Reset input fields
     setTitle('');
     setDescription('');
     setDate(new Date());
   };
+  
 
   return (
     <View style={styles.container}>
@@ -148,4 +185,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddTaskPage;
+export default AddTaskPageForCoach;

@@ -31,7 +31,8 @@ import ReviewsPage from './screens/ReviewsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
 import AllCoaches from './screens/AllCoaches';
-import EditInterests from './screens/EditInterests';
+import EditInterests from './screens/EditInterestsForCoachee';
+import EditInterestsForCoach from './screens/EditInterestForCoach';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
 import ProgressTracker from './screens/ProgressTracker';
@@ -39,6 +40,12 @@ import AddTaskPage from './screens/AddTask';
 import Trainee_Sessions from './screens/TraineeSessions';
 import MyCoaches_alt from './screens/MyCoaches_alt';
 import ReschedulePage from './screens/BookingDrawers.tsx/ReschedulePage';
+import ProgressTracker from './screens/ProgressTrackerForCoach';
+import ProgressTrackerForCoachee from './screens/ProgressTrackerForCoachee';
+import AddTaskPage from './screens/AddTaskForCoachee';
+import AddTaskPageForCoach from './screens/AddTaskForCoach';
+import PreviewTask from './screens/PreviewTaskForCoach';
+import PreviewTaskForCoachee from './screens/PreviewTaskForCoachee';
 import { enGB, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en-GB', enGB)
 import { NavigationContainer } from '@react-navigation/native';
@@ -57,10 +64,11 @@ import {
 } from 'urql';
 
 
+
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.5:5050/graphql',
+    url: 'http://192.168.254.142:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
@@ -103,11 +111,16 @@ export type RootStackParams = {
     AllCoaches: any,
     NewBookingPage: any,
     EditInterests: any,
+    EditInterestForCoach: any,
     ChatList: any,
     ProgressTracker: any,
+    ProgressTrackerForCoachee: any,
     AddTaskPage: any,
     Trainee_Sessions: any,
     ReschedulePage: any,
+    AddTaskPageForCoachee: any
+    PreviewTask: any
+    PreviewTaskForCoachee: any
 };
 
 const RootStack = createNativeStackNavigator();
@@ -290,6 +303,11 @@ export default function App() {
                         options={{headerShown: false}}
                         />
                     <RootStack.Screen 
+                        name="EditProfileForCoach" 
+                        component={EditInterestsForCoach} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
                         name="AddTaskPage" 
                         component={AddTaskPage} 
                         options={{headerShown: false}}
@@ -299,7 +317,21 @@ export default function App() {
                         component={ReschedulePage} 
                         options={{headerShown: false}}
                         />
-
+                    <RootStack.Screen
+                        name="AddTaskPageForCoach" 
+                        component={AddTaskPageForCoach} 
+                        options={{headerShown: false}}
+                        />
+                    <RootStack.Screen 
+                        name="PreviewTask" 
+                        component={PreviewTask} 
+                        options={{headerShown: false}}
+                        />
+                   <RootStack.Screen 
+                        name="PreviewTaskForCoachee" 
+                        component={PreviewTaskForCoachee} 
+                        options={{headerShown: false}}
+                        />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
@@ -342,8 +374,8 @@ function TabNavigator() {
       >
         <Tab.Screen name="Home" component={CoacheeDashboard} options={{ headerShown: false }} />
         <Tab.Screen name="My Coaches" component={MyCoaches_alt} options={{ headerShown: false }} />
-        <Tab.Screen name="Sessions" component={Trainee_Sessions}  options={{ headerShown: false }} />
-        <Tab.Screen name="Taskboard" component={ProgressTracker} options={{ headerShown: false }} />
+        <Tab.Screen name="Sessions" component={Trainee_Sessions} options={{ headerShown: false }} />
+        <Tab.Screen name="Taskboard" component={ProgressTrackerForCoachee} options={{ headerShown: false }} />
         <Tab.Screen name="Chats" component={ChatListPage} options={{ headerShown: false }} />
       </Tab.Navigator>
     );

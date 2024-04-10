@@ -109,6 +109,7 @@ const LogIn = () => {
     const errorMessage = coacheeResult.error ? coacheeResult.error.message.replace('[GraphQL] ', '') : 'An error occurred';
     setEmailPasswordError(errorMessage);
   };
+  
   const onLogInPressed = async () => {
     if (!Email || !Password) {
       if (CoachOrCoachee === "coach") {

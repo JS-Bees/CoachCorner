@@ -157,6 +157,8 @@ const CoacheeDashboard = () => {
 const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
 const coaches = coachData?.coaches || [];
 
+console.log(coaches)
+
 const genrePriority = ['Movie Genre', 'Book Genre', 'Music Genre'];
 const genreWeights = {
     'Movie Genre': 3,

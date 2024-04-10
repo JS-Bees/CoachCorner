@@ -58,3 +58,31 @@ mutation CreateBooking($input: CreateBookingInput!, $slotsInput: [CreateBookingS
     }
   }
 }
+mutation CreateCoachTask($input: CreateCoachTaskInput!) {
+  createCoachTask(input: $input) {
+    coach {
+      firstName
+      lastName
+      tasks {
+        id
+        description
+        completionStatus
+      }
+    }
+  }
+}
+
+mutation CreateCoacheeTask($input: CreateCoacheeTaskInput!) {
+  createCoacheeTask(input: $input) {
+    coachee {
+      firstName
+      lastName
+      tasks {
+        id
+        description
+        completionStatus
+      }
+    }
+  }
+}
+

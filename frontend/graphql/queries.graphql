@@ -29,12 +29,23 @@ query FindCoacheeByID($userId: Int!) {
     address
     profilePicture
     interests {
+      id
       type
       name
     }
     reviews {
       starRating
       comment
+    }
+    tasks {
+      active
+      completionStatus
+      createdAt
+      date
+      description
+      id
+      title
+      updatedAt
     }
   }
 }
@@ -50,6 +61,7 @@ query FindCoachByID($userId: Int!) {
     address
     profilePicture
     interests {
+      id
       type
       name
     }
@@ -59,6 +71,16 @@ query FindCoachByID($userId: Int!) {
     reviews {
       starRating
       comment
+    }
+    tasks {
+      active
+      completionStatus
+      createdAt
+      date
+      description
+      id
+      title
+      updatedAt
     }
   }
 }
