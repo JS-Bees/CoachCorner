@@ -61,7 +61,7 @@ const wsClient = createWSClient({
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.2:5050/graphql',
+    url: 'http://192.168.1.6:5050/graphql',
     // url: apiUrl!,
     exchanges: [
         cacheExchange,

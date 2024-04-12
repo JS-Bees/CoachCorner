@@ -607,3 +607,43 @@ export const findMessagesForCoachList = queryField('findMessagesForCoachList', {
         }
     },
 });
+
+// export const findContactsOfCoachee2 = queryField('findContactsOfCoachee2', {
+//     type: list(Contact),
+//     args: {
+//         coacheeId: nonNull(intArg()),
+//     },
+//     resolve: async (_, { coacheeId }, context: Context) => {
+//         try {
+//             // Validate coachId using the idSchema
+//             idSchema.validateSync({ id: coacheeId });
+
+//             // Search for contacts of the coach with contactedStatus set to true
+//             const contacts = await context.db.contact.findMany({
+//                 where: {
+//                     coacheeId: coacheeId,
+//                     active: true,
+//                 },
+//                 include: {
+//                     messages: {
+//                         distinct: ['contactId'],
+//                         orderBy: {
+//                             createdAt: 'desc',
+//                         },
+//                         take: 1, // Limit to the most recent message
+//                     },
+//                 },
+//             });
+
+//             return contacts;
+//         } catch (error) {
+//             // Handle validation errors
+//             if (error instanceof yup.ValidationError) {
+//                 // You can customize the error message based on the validation error
+//                 throw new Error(error.message);
+//             }
+//             // Rethrow other errors
+//             throw error;
+//         }
+//     },
+// });

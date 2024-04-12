@@ -20,8 +20,28 @@ import {
     NewMessageSubscriptionVariables,
     CreateMessageMutationVariables,
 } from '../generated-gql/graphql';
+import { RouteProp } from '@react-navigation/native';
 
-const ChatPage = () => {
+// Assuming your navigation stack is named 'Root'
+type ChatScreenNavigationProp = NativeStackNavigationProp<
+    RootStackParams,
+    'ChatPage'
+>;
+
+type Props = {
+    route: RouteProp<RootStackParams, 'ChatPage'>;
+    navigation: ChatScreenNavigationProp;
+};
+
+const ChatPage: React.FC<Props> = ({ route }) => {
+    const { chatMessage } = route.params;
+
+    // Log the sender's name
+    console.log('Sender Name:', chatMessage.sender);
+    console.log('image url', chatMessage.imageUrl.uri);
+
+    const imageSource = chatMessage.imageUrl;
+
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     // const [message, setMessage] = useState('');
@@ -112,8 +132,6 @@ const ChatPage = () => {
     // if (result.error) return <Text>Error</Text>;
     // if (!result.data) return <Text>No data received yet.</Text>;
 
-    // ... rest of the component ...
-
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -125,11 +143,8 @@ const ChatPage = () => {
                         style={styles.arrowIcon}
                     />
                 </TouchableOpacity>
-                <Image
-                    source={require('../assets/Woman.png')}
-                    style={styles.profileImage}
-                />
-                <Text style={styles.headerText}>Jane Smith</Text>
+                <Image source={imageSource} style={styles.profileImage} />
+                <Text style={styles.headerText}>{chatMessage.sender}</Text>
                 <TouchableOpacity
                     style={styles.bookmark}
                     onPress={handleNavigateToBooking}
@@ -192,6 +207,7 @@ const styles = StyleSheet.create({
         bottom: '45%',
     },
     profileImage: {
+        borderRadius: 25,
         width: 40,
         height: 40,
         marginLeft: '-10%',
