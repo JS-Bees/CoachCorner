@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     Image,
     SafeAreaView,
+    FlatList,
+    Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -49,7 +51,12 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // const [message, setMessage] = useState('');
     const [isFocused, setIsFocused] = useState(false);
 
-    const [messages, setMessages] = useState<string[]>([]);
+    // const [messages, setMessages] = useState<string[]>([]);
+
+    const [messages, setMessages] = useState<string[]>(
+        Array.from({ length: 20 }, (_, i) => `Message ${i + 1}`),
+    );
+
     const [currentMessage, setCurrentMessage] = useState('');
     const [result] = useSubscription<NewMessageSubscriptionVariables>({
         query: NewMessageDocument,
@@ -134,9 +141,16 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // if (result.error) return <Text>Error</Text>;
     // if (!result.data) return <Text>No data received yet.</Text>;
 
+    // Render each message item
+    const renderMessageItem = ({ item }: { item: string }) => (
+        <View style={styles.chatBubble}>
+            <Text style={styles.messageText}>{item}</Text>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            <View style={{ ...styles.header, backgroundColor: 'yellow' }}>
                 <TouchableOpacity onPress={handleNavigateBack}>
                     <Icon
                         name="arrow-back-circle-outline"
@@ -158,14 +172,31 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     />
                 </TouchableOpacity>
             </View>
-            {/* Added this for the message rendering*/}
-            {messages.map((message, index) => (
-                <View key={index} style={styles.chatBubble}>
-                    <Text style={styles.messageText}>{message}</Text>
-                </View>
-            ))}
-            <View style={styles.messageContainer}>
-                <SafeAreaView style={styles.safeArea}>
+            {/* This should be the start of a separate container */}
+            <View
+                style={{
+                    ...styles.messageContainer,
+                    // backgroundColor: 'brown',
+                }}
+            >
+                <FlatList
+                    style={{ flex: 1 }}
+                    data={messages}
+                    renderItem={renderMessageItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    inverted // This will render the list in reverse, starting from the bottom
+                    // contentContainerStyle={styles.messageContainer}
+                    // ListFooterComponent={<View style={{ height: 20 }} />}
+                />
+            </View>
+            {/* This should be the end of a separate container */}
+            <View
+                style={{
+                    ...styles.inputArea,
+                    backgroundColor: 'violet',
+                }}
+            >
+                {/* <View style={styles.safeArea}>
                     <TextInput
                         style={[
                             styles.input,
@@ -188,11 +219,14 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                             style={styles.sendIcon}
                         />
                     </TouchableOpacity>
-                </SafeAreaView>
+                </View> */}
             </View>
         </View>
     );
 };
+
+// Get the screen height
+const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
@@ -200,10 +234,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     header: {
+        // added the flex and height
+        flex: 1,
+        // height: screenHeight * 0.1, // 10% of the screen height
         flexDirection: 'row',
         alignItems: 'center',
-        top: '15%',
-        padding: 10,
+        // top: '15%',
+        // padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
     },
@@ -229,13 +266,20 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     messageContainer: {
+        // height: screenHeight * 0.4,
+        // removing flex allows it to scroll
         flex: 1,
-        justifyContent: 'flex-end',
+        // justifyContent: 'flex-end',
         // backgroundColor: 'red',
     },
     safeArea: {
-        backgroundColor: 'blue', // change this back to white
+        // backgroundColor: 'green', // change this back to white
         flexDirection: 'row',
+    },
+    inputArea: {
+        flex: 1,
+        // height: screenHeight * 0.5,
+        backgroundColor: 'violet',
     },
     input: {
         height: 55,
