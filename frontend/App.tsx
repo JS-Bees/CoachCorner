@@ -35,8 +35,6 @@ import EditInterests from './screens/EditInterestsForCoachee';
 import EditInterestsForCoach from './screens/EditInterestForCoach';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
-import ProgressTracker from './screens/ProgressTracker';
-import AddTaskPage from './screens/AddTask';
 import Trainee_Sessions from './screens/TraineeSessions';
 import MyCoaches_alt from './screens/MyCoaches_alt';
 import ReschedulePage from './screens/BookingDrawers.tsx/ReschedulePage';
@@ -68,7 +66,7 @@ import {
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.254.142:5050/graphql',
+  url: 'http://192.168.1.5:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });
