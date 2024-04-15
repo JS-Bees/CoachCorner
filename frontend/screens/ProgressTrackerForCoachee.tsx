@@ -54,17 +54,9 @@ const ProgressTrackerForCoachee = () => {
       navigation.navigate("AddTaskPage");
     };
     const handleNavigatePreviewTask = (task: any) => {
-      navigation.navigate("PreviewTask", { task });
+      navigation.navigate("PreviewTaskForCoachee", { task });
     };
   
-    // const [tasks, setTasks] = useState([
-    //   { id: 1, title: 'Practice with coach', date: 'June 24, 2024', completed: false },
-    //   { id: 2, title: 'Dribble excercirse', date: 'March 12, 2024', completed: false },
-    //   { id: 3, title: 'Lady gaga playlist', date: 'Decemeber 25, 2024', completed: false },
-    //   { id: 4, title: 'Yeyuh', date: 'June 24, 2024', completed: false },
-    // ]);
-  
-
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
@@ -186,8 +178,8 @@ const ProgressTrackerForCoachee = () => {
         backgroundColor: 'white',
       },
       iconContainer: {
-        marginTop: "10.5%",
-        marginLeft: "9%",
+        marginTop: "12%",
+        marginLeft: "5%",
         height: "17%"
       },
       headerText: {

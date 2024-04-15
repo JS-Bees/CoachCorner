@@ -6,7 +6,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const PreviewTask = ({ route }: any) => {
-
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const { title, description, date } = route.params.task;
 
@@ -26,32 +25,32 @@ const PreviewTask = ({ route }: any) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.iconContainer} onPress={handleNavigateBack}>
+        <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0'/>
+      </TouchableOpacity>
 
-       <View style={styles.iconContainer}>
-            <TouchableOpacity onPress={handleNavigateBack}>
-              <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0'/>
-            </TouchableOpacity>
-       </View>
-      
       <View style={styles.content}>
         <Text style={styles.label}>Title:</Text>
         <TextInput
           style={styles.input}
           value={title}
+          editable={false}
         />
         <Text style={styles.label}>Date:</Text>
-        <TouchableOpacity style={styles.dateButton}>
+        <TouchableOpacity style={styles.dateButton} disabled>
           <TextInput
             style={styles.input}
             value={convertToDate(date)} // Convert projected date to actual date
+            editable={false}
           />
         </TouchableOpacity>
         <Text style={styles.label}>Description:</Text>
         <TextInput
-          style={[styles.input]}
+          style={[styles.input, styles.descriptionInput]}
           value={description}
           multiline
           textAlignVertical='top'
+          editable={false}
         />
       </View>
     </View>
@@ -62,19 +61,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: 'white',
+    backgroundColor: '#F9F9F9', // Light gray background
   },
   content: {
-    top: "10%"
+    marginTop: 80, // Lowered down
   },
   iconContainer: {
-    top: "5%",
-    marginLeft: "2%"
+    position: 'absolute',
+    top: 40, // Lowered down
+    left: 16,
+    zIndex: 1,
   },
   label: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 'bold',
     marginBottom: 8,
+    color: '#333', // Darker text color
   },
   input: {
     borderBottomWidth: 1,
@@ -82,33 +84,17 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginBottom: 16,
+    backgroundColor: '#FFFFFF', // White background
+    color: '#333', // Darker text color
   },
   dateButton: {
     borderRadius: 4,
-    padding: 12,
-    alignItems: 'flex-start',
+    padding: 8,
+    marginBottom: 16,
+    backgroundColor: '#FFFFFF', // White background
   },
-  dateButtonText: {
-    bottom: "40%",
-    color: 'grey',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  buttonsContainer: {
-    flexDirection: "row"
-  },
-  addButtonText: {
-    color: '#7E3FF0',
-    fontSize: 16,
-    fontWeight: '400',
-    fontStyle: "italic"
-  },
-  deleteButtonText: {
-    color: 'red',
-    marginLeft: "82%",
-    fontSize: 16,
-    fontWeight: '400',
-    fontStyle: "italic"
+  descriptionInput: {
+    minHeight: 100, // Adjust as needed
   },
 });
 

@@ -203,7 +203,8 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
 
     const TopCoaches: Profile[] = [
         //max 2
-        {
+        {   
+            id: 1,
             name: 'Serena Williams',
             imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
             gainedStars: 3,
@@ -212,7 +213,8 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
             workplaceAddress:
                 'So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458',
         },
-        {
+        {   
+            id: 2,
             name: 'Kobe Brian',
             imageSource: require('../assets/Kobe_Brian.jpg'),
             gainedStars: 5,
