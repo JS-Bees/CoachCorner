@@ -39,6 +39,8 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // Log the sender's name
     console.log('Sender Name:', chatMessage.sender);
     console.log('image url', chatMessage.imageUrl.uri);
+    console.log('Contact ID', chatMessage.id);
+    console.log('Type of Contact ID', typeof chatMessage.id);
 
     const imageSource = chatMessage.imageUrl;
 
@@ -51,7 +53,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     const [currentMessage, setCurrentMessage] = useState('');
     const [result] = useSubscription<NewMessageSubscriptionVariables>({
         query: NewMessageDocument,
-        variables: { channelName: 'ChannelofContact1' },
+        variables: { channelName: `ChannelofContact${chatMessage.id}` },
     });
 
     // const [, createMessage] = useMutation<CreateMessageMutationVariables>(
@@ -110,7 +112,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
             // });
             const response = await createMessage({
                 input: {
-                    contactId: 1, // Replace with the actual contact ID
+                    contactId: chatMessage.id, // Replace with the actual contact ID
                     content,
                 },
             });
@@ -156,6 +158,12 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     />
                 </TouchableOpacity>
             </View>
+            {/* Added this for the message rendering*/}
+            {messages.map((message, index) => (
+                <View key={index} style={styles.chatBubble}>
+                    <Text style={styles.messageText}>{message}</Text>
+                </View>
+            ))}
             <View style={styles.messageContainer}>
                 <SafeAreaView style={styles.safeArea}>
                     <TextInput
@@ -223,9 +231,10 @@ const styles = StyleSheet.create({
     messageContainer: {
         flex: 1,
         justifyContent: 'flex-end',
+        // backgroundColor: 'red',
     },
     safeArea: {
-        backgroundColor: 'white',
+        backgroundColor: 'blue', // change this back to white
         flexDirection: 'row',
     },
     input: {
@@ -242,6 +251,15 @@ const styles = StyleSheet.create({
     },
     focusedInput: {
         borderColor: '#7E3FF0', // Change the border color to your desired color
+    },
+    chatBubble: {
+        backgroundColor: 'blue',
+        borderRadius: 15,
+        padding: 10,
+        marginBottom: 10,
+    },
+    messageText: {
+        color: 'white',
     },
 });
 
