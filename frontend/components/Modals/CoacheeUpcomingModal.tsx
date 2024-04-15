@@ -97,15 +97,6 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
 </View>
 
 
-<View style={styles.buttons}>
-  <View style={styles.buttonContainer}>
-    <TouchableOpacity style={styles.button}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }} >Re-Schedule</Text>
-    </TouchableOpacity>
-  </View>
-</View>
-
-
       </View>
     </Overlay>
   );
