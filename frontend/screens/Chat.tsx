@@ -150,7 +150,12 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ ...styles.header, backgroundColor: 'yellow' }}>
+            <View
+                style={{
+                    ...styles.header,
+                    // backgroundColor: 'yellow'
+                }}
+            >
                 <TouchableOpacity onPress={handleNavigateBack}>
                     <Icon
                         name="arrow-back-circle-outline"
@@ -172,7 +177,6 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     />
                 </TouchableOpacity>
             </View>
-            {/* This should be the start of a separate container */}
             <View
                 style={{
                     ...styles.messageContainer,
@@ -185,18 +189,18 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
                     inverted // This will render the list in reverse, starting from the bottom
+                    // contentContainerStyle={styles.chatItems}
                     // contentContainerStyle={styles.messageContainer}
                     // ListFooterComponent={<View style={{ height: 20 }} />}
                 />
             </View>
-            {/* This should be the end of a separate container */}
             <View
                 style={{
                     ...styles.inputArea,
-                    backgroundColor: 'violet',
+                    // backgroundColor: 'violet',
                 }}
             >
-                {/* <View style={styles.safeArea}>
+                <View style={styles.safeArea}>
                     <TextInput
                         style={[
                             styles.input,
@@ -219,14 +223,14 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                             style={styles.sendIcon}
                         />
                     </TouchableOpacity>
-                </View> */}
+                </View>
             </View>
         </View>
     );
 };
 
 // Get the screen height
-const screenHeight = Dimensions.get('window').height;
+// const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
@@ -239,8 +243,8 @@ const styles = StyleSheet.create({
         // height: screenHeight * 0.1, // 10% of the screen height
         flexDirection: 'row',
         alignItems: 'center',
-        // top: '15%',
-        // padding: 10,
+        top: '15%',
+        padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
     },
@@ -267,8 +271,9 @@ const styles = StyleSheet.create({
     },
     messageContainer: {
         // height: screenHeight * 0.4,
-        // removing flex allows it to scroll
-        flex: 1,
+        top: '10%',
+        bottom: '50%',
+        flex: 4,
         // justifyContent: 'flex-end',
         // backgroundColor: 'red',
     },
@@ -277,9 +282,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     inputArea: {
-        flex: 1,
+        flex: 2,
+        justifyContent: 'flex-end',
         // height: screenHeight * 0.5,
-        backgroundColor: 'violet',
+        // backgroundColor: 'violet',
     },
     input: {
         height: 55,
@@ -289,7 +295,7 @@ const styles = StyleSheet.create({
         borderColor: '#D4C5ED',
         borderWidth: 1.5,
         borderRadius: 15,
-        marginBottom: 10,
+        // marginBottom: 10,
         paddingLeft: 10,
         paddingRight: 10,
     },
@@ -297,10 +303,12 @@ const styles = StyleSheet.create({
         borderColor: '#7E3FF0', // Change the border color to your desired color
     },
     chatBubble: {
-        backgroundColor: 'blue',
+        backgroundColor: '#7E3FF0',
         borderRadius: 15,
         padding: 10,
         marginBottom: 10,
+        alignSelf: 'flex-end', // Align the chat bubble to the right
+        flexWrap: 'wrap', // Allow the bubble to grow according to the content
     },
     messageText: {
         color: 'white',

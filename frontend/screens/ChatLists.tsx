@@ -18,6 +18,7 @@ import {
     FindMessagesForCoachListDocument,
 } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
+import { useIsFocused } from '@react-navigation/native';
 
 interface ChatMessage {
     id: number;
@@ -43,6 +44,16 @@ const ChatListPage: React.FC = () => {
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
+    // const isFocused = useIsFocused();
+
+    // useEffect(() => {
+    //     if (isFocused) {
+    //         // Perform your data fetching or any other updates here
+    //         console.log('ChatLists screen is focused, reloading data...');
+    //         // Example: Fetch new data or update the state
+    //     }
+    // }, [isFocused]);
+
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -62,6 +73,7 @@ const ChatListPage: React.FC = () => {
             variables: {
                 coacheeId: parseInt(userID),
             },
+            requestPolicy: 'cache-and-network',
         });
 
         return chatListMessageResult;
@@ -137,7 +149,7 @@ const ChatListPage: React.FC = () => {
 
             setChatMessages(chatMessages);
         }
-    }, [coacheeData]);
+    }, [coacheeData, coacheeChatListMessageData]);
 
     const renderChatMessage = ({ item }: { item: ChatMessage }) => (
         <TouchableOpacity
