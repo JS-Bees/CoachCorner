@@ -137,7 +137,7 @@ const MyClients_alt = () => {
 
 
 
-        <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
+        <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,  left: 12}}>
            <View>
                <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
            </View>
