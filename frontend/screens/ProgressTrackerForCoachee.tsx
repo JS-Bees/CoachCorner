@@ -54,7 +54,7 @@ const ProgressTrackerForCoachee = () => {
       navigation.navigate("AddTaskPage");
     };
     const handleNavigatePreviewTask = (task: any) => {
-      navigation.navigate("PreviewTask", { task });
+      navigation.navigate("PreviewTaskForCoachee", { task });
     };
   
     // const [tasks, setTasks] = useState([

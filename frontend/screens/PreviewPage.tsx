@@ -142,6 +142,9 @@ const handleAddToFavorites = async () => {
       </View>
       <View style={styles.aboutContainer}>
       <Text style={styles.about}>{profile?.about}</Text>
+      
+      
+      
       </View>
 
       <View style = {styles.addressContainer}>
@@ -152,10 +155,6 @@ const handleAddToFavorites = async () => {
       <View style={styles.worplaceAddressContainer}>
       <Text style={styles.workplaceAddressText}>{profile?.workplaceAddress}</Text>
       </View>
-
-    
-
-      
 
       <View style={styles.buttonContainer}>
       <TouchableOpacity
@@ -266,12 +265,12 @@ const styles = StyleSheet.create({
   },
   aboutContainer:{
     position: 'absolute',
-    bottom: "25%", 
-    alignItems: 'center',
+    bottom: "35%", // Adjust this value to move the address text up or down
     left: "6%",
     width: "85%"
   },
   about: {
+    position: "absolute",
     textAlign: "justify",
     lineHeight: 20, // Adjust line height as needed
     fontFamily: "Roboto",

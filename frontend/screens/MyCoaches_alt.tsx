@@ -146,8 +146,8 @@ const MyCoaches_alt = () => {
             </View>
             <Text style={MyCoaches.buttonText}>Favorite Coaches</Text>
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
-               <View>
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250, left: 12}}>
+               <View >
                <CoachProfiles profiles={FavoriteCoaches}/>
                </View>
 
