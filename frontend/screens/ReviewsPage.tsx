@@ -62,7 +62,7 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
     // Calculate the total number of reviews and the average rating
     const totalReviews = reviews.length;
     const totalStars = reviews.reduce((sum, review) => sum + review.starRating, 0);
-    const averageRating = totalStars / totalReviews;
+    const averageRating = totalReviews !== 0 ? totalStars / totalReviews : 0;
   
     const maxBarWidth = 150; // Adjust as needed
 
@@ -92,18 +92,23 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
         ))}
       </View>
 
+
       <ScrollView style={styles.reviewsContainer}>
-      {reviews.map((review, index) => (
-  <ReviewTile
-    key={index}
-    review={{
-      imageSource: require('../assets/John_Doe.png'),
-      name: `${review.coachee.firstName} ${review.coachee.lastName}`,
-      stars: review.starRating,
-      reviewText: review.comment,
-    }}
-  />
-))}
+  {totalReviews > 0 ? (
+    reviews.map((review, index) => (
+      <ReviewTile
+        key={index}
+        review={{
+          imageSource: require('../assets/John_Doe.png'),
+          name: `${review.coachee.firstName} ${review.coachee.lastName}`,
+          stars: review.starRating,
+          reviewText: review.comment,
+        }}
+      />
+    ))
+  ) : (
+    <Text style={{ alignSelf: 'center', marginTop: 20 }}>No reviews yet</Text>
+  )}
 </ScrollView>
 
       <TouchableOpacity style={styles.addReview} onPress={handleAddReviewPress}>

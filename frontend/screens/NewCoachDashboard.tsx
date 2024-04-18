@@ -7,6 +7,7 @@ import {
     Image,
     Platform,
     ScrollView,
+    ImageSourcePropType,
 } from 'react-native';
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
@@ -16,15 +17,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
-import UpcomingSession from '../components/Profile Tiles/UpcomingSessionTiles';
-import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
+import { FindBookingsOfCoachDocument } from '../generated-gql/graphql';
+import UpcomingDashboard from '../components/Profile Tiles/UpcomingDashboardTiles';
+import { format } from 'date-fns';
 import { SearchBar } from '@rneui/themed'; 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-
+interface Booking {
+    status: string,
+    coachee: {
+        firstName: string;
+        lastName: string;
+        profilePicture: string;
+    };
+    bookingSlots: {
+        id: number;
+        date: string;
+        startTime: string;
+        endTime: string;
+    }[];
+}
 
 
 
@@ -69,6 +84,21 @@ const NewCoachDashboard = () => {
         return coachResult;
     };
 
+    const [{ data: bookingsData, fetching: bookingsFetching, error: bookingsError }] = useQuery({
+        query: FindBookingsOfCoachDocument,
+        variables: {
+            userId: parseInt(userToken ?? '0'), // Use userToken instead of userID
+        },
+    });
+
+    if (bookingsError) {
+        console.error('Error fetching bookings:', bookingsError);
+        return null; // or an error message
+    }
+
+    const upcomingBookings = bookingsData?.findCoachByID.bookings.filter((booking: Booking) => booking.status === 'UPCOMING');
+    
+
     
     const handleSearchChange = (text: string) => {
         setSearchText(text);
@@ -93,7 +123,7 @@ const NewCoachDashboard = () => {
         navigation.navigate("NewCoachProfile");
     };
 
-    // const upcoming = [ // only max two to show 
+    // const upcoming = [ // only max three to show 
     //    {
     //     traineeName: 'Angelina Maverick',
     //     imageSource: require('../assets/angelina.jpg'),
@@ -117,6 +147,7 @@ const NewCoachDashboard = () => {
     //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
     //     date: ["Sat 26 June"],
     //    },
+       
       
     // ]
 
@@ -189,10 +220,24 @@ const NewCoachDashboard = () => {
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
                     </View>
-                    {/* <UpcomingSession upcoming={upcoming} /> */}
-                    <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                    </View>
-                
+                    {upcomingBookings && upcomingBookings.length > 0 ? (
+                    <UpcomingDashboard
+                        upcoming={(upcomingBookings || []).map((booking: Booking) => ({
+                            traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                            imageSource: { uri: booking.coachee.profilePicture },
+                            time: booking.bookingSlots.map((slot) => ({
+                                startTime: format(new Date(slot.startTime), 'h:mm a'),
+                                endTime: format(new Date(slot.endTime), 'h:mm a'),
+                            })),
+                            date: booking.bookingSlots.map((slot) => format(new Date(slot.date), 'MMMM dd')),
+                        }))}
+                    />
+                ) : (
+                    <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, color: "#d3d3d3"  }}>
+                        No Sessions at the moment
+                    </Text>
+                )}
+
                 </ScrollView>
 
 

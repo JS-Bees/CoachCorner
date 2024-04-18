@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoacheesOfCoachDocument } from '../generated-gql/graphql';
+import { FindCoacheesOfCoachDocument, FindCoachByIdDocument } from '../generated-gql/graphql';
 
 
 
@@ -59,6 +59,17 @@ const MyClients_alt = () => {
 
         fetchUserToken();
     }, []);
+
+    const useFetchCoacheeByUserID = (userID: string) => {
+        const [coacheeResult] = useQuery({
+            query: FindCoachByIdDocument,
+            variables: { userId: parseInt(userID) },
+        });
+
+        return coacheeResult;
+    };
+
+    const { data: coachData } = useFetchCoacheeByUserID(userToken || '');
 
     const [result] = useQuery({
         query: FindCoacheesOfCoachDocument, 
@@ -105,8 +116,8 @@ const MyClients_alt = () => {
             
             <TouchableOpacity onPress={navigateToCoacheeProfile}>
             <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
+                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
             
             </TouchableOpacity>
             

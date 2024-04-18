@@ -15,7 +15,7 @@ import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useQuery } from 'urql';
-import { FindFavoriteCoachesDocument } from '../generated-gql/graphql';
+import { FindFavoriteCoachesDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
@@ -50,6 +50,17 @@ const MyCoaches_alt = () => {
 
         fetchUserToken();
     }, []);
+
+    const useFetchCoacheeByUserID = (userID: string) => {
+        const [coacheeResult] = useQuery({
+            query: FindCoacheeByIdDocument,
+            variables: { userId: parseInt(userID) },
+        });
+
+        return coacheeResult;
+    };
+
+    const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
 
     const [result] = useQuery({
         query: FindFavoriteCoachesDocument, // Pass the FindCoachesBySportDocument query
@@ -87,31 +98,6 @@ const MyCoaches_alt = () => {
     });
     console.log(contacts)
     
-
-    // const FavoriteCoaches: Profile[] = [ // max 2
-    //     {
-    //         name: 'John Doe',
-    //         imageSource: require('../assets/John_Doe.png'), 
-    //         gainedStars: 4,
-    //         mainSport: "Basketball",
-    //         about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
-    //         workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
-    //     },
-    //     {
-    //         name: 'Jane Smith',
-    //         imageSource: require('../assets/Jane_Smith.png'),
-    //         gainedStars: 3,
-    //         mainSport: "Basketball",
-    //         about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
-    //         workplaceAddress: "Smith's Hoops Academy 456 Court Street Basketballville, Slam Dunk County Hoopsland, 98765"
-    //     },
-        
-    // ];
-
-
-
-   
-
     return (
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}>
@@ -126,8 +112,8 @@ const MyCoaches_alt = () => {
             <TouchableOpacity
                 onPress={() => navigation.navigate('NewCoacheeProfile')}>
             <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
+                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
             
             </TouchableOpacity>
             
