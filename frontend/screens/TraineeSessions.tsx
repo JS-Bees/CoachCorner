@@ -176,16 +176,11 @@ const MyCoaches = StyleSheet.create({
         width: '100%',
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
-
-
     nameAndGreetingsContainer: {
         paddingTop:"25%",
         marginLeft: '25%',
         flexDirection: 'row', 
     },
-
-    
-
     middleContainer: {
         flex: 1,
         justifyContent: 'center',

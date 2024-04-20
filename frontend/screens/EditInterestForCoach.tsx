@@ -112,8 +112,94 @@ const handleNavigateBack = () => {
    };
 
 
-   const handleSaveChanges = async () => {
-    // Check if either bio or address or profile picture is empty
+  //  const handleSaveChanges = async () => {
+  //   // Check if either bio or address or profile picture is empty
+  //   if (
+  //     (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
+  //     (editedBio.trim() === coachData?.findCoachByID.bio &&
+  //       editedAddress.trim() === coachData?.findCoachByID.address &&
+  //       editedProfilePicture.trim() === coachData?.findCoachByID.profilePicture)
+  //   ) {
+  //     Alert.alert('No changes made.');
+  //     return;
+  //   }
+  
+  //   try {
+  //     const result = await executeMutation({
+  //       updateCoachProfileId: parseInt(userToken),
+  //       input: {
+  //         bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio || '',
+  //         address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address || '',
+  //         profilePicture: editedProfilePicture
+  //       }
+  //     });
+  
+  //     // Check if mutation was successful
+  //     if (result.error) {
+  //       throw new Error(result.error.message);
+  //     }
+  
+  //     // Update the original bio and address if they were changed
+  //     if (editedBio.trim()) {
+  //       setEditedBio(editedBio);
+  //     }
+  //     if (editedAddress.trim()) {
+  //       setEditedAddress(editedAddress);
+  //     }
+  
+  //     Alert.alert('Changes saved successfully.');
+  
+  //   } catch (error) {
+  //     console.error('Error saving changes:', error);
+  //     Alert.alert('Error saving changes. Please try again.');
+  //   }
+    
+  //   // Step 1: Retrieve all selected genres
+  //   const selectedGenres = lists.flatMap(list => list.items.filter(item => item.checked));
+    
+  //   // Step 2: Count the total number of checked items
+  //   const totalChecked = selectedGenres.length;
+    
+  //   // Step 3: Check if the user has selected exactly 9 items
+  //   if (totalChecked !== 9) {
+  //     Alert.alert('Please select exactly 9 genres in total.');
+  //     return;
+  //   } else {
+  //     Alert.alert('Passed');
+  //   }
+  
+  //   // Step 4: Retrieve stored interest IDs
+  //   const interestIds = coachData?.findCoachByID.interests.map(interest => interest.id) || [];
+    
+  //   // Step 5: Extract names and types of selected genres
+  //   const interestsInput = selectedGenres.map((genre, index) => ({
+  //     id: interestIds[index], // Assign the corresponding interest ID from the stored IDs
+  //     name: genre.text,
+  //     type: lists.find(list => list.items.some(item => item.text === genre.text))?.title || '', // Find the title of the item
+  //   }));
+
+
+  //   console.log(interestsInput)
+  
+  //   try {
+  //     // Step 6: Perform the mutation to update interests
+  //     const result = await executeMutationUpdateInterest({
+  //       input: interestsInput,
+  //     });
+  
+  //     if (result.error) {
+  //       throw new Error(result.error.message);
+  //     }
+  
+  //     Alert.alert('Interests updated successfully.');
+  
+  //   } catch (error) {
+  //     console.error('Error updating interests:', error);
+  //     Alert.alert('Error updating interests. Please try again.');
+  //   }
+  // };
+  const handleSaveChanges = async () => {
+    // Check if either bio, address, or profile picture is empty or if they have changed
     if (
       (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
       (editedBio.trim() === coachData?.findCoachByID.bio &&
@@ -152,50 +238,6 @@ const handleNavigateBack = () => {
     } catch (error) {
       console.error('Error saving changes:', error);
       Alert.alert('Error saving changes. Please try again.');
-    }
-    
-    // Step 1: Retrieve all selected genres
-    const selectedGenres = lists.flatMap(list => list.items.filter(item => item.checked));
-    
-    // Step 2: Count the total number of checked items
-    const totalChecked = selectedGenres.length;
-    
-    // Step 3: Check if the user has selected exactly 9 items
-    if (totalChecked !== 9) {
-      Alert.alert('Please select exactly 9 genres in total.');
-      return;
-    } else {
-      Alert.alert('Passed');
-    }
-  
-    // Step 4: Retrieve stored interest IDs
-    const interestIds = coachData?.findCoachByID.interests.map(interest => interest.id) || [];
-    
-    // Step 5: Extract names and types of selected genres
-    const interestsInput = selectedGenres.map((genre, index) => ({
-      id: interestIds[index], // Assign the corresponding interest ID from the stored IDs
-      name: genre.text,
-      type: lists.find(list => list.items.some(item => item.text === genre.text))?.title || '', // Find the title of the item
-    }));
-
-
-    console.log(interestsInput)
-  
-    try {
-      // Step 6: Perform the mutation to update interests
-      const result = await executeMutationUpdateInterest({
-        input: interestsInput,
-      });
-  
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
-  
-      Alert.alert('Interests updated successfully.');
-  
-    } catch (error) {
-      console.error('Error updating interests:', error);
-      Alert.alert('Error updating interests. Please try again.');
     }
   };
   
@@ -361,121 +403,133 @@ const toggleCheckbox = (listIndex: number, itemIndex: number) => {
   
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={handleNavigateBack} style={styles.arrowBack}>
-        <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0" />
-      </TouchableOpacity>
+<View style={styles.container}>
+  <TouchableOpacity onPress={handleNavigateBack} style={styles.arrowBack}>
+    <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0" />
+  </TouchableOpacity>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-        <Text style={styles.saveText}>Save</Text>
-      </TouchableOpacity>
+  <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
+    <Text style={styles.saveText}>Save</Text>
+  </TouchableOpacity>
 
-      <Text style={styles.headerText}>Edit Profile</Text>
-      
-      <Text style={styles.subHeaderText}>Profile Picture</Text>
-      <TouchableOpacity onPress={selectImage}>
-        <Image source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')} style={styles.circleImage}/>
-      </TouchableOpacity>
+  <Text style={styles.headerText}>Edit Profile</Text>
+  
+  <Text style={styles.subHeaderText}>Profile Picture</Text>
+  <TouchableOpacity onPress={selectImage}>
+    <Image
+      source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')}
+      style={styles.circleImage}
+    />
+  </TouchableOpacity>
 
-      <Text style={styles.subHeaderText}>Profile</Text>
-      <TouchableOpacity>
-        <View>
-          <TextInput
-            style={styles.input}
-            value={editedBio}
-            onChangeText={setEditedBio}
-            placeholder="Edit Bio"
-            multiline={true}
-          />
-          <TextInput
-            style={styles.input}
-            value={editedAddress}
-            onChangeText={setEditedAddress}
-            placeholder="Edit Address"
-          />
-        </View>
-      </TouchableOpacity>
-      
-      <Text style={styles.subHeaderInterests}>Interests</Text>
-      <Text style={styles.subTitle}> Please choose at most 3 </Text>
+  <Text style={styles.subHeaderText}>Profile</Text>
+  <View style={styles.inputContainer}>
+  <TextInput
+  style={styles.input}
+  value={editedBio}
+  onChangeText={(text) => {
+    if (text.length <= 50) {
+      setEditedBio(text);
+    }
+  }}
+  placeholder="Edit Bio"
+  multiline={true}
+  maxLength={50} // Limiting to 50 characters
+/>
+<TextInput
+  style={styles.input}
+  value={editedAddress}
+  onChangeText={(text) => {
+    if (text.length <= 50) {
+      setEditedAddress(text);
+    }
+  }}
+  placeholder="Edit Address"
+  maxLength={50} // Limiting to 50 characters
+/>
+  </View>
+  
+  <Text style={styles.subHeaderInterests}>Interests</Text>
+  <Text style={styles.subTitle}>Please choose 3 of each interest</Text>
 
-      <FlatList
-        data={lists}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => renderList(item, index)}
-      />
-    </View>
-  );
+  <FlatList
+    data={lists}
+    keyExtractor={(item, index) => index.toString()}
+    renderItem={({ item, index }) => renderList(item, index)}
+  />
+</View>
+);
 };
 
 const styles = StyleSheet.create({
   container: {
+    top: '5%',
     flex: 1,
     backgroundColor: 'white',
-    paddingBottom: "5%"
+    paddingTop: 10,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   arrowBack: {
-    marginTop: "10%",
-    marginLeft: "10%"
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   headerText: {
-    marginTop: "10%",
-    marginLeft: "25%",
-    fontSize: 20,
-    fontWeight: "500",
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#333',
   },
   subHeaderText: {
-    marginTop: "23%",
-    marginLeft: "13%",
-    fontSize: 25,
-    fontWeight: "400",
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#333',
   },
   subHeaderInterests: {
-    marginTop: "5%",
-    marginLeft: "13%",
-    fontSize: 25,
-    fontWeight: "400",
-  },
-  listContainer: {
-    flex: 1,
-    paddingTop: "5%",
-    marginLeft: "15%"
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#333',
   },
   saveButton: {
     position: 'absolute',
-    top: 20, // Adjust as needed
-    right: 20, // Adjust as needed
+    top: 10,
+    right: 10,
     padding: 10,
     backgroundColor: '#7E3FF0',
     borderRadius: 5,
   },
   saveText: {
     color: 'white',
-    fontSize: 15,
+    fontSize: 16,
   },
   subTitle: {
-    marginLeft: "12%",
-    top: "1%",
-    color: "#908D93"
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
   },
   circleImage: {
-    width: 80, // Adjust width as needed
-    height: 80, // Adjust height as needed
-    position: 'absolute',
-    bottom: '100%', // Adjusted to center vertically
-    left: '30%', // Adjusted to center horizontally
-    marginLeft: -50, // Half of the width
-    marginBottom: -80, // Half of the height
-    borderRadius: 10,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignSelf: 'center',
+    marginTop: 10,
+  },
+  inputContainer: {
+    marginBottom: 20,
   },
   input: {
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    marginBottom: 5,
-    width: 260,
-    left: "15%"
+    marginBottom: 10,
   },
 });
 

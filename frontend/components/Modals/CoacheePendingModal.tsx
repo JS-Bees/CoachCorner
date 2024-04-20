@@ -9,6 +9,10 @@ import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface SessionModalProps {
   visible: boolean;
@@ -110,19 +114,16 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
 </View>
 
 
-<View style={styles.buttons}>
-  <View style={styles.buttonContainer}>
+{/* <View style={styles.buttons}> */}
+<View style={styles.buttonContainer}>
     <TouchableOpacity style={styles.cancelButton} onPress={handleConfirmSchedule}>
-      <Text style={styles.cancelText}>Confirm Schedule</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.button}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }} >Re-Schedule</Text>
+      <Text style={styles.cancelText}>Cancel Schedule</Text>
     </TouchableOpacity>
   </View>
 </View>
 
 
-      </View>
+      {/* </View> */}
     </Overlay>
   );
 };
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     left: "10%"
   },
   contentText: {
-    paddingTop: "5%",
+    top: "5%",
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
@@ -155,14 +156,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   subContent: {
+    top: "5%",
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: "space-between",
     left: "-2%",
   },
   sessionImage: {
-    width: 65,
-    height: 65,
+    width: (screenWidth * 0.17),
+    height: (screenWidth * 0.17),
     marginBottom: 10,
     borderRadius: 50,
   },
@@ -197,8 +199,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#FECB2E"
   },
+  Text: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "white"
+  },
   buttons: {
-    bottom: "-66%",
+    backgroundColor: 'red',
+    bottom: "-50%",
     marginLeft: "-110%"
 
   },
@@ -206,24 +214,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: 'row',
     justifyContent: 'space-between', 
-    bottom:  20, 
+    bottom:  '-40%', 
     left:  0,
     right:  0,
     paddingHorizontal:  10, 
   },
   button: {
-    marginTop: '-5%',
-    marginLeft: '80%',
-    backgroundColor: '#7E3FF0',
-    width: 140,
-    height: 45,
-    borderRadius: 15,
+    backgroundColor: 'purple', // Set the background color for the cancel button
+      width: (screenWidth * 0.38), // Adjust the percentage as needed
+      height: (screenHeight * 0.08), // Adjust the percentage as needed
+    borderRadius:  15,
     alignItems: 'center',
+    justifyContent: 'center', 
+    marginBottom:  10
   },
   cancelButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
-    width:  140,
-    height:  45,
+    backgroundColor: '#7E3FF0', // Set the background color for the cancel button
+      width: (screenWidth * 0.38), // Adjust the percentage as needed
+      height: (screenHeight * 0.08), // Adjust the percentage as needed
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
@@ -244,6 +252,7 @@ const styles = StyleSheet.create({
     marginLeft: 30
   }
 });
+
 
 export default CoacheePendingModal;
 

@@ -9,6 +9,10 @@ import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface SessionModalProps {
   visible: boolean;
