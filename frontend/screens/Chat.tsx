@@ -38,11 +38,11 @@ type Props = {
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
 
-    // Log the sender's name
-    console.log('Sender Name:', chatMessage.sender);
-    console.log('image url', chatMessage.imageUrl.uri);
-    console.log('Contact ID', chatMessage.id);
-    console.log('Type of Contact ID', typeof chatMessage.id);
+    // Console logs
+    // console.log('Sender Name:', chatMessage.sender);
+    // console.log('image url', chatMessage.imageUrl.uri);
+    // console.log('Contact ID', chatMessage.id);
+    // console.log('Type of Contact ID', typeof chatMessage.id);
 
     const imageSource = chatMessage.imageUrl;
 
@@ -51,40 +51,45 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // const [message, setMessage] = useState('');
     const [isFocused, setIsFocused] = useState(false);
 
-    // const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<string[]>([]);
 
-    const [messages, setMessages] = useState<string[]>(
-        Array.from({ length: 20 }, (_, i) => `Message ${i + 1}`),
-    );
+    // const [messages, setMessages] = useState<string[]>(
+    //     Array.from({ length: 20 }, (_, i) => `Message ${i + 1}`),
+    // );
 
     const [currentMessage, setCurrentMessage] = useState('');
     const [result] = useSubscription<NewMessageSubscriptionVariables>({
         query: NewMessageDocument,
-        variables: { channelName: `ChannelofContact${chatMessage.id}` },
+        variables: { channelName: `ChannelofContact1` },
+        // variables: { channelName: `ChannelofContact${chatMessage.id}` },
     });
 
-    // const [, createMessage] = useMutation<CreateMessageMutationVariables>(
-    //     CreateMessageDocument,
-    // );
-    const [, createMessage] = useMutation(CreateMessageDocument);
+    const [createMessage, setCreateMessage] = useMutation(
+        CreateMessageDocument,
+    );
 
     useEffect(() => {
-        console.log('use effect ran');
         if (result.data) {
-            // Handle the new message, e.g., add it to the chat
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                result.data.newMessage.content,
-            ]);
-            console.log('result.data true');
-            console.log(result.data);
+            console.log('Message received from other source', result.data);
+        }
+        console.log('use effect ran');
+        console.log('result data', result);
+        console.log('result error', result.error?.networkError);
+        // The data received from the useEffect should also be added to the messages array here
+        if (createMessage.data) {
+            // Assuming createMessage.data has the structure { createMessage: { content: 'message content' } }
+            const newMessageContent = createMessage.data.createMessage.content;
+            console.log('New message content', newMessageContent);
+            setMessages((prevMessages) => [...prevMessages, newMessageContent]);
+            console.log('Message added to messages:', newMessageContent);
         }
 
         // // Log each message to the console
-        messages.forEach((message) => {
-            console.log(message);
-        });
-    }, [result.data]);
+        console.log('chat page messages', messages);
+        // messages.forEach((message) => {
+        //     console.log(message);
+        // });
+    }, [createMessage.data]);
 
     const handleNavigateBack = () => {
         navigation.goBack();
@@ -94,41 +99,17 @@ const ChatPage: React.FC<Props> = ({ route }) => {
         navigation.navigate('NewBookingPage');
     };
 
-    // const handleSendMessage = () => {
-    //     if (message.trim() !== '') {
-    //         // Log the message
-    //         console.log('Message sent:', message);
-
-    //         // Add the message to the messages array
-    //         setMessages([...messages, message]);
-
-    //         // Clear the message input
-    //         setMessage('');
-    //     }
-    // };
-
     const handleSendMessage = async (content: string) => {
         try {
-            // const response = await createMessage({
-            //     variables: {
-            //         input: {
-            //             contactId: 1, // Replace with the actual contact ID
-            //             content,
-            //         },
-            //     },
-            // });
-            const response = await createMessage({
+            const response = await setCreateMessage({
                 input: {
-                    contactId: chatMessage.id, // Replace with the actual contact ID
+                    // contactId: chatMessage.id, // Replace with the actual contact ID
+                    contactId: 1,
                     content,
                 },
             });
-            console.log('Mutation response:', response.data);
-            // const message = response.data?.content; // Adjust 'createMessage' based on your mutation's return type
-            // console.log('Created message:', message);
+            console.log('Message created:', response.data);
 
-            console.log('sent message');
-            console.log('content', content);
             // Clear the input field after a successful message send
             setCurrentMessage('');
         } catch (error) {
@@ -188,7 +169,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     data={messages}
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
-                    inverted // This will render the list in reverse, starting from the bottom
+                    // inverted // This will render the list in reverse, starting from the bottom
                     // contentContainerStyle={styles.chatItems}
                     // contentContainerStyle={styles.messageContainer}
                     // ListFooterComponent={<View style={{ height: 20 }} />}

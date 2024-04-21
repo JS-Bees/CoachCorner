@@ -44,16 +44,6 @@ const ChatListPage: React.FC = () => {
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
-    // const isFocused = useIsFocused();
-
-    // useEffect(() => {
-    //     if (isFocused) {
-    //         // Perform your data fetching or any other updates here
-    //         console.log('ChatLists screen is focused, reloading data...');
-    //         // Example: Fetch new data or update the state
-    //     }
-    // }, [isFocused]);
-
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -85,10 +75,10 @@ const ChatListPage: React.FC = () => {
         error: coacheeChatListMessageError,
     } = useFetchMessagesForCoachlist(userToken);
 
-    console.log(
-        'messages',
-        coacheeChatListMessageData?.findMessagesForCoachList,
-    );
+    // console.log(
+    //     'chat list messages',
+    //     coacheeChatListMessageData?.findMessagesForCoachList,
+    // );
 
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
@@ -108,12 +98,12 @@ const ChatListPage: React.FC = () => {
     } = useFetchCoacheeByUserID(userToken);
 
     useEffect(() => {
-        console.log('coacheeData:', coacheeData);
+        // console.log('coacheeData:', coacheeData);
         const contacts = coacheeData?.findCoacheeByID.contacts;
 
         // Log all contacts
-        console.log(JSON.stringify(contacts, null, 2));
-        console.log('contacts');
+        // console.log(JSON.stringify(contacts, null, 2));
+        // console.log('contacts');
 
         const messages = coacheeChatListMessageData?.findMessagesForCoachList;
 
