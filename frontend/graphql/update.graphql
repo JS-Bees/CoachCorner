@@ -1,23 +1,39 @@
-mutation UpdateCoacheeProfile($updateCoacheeProfileId: Int!, $input: UpdateCoacheeProfileInput!) {
-  updateCoacheeProfile(id: $updateCoacheeProfileId, input: $input) {
-    address
-    bio
-    profilePicture
-  }
+mutation UpdateCoacheeProfile(
+    $updateCoacheeProfileId: Int!
+    $input: UpdateCoacheeProfileInput!
+) {
+    updateCoacheeProfile(id: $updateCoacheeProfileId, input: $input) {
+        address
+        bio
+        profilePicture
+    }
 }
 
-mutation UpdateCoachProfile($updateCoachProfileId: Int!, $input: UpdateCoachProfileInput!) {
-  updateCoachProfile(id: $updateCoachProfileId, input: $input) {
-    address
-    bio
-    profilePicture
-  }
+mutation UpdateCoachProfile(
+    $updateCoachProfileId: Int!
+    $input: UpdateCoachProfileInput!
+) {
+    updateCoachProfile(id: $updateCoachProfileId, input: $input) {
+        address
+        bio
+        profilePicture
+    }
 }
 
 mutation CreateContact($input: CreateContactInput!) {
-  createContact(input: $input) {
-    coachId
-    coacheeId
-    contactedStatus
-  }
+    createContact(input: $input) {
+        coachId
+        coacheeId
+        contactedStatus
+    }
+}
+
+mutation UpdateContactedStatus(
+    $updateContactedStatusId: Int!
+    $input: UpdateContactedStatusInput!
+) {
+    updateContactedStatus(id: $updateContactedStatusId, input: $input) {
+        contactedStatus
+        id
+    }
 }

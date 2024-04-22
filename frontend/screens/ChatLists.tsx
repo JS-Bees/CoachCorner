@@ -25,6 +25,7 @@ interface ChatMessage {
     message: string;
     sender: string;
     imageUrl: ImageSourcePropType;
+    contactedStatus: boolean;
 }
 
 const ChatListPage: React.FC = () => {
@@ -134,6 +135,7 @@ const ChatListPage: React.FC = () => {
                     message: messageContent,
                     sender: sender,
                     imageUrl: imageUrl,
+                    contactedStatus: contact.contactedStatus,
                 };
             });
 

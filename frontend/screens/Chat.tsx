@@ -15,12 +15,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
-import { useMutation, useSubscription } from 'urql';
+import { useMutation, useSubscription, useQuery } from 'urql';
 import {
     NewMessageDocument,
     CreateMessageDocument,
     NewMessageSubscriptionVariables,
     CreateMessageMutationVariables,
+    FindfilteredMessagesByContactIdDocument,
+    UpdateContactedStatusDocument,
 } from '../generated-gql/graphql';
 import { RouteProp } from '@react-navigation/native';
 
@@ -43,6 +45,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // console.log('image url', chatMessage.imageUrl.uri);
     // console.log('Contact ID', chatMessage.id);
     // console.log('Type of Contact ID', typeof chatMessage.id);
+    console.log('Contacted Status', chatMessage.contactedStatus);
 
     const imageSource = chatMessage.imageUrl;
 
@@ -58,27 +61,47 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // );
 
     const [currentMessage, setCurrentMessage] = useState('');
+
+    // Use the FindFilteredMessagesByContactId query to fetch the initial 50 messages
+    const [initialMessagesResult] = useQuery({
+        query: FindfilteredMessagesByContactIdDocument,
+        variables: { contactId: chatMessage.id, numberOfMessages: 50 },
+        requestPolicy: 'cache-and-network',
+    });
+
     const [result] = useSubscription<NewMessageSubscriptionVariables>({
         query: NewMessageDocument,
-        variables: { channelName: `ChannelofContact1` },
-        // variables: { channelName: `ChannelofContact${chatMessage.id}` },
+        variables: { channelName: `ChannelofContact${chatMessage.id}` },
+        // variables: { channelName: `ChannelofContact1` },
     });
 
     const [createMessage, setCreateMessage] = useMutation(
         CreateMessageDocument,
     );
 
+    const [, setUpdateContactedStatus] = useMutation(
+        UpdateContactedStatusDocument,
+    );
+
     useEffect(() => {
-        if (result.data) {
-            console.log('Message received from other source', result.data);
+        if (initialMessagesResult.data) {
+            // Assuming the data structure matches your expectations
+            const fetchedMessages =
+                initialMessagesResult.data.findfilteredMessagesByContactId.map(
+                    (message) => message.content,
+                );
+            setMessages(fetchedMessages.slice().reverse()); // Directly update the messages state with the initial messages
         }
+    }, [initialMessagesResult.data]);
+
+    useEffect(() => {
         console.log('use effect ran');
         console.log('result data', result);
         console.log('result error', result.error?.networkError);
         // The data received from the useEffect should also be added to the messages array here
-        if (createMessage.data) {
+        if (result.data) {
             // Assuming createMessage.data has the structure { createMessage: { content: 'message content' } }
-            const newMessageContent = createMessage.data.createMessage.content;
+            const newMessageContent = result.data.newMessage.content;
             console.log('New message content', newMessageContent);
             setMessages((prevMessages) => [...prevMessages, newMessageContent]);
             console.log('Message added to messages:', newMessageContent);
@@ -89,7 +112,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
         // messages.forEach((message) => {
         //     console.log(message);
         // });
-    }, [createMessage.data]);
+    }, [result.data]);
 
     const handleNavigateBack = () => {
         navigation.goBack();
@@ -101,17 +124,29 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     const handleSendMessage = async (content: string) => {
         try {
+            setCurrentMessage('');
             const response = await setCreateMessage({
                 input: {
-                    // contactId: chatMessage.id, // Replace with the actual contact ID
-                    contactId: 1,
+                    // contactId: 1,
+                    contactId: chatMessage.id,
                     content,
                 },
             });
             console.log('Message created:', response.data);
 
-            // Clear the input field after a successful message send
-            setCurrentMessage('');
+            // Check if contactedStatus is already true
+            if (!chatMessage.contactedStatus) {
+                // Proceed to update contactedStatus to true
+                const updateResponse = await setUpdateContactedStatus({
+                    updateContactedStatusId: chatMessage.id,
+                    input: { contactedStatus: true },
+                });
+                console.log('Contacted status updated:', updateResponse.data);
+            } else {
+                console.log(
+                    'Contacted status is already true. No update needed.',
+                );
+            }
         } catch (error) {
             // Handle error, e.g., show an error message
             console.log(error);
@@ -166,10 +201,10 @@ const ChatPage: React.FC<Props> = ({ route }) => {
             >
                 <FlatList
                     style={{ flex: 1 }}
-                    data={messages}
+                    data={messages.slice().reverse()}
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
-                    // inverted // This will render the list in reverse, starting from the bottom
+                    inverted // This will render the list in reverse, starting from the bottom
                     // contentContainerStyle={styles.chatItems}
                     // contentContainerStyle={styles.messageContainer}
                     // ListFooterComponent={<View style={{ height: 20 }} />}
