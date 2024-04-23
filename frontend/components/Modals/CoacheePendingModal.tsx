@@ -9,6 +9,10 @@ import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface SessionModalProps {
   visible: boolean;
@@ -70,12 +74,13 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
               </View>
             </TouchableOpacity>
           </View>
-            <Text style={styles.sessionName}>{session.coacheeName}</Text>
+            <Text style={styles.sessionName}>{session.coachName}</Text>
             <Text style={styles.subtitleText}>  Pending sessions with this coach</Text>
           </>
         )}
 
         <View style={styles.contentContainer}>
+
             <Text style={styles.titleText}>Service Type</Text>
             <Text style={styles.subtitleText}>{session?.serviceType}</Text>
 
@@ -110,19 +115,16 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
 </View>
 
 
-<View style={styles.buttons}>
-  <View style={styles.buttonContainer}>
+{/* <View style={styles.buttons}> */}
+<View style={styles.buttonContainer}>
     <TouchableOpacity style={styles.cancelButton} onPress={handleConfirmSchedule}>
       <Text style={styles.cancelText}>Confirm Schedule</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.button}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }} >Re-Schedule</Text>
     </TouchableOpacity>
   </View>
 </View>
 
 
-      </View>
+      {/* </View> */}
     </Overlay>
   );
 };
@@ -130,12 +132,14 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
 const styles = StyleSheet.create({
   overlay: {
     borderRadius: 15,
-    height: "65%",
+    height: "75%",
     width: "85%",
+    position: "relative"
   },
   container: {
     alignItems: "center",
     padding: 20,
+    position: 'relative', 
   },
   imageContainer: {
     flexDirection: 'row',
@@ -146,7 +150,7 @@ const styles = StyleSheet.create({
     left: "10%"
   },
   contentText: {
-    paddingTop: "5%",
+    top: "5%",
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
@@ -155,14 +159,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   subContent: {
+    top: "5%",
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: "space-between",
     left: "-2%",
   },
   sessionImage: {
-    width: 65,
-    height: 65,
+    width: (screenWidth * 0.17),
+    height: (screenWidth * 0.17),
     marginBottom: 10,
     borderRadius: 50,
   },
@@ -195,40 +200,35 @@ const styles = StyleSheet.create({
   cancelText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#FECB2E"
+    color: "white"
+  },
+  Text: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "white"
   },
   buttons: {
-    bottom: "-66%",
+    backgroundColor: 'red',
+    bottom: "-50%",
     marginLeft: "-110%"
 
   },
-  buttonContainer:{
+  buttonContainer: {
     position: 'absolute',
-    flexDirection: 'row',
-    justifyContent: 'space-between', 
-    bottom:  20, 
-    left:  0,
-    right:  0,
-    paddingHorizontal:  10, 
-  },
-  button: {
-    marginTop: '-5%',
-    marginLeft: '80%',
-    backgroundColor: '#7E3FF0',
-    width: 140,
-    height: 45,
+    top: "135%", // Adjust the bottom value as needed
+    left: 15, // Adjust the right value as needed
+    alignItems: 'center',
+    paddingVertical: "5%",
+    justifyContent: 'center',
+ },
+ cancelButton: {
+    backgroundColor: '#7E3FF0', // Set the background color for the cancel button
+    width: (screenWidth * 0.38), // Adjust the percentage as needed
+    height: (screenHeight * 0.07), // Adjust the percentage as needed
     borderRadius: 15,
     alignItems: 'center',
-  },
-  cancelButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
-    width:  140,
-    height:  45,
-    borderRadius:  15,
-    alignItems: 'center',
-    justifyContent: 'center', 
-    marginBottom:  10
-  },
+    justifyContent: 'center',
+ },
   dateText: {
     marginLeft: "15%",
     paddingTop: "3%",
@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
     marginLeft: 30
   }
 });
+
 
 export default CoacheePendingModal;
 

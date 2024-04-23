@@ -171,6 +171,7 @@ query FindBookingsOfCoachee($userId: Int!) {
     serviceType
     additionalNotes
     bookingSlots {
+      id
       date
       startTime
       endTime

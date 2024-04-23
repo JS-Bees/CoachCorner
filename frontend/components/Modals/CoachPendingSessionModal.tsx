@@ -9,6 +9,7 @@ import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
 
 interface SessionModalProps {
   visible: boolean;
@@ -18,6 +19,10 @@ interface SessionModalProps {
 
 //make a component for custom start and end time 
 //make another component for multiple dates 
+
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -124,7 +129,7 @@ const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
 const styles = StyleSheet.create({
   overlay: {
     borderRadius: 15,
-    height: "65%",
+    height: "75%",
     width: "85%",
   },
   container: {

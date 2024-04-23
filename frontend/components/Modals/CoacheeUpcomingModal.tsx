@@ -9,6 +9,10 @@ import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface SessionModalProps {
   visible: boolean;
@@ -57,7 +61,7 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
               </View>
             </TouchableOpacity>
           </View>
-            <Text style={styles.sessionName}>{session.coacheeName}</Text>
+            <Text style={styles.sessionName}>{session.coachName}</Text>
             <Text style={styles.subtitleText}>  Upcoming sessions with this coach</Text>
           </>
         )}
@@ -97,15 +101,6 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
 </View>
 
 
-<View style={styles.buttons}>
-  <View style={styles.buttonContainer}>
-    <TouchableOpacity style={styles.button}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }} >Re-Schedule</Text>
-    </TouchableOpacity>
-  </View>
-</View>
-
-
       </View>
     </Overlay>
   );
@@ -114,7 +109,7 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
 const styles = StyleSheet.create({
   overlay: {
     borderRadius: 15,
-    height: "65%",
+    height: "75%",
     width: "85%",
   },
   container: {

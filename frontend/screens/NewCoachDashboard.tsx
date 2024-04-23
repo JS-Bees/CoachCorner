@@ -7,7 +7,6 @@ import {
     Image,
     Platform,
     ScrollView,
-    ImageSourcePropType,
 } from 'react-native';
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
@@ -123,57 +122,13 @@ const NewCoachDashboard = () => {
         navigation.navigate("NewCoachProfile");
     };
 
-    // const upcoming = [ // only max three to show 
-    //    {
-    //     traineeName: 'Angelina Maverick',
-    //     imageSource: require('../assets/angelina.jpg'),
-    //     time: [
-    //         { startTime: "9:00 AM", endTime: "10:00 AM" }, // the first of the upcoming time  and date should be displayed
-    //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-    //     date: ["Fri 25 June", "Sat 26 June"],
-    //    },
-    //    {
-    //     traineeName: 'Jane Smith',
-    //     imageSource: require('../assets/Jane_Smith.png'),
-    //     time: [
-    //         { startTime: "9:00 AM", endTime: "10:00 AM" },
-    //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-    //     date: ["Fri 25 June", "Sat 26 June"],
-    //    },
-    //    {
-    //     traineeName: 'Jane Smith',
-    //     imageSource: require('../assets/Jane_Smith.png'),
-    //     time: [
-    //         { startTime: "2:00 PM", endTime: "3:00 PM" } ],
-    //     date: ["Sat 26 June"],
-    //    },
-       
-      
-    // ]
-
-    // const profiles = [ // only max four to show 
-    //    {
-    //         name: 'Kobe Brian',
-    //         imageSource: require('../assets/Kobe_Brian.jpg'),
-    //         gainedStars: 5,
-    //         mainSport: "Basketball",
-    //         about: "Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association",
-    //         workplaceAddress: "1551 N. Tustin Ave.Santa Ana, CA 92705"
-    //     },
-    //     {
-    //         name: 'John Doe',
-    //         imageSource: require('../assets/John_Doe.png'), 
-    //         gainedStars: 4,
-    //         mainSport: "Basketball",
-    //         about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
-    //         workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
-    //     },
-        
-      
-    // ]
-    
-
-    
+    const filteredBookings = searchText.trim() === '' 
+    ? upcomingBookings // If search text is empty, show all bookings
+    : upcomingBookings?.filter(booking => {
+        // Filter bookings whose trainee name includes the search text (case insensitive)
+        const traineeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`.toLowerCase();
+        return traineeName.includes(searchText.toLowerCase());
+    });
 
     return (
         <View style={CoacheeDashboardStyle.container}>
@@ -207,7 +162,7 @@ const NewCoachDashboard = () => {
                 keyboardVerticalOffset={Platform.OS === "android" ?  0 :  0}>
                 <View style={CoacheeDashboardStyle.searchContainer}>
                     <SearchBar
-                     placeholder='Search anything...'
+                     placeholder='Search client name...'
                      onChangeText={handleSearchChange}
                     value={searchText}
                     platform='android'
@@ -216,29 +171,28 @@ const NewCoachDashboard = () => {
                 </View>
                 
 
-                <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 350}}>
-                    <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                        <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
-                    </View>
-                    {upcomingBookings && upcomingBookings.length > 0 ? (
-                    <UpcomingDashboard
-                        upcoming={(upcomingBookings || []).map((booking: Booking) => ({
-                            traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
-                            imageSource: { uri: booking.coachee.profilePicture },
-                            time: booking.bookingSlots.map((slot) => ({
-                                startTime: format(new Date(slot.startTime), 'h:mm a'),
-                                endTime: format(new Date(slot.endTime), 'h:mm a'),
-                            })),
-                            date: booking.bookingSlots.map((slot) => format(new Date(slot.date), 'MMMM dd')),
-                        }))}
-                    />
-                ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, color: "#d3d3d3"  }}>
-                        No Sessions at the moment
-                    </Text>
-                )}
-
-                </ScrollView>
+                <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 350}}>
+            <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
+            </View>
+            {filteredBookings && filteredBookings.length > 0 ? (
+                <UpcomingDashboard
+                    upcoming={(filteredBookings || []).map((booking: Booking) => ({
+                        traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                        imageSource: { uri: booking.coachee.profilePicture },
+                        time: booking.bookingSlots.map((slot) => ({
+                            startTime: format(new Date(slot.startTime), 'h:mm a'),
+                            endTime: format(new Date(slot.endTime), 'h:mm a'),
+                        })),
+                        date: booking.bookingSlots.map((slot) => format(new Date(slot.date), 'MMMM dd')),
+                    }))}
+                />
+            ) : (
+                <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, color: "#d3d3d3"  }}>
+                    No Sessions at the moment
+                </Text>
+            )}
+        </ScrollView>
 
 
             </KeyboardAvoidingView>

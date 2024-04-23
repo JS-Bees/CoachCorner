@@ -10,6 +10,10 @@ import {
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface CoacheeProfile {
   name: string;
@@ -88,16 +92,16 @@ const CoacheeProfileStyle = StyleSheet.create({
         borderRadius: 20
     },
     coacheeBoxes: {
-        backgroundColor: "white",
-        marginTop: "4%",
-        marginLeft: "4%",
-        width: 150,
-        height: 140,
-        borderRadius: 16,  
-        borderColor: "#7E3FF0",
-        borderWidth: 1,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+      backgroundColor: 'white',
+      marginTop: '5%',
+      marginLeft: '5%', // Adjust the margin for better alignment
+      width: (screenWidth * 0.38), // Adjust the percentage as needed
+      height: (screenHeight * 0.19), // Adjust the percentage as needed
+      borderRadius: 16,
+      borderColor: '#7E3FF0',
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     coacheeNameText: {
       textAlign: 'center',

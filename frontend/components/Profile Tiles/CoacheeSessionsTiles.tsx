@@ -10,6 +10,10 @@ import {
 import PendingModal from '../Modals/CoachPendingSessionModal';
 import UpcomingModal from '../Modals/CoachUpcomingSessionModal'
 import { format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface Session {
   coacheeName: string;
@@ -109,6 +113,7 @@ const CoachProfileStyle = StyleSheet.create({
        paddingBottom: '5%',
        flexDirection: 'row',
       flexWrap: "wrap",
+      marginLeft: "1%"
     },
     frameContainer: {
         backgroundColor: "#7E3FF0",
@@ -126,16 +131,16 @@ const CoachProfileStyle = StyleSheet.create({
         borderRadius: 20
     },
     coachBoxes: {
-        backgroundColor: "white",
-        marginTop: "5%",
-        marginLeft: "7%",
-        width: 155,
-        height: 150,
-        borderRadius: 16,  
-        borderColor: "#7E3FF0",
-        borderWidth: 1,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+      backgroundColor: 'white',
+      marginTop: '5%',
+      marginLeft: '5%', // Adjust the margin for better alignment
+      width: (screenWidth * 0.4), // Adjust the percentage as needed
+      height: (screenHeight * 0.19), // Adjust the percentage as needed
+      borderRadius: 16,
+      borderColor: '#7E3FF0',
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     coachNameText: {
       textAlign: 'center',

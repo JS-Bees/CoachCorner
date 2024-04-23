@@ -9,6 +9,10 @@ import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
 import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface SessionModalProps {
   visible: boolean;
@@ -117,19 +121,19 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 </View>
 
 
-<View style={styles.buttons}>
+{/* <View style={styles.buttons}> */}
   <View style={styles.buttonContainer}>
     <TouchableOpacity style={styles.cancelButton} onPress={handleCancelSchedule}>
       <Text style={styles.cancelText}>Cancel Schedule</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.button} onPress={navigateToReSched}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }} >Re-Schedule</Text>
+      <Text style={styles.Text} >Re-Schedule</Text>
     </TouchableOpacity>
   </View>
 </View>
 
 
-      </View>
+      {/* </View> */}
     </Overlay>
   );
 };
@@ -137,7 +141,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 const styles = StyleSheet.create({
   overlay: {
     borderRadius: 15,
-    height: "65%",
+    height: "75%",
     width: "85%",
   },
   container: {
@@ -169,8 +173,8 @@ const styles = StyleSheet.create({
     left: "-2%",
   },
   sessionImage: {
-    width: 65,
-    height: 65,
+    width: (screenWidth * 0.17),
+    height: (screenWidth * 0.17),
     marginBottom: 10,
     borderRadius: 50,
   },
@@ -203,10 +207,16 @@ const styles = StyleSheet.create({
   cancelText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#FECB2E"
+    color: "#7E3FF0"
+  },
+  Text: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "white"
   },
   buttons: {
-    bottom: "-66%",
+    backgroundColor: 'red',
+    bottom: "-50%",
     marginLeft: "-110%"
 
   },
@@ -214,24 +224,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: 'row',
     justifyContent: 'space-between', 
-    bottom:  20, 
+    bottom:  '-30%', 
     left:  0,
     right:  0,
     paddingHorizontal:  10, 
   },
   button: {
-    marginTop: '-5%',
-    marginLeft: '80%',
-    backgroundColor: '#7E3FF0',
-    width: 140,
-    height: 45,
-    borderRadius: 15,
+    backgroundColor: '#7E3FF0', // Set the background color for the cancel button
+      width: (screenWidth * 0.36), // Adjust the percentage as needed
+      height: (screenHeight * 0.07), // Adjust the percentage as needed
+    borderRadius:  15,
     alignItems: 'center',
+    justifyContent: 'center', 
+    marginBottom:  10
   },
   cancelButton: {
     backgroundColor: 'transparent', // Set the background color for the cancel button
-    width:  140,
-    height:  45,
+      width: (screenWidth * 0.38), // Adjust the percentage as needed
+      height: (screenHeight * 0.08), // Adjust the percentage as needed
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 

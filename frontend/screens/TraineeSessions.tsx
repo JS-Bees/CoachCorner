@@ -13,7 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SearchBar } from '@rneui/themed';
 import CoachSessions from '../components/Profile Tiles/CoachSessionTiles';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { FindBookingsOfCoacheeDocument } from '../generated-gql/graphql';
+import { FindBookingsOfCoacheeDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
@@ -59,6 +59,17 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
         fetchUserToken();
     }, []);
 
+    const useFetchCoacheeByUserID = (userID: string) => {
+        const [coacheeResult] = useQuery({
+            query: FindCoacheeByIdDocument,
+            variables: { userId: parseInt(userID) },
+        });
+
+        return coacheeResult;
+    };
+
+    const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
+
     const [result] = useQuery({
         query: FindBookingsOfCoacheeDocument, 
         variables: {
@@ -92,8 +103,8 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             <TouchableOpacity
                 onPress={() => navigation.navigate('NewCoacheeProfile')}>
             <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
+                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
             
             </TouchableOpacity>
             
@@ -165,16 +176,11 @@ const MyCoaches = StyleSheet.create({
         width: '100%',
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
-
-
     nameAndGreetingsContainer: {
         paddingTop:"25%",
         marginLeft: '25%',
         flexDirection: 'row', 
     },
-
-    
-
     middleContainer: {
         flex: 1,
         justifyContent: 'center',

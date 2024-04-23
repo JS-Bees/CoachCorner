@@ -5,8 +5,17 @@ import {
     StyleSheet,
     Image,
     ImageSourcePropType,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native';
+import { RootStackParams } from '../../App';
+import { useNavigation } from '@react-navigation/core';
+import { Dimensions } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
 
 interface UpcomingSession {
     traineeName: string;
@@ -20,6 +29,7 @@ interface UpcomingSessionsProp {
 }
 
 const UpcomingDashboard: React.FC<UpcomingSessionsProp> = ({upcoming}) => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     if (upcoming.length ===   0) {
         return null; // Or return a placeholder view
@@ -33,18 +43,23 @@ const UpcomingDashboard: React.FC<UpcomingSessionsProp> = ({upcoming}) => {
     return(
         <View style={style.container}>
           {firstTwoSessions.map((session, index) => (
-             <TouchableOpacity key={index} style={style.sessionBoxes}>
-                 <View style={style.sessionContent}>
-                     <Image source={session.imageSource} style={style.profileImage}/>
-                     <View style={style.textContainer}>
-                         <Text style={style.nameText}>{session.traineeName}</Text>
-                         {session.time.map((time, timeIndex) => (
-                             timeIndex ===   0 ? (
-                                 <Text key={`time-${timeIndex}`} style={style.subtitleText}>
-                                     {`${time.startTime} - ${time.endTime} on ${session.date[0]}`}
-                                 </Text>
-                             ) : null
-                         ))}
+             <TouchableOpacity
+                key={index}
+                onPress={() => navigation.navigate('Sessions')} // Navigate to the Sessions page
+             >
+                 <View style={style.sessionBoxes}>
+                     <View style={style.sessionContent}>
+                         <Image source={session.imageSource} style={style.profileImage}/>
+                         <View style={style.textContainer}>
+                             <Text style={style.nameText}>{session.traineeName}</Text>
+                             {session.time.map((time, timeIndex) => (
+                                 timeIndex ===   0 ? (
+                                     <Text key={`time-${timeIndex}`} style={style.subtitleText}>
+                                         {`${time.startTime} - ${time.endTime} on ${session.date[0]}`}
+                                     </Text>
+                                 ) : null
+                             ))}
+                         </View>
                      </View>
                  </View>
              </TouchableOpacity>
@@ -66,11 +81,11 @@ const style = StyleSheet.create({
         borderRadius:  10,   
         borderColor: "#7E3FF0",
         borderWidth:  1,
-        width:  335,  
-        height:  80
+        width: (screenWidth * 0.85), // Adjust the percentage as needed
+        height: (screenHeight * 0.11), // Adjust the percentage as needed
     },
     sessionContent: {
-        marginTop: "3%",        
+        marginTop: "3.5%",        
         flexDirection: "row",
         alignItems: "center", // Align items vertically in the center
         justifyContent: "space-between", // Space out items horizontally
