@@ -14,11 +14,10 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-    FindCoacheeContactsByIdDocument,
-    FindMessagesForCoachListDocument,
+    FindCoachContactsByIdDocument,
+    FindMessagesForCoacheeListDocument,
 } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
-import { useIsFocused } from '@react-navigation/native';
 
 interface ChatMessage {
     id: number;
@@ -38,7 +37,7 @@ const ChatListPage: React.FC = () => {
 
     const handleChatPress = (item: ChatMessage) => {
         console.log('Contact ID:', item.id);
-        navigation.navigate('ChatPage', { chatMessage: item });
+        navigation.navigate('CoachChatPage', { chatMessage: item });
     };
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
@@ -60,9 +59,9 @@ const ChatListPage: React.FC = () => {
 
     const useFetchMessagesForCoachlist = (userID: any) => {
         const [chatListMessageResult] = useQuery({
-            query: FindMessagesForCoachListDocument, // Use the Coachee query document
+            query: FindMessagesForCoacheeListDocument,
             variables: {
-                coacheeId: parseInt(userID),
+                coachId: parseInt(userID),
             },
             requestPolicy: 'cache-and-network',
         });
@@ -71,52 +70,52 @@ const ChatListPage: React.FC = () => {
     };
 
     const {
-        data: coacheeChatListMessageData,
-        loading: coacheeChatListMessageLoading,
-        error: coacheeChatListMessageError,
+        data: coachChatListMessageData,
+        loading: coachChatListMessageLoading,
+        error: coachChatListMessageError,
     } = useFetchMessagesForCoachlist(userToken);
 
     // console.log(
     //     'chat list messages',
-    //     coacheeChatListMessageData?.findMessagesForCoachList,
+    //     coachChatListMessageData?.findMessagesForCoachList,
     // );
 
-    const useFetchCoacheeByUserID = (userID: any) => {
-        const [coacheeResult] = useQuery({
-            query: FindCoacheeContactsByIdDocument, // Use the Coachee query document
+    const useFetchCoachByUserID = (userID: any) => {
+        const [coachResult] = useQuery({
+            query: FindCoachContactsByIdDocument,
             variables: {
                 userId: parseInt(userID),
             },
         });
 
-        return coacheeResult;
+        return coachResult;
     };
 
     const {
-        data: coacheeData,
-        loading: coacheeLoading,
-        error: coacheeError,
-    } = useFetchCoacheeByUserID(userToken);
+        data: coachData,
+        loading: coachLoading,
+        error: coachError,
+    } = useFetchCoachByUserID(userToken);
 
     useEffect(() => {
-        // console.log('coacheeData:', coacheeData);
-        const contacts = coacheeData?.findCoacheeByID.contacts;
+        // console.log('coachData:', coachData);
+        const contacts = coachData?.findCoachByID.contacts;
 
         // Log all contacts
         // console.log(JSON.stringify(contacts, null, 2));
         // console.log('contacts');
 
-        const messages = coacheeChatListMessageData?.findMessagesForCoachList;
+        const messages = coachChatListMessageData?.findMessagesForCoacheeList;
 
         // Map over contacts and set chatMessages
         if (contacts) {
             const chatMessages = contacts.map((contact) => {
-                const sender = `${contact.coach.firstName} ${contact.coach.lastName}`;
+                const sender = `${contact.coachee.firstName} ${contact.coachee.lastName}`;
                 let imageUrl;
 
                 // Check if the profilePicture URL starts with 'https:'
-                if (contact.coach.profilePicture.startsWith('https:')) {
-                    imageUrl = { uri: contact.coach.profilePicture };
+                if (contact.coachee.profilePicture.startsWith('https:')) {
+                    imageUrl = { uri: contact.coachee.profilePicture };
                 } else {
                     // Use the fallback image if the URL does not start with 'https:'
                     imageUrl = require('../assets/User.png');
@@ -141,7 +140,11 @@ const ChatListPage: React.FC = () => {
 
             setChatMessages(chatMessages);
         }
-    }, [coacheeData, coacheeChatListMessageData]);
+    }, [coachData, coachChatListMessageData]);
+
+    const filteredChatMessages = chatMessages.filter(
+        (item) => item.contactedStatus === true,
+    );
 
     const renderChatMessage = ({ item }: { item: ChatMessage }) => (
         <TouchableOpacity
@@ -174,7 +177,7 @@ const ChatListPage: React.FC = () => {
             </View>
 
             <FlatList
-                data={chatMessages}
+                data={filteredChatMessages} // Use the filtered array here
                 keyExtractor={(item) => item.id}
                 renderItem={renderChatMessage}
                 style={styles.chatList}

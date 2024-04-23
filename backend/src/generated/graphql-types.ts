@@ -493,8 +493,10 @@ export interface NexusGenFieldTypes {
     findCoacheeByID: NexusGenRootTypes['Coachee']; // Coachee!
     findCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
     findContactsOfCoach: NexusGenRootTypes['Contact'][]; // [Contact!]!
+    findContactsOfCoachDespiteContactedStatus: NexusGenRootTypes['Contact'][]; // [Contact!]!
     findMessagesByContactId: NexusGenRootTypes['Message'][]; // [Message!]!
     findMessagesForCoachList: NexusGenRootTypes['Message'][]; // [Message!]!
+    findMessagesForCoacheeList: NexusGenRootTypes['Message'][]; // [Message!]!
     findNonContactCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
     findfilteredMessagesByContactId: NexusGenRootTypes['Message'][]; // [Message!]!
   }
@@ -698,8 +700,10 @@ export interface NexusGenFieldTypeNames {
     findCoacheeByID: 'Coachee'
     findCoachesBySport: 'Coach'
     findContactsOfCoach: 'Contact'
+    findContactsOfCoachDespiteContactedStatus: 'Contact'
     findMessagesByContactId: 'Message'
     findMessagesForCoachList: 'Message'
+    findMessagesForCoacheeList: 'Message'
     findNonContactCoachesBySport: 'Coach'
     findfilteredMessagesByContactId: 'Message'
   }
@@ -853,11 +857,17 @@ export interface NexusGenArgTypes {
     findContactsOfCoach: { // args
       coachId: number; // Int!
     }
+    findContactsOfCoachDespiteContactedStatus: { // args
+      coachId: number; // Int!
+    }
     findMessagesByContactId: { // args
       contactId: number; // Int!
     }
     findMessagesForCoachList: { // args
       coacheeId: number; // Int!
+    }
+    findMessagesForCoacheeList: { // args
+      coachId: number; // Int!
     }
     findNonContactCoachesBySport: { // args
       coacheeID: number; // Int!

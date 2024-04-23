@@ -60,7 +60,7 @@ const ChatListPage: React.FC = () => {
 
     const useFetchMessagesForCoachlist = (userID: any) => {
         const [chatListMessageResult] = useQuery({
-            query: FindMessagesForCoachListDocument, // Use the Coachee query document
+            query: FindMessagesForCoachListDocument,
             variables: {
                 coacheeId: parseInt(userID),
             },
@@ -83,7 +83,7 @@ const ChatListPage: React.FC = () => {
 
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
-            query: FindCoacheeContactsByIdDocument, // Use the Coachee query document
+            query: FindCoacheeContactsByIdDocument,
             variables: {
                 userId: parseInt(userID),
             },

@@ -34,6 +34,8 @@ import AllCoaches from './screens/AllCoaches';
 import EditInterests from './screens/EditInterests';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
+import CoachChatPage from './screens/ChatCoach';
+import CoachChatListsPage from './screens/ChatListsCoach';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
 registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
@@ -124,6 +126,8 @@ export type RootStackParams = {
     NewBookingPage: any;
     EditInterests: any;
     ChatList: any;
+    CoachChatPage: any;
+    CoachChatListsPage: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -305,6 +309,16 @@ export default function App() {
                         component={EditInterests}
                         options={{ headerShown: false }}
                     />
+                    <RootStack.Screen
+                        name="CoachChatPage"
+                        component={CoachChatPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CoachChatListsPage"
+                        component={CoachChatListsPage}
+                        options={{ headerShown: false }}
+                    />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
@@ -418,7 +432,7 @@ function NewCoachTabNavigator() {
             />
             <CoachTab.Screen
                 name="Chats"
-                component={ChatListPage}
+                component={CoachChatListsPage}
                 options={{ headerShown: false }}
             />
         </CoachTab.Navigator>

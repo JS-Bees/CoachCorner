@@ -22,18 +22,17 @@ import {
     NewMessageSubscriptionVariables,
     CreateMessageMutationVariables,
     FindfilteredMessagesByContactIdDocument,
-    UpdateContactedStatusDocument,
 } from '../generated-gql/graphql';
 import { RouteProp } from '@react-navigation/native';
 
 // Assuming your navigation stack is named 'Root'
 type ChatScreenNavigationProp = NativeStackNavigationProp<
     RootStackParams,
-    'ChatPage'
+    'CoachChatPage'
 >;
 
 type Props = {
-    route: RouteProp<RootStackParams, 'ChatPage'>;
+    route: RouteProp<RootStackParams, 'CoachChatPage'>;
     navigation: ChatScreenNavigationProp;
 };
 
@@ -75,13 +74,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
         // variables: { channelName: `ChannelofContact1` },
     });
 
-    const [createMessage, setCreateMessage] = useMutation(
-        CreateMessageDocument,
-    );
-
-    const [, setUpdateContactedStatus] = useMutation(
-        UpdateContactedStatusDocument,
-    );
+    const [, setCreateMessage] = useMutation(CreateMessageDocument);
 
     useEffect(() => {
         if (initialMessagesResult.data) {
@@ -127,26 +120,11 @@ const ChatPage: React.FC<Props> = ({ route }) => {
             setCurrentMessage('');
             const response = await setCreateMessage({
                 input: {
-                    // contactId: 1,
                     contactId: chatMessage.id,
                     content,
                 },
             });
             console.log('Message created:', response.data);
-
-            // Check if contactedStatus is already true
-            if (!chatMessage.contactedStatus) {
-                // Proceed to update contactedStatus to true
-                const updateResponse = await setUpdateContactedStatus({
-                    updateContactedStatusId: chatMessage.id,
-                    input: { contactedStatus: true },
-                });
-                console.log('Contacted status updated:', updateResponse.data);
-            } else {
-                console.log(
-                    'Contacted status is already true. No update needed.',
-                );
-            }
         } catch (error) {
             // Handle error, e.g., show an error message
             console.log(error);

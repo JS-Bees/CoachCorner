@@ -608,42 +608,78 @@ export const findMessagesForCoachList = queryField('findMessagesForCoachList', {
     },
 });
 
-// export const findContactsOfCoachee2 = queryField('findContactsOfCoachee2', {
-//     type: list(Contact),
-//     args: {
-//         coacheeId: nonNull(intArg()),
-//     },
-//     resolve: async (_, { coacheeId }, context: Context) => {
-//         try {
-//             // Validate coachId using the idSchema
-//             idSchema.validateSync({ id: coacheeId });
+export const findMessagesForCoacheeList = queryField(
+    'findMessagesForCoacheeList',
+    {
+        type: list(Message),
+        args: {
+            coachId: nonNull(intArg()),
+        },
+        resolve: async (_, { coachId }, context: Context) => {
+            try {
+                // Validate coachId using the idSchema
+                idSchema.validateSync({ id: coachId });
 
-//             // Search for contacts of the coach with contactedStatus set to true
-//             const contacts = await context.db.contact.findMany({
-//                 where: {
-//                     coacheeId: coacheeId,
-//                     active: true,
-//                 },
-//                 include: {
-//                     messages: {
-//                         distinct: ['contactId'],
-//                         orderBy: {
-//                             createdAt: 'desc',
-//                         },
-//                         take: 1, // Limit to the most recent message
-//                     },
-//                 },
-//             });
+                // FIND MESSAGES WHERE THE CONTACT OBJECT HAS THE COACHEEID ARG FOR THE COACHEEID FIELD
 
-//             return contacts;
-//         } catch (error) {
-//             // Handle validation errors
-//             if (error instanceof yup.ValidationError) {
-//                 // You can customize the error message based on the validation error
-//                 throw new Error(error.message);
-//             }
-//             // Rethrow other errors
-//             throw error;
-//         }
-//     },
-// });
+                // Search for contacts of the coach with contactedStatus set to true
+                const messages = await context.db.message.findMany({
+                    where: {
+                        contact: {
+                            coachId: coachId, // Filter messages by the provided coachee ID
+                        },
+                    },
+                    distinct: ['contactId'],
+                    orderBy: {
+                        createdAt: 'desc', // Order by creation date in descending order
+                    },
+                    // take: 1, // Limit to the most recent message
+                });
+
+                return messages;
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
+            }
+        },
+    },
+);
+
+export const findContactsOfCoachDespiteContactedStatus = queryField(
+    'findContactsOfCoachDespiteContactedStatus',
+    {
+        type: list(Contact),
+        args: {
+            coachId: nonNull(intArg()),
+        },
+        resolve: async (_, { coachId }, context: Context) => {
+            try {
+                // Validate coachId using the idSchema
+                idSchema.validateSync({ id: coachId });
+
+                // Search for contacts of the coach with contactedStatus set to true
+                const contacts = await context.db.contact.findMany({
+                    where: {
+                        coachId: coachId,
+                        active: true,
+                    },
+                });
+
+                return contacts;
+            } catch (error) {
+                // Handle validation errors
+                if (error instanceof yup.ValidationError) {
+                    // You can customize the error message based on the validation error
+                    throw new Error(error.message);
+                }
+                // Rethrow other errors
+                throw error;
+            }
+        },
+    },
+);
