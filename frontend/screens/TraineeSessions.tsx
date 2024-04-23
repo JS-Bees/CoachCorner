@@ -129,7 +129,7 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
 
 
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250, marginLeft: 12}}>
                <View>
                <CoachSessions sessions={sessionsToShow.map(booking => ({
                     coachName: `${booking.coach.firstName} ${booking.coach.lastName}`,

@@ -98,7 +98,7 @@ const NewCoachProfile = () => {
     const CoachProfiles: CoachProfile[] = [
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
-            mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
+            mainSport: coachData?.findCoachByID.sports?.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
             imageSource: coachData?.findCoachByID.profilePicture,
             about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",

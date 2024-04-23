@@ -65,9 +65,6 @@ query FindCoachByID($userId: Int!) {
       type
       name
     }
-    sports {
-      type  
-    }
     reviews {
       starRating
       comment
@@ -84,6 +81,7 @@ query FindCoachByID($userId: Int!) {
     }
   }
 }
+
 
 query FindCoachesBySport($sportType: String!) {
   findCoachesBySport(sportType: $sportType) {
@@ -138,24 +136,24 @@ query FindCoacheesOfCoach($userId: Int!) {
 
 query FindBookingsOfCoach($userId: Int!) {
   findCoachByID(userID: $userId) {
-  bookings {
-    id
-    status
-    coacheeId
-    coachee {
-      firstName
-      lastName
-      profilePicture
-    }
-    serviceType
-    additionalNotes
-    bookingSlots {
+    bookings {
+      bookingSlots {
+        id
+        date
+        startTime
+        endTime
+      }
       id
-      date
-      startTime
-      endTime
+      status
+      additionalNotes
+      serviceType
+      coachee {
+        firstName
+        lastName
+        profilePicture
+      }
+      coacheeId
     }
-  }
   }
 }
 
