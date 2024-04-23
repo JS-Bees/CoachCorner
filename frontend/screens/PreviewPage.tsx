@@ -96,7 +96,14 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const handleButtonPress = (item: ChatMessage) => {
-        navigation.navigate('ChatPage', { chatMessage: item });
+        const chatMessage = {
+            id: profile.contactId,
+            message: 'placeholder message',
+            sender: profile.name,
+            imageUrl: profile.imageSource,
+            contactedStatus: profile.contactedStatus,
+        };
+        navigation.navigate('ChatPage', { chatMessage: chatMessage });
     };
 
     const handleNavigateBack = () => {
@@ -110,6 +117,8 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     };
 
     const { profile, gainedStars } = route.params || {};
+
+    console.log('Profile object', profile);
 
     const totalStars = 5;
 

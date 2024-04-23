@@ -80,6 +80,7 @@ query FindCoachesBySport($sportType: String!) {
 query FindFavoriteCoaches($userId: Int!) {
     findCoacheeByID(userID: $userId) {
         contacts {
+            id
             coachId
             contactedStatus
             coach {
@@ -90,6 +91,7 @@ query FindFavoriteCoaches($userId: Int!) {
                 sports {
                     type
                 }
+                profilePicture
                 reviews {
                     starRating
                     comment

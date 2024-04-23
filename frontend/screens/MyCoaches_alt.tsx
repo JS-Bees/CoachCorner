@@ -12,32 +12,30 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed';
-import Icon from 'react-native-vector-icons/Ionicons'
-import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+    ScrollView,
+    KeyboardAvoidingView,
+    TouchableOpacity,
+} from 'react-native';
 import { useQuery } from 'urql';
 import { FindFavoriteCoachesDocument } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-
-
-
-
 const MyCoaches_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const [searchText, setSearchText] = useState(''); 
+    const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('Favorite'); // 'All' or 'Favorite'
-    
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
 
-    
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -62,36 +60,50 @@ const MyCoaches_alt = () => {
 
     if (fetching) return <Text>Loading...</Text>;
     if (error) return <Text>Error: {error.message}</Text>;
-    
+
     // Extract coaches data from the GraphQL response
     const contacts = data?.findCoacheeByID.contacts;
-    
+
     // Check if contacts is not null or undefined before proceeding
     if (!contacts) return <Text>No contacts found.</Text>;
-    
+
     // Map over the contacts array to create a new array of Profile objects
-    const FavoriteCoaches: Profile[] = contacts.map(contact => {
+    const FavoriteCoaches: Profile[] = contacts.map((contact) => {
         const coach = contact.coach;
-        const totalStars = coach.reviews.reduce((acc, review) => acc + review.starRating, 0);
-        const averageStars = coach.reviews.length > 0 ? totalStars / coach.reviews.length : 0;
-    
+        const totalStars = coach.reviews.reduce(
+            (acc, review) => acc + review.starRating,
+            0,
+        );
+        const averageStars =
+            coach.reviews.length > 0 ? totalStars / coach.reviews.length : 0;
+        let imageUrl;
+
+        // Check if the profilePicture URL starts with 'https:'
+        if (contact.coach.profilePicture.startsWith('https:')) {
+            imageUrl = { uri: coach.profilePicture };
+        } else {
+            // Use the fallback image if the URL does not start with 'https:'
+            imageUrl = require('../assets/User.png');
+        }
+
         return {
             id: contact.coachId,
             name: `${coach.firstName} ${coach.lastName}`,
-            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
+            imageSource: imageUrl,
             gainedStars: averageStars, // Use the calculated average stars
             mainSport: coach.sports.length > 0 ? coach.sports[0].type : '', // Assuming mainSport is the first sport in the array
             about: coach.bio,
             workplaceAddress: coach.address,
+            contactId: contact.id,
+            contactedStatus: contact.contactedStatus,
         };
     });
-    console.log(contacts)
-    
+    console.log(contacts);
 
     // const FavoriteCoaches: Profile[] = [ // max 2
     //     {
     //         name: 'John Doe',
-    //         imageSource: require('../assets/John_Doe.png'), 
+    //         imageSource: require('../assets/John_Doe.png'),
     //         gainedStars: 4,
     //         mainSport: "Basketball",
     //         about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
@@ -105,57 +117,63 @@ const MyCoaches_alt = () => {
     //         about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
     //         workplaceAddress: "Smith's Hoops Academy 456 Court Street Basketballville, Slam Dunk County Hoopsland, 98765"
     //     },
-        
+
     // ];
-
-
-
-   
 
     return (
         <View style={MyCoaches.container}>
-            <View style={MyCoaches.nameAndGreetingsContainer}>
-        
-            </View>
+            <View style={MyCoaches.nameAndGreetingsContainer}></View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
-            <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('CoacheeDashboard')}
+                >
+                    <Icon
+                        name="arrow-back-circle-outline"
+                        size={30}
+                        color="#7E3FF0"
+                    />
+                </TouchableOpacity>
             </View>
-            
+
             <TouchableOpacity
-                onPress={() => navigation.navigate('NewCoacheeProfile')}>
-            <Image
+                onPress={() => navigation.navigate('NewCoacheeProfile')}
+            >
+                <Image
                     source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
-            
+                    style={{
+                        width: 40,
+                        height: 40,
+                        marginLeft: '83%',
+                        marginTop: '-10%',
+                    }}
+                />
             </TouchableOpacity>
-            
 
             <KeyboardAvoidingView
-            style={MyCoaches.container}
-            behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            <View style={MyCoaches.searchContainer}>
-                <SearchBar
-                 placeholder='Search Coach'
-                 onChangeText={handleSearchChange}
-                 value={searchText}
-                 platform='android'
-                 containerStyle={MyCoaches.searchBarContainer}
-                 inputContainerStyle={MyCoaches.searchBarInputContainer}/>
-            </View>
-            <Text style={MyCoaches.buttonText}>Favorite Coaches</Text>
+                style={MyCoaches.container}
+                behavior={Platform.OS === 'android' ? 'height' : 'padding'}
+            >
+                <View style={MyCoaches.searchContainer}>
+                    <SearchBar
+                        placeholder="Search Coach"
+                        onChangeText={handleSearchChange}
+                        value={searchText}
+                        platform="android"
+                        containerStyle={MyCoaches.searchBarContainer}
+                        inputContainerStyle={MyCoaches.searchBarInputContainer}
+                    />
+                </View>
+                <Text style={MyCoaches.buttonText}>Favorite Coaches</Text>
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
-               <View>
-               <CoachProfiles profiles={FavoriteCoaches}/>
-               </View>
-
-            </ScrollView>
-
+                <ScrollView
+                    contentInsetAdjustmentBehavior="scrollableAxes"
+                    style={{ marginTop: '1%', height: 250 }}
+                >
+                    <View>
+                        <CoachProfiles profiles={FavoriteCoaches} />
+                    </View>
+                </ScrollView>
             </KeyboardAvoidingView>
-
-
         </View>
     );
 };
@@ -175,14 +193,11 @@ const MyCoaches = StyleSheet.create({
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
 
-
     nameAndGreetingsContainer: {
-        paddingTop:"25%",
+        paddingTop: '25%',
         marginLeft: '25%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
-
-    
 
     middleContainer: {
         flex: 1,
@@ -208,16 +223,16 @@ const MyCoaches = StyleSheet.create({
         alignItems: 'center',
     },
     iconContainer: {
-        marginTop: "-10%",
+        marginTop: '-10%',
         marginLeft: '9%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
     imageLabel: {
         fontFamily: 'Roboto',
         fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        top: -2
+        top: -2,
     },
     imageStyle: {
         width: 65,
@@ -240,21 +255,19 @@ const MyCoaches = StyleSheet.create({
     },
 
     searchBarInputContainer: {
-
         height: '100%', // Match the height of the container
     },
 
     frameContainer: {
-        backgroundColor: "#7E3FF0",
-        marginTop: "5%",
-        marginLeft: "7%",
+        backgroundColor: '#7E3FF0',
+        marginTop: '5%',
+        marginLeft: '7%',
         width: '85%',
-        height: "15%",
-        overflow: "hidden",
-        borderRadius: 16  
+        height: '15%',
+        overflow: 'hidden',
+        borderRadius: 16,
     },
-  
-    
+
     AllCoachesButton: {
         width: '80%', // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
@@ -281,9 +294,8 @@ const MyCoaches = StyleSheet.create({
         lineHeight: 24,
     },
     activeButton: {
-        backgroundColor: '#7E3FF0'
-    }
-   
+        backgroundColor: '#7E3FF0',
+    },
 });
 
 export default MyCoaches_alt;
