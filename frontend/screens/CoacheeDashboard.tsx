@@ -157,6 +157,8 @@ const CoacheeDashboard = () => {
 const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
 const coaches = coachData?.coaches || [];
 
+console.log(coaches)
+
 const genrePriority = ['Movie Genre', 'Book Genre', 'Music Genre'];
 const genreWeights = {
     'Movie Genre': 3,
@@ -201,7 +203,8 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
 
     const TopCoaches: Profile[] = [
         //max 2
-        {
+        {   
+            id: 1,
             name: 'Serena Williams',
             imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
             gainedStars: 3,
@@ -210,7 +213,8 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
             workplaceAddress:
                 'So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458',
         },
-        {
+        {   
+            id: 2,
             name: 'Kobe Brian',
             imageSource: require('../assets/Kobe_Brian.jpg'),
             gainedStars: 5,
@@ -340,15 +344,16 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
 
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.greetings}>
-                            {' '}
-                            Top Coaches{' '}
+                            Top Coaches
                         </Text>
                     </View>
+                   <View style={CoacheeDashboardStyle.profileTiles}>
                     <CoachProfiles
                         profiles={
                             seeAllCoaches ? TopCoaches : TopCoaches.slice(0, 2)
                         }
                     />
+                   </View>
 
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.greetings}>
@@ -361,7 +366,9 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <CoachProfiles profiles={RecommendedCoaches} />
+                   <View style={CoacheeDashboardStyle.profileTiles}>
+                     <CoachProfiles profiles={RecommendedCoaches} />
+                   </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>
@@ -565,6 +572,9 @@ const CoacheeDashboardStyle = StyleSheet.create({
         fontSize: 12, // Adjust the font size of the label
         color: '#7E3FF0'
     },
+    profileTiles: {
+        marginLeft: "3%"
+    }
     
 });
 

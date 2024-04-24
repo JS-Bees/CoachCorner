@@ -3,26 +3,35 @@ import { TouchableOpacity, StyleSheet, View, Text, KeyboardAvoidingView, ScrollV
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
+import { UpdateBookingDataDocument } from '../../generated-gql/graphql';
 import CustomInput from '../../components/Custom components/CustomBookingInput';
 import Slot from '../../components/SlotsProps';
 import AddSlotModal from '../../components/Modals/AddSlots';
-import { CreateBookingDocument } from '../../generated-gql/graphql';
 import { FindCoachByIdDocument } from '../../generated-gql/graphql';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { parse, formatISO } from 'date-fns';
 import { useEffect } from 'react';
 import SuccessModal from '../../components/Modals/SuccessModal';
 import { useMutation, useQuery } from 'urql';
+import { parse, formatISO, format } from 'date-fns';
 
 
 
-interface RouteParams {
+interface Session {
+    selectedSlots: Array<{slotsId:number; startTime: string; endTime: string; date: string }>;
     coacheeId: number;
     coacheeName: string;
+    serviceType: string; // Add this line
+    additionalNotes: string; // Add this line if you also need to access additionalNotes
+    bookingId: number;
 }
 
-interface NewBookingPageProps {
+interface RouteParams {
+    session: Session;
+    slotsId: number;
+}
+
+interface ReschedulePageProps {
     route: {
         params: RouteParams;
     };
@@ -35,20 +44,21 @@ export interface CoachProfile {
   
 
 
-const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
+const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
+    const { session, slotsId } = route.params;
     const [isAddSlotModalVisible, setAddSlotModalVisible] = useState(false);
     const [selectedSlots, setSelectedSlots] = useState<{
         status: string; startTime: string; endTime: string; date: string}[]>([]);
-    const [createBookingResult, createBookingMutation] = useMutation(CreateBookingDocument);
-    const [serviceType, setServiceType] = useState('');
-    const [additionalNotes, setAdditionalNotes] = useState('');
+    const [serviceType, setServiceType] = useState(session.serviceType || ''); 
+    const [additionalNotes, setAdditionalNotes] = useState(session.additionalNotes || ''); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
+    const [result, updateBookingData] = useMutation(UpdateBookingDataDocument);
+    
 
-    const { coacheeId, coacheeName} = route.params || {}
-
-
+  
+    
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const handleNavigateBack = () => {
@@ -60,79 +70,59 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     };
 
     const handleAddSlot = (startTime: string, endTime: string, date: string) => {
-        const newSlot = { startTime, endTime, date };
-        setSelectedSlots([...selectedSlots, newSlot]);
+        const newSlot = { status: 'UPCOMING', startTime, endTime, date };
+        setSelectedSlots(prevSlots => [...prevSlots, newSlot]);
         handleToggleAddSlotModal();
     };
 
-    const handleCreateBooking = async () => {
+    
 
+   
+    const handleUpdateBooking = async () => {
         setIsBookingProcessing(true);
-
-        if (userToken === null) {
-            console.error('User token is null');
-            return;
-        }
-    
-        const input = {
-            
-            coacheeId: parseInt(coacheeId),
-            coachId: parseInt(userToken),
-            serviceType: serviceType,
-            additionalNotes: additionalNotes,
-            status: "PENDING"
-        };
-    
-        const slotsInput = selectedSlots.map(slot => {
+        // Prepare variables for the mutation
+        const variables = {
+          bookingId: session.bookingId,
+          updateSlotsIds: slotsId, // Include the IDs of slots to update
+          deleteSlotsIds: [], // No slots to delete in this case
+          bookingData: {
+            serviceType,
+            additionalNotes,
+          },
+          updateSlots: selectedSlots.map(slot => {
             const date = parse(slot.date, 'EEEE, do MMMM', new Date());
-    
-            // Format startTime and endTime to ISO 8601 format
             const startTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.startTime.split(':')[0]), parseInt(slot.startTime.split(':')[1])));
             const endTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.endTime.split(':')[0]), parseInt(slot.endTime.split(':')[1])));
-           
-            
-            // Include the date in the slotsInput array
             return {
-                status: 'UPCOMING',
-                date: formatISO(date), // Format the date as an ISO 8601 string
-                startTime,
-                endTime,
+                id: slotsId, // Include the ID of each slot to update
+                date:formatISO(date),
+                startTime: startTime,
+                endTime: endTime,
+                status: slot.status,
             };
-        });
+        }),
+          addSlots: [], // No new slots to add in this case
+        };
+         
+      
+        // Execute the mutation
+        const response = await updateBookingData(variables);
+      
+        // Handle the response
+        if (response.error) {
+          console.error('Error updating booking:', response.error.message);
+        } else {
+          console.log('Booking updated successfully:', response?.data?.updatePendingBooking);
+          navigation.goBack();
+          // Optionally, you can perform actions based on the result, such as displaying a success message
+        }
+        setIsBookingProcessing(false);
+    };
     
-       
-        const { data, error } = await createBookingMutation({
-            variables: { input, slotsInput }
-        });
+    
+
 
     
-        try {
-            const { data, error } = await createBookingMutation({
-                input,
-                slotsInput
-            });
-    
-            if (error) {
-                console.error('Failed to create booking:', error);
-            } else {
-                console.log('Booking created successfully:', data);
-                setIsBookingProcessing(false);
-                setSuccessModalVisible(true);
-            }
-    
-            console.log("Input:", input);
-            console.log("Slots Input:", slotsInput);
-        } catch (error) {
-            console.error('Error creating booking:', error);
-        }
-        if (!error) {
-            setSuccessModalVisible(true);
-            setSelectedSlots([]);
-            setServiceType('');
-            setAdditionalNotes('');
-        }
-    
-    };
 
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
@@ -141,22 +131,6 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
         },
         requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
-
-    
-    useEffect(() => {
-        const fetchUserToken = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-                console.log('token', token);
-                setUserToken(token);
-            } catch (error) {
-                console.error('Error fetching token:', error);
-            }
-        };
-    
-        fetchUserToken();
-    }, []);
-
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -198,14 +172,14 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     
                     <Text style={styles.subheaderText}>Coach Name</Text>
                     {CoachProfiles[0].coachName ? (
-                        <CustomInput value={CoachProfiles[0].coachName} />) : null}
+                    <CustomInput value={CoachProfiles[0].coachName} />) : null}
                     <Text style={styles.subheaderText}> Trainee Name </Text>
-                    <CustomInput value={`${coacheeName}`}/>
+                    <CustomInput value={`${session.coacheeName}`}/>
 
 
                     <View>
                         <View style={styles.slotsHeader}>
-                         <Text style={styles.subheaderText}> Add a slot </Text>
+                         <Text style={styles.subheaderText}>Change Schedule </Text>
                          <TouchableOpacity style={styles.addCircle} onPress={handleToggleAddSlotModal}>
                                 <Icon name="add-circle-outline" size={30} color="#7E3FF0"  />
                          </TouchableOpacity>
@@ -215,13 +189,14 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                          <Slot key={index} startTime={slot.startTime} endTime={slot.endTime} date={slot.date} />))}
                     </View>
 
+
                     <Text style={styles.subheaderText}> Service Type </Text>
-                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)} />
+                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)} value={serviceType}/>
                     <Text style={styles.subheaderText}> Additional Notes </Text>
-                    <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)}/>
+                    <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)} value={additionalNotes}/>
 
                     <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={handleCreateBooking}>
+                    <TouchableOpacity style={styles.button} onPress={handleUpdateBooking}>
                         {isBookingProcessing ? (
                          <ActivityIndicator size="small" color="white" />) : (
                             <Text style={{ color: 'white', fontSize: 16, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Save Session</Text>)}
@@ -230,7 +205,11 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                 </View>
                 </ScrollView>
 
-                
+                <TouchableOpacity style={styles.button} onPress={handleUpdateBooking}>
+            {isBookingProcessing ? (
+        <ActivityIndicator size="small" color="white" />
+        ) : (
+         <Text style={{ color: 'white', fontSize: 16, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Save Session</Text> )}</TouchableOpacity>
             </KeyboardAvoidingView>
         </View>
     )
@@ -304,4 +283,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default NewBookingPage;
+export default ReschedulePage;

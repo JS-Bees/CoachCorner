@@ -19,7 +19,10 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { useQuery } from 'urql';
-import { FindFavoriteCoachesDocument } from '../generated-gql/graphql';
+import {
+    FindFavoriteCoachesDocument,
+    FindCoacheeByIdDocument,
+} from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
@@ -48,6 +51,17 @@ const MyCoaches_alt = () => {
 
         fetchUserToken();
     }, []);
+
+    const useFetchCoacheeByUserID = (userID: string) => {
+        const [coacheeResult] = useQuery({
+            query: FindCoacheeByIdDocument,
+            variables: { userId: parseInt(userID) },
+        });
+
+        return coacheeResult;
+    };
+
+    const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
 
     const [result] = useQuery({
         query: FindFavoriteCoachesDocument, // Pass the FindCoachesBySportDocument query
@@ -139,12 +153,15 @@ const MyCoaches_alt = () => {
                 onPress={() => navigation.navigate('NewCoacheeProfile')}
             >
                 <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
+                    source={{
+                        uri: coacheeData?.findCoacheeByID.profilePicture,
+                    }} // Add your profile image source here
                     style={{
                         width: 40,
                         height: 40,
                         marginLeft: '83%',
                         marginTop: '-10%',
+                        borderRadius: 20,
                     }}
                 />
             </TouchableOpacity>
@@ -167,7 +184,7 @@ const MyCoaches_alt = () => {
 
                 <ScrollView
                     contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 250 }}
+                    style={{ marginTop: '1%', height: 250, left: 12 }}
                 >
                     <View>
                         <CoachProfiles profiles={FavoriteCoaches} />

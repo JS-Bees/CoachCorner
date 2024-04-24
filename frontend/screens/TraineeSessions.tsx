@@ -6,50 +6,46 @@ import {
     Image,
     Platform,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import { SearchBar } from '@rneui/themed';
+import CoachSessions from '../components/Profile Tiles/CoachSessionTiles';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
-import { FindCoachesBySportDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import { FindBookingsOfCoacheeDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+
+
+
 
 const { width, height } = Dimensions.get('window');
 
+interface CoacheeSessionsProps {
+    sessions: CoacheeSessionsProps[];
+    onSessionPress?: (session: CoacheeSessionsProps) => void;
+}
 
 
 
 
-const AllCoaches = ({route}) => {
+const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
-    
-    const { selectedSport } = route.params;
+    const [activeButton, setActiveButton] = useState('Upcoming'); 
+    const [userToken, setUserToken] = useState<string | null>(null);
+ 
 
-    // Now you can use the selectedSport value in your component logic
-    console.log('Selected Sport:', selectedSport);
 
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
-    
-    const [result] = useQuery({
-        query: FindCoachesBySportDocument, // Pass the FindCoachesBySportDocument query
-        variables: { sportType: selectedSport }, // Pass the selectedSport as a variable
-    });
 
-    const { fetching, data, error } = result;
-
-            
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -63,46 +59,36 @@ const AllCoaches = ({route}) => {
         fetchUserToken();
     }, []);
 
-        const useFetchCoacheeByUserID = (userID: any) => {
-            const [coacheeResult] = useQuery({
-                query: FindCoacheeByIdDocument, // Use the Coachee query document
-                variables: {
-                    userId: parseInt(userID),
-                },
-            });
-    
-            return coacheeResult;
-        };
-        const {
-            data: coacheeData,
-            loading: coacheeLoading,
-            error: coacheeError,
-        } = useFetchCoacheeByUserID(userToken);
-
-        console.log(coacheeData?.findCoacheeByID.firstName)
-
-    if (fetching) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error.message}</Text>;
-
-    // Extract coaches data from the GraphQL response
-    const coaches = data.findCoachesBySport;
-
-        // Map over the coaches array to create a new array of Profile objects
-        const AllCoaches: Profile[] = coaches.map(coach => {
-            const totalStars = coach.reviews.reduce((acc, review) => acc + review.starRating, 0);
-            const averageStars = coach.reviews.length > 0 ? totalStars / coach.reviews.length : 0;
-    
-            return {
-                id: coach.id,
-                name: `${coach.firstName} ${coach.lastName}`,
-                imageSource:  { uri: coach.profilePicture },
-                gainedStars: averageStars, // Use the calculated average stars
-                mainSport: selectedSport, // Assuming mainSport is the selected sport
-                about: coach.bio,
-                workplaceAddress: coach.address,
-            };
+    const useFetchCoacheeByUserID = (userID: string) => {
+        const [coacheeResult] = useQuery({
+            query: FindCoacheeByIdDocument,
+            variables: { userId: parseInt(userID) },
         });
 
+        return coacheeResult;
+    };
+
+    const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
+
+    const [result] = useQuery({
+        query: FindBookingsOfCoacheeDocument, 
+        variables: {
+            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+        },
+    });
+
+    const { fetching, data, error } = result;
+    if (fetching) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>
+
+    const bookings = data?.findCoacheeByID.bookings;
+    if (!bookings) return <Text>No bookings found.</Text>;
+
+    const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
+    const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
+
+    const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+    
     return (
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}>
@@ -116,9 +102,9 @@ const AllCoaches = ({route}) => {
             
             <TouchableOpacity
                 onPress={() => navigation.navigate('NewCoacheeProfile')}>
-                <Image
-   source={{uri: coacheeData?.findCoacheeByID.profilePicture}}
-   style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
+            <Image
+                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
             
             </TouchableOpacity>
             
@@ -128,7 +114,7 @@ const AllCoaches = ({route}) => {
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
             <View style={MyCoaches.searchContainer}>
                 <SearchBar
-                 placeholder='Search Coach'
+                 placeholder='Search for coach name'
                  onChangeText={handleSearchChange}
                  value={searchText}
                  platform='android'
@@ -136,13 +122,39 @@ const AllCoaches = ({route}) => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
+            <TouchableOpacity 
+            style={[
+                MyCoaches.AllCoachesButton,
+                activeButton === 'Upcoming' ? MyCoaches.activeButton : null, 
+            ]}
+                onPress={() => setActiveButton('Upcoming')}>
+            <Text style={MyCoaches.buttonText}>Upcoming</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
+            activeButton === 'Pending' ? MyCoaches.activeButton : null,
+            ]}
+                onPress={() => setActiveButton('Pending')}>
+            <Text style={MyCoaches.buttonText}>Pending</Text>
+            </TouchableOpacity>
+
+
+
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250, marginLeft: 12}}>
                <View>
-               <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
-               </View>
+               <CoachSessions sessions={sessionsToShow.map(booking => ({
+                    coachName: `${booking.coach.firstName} ${booking.coach.lastName}`,
+                    bookingId: Number(booking.id), // Convert string to number
+                    serviceType: `${booking.serviceType}`,
+                    status: `${booking.status}`,
+                    imageSource: { uri: booking.coach.profilePicture },
+                    time: booking.bookingSlots.map(slot => ({
+                     startTime: slot.startTime,
+                    endTime: slot.endTime})),
+                    date: booking.bookingSlots.map(slot => slot.date)}))} />
+                </View>
 
             </ScrollView>
-
             </KeyboardAvoidingView>
 
 
@@ -164,16 +176,11 @@ const MyCoaches = StyleSheet.create({
         width: '100%',
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
-
-
     nameAndGreetingsContainer: {
         paddingTop:"25%",
         marginLeft: '25%',
         flexDirection: 'row', 
     },
-
-    
-
     middleContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -255,6 +262,16 @@ const MyCoaches = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10, // Adjust the border radius for rounded corners (optional)
     },
+    FavoriteCoachesButton: {
+        width: 100, // Adjust the width to make it square
+        height: 50, // Adjust the height to make it square
+        marginTop: '-13%',
+        marginLeft: '67%',
+        backgroundColor: '#e1d1f0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+    },
     buttonText: {
         color: 'white',
         fontSize: 15,
@@ -266,4 +283,4 @@ const MyCoaches = StyleSheet.create({
    
 });
 
-export default AllCoaches;
+export default Trainee_Sessions;

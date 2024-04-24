@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { useMutation } from 'urql';
 import { CreateCoachDocument } from '../../../generated-gql/graphql';
 import { CreateCoacheeDocument } from '../../../generated-gql/graphql';
-import ProfilePicture from '../../../components/ProfilePictureSvg';
 import SignupSuccessModal from '../../../components/PopUpModal';
 
 
@@ -56,8 +55,13 @@ const ChooseMovies = ({route}) => {
       });
     };
 
-  const areAnyChecked = Object.values(checkedMovies).some((value) => value);
-  const isMaxChecksReached = Object.values(checkedMovies).filter((value) => value).length >= 4;
+    const checkedCount = Object.values(checkedMovies).filter((value) => value).length;
+    const isMaxChecksReached = checkedCount === 3;
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
 
   const handleButtonPress = async () => {
 
@@ -193,11 +197,11 @@ const ChooseMovies = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate("SignUpCoachee")} style={styles.iconContainer}>
+      <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
       <Text style={styles.header}> Which genre of movies do you prefer to enjoy during your downtime?</Text>
-      <Text style={styles.subtitle}>Choose maximum of 3</Text>
+      <Text style={styles.subtitle}>Choose 3 Genres</Text>
 
       <View style={styles.checkboxContainer}>
         <CustomCheckBox checked={checkedMovies.Action} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Action')} />
@@ -209,10 +213,10 @@ const ChooseMovies = ({route}) => {
       </View>
 
       <TouchableOpacity
-        style={[styles.button, (!areAnyChecked || isMaxChecksReached) && styles.disabledButton]}
+        style={[styles.button, !isMaxChecksReached && styles.disabledButton]}
         onPress={handleButtonPress}
-        disabled={!areAnyChecked || isMaxChecksReached}
-      >
+        disabled={!isMaxChecksReached}
+        >
         <Text style={{ color: 'white', fontSize: 15, height: 40, paddingHorizontal: 10, paddingVertical: 10 }}>Sign Up</Text>
       </TouchableOpacity>
       <SignupSuccessModal visible={modalVisible} message={successMessage} />

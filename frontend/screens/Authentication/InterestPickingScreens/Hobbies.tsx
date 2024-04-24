@@ -40,10 +40,12 @@ const ChooseHobbies = ({route}) => {
       });
     };
 
-    const areAnyChecked = Object.values(checkedHobby).some((value) => value);
-    const isMaxChecksReached = Object.values(checkedHobby).filter((value) => value).length >= 4;
+    const checkedCount = Object.values(checkedHobby).filter((value) => value).length;
+    const isMaxChecksReached = checkedCount === 3;
 
-
+    const handleGoBack = () => {
+      navigation.goBack();
+    };
 
 const handleButtonPress = () => {
   // Filter out the selected hobbies
@@ -75,7 +77,7 @@ const handleButtonPress = () => {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity onPress={() => navigation.navigate("SignUpCoachee")} style={styles.iconContainer}>
+      <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
       <Text style={styles.header}> Which genre of music do you prefer to enjoy during your downtime?</Text>
@@ -91,11 +93,12 @@ const handleButtonPress = () => {
     
       </View>
 
+
       <TouchableOpacity
-        style={[styles.button, (!areAnyChecked || isMaxChecksReached) && styles.disabledButton]}
+        style={[styles.button, !isMaxChecksReached && styles.disabledButton]}
         onPress={handleButtonPress}
-        disabled={!areAnyChecked || isMaxChecksReached}
-      >
+        disabled={!isMaxChecksReached}
+        >
         <Text style={{ color: 'white', fontSize: 15, height: 40, paddingHorizontal: 10, paddingVertical: 10 }}>Continue</Text>
       </TouchableOpacity>
     </View>

@@ -37,3 +37,93 @@ mutation UpdateContactedStatus(
         id
     }
 }
+
+mutation UpdateBookingStatus($updateBookingStatusId: Int!, $input: UpdateBookingStatusInput!) {
+  updateBookingStatus(id: $updateBookingStatusId, input: $input) {
+    id
+    status
+    bookingSlots {
+      endTime
+      startTime
+      date
+    }
+    serviceType
+    additionalNotes
+  }
+}
+
+mutation UpdateBookingData($bookingId: Int!, $updateSlotsIds: [Int!]!, $deleteSlotsIds: [Int!]!, $bookingData: UpdateBookingInput!, $updateSlots: [UpdateBookingSlotInput!]!, $addSlots: [CreateBookingSlotInput!]!) {
+  updatePendingBooking(bookingId: $bookingId, updateSlotsIds: $updateSlotsIds, deleteSlotsIds: $deleteSlotsIds, bookingData: $bookingData, updateSlots: $updateSlots, addSlots: $addSlots) {
+    id
+    bookingSlots {
+      id
+      date
+      endTime
+      startTime
+    }
+    serviceType
+    additionalNotes
+  }
+}
+
+mutation UpdateCoachTask($updateCoachTaskId: Int!, $input: UpdateCoachTaskInput!) {
+  updateCoachTask(id: $updateCoachTaskId, input: $input) {
+    coach {
+      firstName
+      lastName
+      tasks {
+        active
+        description
+        id
+      }
+    }
+    description
+    id
+    title
+    updatedAt
+    completionStatus
+    createdAt
+    date
+    active
+  }
+}
+
+mutation UpdateCoacheeTask($updateCoachTaskId: Int!, $input: UpdateCoacheeTaskInput!) {
+  updateCoacheeTask(id: $updateCoachTaskId, input: $input) {
+    coachee {
+      firstName
+      lastName
+      tasks {
+        active
+        description
+        id
+      }
+    }
+    description
+    id
+    title
+    updatedAt
+    completionStatus
+    createdAt
+    date
+    active
+  }
+}
+
+mutation UpdateCoachInterests($input: [UpdateCoachInterestInput!]!) {
+  updateCoachInterests(input: $input) {
+    id
+    name
+    type
+    updatedAt
+  }
+}
+
+mutation UpdateCoacheeInterests($input: [UpdateCoacheeInterestInput!]!) {
+  updateCoacheeInterests(input: $input) {
+    id
+    name
+    type
+    updatedAt
+  }
+}

@@ -6,11 +6,16 @@ import {
     Image,
     ImageSourcePropType,
     TouchableOpacity
+    
 } from 'react-native';
 import StarRating from '../StarRating';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface Profile {
   id: string;
@@ -20,6 +25,7 @@ interface Profile {
   mainSport: string,
   about: string;
   workplaceAddress: string;
+
 }
 
 interface CoachProfilesProp {
@@ -72,7 +78,7 @@ const CoachProfiles: React.FC<CoachProfilesProp> = ({ profiles }) => {
 
 const CoachProfileStyle = StyleSheet.create({
     coachProfiles: {
-        paddingBottom: '5%',
+        paddingBottom: '15%',
         flexDirection: 'row',
         flexWrap: "wrap",
     },
@@ -83,7 +89,8 @@ const CoachProfileStyle = StyleSheet.create({
         width: '85%',
         height: "15%",
         overflow: "hidden",
-        borderRadius: 16  
+        borderRadius: 16,  
+
     },
     profileImage: {
         width: 40,
@@ -92,16 +99,17 @@ const CoachProfileStyle = StyleSheet.create({
         borderRadius: 20
     },
     coachBoxes: {
-        backgroundColor: "white",
-        marginTop: "4%",
-        marginLeft: "4%",
-        width: 150,
-        height: 140,
-        borderRadius: 16,  
-        borderColor: "#7E3FF0",
-        borderWidth: 1,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+      backgroundColor: 'white',
+      marginTop: '5%',
+      marginLeft: '5%', // Adjust the margin for better alignment
+      width: (screenWidth * 0.38), // Adjust the percentage as needed
+      height: (screenHeight * 0.19), // Adjust the percentage as needed
+      borderRadius: 16,
+      borderColor: '#7E3FF0',
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      
     },
     coachNameText: {
       textAlign: 'center',

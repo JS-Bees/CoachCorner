@@ -31,11 +31,21 @@ import ReviewsPage from './screens/ReviewsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
 import AllCoaches from './screens/AllCoaches';
-import EditInterests from './screens/EditInterests';
+import EditInterests from './screens/EditInterestsForCoachee';
+import EditInterestsForCoach from './screens/EditInterestForCoach';
 import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
 import ChatListPage from './screens/ChatLists';
 import CoachChatPage from './screens/ChatCoach';
 import CoachChatListsPage from './screens/ChatListsCoach';
+import Trainee_Sessions from './screens/TraineeSessions';
+import MyCoaches_alt from './screens/MyCoaches_alt';
+import ReschedulePage from './screens/BookingDrawers.tsx/ReschedulePage';
+import ProgressTracker from './screens/ProgressTrackerForCoach';
+import ProgressTrackerForCoachee from './screens/ProgressTrackerForCoachee';
+import AddTaskPage from './screens/AddTaskForCoachee';
+import AddTaskPageForCoach from './screens/AddTaskForCoach';
+import PreviewTask from './screens/PreviewTaskForCoach';
+import PreviewTaskForCoachee from './screens/PreviewTaskForCoachee';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
 registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
@@ -54,8 +64,9 @@ import {
     // dedupExchange,
     subscriptionExchange,
 } from 'urql';
-import MyCoaches_alt from './screens/MyCoaches_alt';
+
 import { createClient as createWSClient, SubscribePayload } from 'graphql-ws';
+
 const wsClient = createWSClient({
     url: 'ws://192.168.1.6:5050/graphql',
 });
@@ -106,6 +117,8 @@ export type RootStackParams = {
     ClientBookingDrawer: any;
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
+    CoachChatPage: any;
+    CoachChatListsPage: any;
     ClientAppointments: any;
     NewCoachDashboard: any;
     NewCoachProfile: any;
@@ -125,9 +138,16 @@ export type RootStackParams = {
     AllCoaches: any;
     NewBookingPage: any;
     EditInterests: any;
+    EditInterestForCoach: any;
     ChatList: any;
-    CoachChatPage: any;
-    CoachChatListsPage: any;
+    ProgressTracker: any;
+    ProgressTrackerForCoachee: any;
+    AddTaskPage: any;
+    Trainee_Sessions: any;
+    ReschedulePage: any;
+    AddTaskPageForCoachee: any;
+    PreviewTask: any;
+    PreviewTaskForCoachee: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -310,6 +330,36 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
+                        name="EditProfileForCoach"
+                        component={EditInterestsForCoach}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="AddTaskPage"
+                        component={AddTaskPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ReschedulePage"
+                        component={ReschedulePage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="AddTaskPageForCoach"
+                        component={AddTaskPageForCoach}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="PreviewTask"
+                        component={PreviewTask}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="PreviewTaskForCoachee"
+                        component={PreviewTaskForCoachee}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
                         name="CoachChatPage"
                         component={CoachChatPage}
                         options={{ headerShown: false }}
@@ -334,6 +384,8 @@ function TabNavigator() {
                 return 'sports';
             case 'Sessions':
                 return 'schedule';
+            case 'Taskboard':
+                return 'list';
             case 'Chats':
                 return 'chat';
             default:
@@ -370,7 +422,12 @@ function TabNavigator() {
             />
             <Tab.Screen
                 name="Sessions"
-                component={Booking_Sessions}
+                component={Trainee_Sessions}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Taskboard"
+                component={ProgressTrackerForCoachee}
                 options={{ headerShown: false }}
             />
             <Tab.Screen
@@ -391,6 +448,8 @@ function NewCoachTabNavigator() {
                 return 'sports';
             case 'Sessions':
                 return 'schedule';
+            case 'Taskboard':
+                return 'list';
             case 'Chats':
                 return 'chat';
             default:
@@ -427,7 +486,12 @@ function NewCoachTabNavigator() {
             />
             <CoachTab.Screen
                 name="Sessions"
-                component={ClientAppointments}
+                component={Booking_Sessions}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Taskboard"
+                component={ProgressTracker}
                 options={{ headerShown: false }}
             />
             <CoachTab.Screen

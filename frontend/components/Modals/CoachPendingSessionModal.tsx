@@ -1,26 +1,65 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Overlay, Icon } from '@rneui/themed';
-import Session from '../Profile Tiles/CoacheeSessionsTiles';
+import CoacheeSessions from '../Profile Tiles/CoacheeSessionsTiles';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UpdateBookingStatusDocument } from '../../generated-gql/graphql';
+import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
+import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
+import {format} from 'date-fns';
+import { Dimensions } from 'react-native';
 
-interface PendingSessionModalProps {
+interface SessionModalProps {
   visible: boolean;
-  session: Session | null;
+  session: CoacheeSessions | null;
   toggleOverlay: (session: Session | null) => void;
 }
 
-//have to refine the added data
-//have to refine this to fit criteria
+//make a component for custom start and end time 
+//make another component for multiple dates 
 
-const PendingSessionModal: React.FC<PendingSessionModalProps> = ({ visible, session, toggleOverlay }) => {
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
+const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  const [result, updateBookingStatus] = useMutation<UpdateBookingStatusMutation>(UpdateBookingStatusDocument);
+
+  
 
   const navigateToChat = () => {
     navigation.navigate('ChatPage');
   };
+
+  // const handleConfirmSchedule = () => {
+  //   if (session?.bookingId) {
+  //     const variables = {
+  //       updateBookingStatusId: session.bookingId,
+  //       input: { status: 'UPCOMING' }
+  //     };
+  //     updateBookingStatus(variables);
+  //     toggleOverlay(null); // Close the modal
+  //   } else {
+  //     console.error("Cannot update status ");
+  //   }
+  // };
+  
+  
+  useEffect(() => {
+    if (result.error) {
+      console.error('Error updating booking status:', result.error.message);
+    } else if (result.data) {
+      console.log('Booking status updated successfully:', result.data.updateBookingStatus);
+      // Optionally, you can perform actions based on the result, such as updating local state or displaying a success message
+    }
+  }, [result]);
+
+  console.log("Session in modal:", session)
+
+  
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
@@ -36,14 +75,14 @@ const PendingSessionModal: React.FC<PendingSessionModalProps> = ({ visible, sess
               </View>
             </TouchableOpacity>
           </View>
-            <Text style={styles.sessionName}>{session.coachName}</Text>
-            <Text style={styles.subtitleText}>You have yet to confirm the following sessions</Text>
+            <Text style={styles.sessionName}>{session.coacheeName}</Text>
+            <Text style={styles.subtitleText}>  Pending sessions with this trainee</Text>
           </>
         )}
 
         <View style={styles.contentContainer}>
-            <Text style={styles.titleText}>Sport</Text>
-            <Text style={styles.subtitleText}>{session?.sport}</Text>
+            <Text style={styles.titleText}>Service Type</Text>
+            <Text style={styles.subtitleText}>{session?.serviceType}</Text>
 
             <View style={styles.contentText}>
             <Text style={styles.titleText}>Time</Text>
@@ -57,13 +96,13 @@ const PendingSessionModal: React.FC<PendingSessionModalProps> = ({ visible, sess
             renderItem={({ item }) => (
             <View style={styles.timeRow}>
             <Text style={styles.subcontentText}>
-            {item.startTime} - {item.endTime}
+              {format(new Date(item.startTime), 'h:mm a')} - {format(new Date(item.endTime), 'h:mm a')}
             </Text>
       </View>
     )}
   />
          <FlatList
-    data={session?.date}
+    data={session?.date.map(item => format(new Date(item), 'MMMM d, EEEE'))}
     keyExtractor={(item, index) => index.toString()}
     renderItem={({ item }) => (
       <View style={styles.dateRow}>
@@ -75,17 +114,11 @@ const PendingSessionModal: React.FC<PendingSessionModalProps> = ({ visible, sess
   />
 </View>
 
+  <View style={styles.awaitingText}>
+      <Text style={styles.cancelText}>Awaiting trainee confirmation</Text>
+    </View>
 
-<View style={styles.buttons}>
-  <View style={styles.buttonContainer}>
-    <TouchableOpacity style={styles.cancelButton}>
-      <Text style={styles.cancelText}>Confirm all</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.button}>
-      <Text style={{ color: 'white', fontSize:  15, height:  55, paddingHorizontal:  15, paddingVertical:  10, fontWeight: "500" }}>Re-Schedule</Text>
-    </TouchableOpacity>
-  </View>
-</View>
+
 
 
       </View>
@@ -96,7 +129,7 @@ const PendingSessionModal: React.FC<PendingSessionModalProps> = ({ visible, sess
 const styles = StyleSheet.create({
   overlay: {
     borderRadius: 15,
-    height: "65%",
+    height: "75%",
     width: "85%",
   },
   container: {
@@ -160,8 +193,9 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 15,
-    fontWeight: "600",
-    color: "#FECB2E"
+    fontWeight: "500",
+    color: "#908D93",
+    justifyContent: "center"
   },
   buttons: {
     bottom: "-66%",
@@ -186,14 +220,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
   },
-  cancelButton: {
+  awaitingText: {
+    top: "35%",
     backgroundColor: 'transparent', // Set the background color for the cancel button
-    width:  140,
-    height:  45,
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
-    marginBottom:  10
   },
   dateText: {
     marginLeft: "15%",
@@ -211,4 +243,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PendingSessionModal;
+export default PendingModal;

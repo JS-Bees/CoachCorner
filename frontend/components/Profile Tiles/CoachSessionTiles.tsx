@@ -7,9 +7,13 @@ import {
     ImageSourcePropType,
     TouchableOpacity
 } from 'react-native';
-import PendingModal from '../Modals/CoachPendingSessionModal';
-import UpcomingModal from '../Modals/CoachUpcomingSessionModal';
+import CoacheePendingModal from '../Modals/CoacheePendingModal';
+import CoacheeUpcomingModal from '../Modals/CoacheeUpcomingModal';
 import { format} from 'date-fns';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface Session {
   coachName: string;
@@ -22,13 +26,13 @@ interface Session {
 }
 
 
-interface CoachSessionsProp {
+interface CoacheeSessionsProp {
   sessions: Session[];
 }
 
 
 
-const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
+const CoachSessions: React.FC<CoacheeSessionsProp> = ({ sessions }) => {
 
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false);
@@ -89,12 +93,12 @@ const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
         </TouchableOpacity>
       ))}
         
-        <PendingModal
+     <CoacheePendingModal
         visible={isPendingModalVisible}
         session={selectedSession}
         toggleOverlay={() => setPendingModalVisible(false)}
       />
-      <UpcomingModal
+      <CoacheeUpcomingModal
         visible={isUpcomingModalVisible}
         session={selectedSession}
         toggleOverlay={() => setUpcomingModalVisible(false)}
@@ -125,16 +129,16 @@ const CoachProfileStyle = StyleSheet.create({
         borderRadius: 20
     },
     coachBoxes: {
-        backgroundColor: "white",
-        marginTop: "5%",
-        marginLeft: "7%",
-        width: 155,
-        height: 150,
-        borderRadius: 16,  
-        borderColor: "#7E3FF0",
-        borderWidth: 1,
-        alignItems: 'center', 
-        justifyContent: 'center', 
+      backgroundColor: 'white',
+      marginTop: '5%',
+      marginLeft: '5%', // Adjust the margin for better alignment
+      width: (screenWidth * 0.4), // Adjust the percentage as needed
+      height: (screenHeight * 0.19), // Adjust the percentage as needed
+      borderRadius: 16,
+      borderColor: '#7E3FF0',
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     coachNameText: {
       textAlign: 'center',

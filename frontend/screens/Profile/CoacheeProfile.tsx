@@ -76,9 +76,7 @@ const CoacheeProfile = () => {
     };
     
 
-    const [mantra, setMantra] = React.useState(
-        coacheeData?.findCoacheeByID.mantra,
-    );
+    
     const [age, setAge] = React.useState('18');
     const [bio, setBio] = React.useState(coacheeData?.findCoacheeByID.bio);
     const [affliation, setAffiliate] = React.useState(
@@ -129,7 +127,7 @@ const CoacheeProfile = () => {
 
     useEffect(() => {
         if (coacheeData) {
-            setMantra(coacheeData.findCoacheeByID.mantra);
+          
             setBio(coacheeData.findCoacheeByID.bio);
             setAffiliate(coacheeData.findCoacheeByID.affiliations);
             setAddres(coacheeData.findCoacheeByID.address);
@@ -236,8 +234,6 @@ const CoacheeProfile = () => {
                 <TextInput
                     style={styles.mantraTextInput}
                     placeholder="Enter mantra"
-                    value={mantra}
-                    onChangeText={(text) => setMantra(text.substring(0, 25))}
                     editable={isEditing}
                     underlineColor="transparent"
                 />

@@ -6,7 +6,7 @@ import {
     Image,
     Platform,
 } from 'react-native';
-import React, { useState, } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,6 +14,11 @@ import CoacheeProfile from '../components/Profile Tiles/CoacheeProfileTile';
 import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import { useQuery } from 'urql';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FindCoacheesOfCoachDocument, FindCoachByIdDocument } from '../generated-gql/graphql';
+
+
 
 
 
@@ -22,11 +27,10 @@ const { width, height } = Dimensions.get('window');
 
 
 
-
 const MyClients_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const [userToken, setUserToken] = useState<string | null>(null);
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
     
@@ -39,52 +43,61 @@ const MyClients_alt = () => {
         navigation.goBack();
     };
 
-    const navigateToCoachProfile = () => {
-        navigation.navigate("NewCoachProfile");
+    const navigateToCoacheeProfile = () => {
+        navigation.navigate("CoacheePreviewPage");
     };
 
+    useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                setUserToken(token);
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
 
+        fetchUserToken();
+    }, []);
 
+    const useFetchCoacheeByUserID = (userID: string) => {
+        const [coacheeResult] = useQuery({
+            query: FindCoachByIdDocument,
+            variables: { userId: parseInt(userID) },
+        });
 
-    const AllTrainees: Profile[] = [ 
-        {
-            name: 'Angelina Maverick',
-            imageSource: require('../assets/angelina.jpg'),
-            mainSport: "Basketball",
-            achievements: "None at the moment",
-            affliations: "Basketball Charter",
-            about: "Angelina Maverick is a dedicated student with a passion for basketball. Despite facing challenges in taking basketball as part of her Physical Education curriculum, Angelina remains determined to improve her skills and overcome obstacles."
-            
+        return coacheeResult;
+    };
+
+    const { data: coachData } = useFetchCoacheeByUserID(userToken || '');
+
+    const [result] = useQuery({
+        query: FindCoacheesOfCoachDocument, 
+        variables: {
+            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
-        {
-            name: 'Jane Smith',
-            imageSource: require('../assets/Jane_Smith.png'),
-            mainSport: "Basketball",
-            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
-            affliations: "Basketball Charter, US Basketball Federation",
-           
-        },
-      
+    });
 
-    ];
 
-    const FavoriteTrainees: Profile[] = [ // max 2
-        {
-            name: 'John Doe',
-            imageSource: require('../assets/John_Doe.png'), 
-            mainSport: "Basketball",
-            about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
-     
-        },
-        {
-            name: 'Jane Smith',
-            imageSource: require('../assets/Jane_Smith.png'),
-            mainSport: "Basketball",
-            about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
-            affliations: "Basketball Charter, US Basketball Federation",
-        },
-        
-    ];
+    const { fetching, data, error } = result;
+    if (fetching) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>
+
+    const contacts = data?.findCoachByID.contacts;
+    if (!contacts) return <Text>No contacts found.</Text>;
+
+    
+
+   const FavoriteCoachees: Profile[] = contacts.map(contact => {
+        const coachee = contact.coachee;
+    
+        return {
+            id: contact.coacheeId,
+            name: `${coachee.firstName} ${coachee.lastName}`,
+            imageSource: {uri: coachee.profilePicture}
+        };
+    });
+    console.log(contacts)
 
 
 
@@ -101,10 +114,10 @@ const MyClients_alt = () => {
             </TouchableOpacity>
             </View>
             
-            <TouchableOpacity onPress={navigateToCoachProfile}>
+            <TouchableOpacity onPress={navigateToCoacheeProfile}>
             <Image
-                    source={require('../assets/Woman.png')} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%'}}/>
+                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
+                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
             
             </TouchableOpacity>
             
@@ -122,30 +135,13 @@ const MyClients_alt = () => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
 
-            <TouchableOpacity 
-            style={[
-                MyCoaches.AllCoachesButton,
-                activeButton === 'All' ? MyCoaches.activeButton : null, 
-            ]}
-                onPress={() => setActiveButton('All')}>
-            <Text style={MyCoaches.buttonText}>All Trainees</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
-            activeButton === 'Favorite' ? MyCoaches.activeButton : null,
-            ]}
-                onPress={() => setActiveButton('Favorite')}>
-            <Text style={MyCoaches.buttonText}>Favorite Trainees</Text>
-            </TouchableOpacity>
 
 
-
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
-               <View>
-               <CoacheeProfile coacheeProfiles={activeButton === 'All' ? AllTrainees : FavoriteTrainees}/>
-               </View>
-
-            </ScrollView>
+        <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,  left: 12}}>
+           <View>
+               <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
+           </View>
+        </ScrollView>
 
             </KeyboardAvoidingView>
 

@@ -309,17 +309,20 @@ export const updateCoachInterest = mutationField('updateCoachInterests', {
                         await context.db.coachInterest.findUnique({
                             where: { id },
                         });
+
                     if (!existingCoachInterest) {
                         throw new Error(
                             `Coach interest with ID ${id} not found.`,
                         );
                     }
+
                     return context.db.coachInterest.update({
                         where: { id },
                         data,
                     });
                 }),
             );
+
             return updatedCoachInterests;
         } catch (error) {
             // Handle validation errors or other exceptions

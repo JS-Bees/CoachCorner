@@ -1,18 +1,17 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, ImageSourcePropType, DrawerLayoutAndroid, ScrollView, Alert, TextInput, Animated} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, DrawerLayoutAndroid, ScrollView} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { useRef } from 'react';
 import { useState,useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoachByIdDocument, UpdateCoachProfileDocument } from '../../generated-gql/graphql';
-import { useMutation, useQuery } from 'urql';
+import { FindCoachByIdDocument } from '../../generated-gql/graphql';
+import {useQuery} from 'urql';
 import PagerView from 'react-native-pager-view';
-
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
-// import  Cloudinary  from "cloudinary-react-native";
+
+
 
 
 interface CoachProfile {
@@ -35,71 +34,11 @@ const NewCoachProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const pagerRef = useRef<PagerView>(null);
     const drawer = useRef<DrawerLayoutAndroid>(null);
-    const [drawerPosition] = useState<'left' | 'right'>('right');
+    const [drawerPosition, setDrawerPosition] = useState<'left' | 'right'>('right');
     const [activeTab, setActiveTab] = useState(0);
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
-
-    const [, executeMutation] = useMutation(UpdateCoachProfileDocument);
-
     
-    // Function to upload image to Cloudinary
-const uploadImageToCloudinary = async (imageObject: any) => {
-    try {
-      const uploadPreset = 'coachcorner';
-      const formData = new FormData();
-      formData.append('file', imageObject); // Append the Blob directly
-      formData.append('upload_preset', uploadPreset);
-
-
-      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const cloudinaryData = await cloudinaryResponse.json();
-      
-      return cloudinaryData.secure_url;
-    } catch (error) {
-      console.error('Error uploading image to Cloudinary:', error);
-      throw error;
-    }
- };
-
- const selectImage = async () => {
-    try {
-       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-       if (!permissionResult.granted) {
-         alert('Permission to access camera roll is required!');
-         return;
-       }
-   
-       const pickerResult = await ImagePicker.launchImageLibraryAsync();
-       if (pickerResult.canceled) {
-         return;
-       }
-       // Ensure you're accessing the first asset's uri
-       const imageUri = pickerResult.assets[0].uri;
-       
-       const imageObject = {
-        uri: imageUri,
-        type: `test/${imageUri.split('.')[1]}`,
-        name: `test.${imageUri.split('.')[1]}`
-       }
-
-       // Upload the selected image to Cloudinary
-       const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
-       setEditedProfilePicture(uploadedImageUrl)
-       console.log('Uploaded image URL:', uploadedImageUrl);
-   
-       // Here you can use the uploadedImageUrl as needed, e.g., updating your state or database
-   
-    } catch (error) {
-       console.error('Error picking an image:', error);
-    }
-   };
-    
-
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
         variables: {
@@ -107,27 +46,6 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         },
         requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
-
-    const [editedBio, setEditedBio] = useState<string>(coachData?.findCoachByID.bio || '');
-    const [editedAddress, setEditedAddress] = useState<string>(coachData?.findCoachByID.address || '');
-    const [editedProfilePicture, setEditedProfilePicture] = useState<string>(coachData?.findCoachByID.profilePicture || '');
-
-    useEffect(() => {
-        const fetchUserToken = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-                console.log('token', token);
-                setUserToken(token);
-                console.log(coachData?.findCoachByID?.firstName)
-                console.log(coachData?.findCoachByID.lastName)
-            } catch (error) {
-                console.error('Error fetching token:', error);
-            }
-        };
-    
-        fetchUserToken();
-    }, []);
-
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -146,47 +64,9 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     
 
     const toggleDrawer = () => {
-        if (drawer.current) {
-            drawer.current.openDrawer();
-        }
+        drawer.current?.openDrawer()
     };
 
-    const handleSaveChanges = async () => {
-        // Check if either bio or address is empty
-        if ((!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) || 
-            (editedBio.trim() === coachData?.findCoachByID.bio && 
-             editedAddress.trim() === coachData?.findCoachByID.address &&
-             editedProfilePicture.trim() === coachData?.findCoachByID.profilePicture)) 
-            {
-            Alert.alert('No changes made.');
-            return;
-        } 
-    
-        try {
-            await executeMutation({
-                updateCoachProfileId: parseInt(userToken),
-                input: {
-                    bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio || '',
-                    address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address || '',
-                    profilePicture: editedProfilePicture
-                }
-            });
-    
-            // Update the original bio and address if they were changed
-            if (editedBio.trim()) {
-                setEditedBio(editedBio);
-            }
-            if (editedAddress.trim()) {
-                setEditedAddress(editedAddress);
-            }
-    
-            // Close the drawer
-            drawer.current?.closeDrawer();
-        } catch (error) {
-            console.error('Error saving changes:', error);
-            Alert.alert('Error saving changes. Please try again.');
-        }
-    };
 
     const goToPage = (page: number) => {
         pagerRef.current?.setPage(page);
@@ -200,21 +80,25 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     };
 
     const handleNavigateBack = () => {
-        navigation.goBack();
-        // Clear the editedBio and editedAddress inputs when navigating back
-        setEditedBio('');
-        setEditedAddress('');
-    };
+        navigation.reset({
+            routes: [{ name: 'NewCoachDashboard' }],
+          });
+        };
 
     const handleNavigatetoEditInterests= () => {
-        navigation.navigate("EditProfile")
+        navigation.navigate("EditProfileForCoach")
     };
+
+    
+    const handleNavigateLogOut = () => {
+        navigation.navigate("LogIn")
+    }
  
     console.log(coachData?.findCoachByID.address)
     const CoachProfiles: CoachProfile[] = [
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
-            mainSport: coachData?.findCoachByID.sports.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
+            mainSport: coachData?.findCoachByID.sports?.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
             imageSource: coachData?.findCoachByID.profilePicture,
             about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",
@@ -227,40 +111,6 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         },
 
     ]
-    const [isEditMode, setIsEditMode] = useState(false);
-    const slideAnimation = useRef(new Animated.Value(0)).current;
-    const opacityAnimation = useRef(new Animated.Value(0)).current;
-
-
-    useEffect(() => {
-        if (isEditMode) {
-            Animated.parallel([
-                Animated.timing(slideAnimation, {
-                    toValue: 1,
-                    duration: 500,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnimation, {
-                    toValue: 1,
-                    duration: 500,
-                    useNativeDriver: true,
-                }),
-            ]).start();
-        } else {
-            Animated.parallel([
-                Animated.timing(slideAnimation, {
-                    toValue: 0,
-                    duration: 500,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(opacityAnimation, {
-                    toValue: 0,
-                    duration: 500,
-                    useNativeDriver: true,
-                }),
-            ]).start();
-        }
-    }, [isEditMode]);
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
@@ -268,35 +118,6 @@ const uploadImageToCloudinary = async (imageObject: any) => {
                 <Icon name="person-outline" size={30} color="#7E3FF0"/>
                 <Text style={styles.buttonText3}>Edit Profile</Text>
             </TouchableOpacity>
-            {isEditMode && (
-    <Animated.View style={{ transform: [{ translateY: slideAnimation }] }}>
-        <TouchableOpacity onPress={selectImage}>
-        <Image 
-    source={editedProfilePicture ? { uri: editedProfilePicture } : require('../../assets/add-image.png')}
-    style={styles.circleImage}
-/>
-        </TouchableOpacity>
-        <View style={styles.inputContainer}>
-            <TextInput
-                style={styles.input}
-                value={editedBio}
-                onChangeText={setEditedBio}
-                placeholder="Edit Bio"
-                multiline={true}
-            />
-            <TextInput
-                style={styles.input}
-                value={editedAddress}
-                onChangeText={setEditedAddress}
-                placeholder="Edit Address"
-            />
-        </View>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-            <Text style={styles.buttonText2}>Save Changes</Text>
-        </TouchableOpacity>
-    </Animated.View>
-)}
-
             <TouchableOpacity style={styles.drawerButton} > 
                 <Icon name="settings-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Account Settings</Text>
@@ -313,7 +134,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
                 <Icon name="information-circle-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Privacy Policy</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.logOutButton} > 
+            <TouchableOpacity style={styles.logOutButton} onPress={handleNavigateLogOut}> 
                 <Icon name="log-out-outline" size={30} color="#7E3FF0" />
                 <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
@@ -463,7 +284,7 @@ const styles = StyleSheet.create({
     },
     drawerContainer: {
         flex: 1,
-        top: "15%",
+        top: "10%",
         left: "10%",
         backgroundColor: '#fff',
         alignItems: 'flex-start',

@@ -9,6 +9,11 @@ import {
 } from 'react-native';
 import PendingModal from '../Modals/CoachPendingSessionModal';
 import UpcomingModal from '../Modals/CoachUpcomingSessionModal';
+import { Dimensions } from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
 import { format} from 'date-fns';
 
 interface Session {
@@ -128,8 +133,8 @@ const CoachProfileStyle = StyleSheet.create({
         backgroundColor: "white",
         marginTop: "5%",
         marginLeft: "7%",
-        width: 155,
-        height: 150,
+        width: (screenWidth * 0.4), // Adjust the percentage as needed
+        height: (screenHeight * 0.19), // Adjust the percentage as needed
         borderRadius: 16,  
         borderColor: "#7E3FF0",
         borderWidth: 1,
