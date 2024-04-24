@@ -66,7 +66,7 @@ import {
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.4:5050/graphql',
+    url: 'http://192.168.254.142:5050/graphql',
     // url: apiUrl!,
     exchanges: [cacheExchange, fetchExchange],
 });

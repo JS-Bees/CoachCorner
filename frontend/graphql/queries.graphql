@@ -90,6 +90,7 @@ query FindCoachesBySport($sportType: String!) {
     lastName
     bio
     address
+    profilePicture
     reviews {
       starRating
       comment
