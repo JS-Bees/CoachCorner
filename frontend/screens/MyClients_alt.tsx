@@ -44,7 +44,7 @@ const MyClients_alt = () => {
     };
 
     const navigateToCoacheeProfile = () => {
-        navigation.navigate('CoacheePreviewPage');
+        navigation.navigate('NewCoachProfile');
     };
 
     useEffect(() => {
@@ -96,6 +96,7 @@ const MyClients_alt = () => {
                 imageSource: { uri: coachee.profilePicture },
                 contactId: contact.id,
                 contactedStatus: contact.contactedStatus,
+                about: coachee.bio,
             };
         });
 

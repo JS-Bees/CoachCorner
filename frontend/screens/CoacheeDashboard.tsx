@@ -201,35 +201,37 @@ if (matchedCoaches.length === 0) {
 console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`));
 const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`);
 
-    const TopCoaches: Profile[] = [
-        //max 2
-        {   
-            id: 1,
-            name: 'Serena Williams',
-            imageSource: require('../assets/Serena_Williams_at_2013_US_Open.jpg'),
-            gainedStars: 3,
-            mainSport: 'Tennis',
-            about: "Serena Jameka Williams is an American former professional tennis player.Widely regarded as one of the greatest tennis players of all time, she was ranked world No. 1 in singles by the Women's Tennis.",
-            workplaceAddress:
-                'So Farms, LL (Company) 6671 W. Indiantown RoadSuite 50-420 Jupiter, FL 33458',
-        },
-        {   
-            id: 2,
-            name: 'Kobe Brian',
-            imageSource: require('../assets/Kobe_Brian.jpg'),
-            gainedStars: 5,
-            mainSport: 'Basketball',
-            about: 'Kobe Bean Bryant was an American professional basketball player. A shooting guard, he spent his entire 20-year career with the Los Angeles Lakers in the National Basketball Association',
-            workplaceAddress: '1551 N. Tustin Ave.Santa Ana, CA 92705',
-        },
-    ];
+const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png');
+
+// Define the top coaches, using the default image if a coach's profile picture is missing or empty
+const TopCoaches: Profile[] = (coachData?.coaches || []).slice(0, 2).map((coach) => {
+    const isProfilePictureDefault = coach.profilePicture === "profile picture"; // Condition to check if it's the placeholder
+
+    const profileImage = isProfilePictureDefault 
+        ? DEFAULT_PROFILE_PICTURE  // Use the default picture
+        : { uri: coach.profilePicture }; // Use the coach's actual profile picture if it's valid and not the placeholder
+
+    return {
+        id: coach.id,
+        name: `${coach.firstName} ${coach.lastName}`,
+        imageSource: profileImage, // Use the appropriate profile image
+        gainedStars: coach.reviews.reduce((acc, review) => acc + review.starRating, 0),
+        mainSport: coach.sports.length > 0 ? coach.sports[0].type : 'Unknown',
+        about: coach.bio,
+        workplaceAddress: coach.address,
+    };
+}) || [];
+
 
     const RecommendedCoaches: Profile[] = [
         // max 2
         {   
             id: matchedCoaches[0]?.coach?.id || 0, 
             name: matchedCoachesNames[0],
-            imageSource: require('../assets/John_Doe.png'),
+              // Conditional check: if profilePicture is "profile picture", use the default image
+            imageSource: matchedCoaches[0]?.coach?.profilePicture === "profile picture" 
+            ? DEFAULT_PROFILE_PICTURE 
+            : { uri: matchedCoaches[0]?.coach?.profilePicture },
             gainedStars: matchedCoaches[0]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
             mainSport: matchedCoaches[0]?.coach?.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
             about: matchedCoaches[0]?.coach?.bio,
@@ -238,7 +240,9 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
         {   
             id: matchedCoaches[1]?.coach?.id || 0, 
             name: matchedCoachesNames[1],
-            imageSource: require('../assets/Kobe_Brian.jpg'),
+            imageSource: matchedCoaches[1]?.coach?.profilePicture === "profile picture" 
+            ? DEFAULT_PROFILE_PICTURE 
+            : { uri: matchedCoaches[1]?.coach?.profilePicture },
             gainedStars: matchedCoaches[1]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
             mainSport: matchedCoaches[1]?.coach?.sports.length > 0 ? matchedCoaches[1].coach.sports[0].type : "Unknown",
             about: matchedCoaches[1]?.coach?.bio,
