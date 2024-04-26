@@ -6,34 +6,34 @@ import {
     Image,
     Platform,
 } from 'react-native';
-import React, { useEffect, useState, } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CoacheeProfile from '../components/Profile Tiles/CoacheeProfileTile';
 import { SearchBar } from '@rneui/themed';
-import Icon from 'react-native-vector-icons/Ionicons'
-import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+    ScrollView,
+    KeyboardAvoidingView,
+    TouchableOpacity,
+} from 'react-native';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoacheesOfCoachDocument, FindCoachByIdDocument } from '../generated-gql/graphql';
-
-
-
-
+import {
+    FindCoacheesOfCoachDocument,
+    FindCoachByIdDocument,
+} from '../generated-gql/graphql';
 
 const { width, height } = Dimensions.get('window');
 
-
-
-
 const MyClients_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation =
+        useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null);
-    const [searchText, setSearchText] = useState(''); 
+    const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
-    
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
@@ -44,7 +44,7 @@ const MyClients_alt = () => {
     };
 
     const navigateToCoacheeProfile = () => {
-        navigation.navigate("CoacheePreviewPage");
+        navigation.navigate('CoacheePreviewPage');
     };
 
     useEffect(() => {
@@ -72,80 +72,85 @@ const MyClients_alt = () => {
     const { data: coachData } = useFetchCoacheeByUserID(userToken || '');
 
     const [result] = useQuery({
-        query: FindCoacheesOfCoachDocument, 
+        query: FindCoacheesOfCoachDocument,
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
     });
 
-
     const { fetching, data, error } = result;
     if (fetching) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error.message}</Text>
+    if (error) return <Text>Error: {error.message}</Text>;
 
     const contacts = data?.findCoachByID.contacts;
     if (!contacts) return <Text>No contacts found.</Text>;
 
-    
+    const FavoriteCoachees: Profile[] = contacts
+        .filter((contact) => contact.contactedStatus === true)
+        .map((contact) => {
+            const coachee = contact.coachee;
 
-   const FavoriteCoachees: Profile[] = contacts.map(contact => {
-        const coachee = contact.coachee;
-    
-        return {
-            id: contact.coacheeId,
-            name: `${coachee.firstName} ${coachee.lastName}`,
-            imageSource: {uri: coachee.profilePicture}
-        };
-    });
-    console.log(contacts)
+            return {
+                id: contact.coacheeId,
+                name: `${coachee.firstName} ${coachee.lastName}`,
+                imageSource: { uri: coachee.profilePicture },
+                contactId: contact.id,
+                contactedStatus: contact.contactedStatus,
+            };
+        });
 
-
-
-   
+    console.log(contacts);
 
     return (
         <View style={MyCoaches.container}>
-            <View style={MyCoaches.nameAndGreetingsContainer}>
-        
-            </View>
+            <View style={MyCoaches.nameAndGreetingsContainer}></View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={handleNavigateBack}>
-            <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
-            </TouchableOpacity>
+                <TouchableOpacity onPress={handleNavigateBack}>
+                    <Icon
+                        name="arrow-back-circle-outline"
+                        size={30}
+                        color="#7E3FF0"
+                    />
+                </TouchableOpacity>
             </View>
-            
+
             <TouchableOpacity onPress={navigateToCoacheeProfile}>
-            <Image
-                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%',  borderRadius: 20,}}/>
-            
+                <Image
+                    source={{ uri: coachData?.findCoachByID.profilePicture }} // Add your profile image source here
+                    style={{
+                        width: 40,
+                        height: 40,
+                        marginLeft: '83%',
+                        marginTop: '-10%',
+                        borderRadius: 20,
+                    }}
+                />
             </TouchableOpacity>
-            
 
             <KeyboardAvoidingView
-            style={MyCoaches.container}
-            behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            <View style={MyCoaches.searchContainer}>
-                <SearchBar
-                 placeholder='Search for a sport'
-                 onChangeText={handleSearchChange}
-                 value={searchText}
-                 platform='android'
-                 containerStyle={MyCoaches.searchBarContainer}
-                 inputContainerStyle={MyCoaches.searchBarInputContainer}/>
-            </View>
+                style={MyCoaches.container}
+                behavior={Platform.OS === 'android' ? 'height' : 'padding'}
+            >
+                <View style={MyCoaches.searchContainer}>
+                    <SearchBar
+                        placeholder="Search for a sport"
+                        onChangeText={handleSearchChange}
+                        value={searchText}
+                        platform="android"
+                        containerStyle={MyCoaches.searchBarContainer}
+                        inputContainerStyle={MyCoaches.searchBarInputContainer}
+                    />
+                </View>
 
-
-
-        <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,  left: 12}}>
-           <View>
-               <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
-           </View>
-        </ScrollView>
-
+                <ScrollView
+                    contentInsetAdjustmentBehavior="scrollableAxes"
+                    style={{ marginTop: '1%', height: 250, left: 12 }}
+                >
+                    <View>
+                        <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
+                    </View>
+                </ScrollView>
             </KeyboardAvoidingView>
-
-
         </View>
     );
 };
@@ -165,14 +170,11 @@ const MyCoaches = StyleSheet.create({
         zIndex: 0, // Set a lower z-index to put it behind topContainer
     },
 
-
     nameAndGreetingsContainer: {
-        paddingTop:"25%",
+        paddingTop: '25%',
         marginLeft: '25%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
-
-    
 
     middleContainer: {
         flex: 1,
@@ -198,16 +200,16 @@ const MyCoaches = StyleSheet.create({
         alignItems: 'center',
     },
     iconContainer: {
-        marginTop: "-10%",
+        marginTop: '-10%',
         marginLeft: '9%',
-        flexDirection: 'row', 
+        flexDirection: 'row',
     },
     imageLabel: {
         fontFamily: 'Roboto',
         fontWeight: '800',
         fontSize: 15,
         color: '#483B5F',
-        top: -2
+        top: -2,
     },
     imageStyle: {
         width: 65,
@@ -230,18 +232,17 @@ const MyCoaches = StyleSheet.create({
     },
 
     searchBarInputContainer: {
-
         height: '100%', // Match the height of the container
     },
 
     frameContainer: {
-        backgroundColor: "#7E3FF0",
-        marginTop: "5%",
-        marginLeft: "7%",
+        backgroundColor: '#7E3FF0',
+        marginTop: '5%',
+        marginLeft: '7%',
         width: '85%',
-        height: "15%",
-        overflow: "hidden",
-        borderRadius: 16  
+        height: '15%',
+        overflow: 'hidden',
+        borderRadius: 16,
     },
     AllCoachesButton: {
         width: 110, // Adjust the width to make it square
@@ -269,9 +270,8 @@ const MyCoaches = StyleSheet.create({
         lineHeight: 24,
     },
     activeButton: {
-        backgroundColor: '#7E3FF0'
-    }
-   
+        backgroundColor: '#7E3FF0',
+    },
 });
 
 export default MyClients_alt;

@@ -124,6 +124,7 @@ query FindFavoriteCoaches($userId: Int!) {
 query FindCoacheesOfCoach($userId: Int!) {
     findCoachByID(userID: $userId) {
         contacts {
+            id
             coacheeId
             contactedStatus
             coachee {

@@ -42,7 +42,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // Console logs
     // console.log('Sender Name:', chatMessage.sender);
     // console.log('image url', chatMessage.imageUrl.uri);
-    // console.log('Contact ID', chatMessage.id);
+    console.log('Contact IDzzz', chatMessage.id);
     // console.log('Type of Contact ID', typeof chatMessage.id);
     console.log('Contacted Status', chatMessage.contactedStatus);
 
