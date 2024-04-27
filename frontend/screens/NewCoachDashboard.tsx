@@ -198,10 +198,7 @@ const NewCoachDashboard = () => {
             </KeyboardAvoidingView>
 
             
-         
-            
-
-             
+    
         </View>
     );
 };

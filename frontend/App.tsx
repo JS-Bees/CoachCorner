@@ -28,6 +28,7 @@ import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieG
 import PreviewPage from './screens/PreviewPage';
 import CoacheePreviewPage from './screens/CoacheePreviewPage';
 import ReviewsPage from './screens/ReviewsPage';
+import CredentialsPage from './screens/credentialsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
 import AllCoaches from './screens/AllCoaches';
@@ -132,6 +133,7 @@ export type RootStackParams = {
     SplashScreen: any;
     PreviewPage: any;
     ReviewsPage: any;
+    CredentialsPage: any;
     BookingSessions: any;
     NotificationPage: any;
     CoacheePreviewPage: any;
@@ -312,6 +314,11 @@ export default function App() {
                     <RootStack.Screen
                         name="ReviewsPage"
                         component={ReviewsPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CredentialsPage"
+                        component={CredentialsPage}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen

@@ -60,6 +60,14 @@ query FindCoachByID($userId: Int!) {
         bio
         address
         profilePicture
+        sports {
+            type
+        }  
+        sports {
+            sportsCredentials {
+            credentialPicture
+        }
+        } 
         interests {
             id
             type

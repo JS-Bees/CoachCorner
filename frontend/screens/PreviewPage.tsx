@@ -115,6 +115,12 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             profile: profile,
         });
     };
+    const handleSeeCredentialsPress = () => {
+        // Pass the coach ID to the CredentialsPage
+        navigation.navigate('CredentialsPage', {
+          coachId: profile.id, // Passing the coach ID
+        });
+      };
 
     const { profile, gainedStars } = route.params || {};
 
@@ -168,8 +174,11 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             <View style={styles.starsContainer}>
                 {renderStars()}
                 <View style={styles.reviewsContainer}>
-                    <TouchableOpacity onPress={handleSeeReviewsPress}>
+                    <TouchableOpacity onPress={handleSeeReviewsPress}style={styles.gap}>
                         <Text style={styles.reviewText}>See Reviews</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleSeeCredentialsPress} style={styles.gap}>
+                        <Text style={styles.reviewText}>See Credentials</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -285,9 +294,12 @@ const styles = StyleSheet.create({
     left: "1.5%"
   },
   reviewsContainer: {
-   position: "absolute",
-   bottom: "90%",
-   left: "30%"
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Adjust alignment of extra buttons
+    alignItems: 'center',
+  },
+  gap: {
+    marginLeft: "5%", // Adjust the spacing between the buttons
   },
   reviewText: {
     fontWeight: "500",
