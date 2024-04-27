@@ -125,7 +125,9 @@ const ChatListPage: React.FC = () => {
                     (message) => message.contactId === contact.id,
                 );
                 const messageContent = messageForContact
-                    ? messageForContact.content
+                    ? messageForContact.content.endsWith(',;,')
+                        ? messageForContact.content.slice(0, -3)
+                        : messageForContact.content
                     : 'No messages yet';
 
                 return {

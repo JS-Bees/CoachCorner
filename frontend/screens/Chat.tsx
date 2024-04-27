@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
+    ViewStyle,
     SafeAreaView,
     FlatList,
     Dimensions,
@@ -158,11 +159,32 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // if (!result.data) return <Text>No data received yet.</Text>;
 
     // Render each message item
-    const renderMessageItem = ({ item }: { item: string }) => (
-        <View style={styles.chatBubble}>
-            <Text style={styles.messageText}>{item}</Text>
-        </View>
-    );
+    const renderMessageItem = ({ item }: { item: string }) => {
+        // Check if the item ends with ',;,'
+        const isLeftAligned = item.endsWith(',;,');
+        // Remove ',;,' from the item if it exists
+        const messageContent = isLeftAligned ? item.slice(0, -3) : item;
+
+        return (
+            <View
+                style={[
+                    isLeftAligned
+                        ? styles.chatBubbleLeft
+                        : styles.chatBubbleRight,
+                ]}
+            >
+                <Text
+                    style={[
+                        isLeftAligned
+                            ? styles.messageTextLeft
+                            : styles.messageTextRight,
+                    ]}
+                >
+                    {messageContent}
+                </Text>
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -318,7 +340,7 @@ const styles = StyleSheet.create({
     focusedInput: {
         borderColor: '#7E3FF0', // Change the border color to your desired color
     },
-    chatBubble: {
+    chatBubbleRight: {
         backgroundColor: '#7E3FF0',
         borderRadius: 15,
         padding: 10,
@@ -326,8 +348,19 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end', // Align the chat bubble to the right
         flexWrap: 'wrap', // Allow the bubble to grow according to the content
     },
-    messageText: {
+    chatBubbleLeft: {
+        backgroundColor: 'lightgray',
+        borderRadius: 15,
+        padding: 10,
+        marginBottom: 10,
+        alignSelf: 'flex-start', // Align the chat bubble to the left
+        flexWrap: 'wrap', // Allow the bubble to grow according to the content
+    },
+    messageTextRight: {
         color: 'white',
+    },
+    messageTextLeft: {
+        color: 'black',
     },
 });
 
