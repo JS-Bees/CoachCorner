@@ -115,6 +115,12 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             profile: profile,
         });
     };
+    const handleSeeCredentialsPress = () => {
+        // Pass the coach ID to the CredentialsPage
+        navigation.navigate('CredentialsPage', {
+          coachId: profile.id, // Passing the coach ID
+        });
+      };
 
     const { profile, gainedStars } = route.params || {};
 
@@ -168,8 +174,11 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             <View style={styles.starsContainer}>
                 {renderStars()}
                 <View style={styles.reviewsContainer}>
-                    <TouchableOpacity onPress={handleSeeReviewsPress}>
+                    <TouchableOpacity onPress={handleSeeReviewsPress}style={styles.gap}>
                         <Text style={styles.reviewText}>See Reviews</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleSeeCredentialsPress} style={styles.gap}>
+                        <Text style={styles.reviewText}>See Credentials</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -239,154 +248,157 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+  container: {
+    flex: 1,
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative', 
+  },
+  profileImage: {
+    width: "100%", 
+    height: "50%",
+    resizeMode: 'cover', 
+    marginTop: "-110%"
+  },
+  iconContainer: {
+    position: 'absolute',
+    top: "7%",
+    left: "6%",
+    zIndex: 1,
+  },
+  heartIconContainer: {
+    position: 'absolute',
+    top: "6%",
+    left: "5%",
+    zIndex: 1,
+    flexDirection: "row",
+    marginLeft: "85%"
+  },
+  header: {
+    position: 'absolute',
+    bottom: "45%", 
+    alignItems: 'center',
+    left: "5%"
+  },
+  name: {
+    fontFamily: "Roboto",
+    fontWeight: '200',
+    fontSize: 25
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    bottom: "84%",
+    left: "1.5%"
+  },
+  reviewsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Adjust alignment of extra buttons
+    alignItems: 'center',
+  },
+  gap: {
+    marginLeft: "5%", // Adjust the spacing between the buttons
+  },
+  reviewText: {
+    fontWeight: "500",
+    fontSize: 15,
+    color: "#7E3FF0"
+  },
+  content: {
+    position: 'absolute',
+    bottom: "36%", // Adjust this value to move the name up or down
+    alignItems: 'center',
+    left: "5%"
+  },
+  aboutText: {
+    fontFamily: "Roboto",
+    fontWeight: '200',
+    fontSize: 20
+  },
+  aboutContainer:{
+    position: 'absolute',
+    bottom: "35%", // Adjust this value to move the address text up or down
+    left: "6%",
+    width: "85%"
+  },
+  about: {
+    position: "absolute",
+    textAlign: "justify",
+    lineHeight: 20, // Adjust line height as needed
+    fontFamily: "Roboto",
+    fontWeight: '200',
+    color: '#908D93',
+  },
+  buttonContainer:{
+    position: 'absolute',
+    bottom: "2%", 
+    alignItems: 'center',
+    left: "3%",
+    width: "85%"
+  },
+  button: {
+    marginTop: '5%',
+    marginLeft: '11%',
+    backgroundColor: '#7E3FF0',
+    width: 350,
+    height: 50,
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  addressContainer: {
+    position: 'absolute',
+    bottom: "20%", // Adjust this value to move the title up or down
+    alignItems: 'center',
+    left: "5%"
+  },
+  worplaceAddressContainer: {
+    position: 'absolute',
+    bottom: "19%", // Adjust this value to move the address text up or down
+    left: "6%",
+    width: "85%"
+  },
+  workplaceAddressText: {
+    position: "absolute",
+    textAlign: "justify",
+    lineHeight: 20, // Adjust line height as needed
+    fontFamily: "Roboto",
+    fontWeight: '200',
+    color: '#908D93',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
     },
-    imageContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-    },
-    profileImage: {
-        width: '100%',
-        height: '50%',
-        resizeMode: 'cover',
-        marginTop: '-110%',
-    },
-    iconContainer: {
-        position: 'absolute',
-        top: '7%',
-        left: '6%',
-        zIndex: 1,
-    },
-    heartIconContainer: {
-        position: 'absolute',
-        top: '6%',
-        left: '5%',
-        zIndex: 1,
-        flexDirection: 'row',
-        marginLeft: '85%',
-    },
-    header: {
-        position: 'absolute',
-        bottom: '45%',
-        alignItems: 'center',
-        left: '5%',
-    },
-    name: {
-        fontFamily: 'Roboto',
-        fontWeight: '200',
-        fontSize: 25,
-    },
-    starsContainer: {
-        flexDirection: 'row',
-        bottom: '84%',
-        left: '1.5%',
-    },
-    reviewsContainer: {
-        position: 'absolute',
-        bottom: '90%',
-        left: '30%',
-    },
-    reviewText: {
-        fontWeight: '500',
-        fontSize: 15,
-        color: '#7E3FF0',
-    },
-    content: {
-        position: 'absolute',
-        bottom: '36%', // Adjust this value to move the name up or down
-        alignItems: 'center',
-        left: '5%',
-    },
-    aboutText: {
-        fontFamily: 'Roboto',
-        fontWeight: '200',
-        fontSize: 20,
-    },
-    aboutContainer: {
-        position: 'absolute',
-        bottom: '25%',
-        alignItems: 'center',
-        left: '6%',
-        width: '85%',
-    },
-    about: {
-        textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
-        fontFamily: 'Roboto',
-        fontWeight: '200',
-        color: '#908D93',
-    },
-    buttonContainer: {
-        position: 'absolute',
-        bottom: '2%',
-        alignItems: 'center',
-        left: '3%',
-        width: '85%',
-    },
-    button: {
-        marginTop: '5%',
-        marginLeft: '11%',
-        backgroundColor: '#7E3FF0',
-        width: 350,
-        height: 50,
-        borderRadius: 15,
-        alignItems: 'center',
-    },
-    addressContainer: {
-        position: 'absolute',
-        bottom: '20%', // Adjust this value to move the title up or down
-        alignItems: 'center',
-        left: '5%',
-    },
-    worplaceAddressContainer: {
-        position: 'absolute',
-        bottom: '19%', // Adjust this value to move the address text up or down
-        left: '6%',
-        width: '85%',
-    },
-    workplaceAddressText: {
-        position: 'absolute',
-        textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
-        fontFamily: 'Roboto',
-        fontWeight: '200',
-        color: '#908D93',
-    },
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 22,
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalText: {
-        fontSize: 15,
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-    loader: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        zIndex: 9999,
-    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    fontSize: 15,
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  loader: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    zIndex: 9999,
+  },
 });
 
 export default PreviewPage;

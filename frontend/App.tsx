@@ -28,6 +28,7 @@ import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieG
 import PreviewPage from './screens/PreviewPage';
 import CoacheePreviewPage from './screens/CoacheePreviewPage';
 import ReviewsPage from './screens/ReviewsPage';
+import CredentialsPage from './screens/credentialsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
 import AllCoaches from './screens/AllCoaches';
@@ -68,13 +69,13 @@ import {
 import { createClient as createWSClient, SubscribePayload } from 'graphql-ws';
 
 const wsClient = createWSClient({
-    url: 'ws://192.168.1.6:5050/graphql',
+    url: 'ws://192.168.254.142:5050/graphql',
 });
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.6:5050/graphql',
+    url: 'http://192.168.254.142:5050/graphql',
     // url: apiUrl!,
     // fetchSubscriptions: true, // added this to try and fix fetching
     exchanges: [
@@ -132,6 +133,7 @@ export type RootStackParams = {
     SplashScreen: any;
     PreviewPage: any;
     ReviewsPage: any;
+    CredentialsPage: any;
     BookingSessions: any;
     NotificationPage: any;
     CoacheePreviewPage: any;
@@ -315,6 +317,11 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
+                        name="CredentialsPage"
+                        component={CredentialsPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
                         name="NotificationPage"
                         component={NotificationPage}
                         options={{ headerShown: false }}
@@ -480,7 +487,7 @@ function NewCoachTabNavigator() {
                 options={{ headerShown: false }}
             />
             <CoachTab.Screen
-                name="Trainees"
+                name="Trainees" 
                 component={MyClients_alt}
                 options={{ headerShown: false }}
             />

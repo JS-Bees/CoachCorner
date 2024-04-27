@@ -60,6 +60,14 @@ query FindCoachByID($userId: Int!) {
         bio
         address
         profilePicture
+        sports {
+            type
+        }  
+        sports {
+            sportsCredentials {
+            credentialPicture
+        }
+        } 
         interests {
             id
             type
@@ -131,6 +139,7 @@ query FindCoacheesOfCoach($userId: Int!) {
                 firstName
                 lastName
                 profilePicture
+                bio
             }
         }
     }
@@ -204,6 +213,7 @@ query GetSortedCoaches {
         lastName
         bio
         address
+        profilePicture
         sports {
             type
         }

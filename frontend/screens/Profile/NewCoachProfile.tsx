@@ -6,10 +6,11 @@ import { RootStackParams } from '../../App';
 import { useRef } from 'react';
 import { useState,useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FindCoachByIdDocument } from '../../generated-gql/graphql';
-import {useQuery} from 'urql';
+import { CreateSportsCredentialsDocument, FindCoachByIdDocument } from '../../generated-gql/graphql';
+import {useQuery, useMutation} from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker'; 
 
 
 
@@ -37,6 +38,9 @@ const NewCoachProfile = () => {
     const [drawerPosition, setDrawerPosition] = useState<'left' | 'right'>('right');
     const [activeTab, setActiveTab] = useState(0);
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for selected image
+    const [, executeMutation] = useMutation(CreateSportsCredentialsDocument); // Mutation to update sports credentials
+
 
     
     const [{ data: coachData, fetching, error }] = useQuery({
@@ -60,7 +64,73 @@ const NewCoachProfile = () => {
     
         fetchUserToken();
     }, []);
-    
+    const uploadImageToCloudinary = async (imageObject: any) => {
+        const uploadPreset = 'coachcorner';
+        const formData = new FormData();
+        formData.append('file', imageObject);
+        formData.append('upload_preset', uploadPreset);
+
+        const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const cloudinaryData = await cloudinaryResponse.json();
+        return cloudinaryData.secure_url;
+    };
+
+
+  // Function to select and upload the image
+  const selectImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      alert('Permission to access the media library is required.');
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync();
+
+    if (pickerResult.canceled) {
+      return;
+    }
+
+    const imageUri = pickerResult.assets[0].uri;
+
+    const imageObject = {
+      uri: imageUri,
+      type: `image/${imageUri.split('.').pop()}`,
+      name: `image.${imageUri.split('.').pop()}`,
+    };
+
+    const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
+    setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
+
+    // After uploading to Cloudinary, create sports credentials
+        // Store the uploaded image and create sports credentials
+    setSelectedImage(uploadedImageUrl);
+    createSportsCredentials(uploadedImageUrl);
+  };
+
+  // Function to create sports credentials with the uploaded image URL
+  const createSportsCredentials = async (imageUrl: any) => {
+    try {
+      const result = await executeMutation({
+        input: {
+          credentialPicture: imageUrl,
+          sportId: parseInt(userToken), // Example sport ID, adjust as needed
+        },
+      });
+
+      if (result.error) {
+        console.error('Error creating sports credentials:', result.error.message);
+      } else {
+        // If successful, update the latest image and refetch data
+      }
+    } catch (error) {
+      console.error('Error creating sports credentials:', error);
+    }
+  };
     
 
     const toggleDrawer = () => {
@@ -93,12 +163,24 @@ const NewCoachProfile = () => {
     const handleNavigateLogOut = () => {
         navigation.navigate("LogIn")
     }
+    //Get the latest sports credential picture from the coach data
+
+  // Get the sports credentials array
+const sportsCredentials = coachData?.findCoachByID?.sports?.[0]?.sportsCredentials;
+
+// Get the last credential picture from the sports credentials array
+const latestCredentialPicture = sportsCredentials
+  ? sportsCredentials[sportsCredentials.length - 1]?.credentialPicture
+  : null;
+
  
     console.log(coachData?.findCoachByID.address)
     const CoachProfiles: CoachProfile[] = [
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
-            mainSport: coachData?.findCoachByID.sports?.map(sport => sport.type).join(', ') , // Map over sports array and join them"V 
+            mainSport: (coachData?.findCoachByID.sports && coachData.findCoachByID.sports.length > 0)
+            ? coachData.findCoachByID.sports[0].type // Accessing the type from the first sport in the array
+            : "No sports listed", // Fallback if no sports are found
             imageSource: coachData?.findCoachByID.profilePicture,
             about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",
@@ -111,7 +193,7 @@ const NewCoachProfile = () => {
         },
 
     ]
-
+    
     const navigationView = () => (
         <View style={styles.drawerContainer}>
             <TouchableOpacity style={styles.drawerButton} onPress={handleNavigatetoEditInterests}> 
@@ -140,6 +222,8 @@ const NewCoachProfile = () => {
             </TouchableOpacity>
         </View>
     );
+
+    
     
     
     return (
@@ -167,7 +251,7 @@ const NewCoachProfile = () => {
                             <Text style={styles.buttonHeader}>About</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => goToPage(1)} style={[styles.tabButton, activeTab === 1 && styles.activeTabButton]}>
-                            <Text style={styles.buttonHeader}>Achievements</Text>
+                            <Text style={styles.buttonHeader}>Sports Credential</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => goToPage(2)} style={[styles.tabButton, activeTab === 2 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>Affliates</Text>
@@ -201,7 +285,17 @@ const NewCoachProfile = () => {
                            </ScrollView>
                         </View>
                         <View key="2">
-                            <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
+                                {/* Sports Credentials Tab */}
+                                <ScrollView>
+                                <Text style={styles.titleHeader}>Sports Credentials</Text>
+                                <TouchableOpacity onPress={selectImage} style={styles.imageUploadContainer}>
+                                    <Text style={styles.uploadText}>Upload Sports Credentials</Text>
+                                    <Icon name="cloud-upload-outline" size={30} color="#7E3FF0" />
+                                </TouchableOpacity>
+                               {/* Display the latest sports credential image */}
+                                {latestCredentialPicture && (
+                                    <Image source={{ uri: latestCredentialPicture  }} style={styles.uploadedImage}  />)}
+                                </ScrollView>
                         </View>
                         <View key="3">
                             <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
@@ -391,6 +485,27 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         marginTop: 90, // Adjust as needed to create space between the image and text inputs
+    },
+    imageUploadContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+    },
+    uploadText: {
+        fontSize: 16,
+        color: '#7E3FF0',
+        marginRight: 10,
+    },
+    uploadedImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 10,
+        alignSelf: 'center',
+        margin: 10,
     },
   
   

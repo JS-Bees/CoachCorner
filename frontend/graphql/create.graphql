@@ -116,3 +116,10 @@ mutation CreateCoacheeTask($input: CreateCoacheeTaskInput!) {
         }
     }
 }
+
+mutation CreateSportsCredentials($input: CreateSportsCredentialsInput!) {
+  createSportsCredentials(input: $input) {
+    credentialPicture
+    
+  }
+}
