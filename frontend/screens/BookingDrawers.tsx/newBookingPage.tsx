@@ -45,6 +45,13 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [endTimeError, setEndTimeError] = useState('');
+    const [dateError, setDateError] = useState('');
+    const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+
 
     const { coacheeId, coacheeName} = route.params || {}
 
@@ -52,18 +59,27 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const handleNavigateBack = () => {
-        navigation.goBack();
+        setSuccessModalVisible(false); // Close the SuccessModal
+        navigation.goBack(); // Navigate back to the previous screen
     };
+    
 
     const handleToggleAddSlotModal = () => {
         setAddSlotModalVisible(!isAddSlotModalVisible);
     };
 
     const handleAddSlot = (startTime: string, endTime: string, date: string) => {
-        const newSlot = { startTime, endTime, date };
-        setSelectedSlots([...selectedSlots, newSlot]);
+        // Check if the number of selected slots is less than 3
+        if (selectedSlots.length < 3) {
+            const newSlot = { startTime, endTime, date };
+            setSelectedSlots([...selectedSlots, newSlot]);
+        } else {
+            // Alert the user or provide some feedback that they can't add more slots
+            console.log('You can only select up to 3 slots.');
+        }
         handleToggleAddSlotModal();
     };
+    
 
     const handleCreateBooking = async () => {
 
@@ -130,6 +146,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             setSelectedSlots([]);
             setServiceType('');
             setAdditionalNotes('');
+          
         }
     
     };
@@ -192,6 +209,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
             <KeyboardAvoidingView style={styles.contentContainter}>
                 <Text style={styles.headerText}> Schedule Appointment </Text>
+                <Text style={styles.subHeader}>Maximum of 3 slots per session</Text>
 
 
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.subContentContainer}>
@@ -202,10 +220,10 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     <Text style={styles.subheaderText}> Trainee Name </Text>
                     <CustomInput value={`${coacheeName}`}/>
 
-
                     <View>
                         <View style={styles.slotsHeader}>
                          <Text style={styles.subheaderText}> Add a slot </Text>
+                
                          <TouchableOpacity style={styles.addCircle} onPress={handleToggleAddSlotModal}>
                                 <Icon name="add-circle-outline" size={30} color="#7E3FF0"  />
                          </TouchableOpacity>
@@ -226,7 +244,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                          <ActivityIndicator size="small" color="white" />) : (
                             <Text style={{ color: 'white', fontSize: 16, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Save Session</Text>)}
                     </TouchableOpacity>
-                    <SuccessModal visible={isSuccessModalVisible}  onClose={() => setSuccessModalVisible(false)}  />
+                    <SuccessModal visible={isSuccessModalVisible}  onClose={handleNavigateBack}  />
                 </View>
                 </ScrollView>
 
@@ -253,6 +271,9 @@ const styles = StyleSheet.create({
         paddingBottom: "5%",
         marginLeft: "13%",
         flexDirection: "row"
+    },
+    subHeader: {
+        color: '#908D93',
     },
     slotsHeader: {
         flexDirection: "row"

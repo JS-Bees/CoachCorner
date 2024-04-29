@@ -112,7 +112,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     };
 
     const handleNavigateToBooking = () => {
-        navigation.navigate('NewBookingPage');
+        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.coacheeId, coacheeName: chatMessage.sender});
     };
 
     const handleSendMessage = async (content: string) => {
@@ -188,7 +188,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     onPress={handleNavigateToBooking}
                 >
                     <MaterialIcons
-                        name="bookmark-outline"
+                        name="more-time"
                         size={30}
                         color="#7E3FF0"
                     />

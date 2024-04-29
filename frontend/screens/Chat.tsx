@@ -40,7 +40,6 @@ type Props = {
 
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
-
     // Console logs
     // console.log('Sender Name:', chatMessage.sender);
     // console.log('image url', chatMessage.imageUrl.uri);
@@ -120,7 +119,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     };
 
     const handleNavigateToBooking = () => {
-        navigation.navigate('NewBookingPage');
+        navigation.navigate('Sessions');
     };
 
     const handleSendMessage = async (content: string) => {
@@ -209,7 +208,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     onPress={handleNavigateToBooking}
                 >
                     <MaterialIcons
-                        name="bookmark-outline"
+                        name="pending-actions"
                         size={30}
                         color="#7E3FF0"
                     />
