@@ -133,6 +133,10 @@ const MyCoaches_alt = () => {
     //     },
 
     // ];
+    // Filter the FavoriteCoaches array based on the search text
+const filteredCoaches = FavoriteCoaches.filter(coach =>
+    `${coach.name}`.toLowerCase().includes(searchText.toLowerCase())
+);
 
     return (
         <View style={MyCoaches.container}>
@@ -183,13 +187,22 @@ const MyCoaches_alt = () => {
                 <Text style={MyCoaches.buttonText}>Favorite Coaches</Text>
 
                 <ScrollView
-                    contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 250, left: 12 }}
-                >
-                    <View>
-                        <CoachProfiles profiles={FavoriteCoaches} />
-                    </View>
-                </ScrollView>
+ contentInsetAdjustmentBehavior="scrollableAxes"
+ style={{ marginTop: '1%', height: 250, left: 12 }}
+ contentContainerStyle={{
+    flexGrow: 1, // Ensures the container fills available space
+    justifyContent: filteredCoaches.length > 0 ? 'flex-start' : 'center', // Center if no coaches
+    alignItems: filteredCoaches.length > 0 ? 'flex-start' : 'center', // Align horizontally
+ }}
+>
+ {filteredCoaches.length > 0 ? (
+    // Display coaches when they exist
+    <CoachProfiles profiles={filteredCoaches} />
+ ) : (
+    // Center the "No coaches found" text when there are no coaches
+    <Text style={{ color: 'grey', fontSize: 18, marginBottom: '40%', textAlign: 'center',}}>No coaches found.</Text>
+ )}
+</ScrollView>
             </KeyboardAvoidingView>
         </View>
     );

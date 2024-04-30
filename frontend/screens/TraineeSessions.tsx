@@ -87,7 +87,13 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
     const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
 
-    const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+        // Modify the sessionsToShow variable to filter based on searchText
+        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+        const filteredSessions = sessionsToShow.filter(booking => {
+            const coacheeName = `${booking.coach.firstName} ${booking.coach.lastName}`;
+            return coacheeName.toLowerCase().includes(searchText.toLowerCase());
+        });
+    
     
     return (
         <View style={MyCoaches.container}>
@@ -138,23 +144,34 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             <Text style={MyCoaches.buttonText}>Pending</Text>
             </TouchableOpacity>
 
-
-
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250, marginLeft: 12}}>
-               <View>
-               <CoachSessions sessions={sessionsToShow.map(booking => ({
+            <ScrollView
+    contentInsetAdjustmentBehavior="scrollableAxes"
+    style={{ marginTop: "1%", height: 250, marginLeft: 12 }}
+>
+    {filteredSessions.length > 0 ? (
+        <View>
+            <CoachSessions
+                sessions={filteredSessions.map(booking => ({
                     coachName: `${booking.coach.firstName} ${booking.coach.lastName}`,
                     bookingId: Number(booking.id), // Convert string to number
                     serviceType: `${booking.serviceType}`,
                     status: `${booking.status}`,
                     imageSource: { uri: booking.coach.profilePicture },
                     time: booking.bookingSlots.map(slot => ({
-                     startTime: slot.startTime,
-                    endTime: slot.endTime})),
-                    date: booking.bookingSlots.map(slot => slot.date)}))} />
-                </View>
+                        startTime: slot.startTime,
+                        endTime: slot.endTime,
+                    })),
+                    date: booking.bookingSlots.map(slot => slot.date),
+                }))}
+            />
+        </View>
+    ) : (
+        <Text style={{ color: 'grey', fontSize: 18, textAlign: 'center', marginTop: '25%' }}>
+            No coach found.
+        </Text>
+    )}
+</ScrollView>
 
-            </ScrollView>
             </KeyboardAvoidingView>
 
 
