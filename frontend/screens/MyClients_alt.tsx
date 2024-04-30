@@ -101,6 +101,10 @@ const MyClients_alt = () => {
         });
 
     console.log(contacts);
+    // Filter coachees based on search text
+    const filteredCoachees = FavoriteCoachees.filter(coachee =>
+        `${coachee.name}`.toLowerCase().includes(searchText.toLowerCase())
+   );
 
     return (
         <View style={MyCoaches.container}>
@@ -134,7 +138,7 @@ const MyClients_alt = () => {
             >
                 <View style={MyCoaches.searchContainer}>
                     <SearchBar
-                        placeholder="Search for a sport"
+                        placeholder="Search trainee"
                         onChangeText={handleSearchChange}
                         value={searchText}
                         platform="android"
@@ -144,13 +148,22 @@ const MyClients_alt = () => {
                 </View>
 
                 <ScrollView
-                    contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 250, left: 12 }}
-                >
-                    <View>
-                        <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
-                    </View>
-                </ScrollView>
+  contentInsetAdjustmentBehavior="scrollableAxes"
+  style={{ marginTop: '1%', height: 250, left: 12 }}
+  contentContainerStyle={{
+    flexGrow: 1, // Ensures the container fills available space
+    justifyContent: filteredCoachees.length > 0 ? 'flex-start' : 'center', // Center if no trainees
+    alignItems: filteredCoachees.length > 0 ? 'flex-start' : 'center', // Align horizontally
+  }}
+>
+  {filteredCoachees.length > 0 ? (
+    // Display coachees when they exist
+    <CoacheeProfile coacheeProfiles={filteredCoachees} />
+  ) : (
+    // Center the "No trainee found" text when there are no coachees
+    <Text style={{ color: 'grey', fontSize: 18, marginBottom: '40%', textAlign: 'center',}}>No trainee found.</Text>
+  )}
+</ScrollView>
             </KeyboardAvoidingView>
         </View>
     );

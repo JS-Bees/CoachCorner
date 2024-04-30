@@ -111,56 +111,54 @@ const LogIn = () => {
   };
   
   const onLogInPressed = async () => {
-    if (!Email || !Password) {
-      if (CoachOrCoachee === "coach") {
-        handleLoginErrorCoach();
-      } else if (CoachOrCoachee === "coachee") {
-        handleLoginErrorCoachee();
-      }
-      return;
-    }
+    if (isLoading) return; // Prevent multiple login attempts
   
     setLoading(true); // Start loading
-  
-    try {
-      if (CoachOrCoachee === "coach") {
-        await executeCoachQuery(); // Execute the coach query
-      } else {
-        await executeCoacheeQuery(); // Execute the coachee query
-      }
-  
-      // After the queries finish, you can access the data
-      if (CoachOrCoachee === "coach" && coachResult.data) {
-        // Handle coach result
-        const coachData = coachResult.data.findCoachByEmailAndPassword;
-        if (coachData) {
-          const userId = coachData.id;
-          await storeToken(userId.toString()); // Store user ID as async token
-          navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
-        } else {
-          handleLoginErrorCoach();
+    
+    setTimeout(async () => {
+      try {
+        if (!Email || !Password) {
+          setEmailPasswordError("Email and Password cannot be empty.");
+          setLoading(false); // Stop loading before returning
+          return;
         }
-      } else if (CoachOrCoachee === "coachee" && coacheeResult.data) {
-        // Handle coachee result
-        const coacheeData = coacheeResult.data.findCoacheeByEmailAndPassword;
-        if (coacheeData) {
-          const userId = coacheeData.id;
-          await storeToken(userId.toString()); // Store user ID as async token
-          navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
+  
+        if (CoachOrCoachee === "coach") {
+          await executeCoachQuery(); // Execute the coach query
         } else {
-          handleLoginErrorCoachee();
+          await executeCoacheeQuery(); // Execute the coachee query
         }
-      } else {
-        // Handle login error for coachee
-        handleLoginErrorCoachee();
+        
+        // Check the results of the query after it's completed
+        if (CoachOrCoachee === "coach" && coachResult.data) {
+          const coachData = coachResult.data.findCoachByEmailAndPassword;
+          if (coachData) {
+            await storeToken(coachData.id.toString()); // Store token
+            navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
+          } else {
+            handleLoginErrorCoach
+          }
+        } else if (CoachOrCoachee === "coachee" && coacheeResult.data) {
+          const coacheeData = coacheeResult.data.findCoacheeByEmailAndPassword;
+          if (coacheeData) {
+            await storeToken(coacheeData.id.toString()); // Store token
+            navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
+          } else {
+            handleLoginErrorCoachee
+          }
+        } else {
+          setEmailPasswordError("Login failed. Please try again.");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        setEmailPasswordError("An error occurred during login.");
+      } finally {
+        setLoading(false); // Ensure loading stops
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      // Handle any errors here
-    } finally {
-      setLoading(false); // Stop loading
-    }
+    }, 200); // 200ms delay to ensure state has updated
   };
+  
+  
   
 
   const onForgotPressed = () => {

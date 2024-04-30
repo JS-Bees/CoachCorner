@@ -55,7 +55,8 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
     const { coacheeId, coacheeName} = route.params || {}
 
-
+    console.log(coacheeId, "CoacheeId")
+    console.log(coacheeName, "CoacheeName")
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const handleNavigateBack = () => {
@@ -87,11 +88,20 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
         if (userToken === null) {
             console.error('User token is null');
+            alert("User token is missing. Please log in and try again.");
+            setIsBookingProcessing(false); // Reset the processing state
             return;
         }
     
+        // Check if serviceType or additionalNotes is empty or blank
+        if (serviceType.trim() === "" || additionalNotes.trim() === "") {
+            alert("Service type or additional notes cannot be blank. Please fill in the missing inputs.");
+            setIsBookingProcessing(false); // Reset the processing state
+            return;
+        }
+    
+    
         const input = {
-            
             coacheeId: parseInt(coacheeId),
             coachId: parseInt(userToken),
             serviceType: serviceType,
@@ -139,7 +149,9 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             console.log("Input:", input);
             console.log("Slots Input:", slotsInput);
         } catch (error) {
+            alert("An error occurred while creating the booking. Please try again later.");
             console.error('Error creating booking:', error);
+
         }
         if (!error) {
             setSuccessModalVisible(true);

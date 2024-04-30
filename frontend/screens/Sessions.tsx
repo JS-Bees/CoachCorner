@@ -42,8 +42,6 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
 
  
 
-
-
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
@@ -105,7 +103,12 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
     const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
 
-    const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+        // Modify the sessionsToShow variable to filter based on searchText
+        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+        const filteredSessions = sessionsToShow.filter(booking => {
+            const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
+            return coacheeName.toLowerCase().includes(searchText.toLowerCase());
+        });
     
     return (
         <View style={MyCoaches.container}>
@@ -132,7 +135,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
             <View style={MyCoaches.searchContainer}>
                 <SearchBar
-                 placeholder='Search for coach name'
+                 placeholder='Search for trainee'
                  onChangeText={handleSearchChange}
                  value={searchText}
                  platform='android'
@@ -158,22 +161,27 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
 
 
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
-               <View>
-               <CoacheeSessions sessions={sessionsToShow.map(booking => ({
-                    coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
-                    bookingId: Number(booking.id), // Convert string to number
-                    serviceType: `${booking.serviceType}`,
-                    additionalNotes: `${booking.additionalNotes}`,
-                    status: `${booking.status}`,
-                    imageSource: { uri: booking.coachee.profilePicture },
-                    slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
-                    time: booking.bookingSlots.map(slot => ({
-                     startTime: slot.startTime,
-                    endTime: slot.endTime})),
-                    date: booking.bookingSlots.map(slot => slot.date)}))} />
-                </View>
-
+            <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
+                {filteredSessions.length > 0 ? (
+                    <View>
+                        <CoacheeSessions sessions={filteredSessions.map(booking => ({
+                            coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                            bookingId: Number(booking.id),
+                            serviceType: `${booking.serviceType}`,
+                            additionalNotes: `${booking.additionalNotes}`,
+                            status: `${booking.status}`,
+                            imageSource: { uri: booking.coachee.profilePicture },
+                            slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
+                            time: booking.bookingSlots.map(slot => ({
+                                startTime: slot.startTime,
+                                endTime: slot.endTime
+                            })),
+                            date: booking.bookingSlots.map(slot => slot.date)
+                        }))} />
+                    </View>
+                ) : (
+                    <Text style={{ color: 'grey', fontSize: 18,textAlign: 'center', marginTop: '25%'}}>No trainee found.</Text>
+                )}
             </ScrollView>
             </KeyboardAvoidingView>
 

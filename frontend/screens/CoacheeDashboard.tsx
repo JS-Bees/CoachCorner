@@ -5,6 +5,7 @@ import {
     Dimensions,
     Image,
     Platform,
+    Alert,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { RootStackParams } from '../App';
@@ -24,6 +25,8 @@ import {
 } from 'react-native';
 import { FindCoacheeByIdDocument, GetSortedCoachesDocument} from '../generated-gql/graphql';
 import { RadioButton } from 'react-native-paper';
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
 
 
 const { width, height } = Dimensions.get('window');
@@ -44,6 +47,41 @@ const CoacheeDashboard = () => {
     const [sportsVisible, setSportsVisible] = useState(false);
     const [selectedSport, setSelectedSport] = useState('');
     const [checked, setChecked] = React.useState('second');
+
+    useFocusEffect(
+        React.useCallback(() => {
+          // When the screen is focused, add a back button event listener
+          const onBackPress = () => {
+            // Optionally, you can show a confirmation dialog
+            Alert.alert(
+              'Exit App',
+              'Are you sure you want to exit the app?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                  onPress: () => {},
+                },
+                {
+                  text: 'Exit',
+                  onPress: () => BackHandler.exitApp(),
+                },
+              ],
+              { cancelable: true }
+            );
+    
+            // Return true to indicate that we've handled the back button press
+            return true;
+          };
+    
+          const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+          // Cleanup function
+          return () => {
+            backHandler.remove();
+          };
+        }, [])
+      );
 
     const sports = [
         { label: 'Basketball', value: 'Basketball' },
@@ -127,33 +165,6 @@ const CoacheeDashboard = () => {
         return null;
     }
     
-    // console.log('Interests:', JSON.stringify(coacheeData?.findCoacheeByID.interests, null, 2));
-
-//     // Define interests of the coachee
-//     const coacheeInterests = coacheeData?.findCoacheeByID.interests || [];
-//     const coaches = coachData?.coaches || [];
-
-//     // console.log(coaches)
-//     // Sort coaches by the number of matching interests in descending order
-//     // Matching Algorithm and Hierarcy Recommendation Algorithm being applied
-//     const sortedCoaches = coaches.map(coach => ({
-//         coach,
-//         matchingInterests: coach.interests.filter(coachInterest =>
-//         coacheeInterests.some(coacheeInterest =>
-//             coacheeInterest.type === coachInterest.type &&
-//             coacheeInterest.name === coachInterest.name
-//         )).length
-//     })).sort((a, b) => b.matchingInterests - a.matchingInterests);
-
-// // Ensure all coaches are considered for matching interests
-// // This step might not be necessary if the sorting logic is correct,
-// // but it's included here for clarity and to address the concern about initial order.
-
-// // Select the top 2 coaches with the most matching interests
-// const matchedCoaches = sortedCoaches.slice(0, 2);
-
-// console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`));
-// const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName} ${match.coach.lastName}`);
 const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
 const coaches = coachData?.coaches || [];
 

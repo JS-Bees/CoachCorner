@@ -39,10 +39,8 @@ type Props = {
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
 
-    // Console logs
-    // console.log('Sender Name:', chatMessage.sender);
-    // console.log('image url', chatMessage.imageUrl.uri);
-    console.log('Contact IDzzz', chatMessage.id);
+
+    console.log('Contact ID', chatMessage.id);
     // console.log('Type of Contact ID', typeof chatMessage.id);
     console.log('Contacted Status', chatMessage.contactedStatus);
 
@@ -112,7 +110,9 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     };
 
     const handleNavigateToBooking = () => {
-        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.coacheeId, coacheeName: chatMessage.sender});
+        console.log(chatMessage.coacheeId, "the id")
+        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.id, coacheeName: chatMessage.sender});
+
     };
 
     const handleSendMessage = async (content: string) => {

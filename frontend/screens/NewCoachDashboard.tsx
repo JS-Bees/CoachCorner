@@ -7,6 +7,8 @@ import {
     Image,
     Platform,
     ScrollView,
+    Alert,
+    BackHandler,
 } from 'react-native';
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
@@ -22,6 +24,7 @@ import { format } from 'date-fns';
 import { SearchBar } from '@rneui/themed'; 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -55,6 +58,41 @@ const NewCoachDashboard = () => {
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [searchText, setSearchText] = useState('');
+
+    useFocusEffect(
+        React.useCallback(() => {
+          // When the screen is focused, add a back button event listener
+          const onBackPress = () => {
+            // Optionally, you can show a confirmation dialog
+            Alert.alert(
+              'Exit App',
+              'Are you sure you want to exit the app?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                  onPress: () => {},
+                },
+                {
+                  text: 'Exit',
+                  onPress: () => BackHandler.exitApp(),
+                },
+              ],
+              { cancelable: true }
+            );
+    
+            // Return true to indicate that we've handled the back button press
+            return true;
+          };
+    
+          const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+          // Cleanup function
+          return () => {
+            backHandler.remove();
+          };
+        }, [])
+      );
 
 
     useEffect(() => {
