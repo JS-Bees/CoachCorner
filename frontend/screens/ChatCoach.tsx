@@ -115,19 +115,25 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     };
 
+
     const handleSendMessage = async (content: string) => {
+        // Check if the message content is not empty
+        if (content.trim() === '') {
+            console.log('Cannot send an empty message.');
+            return; // Exit the function if the message is empty
+        }
+    
         try {
+            console.log('Coach ID:', chatMessage.id);
             setCurrentMessage('');
-            const messageContent = content + ',;,';
             const response = await setCreateMessage({
                 input: {
                     contactId: chatMessage.id,
-                    content: messageContent,
+                    content,
                 },
             });
             console.log('Message created:', response.data);
         } catch (error) {
-            // Handle error, e.g., show an error message
             console.log(error);
         }
     };
@@ -139,31 +145,25 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // Render each message item
     // Render each message item
     const renderMessageItem = ({ item }: { item: string }) => {
-        // Check if the item ends with ',;,'
-        const isRightAligned = item.endsWith(',;,');
-        // Remove ',;,' from the item if it exists
-        const messageContent = isRightAligned ? item.slice(0, -3) : item;
-
+        const isLeftAligned = item.endsWith(',;,');  // Determines alignment
+        const messageContent = isLeftAligned ? item.slice(0, -3) : item;
+    
         return (
             <View
                 style={[
-                    isRightAligned
-                        ? styles.chatBubbleRight
-                        : styles.chatBubbleLeft,
+                    isLeftAligned ? styles.chatBubbleLeft : styles.chatBubbleRight,
                 ]}
             >
                 <Text
                     style={[
-                        isRightAligned
-                            ? styles.messageTextRight
-                            : styles.messageTextLeft,
+                        isLeftAligned ? styles.messageTextLeft : styles.messageTextRight,
                     ]}
                 >
                     {messageContent}
                 </Text>
             </View>
         );
-    };
+    };;
 
     return (
         <View style={styles.container}>
@@ -201,7 +201,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                 }}
             >
                 <FlatList
-                    style={{ flex: 1 }}
+                     style={{ flex: 1, padding: 10, paddingBottom: 20,  }}
                     data={messages.slice().reverse()}
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
@@ -324,16 +324,18 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         padding: 10,
         marginBottom: 10,
-        alignSelf: 'flex-end', // Align the chat bubble to the right
-        flexWrap: 'wrap', // Allow the bubble to grow according to the content
+        alignSelf: 'flex-end',
+        maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
+        overflow: 'visible', // Ensure text can overflow the container
     },
     chatBubbleLeft: {
         backgroundColor: 'lightgray',
         borderRadius: 15,
         padding: 10,
         marginBottom: 10,
-        alignSelf: 'flex-start', // Align the chat bubble to the left
-        flexWrap: 'wrap', // Allow the bubble to grow according to the content
+        alignSelf: 'flex-start',
+        maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
+        overflow: 'visible', // Ensure text can overflow the container
     },
     messageTextRight: {
         color: 'white',

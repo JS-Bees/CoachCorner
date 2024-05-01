@@ -147,6 +147,8 @@ const NewCoacheeProfile = () => {
         </View>
     );
 
+    
+
     return (
         <DrawerLayoutAndroid
             ref={drawer}

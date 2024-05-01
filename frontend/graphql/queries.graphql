@@ -28,6 +28,13 @@ query FindCoacheeByID($userId: Int!) {
         bio
         address
         profilePicture
+        contacts {
+        coach {
+            id
+            }
+            contactedStatus
+            id
+        }  
         interests {
             id
             type

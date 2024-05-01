@@ -296,10 +296,10 @@ const MyCoaches = StyleSheet.create({
         borderRadius: 10, // Adjust the border radius for rounded corners (optional)
     },
     FavoriteCoachesButton: {
-        width: 100, // Adjust the width to make it square
+        width: 110, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
-        marginTop: '-13%',
-        marginLeft: '67%',
+        marginTop: '-14%',
+        marginLeft: '62%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',

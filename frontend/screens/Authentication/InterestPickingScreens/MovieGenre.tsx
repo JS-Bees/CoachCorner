@@ -92,7 +92,7 @@ const ChooseMovies = ({route}) => {
             address: workplaceAddress,
             bio: "Enter Bio",
             birthday:  birthday,
-            profilePicture: "Profile",
+            profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
             // Add other fields as needed
           },
           interestsInput: [
@@ -156,7 +156,7 @@ const ChooseMovies = ({route}) => {
             address: workplaceAddress,
             bio: " nice",
             birthday:  birthday,
-            profilePicture: "Profile",
+            profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
             // Add other fields as needed
           },                                                                           
           sportsInput: [

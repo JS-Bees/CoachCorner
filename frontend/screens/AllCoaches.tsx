@@ -85,7 +85,11 @@ const AllCoaches = ({route}) => {
     if (error) return <Text>Error: {error.message}</Text>;
 
     // Extract coaches data from the GraphQL response
+    
     const coaches = data.findCoachesBySport;
+    const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png');
+
+    
 
         // Map over the coaches array to create a new array of Profile objects
         const AllCoaches: Profile[] = coaches.map(coach => {
@@ -95,7 +99,9 @@ const AllCoaches = ({route}) => {
             return {
                 id: coach.id,
                 name: `${coach.firstName} ${coach.lastName}`,
-                imageSource:  { uri: coach.profilePicture },
+                imageSource: coach.profilePicture?.startsWith("https://res.cloudinary.com")
+                    ? { uri: coach.profilePicture }
+                    : DEFAULT_PROFILE_PICTURE,
                 gainedStars: averageStars, // Use the calculated average stars
                 mainSport: selectedSport, // Assuming mainSport is the selected sport
                 about: coach.bio,

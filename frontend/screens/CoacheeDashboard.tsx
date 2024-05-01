@@ -215,9 +215,8 @@ const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstNam
 const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png');
 
 // Define the top coaches, using the default image if a coach's profile picture is missing or empty
-const TopCoaches: Profile[] = (coachData?.coaches || []).slice(0, 2).map((coach) => {
-    const isProfilePictureDefault = coach.profilePicture === "profile picture"; // Condition to check if it's the placeholder
-
+const TopCoaches: Profile[] = (coachData?.coaches || []).slice(1, 5).map((coach) => {
+    const isProfilePictureDefault = !coach.profilePicture.startsWith('https://res');
     const profileImage = isProfilePictureDefault 
         ? DEFAULT_PROFILE_PICTURE  // Use the default picture
         : { uri: coach.profilePicture }; // Use the coach's actual profile picture if it's valid and not the placeholder

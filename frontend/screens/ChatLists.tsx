@@ -158,6 +158,8 @@ const ChatListPage: React.FC = () => {
         </TouchableOpacity>
     );
 
+    
+
     return (
         <View style={styles.container}>
             <View style={styles.iconContainer}>
@@ -174,6 +176,7 @@ const ChatListPage: React.FC = () => {
             <View>
                 <Text style={styles.header}> Messages </Text>
             </View>
+            
 
             <FlatList
                 data={chatMessages}
