@@ -88,7 +88,7 @@ const handleButtonPress = () => {
         <CustomCheckBox checked={checkedHobby.Jazz} checkedColor='#7E3FF0' label="Jazz" onPress={() => handleCheckboxChange('Jazz')} />
         <CustomCheckBox checked={checkedHobby.Classical} checkedColor='#7E3FF0' label="Classical" onPress={() => handleCheckboxChange('Classical')} />
         <CustomCheckBox checked={checkedHobby.Pop} checkedColor='#7E3FF0' label="Pop" onPress={() => handleCheckboxChange('Pop')} />
-        <CustomCheckBox checked={checkedHobby['K-Pop']} checkedColor='#7E3FF0' label="Pop" onPress={() => handleCheckboxChange('K-Pop')} />
+        <CustomCheckBox checked={checkedHobby['K-Pop']} checkedColor='#7E3FF0' label="K-Pop" onPress={() => handleCheckboxChange('K-Pop')} />
         <CustomCheckBox checked={checkedHobby.OPM} checkedColor='#7E3FF0' label="OPM" onPress={() => handleCheckboxChange('OPM')} />
     
       </View>

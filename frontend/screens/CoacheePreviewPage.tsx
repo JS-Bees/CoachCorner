@@ -74,9 +74,6 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 >
                     <Icon name="arrow-back-circle" size={30} color="#FECB2E" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.heartIconContainer}>
-                    <Icon name="heart-outline" size={30} color="#FECB2E" />
-                </TouchableOpacity>
             </View>
             <View style={styles.header}>
                 <Text style={styles.name}>{profile?.name}</Text>
@@ -94,7 +91,7 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             </View>
             <View style={styles.affliationsContainer}>
                 <Text style={styles.affliationsText}>
-                    {profile?.affliations}
+                    None at the moment
                 </Text>
             </View>
 

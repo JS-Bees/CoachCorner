@@ -119,7 +119,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 input: {
                     coachId: profile.id,
                     coacheeId: parseInt(userToken),
-                    contactedStatus: false,
+                    contactedStatus: true,
                 },
             });
 
@@ -262,7 +262,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                     style={styles.button}
                     onPress={handleButtonPress}
                 >
-                    <Text
+          <Text
                         style={{
                             color: 'white',
                             fontSize: 15,
@@ -271,7 +271,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                             paddingVertical: 15,
                         }}
                     >
-                        Add this coach
+                        {isFavorite ? 'Proceed to ChatList' : 'Add this coach'}
                     </Text>
                 </TouchableOpacity>
             </View>
