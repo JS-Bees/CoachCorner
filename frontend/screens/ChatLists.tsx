@@ -44,7 +44,6 @@ const ChatListPage: React.FC = () => {
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -113,6 +112,7 @@ const ChatListPage: React.FC = () => {
             const chatMessages = contacts.map((contact) => {
                 const sender = `${contact.coach.firstName} ${contact.coach.lastName}`;
                 let imageUrl;
+                const coacheeID = contact.coach.id;
 
                 // Check if the profilePicture URL starts with 'https:'
                 if (contact.coach.profilePicture.startsWith('https:')) {
@@ -132,6 +132,7 @@ const ChatListPage: React.FC = () => {
                     : 'No messages yet';
 
                 return {
+                    
                     // make it pass coachId here
                     id: contact.id,
                     message: messageContent,

@@ -68,15 +68,21 @@ import {
 
 import { createClient as createWSClient, SubscribePayload } from 'graphql-ws';
 
+const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+
+const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
+
+
 const wsClient = createWSClient({
-    url: 'ws://192.168.254.142:5050/graphql',
+    // APIurl: 'ws://192.168.254.142:5050/graphql',
+    url: apiUrlWs!,
 });
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.254.142:5050/graphql',
-    // url: apiUrl!,
+    // url: 'http://192.168.254.142:5050/graphql',
+    url: apiUrl!,
     // fetchSubscriptions: true, // added this to try and fix fetching
     exchanges: [
         cacheExchange,

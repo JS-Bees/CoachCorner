@@ -99,10 +99,10 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             setIsBookingProcessing(false); // Reset the processing state
             return;
         }
-    
+        
     
         const input = {
-            coacheeId: parseInt(coacheeId),
+            coacheeId: coacheeId,//should be coachID rightnow its showing bookingID
             coachId: parseInt(userToken),
             serviceType: serviceType,
             additionalNotes: additionalNotes,
@@ -187,19 +187,6 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     }, []);
 
 
-    useEffect(() => {
-        const fetchUserToken = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-                setUserToken(token);
-            } catch (error) {
-                console.error('Error fetching token:', error);
-            }
-        };
-    
-        fetchUserToken();
-    }, []);
-
     const CoachProfiles: CoachProfile[] = [
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
@@ -207,10 +194,6 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
     ]
 
-
-
-
-    
    
 
     return (

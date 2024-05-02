@@ -39,10 +39,10 @@ type Props = {
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
 
-
-    console.log('Contact ID', chatMessage.id);
-    // console.log('Type of Contact ID', typeof chatMessage.id);
+    console.log("--------------------------------------")
+    console.log('Contact ID', + chatMessage.id);
     console.log('Contacted Status', chatMessage.contactedStatus);
+    console.log("--------------------------------------")
 
     const imageSource = chatMessage.imageUrl;
 
@@ -111,7 +111,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     const handleNavigateToBooking = () => {
         console.log(chatMessage.coacheeId, "the id")
-        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.id, coacheeName: chatMessage.sender});
+        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.id, coacheeName: chatMessage.sender,});
 
     };
 
@@ -119,6 +119,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     const handleSendMessage = async (content: string) => {
         // Check if the message content is not empty
         if (content.trim() === '') {
+            console.log(chatMessage.coacheeId)
             console.log('Cannot send an empty message.');
             return; // Exit the function if the message is empty
         }
@@ -126,10 +127,11 @@ const ChatPage: React.FC<Props> = ({ route }) => {
         try {
             console.log('Coach ID:', chatMessage.id);
             setCurrentMessage('');
+            const messageContent = content + ',;,'
             const response = await setCreateMessage({
                 input: {
                     contactId: chatMessage.id,
-                    content,
+                    content: messageContent,
                 },
             });
             console.log('Message created:', response.data);
@@ -145,25 +147,31 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     // Render each message item
     // Render each message item
     const renderMessageItem = ({ item }: { item: string }) => {
-        const isLeftAligned = item.endsWith(',;,');  // Determines alignment
-        const messageContent = isLeftAligned ? item.slice(0, -3) : item;
-    
+        // Check if the item ends with ',;,'
+        const isRightAligned = item.endsWith(',;,');
+        // Remove ',;,' from the item if it exists
+        const messageContent = isRightAligned ? item.slice(0, -3) : item;
+
         return (
             <View
                 style={[
-                    isLeftAligned ? styles.chatBubbleLeft : styles.chatBubbleRight,
+                    isRightAligned
+                        ? styles.chatBubbleRight
+                        : styles.chatBubbleLeft,
                 ]}
             >
                 <Text
                     style={[
-                        isLeftAligned ? styles.messageTextLeft : styles.messageTextRight,
+                        isRightAligned
+                            ? styles.messageTextRight
+                            : styles.messageTextLeft,
                     ]}
                 >
                     {messageContent}
                 </Text>
             </View>
         );
-    };;
+    };
 
     return (
         <View style={styles.container}>
