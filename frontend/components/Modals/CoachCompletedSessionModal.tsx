@@ -4,9 +4,6 @@ import { Overlay, Icon } from '@rneui/themed';
 import CoacheeSessions from '../Profile Tiles/CoacheeSessionsTiles';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { UpdateBookingStatusDocument } from '../../generated-gql/graphql';
-import { UpdateBookingStatusMutation } from '../../generated-gql/graphql';
-import { useMutation } from 'urql';
 import { RootStackParams } from '../../App';
 import {format} from 'date-fns';
 import { Dimensions } from 'react-native';
@@ -21,10 +18,9 @@ interface SessionModalProps {
 }
 
 
-const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
+const CompletedModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const [result, updateBookingStatus] = useMutation<UpdateBookingStatusMutation>(UpdateBookingStatusDocument);
-  const [loading, setLoading] = useState(false);
+
 
   
 
@@ -32,58 +28,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
     navigation.navigate('ChatPage');
   };
 
-  
-  const navigateToReSched = () => {
-    navigation.navigate("ReschedulePage", { session, slotsId: session?.slotsId });
-  };
-  
 
-  const handleCancelSchedule = () => {
-    setLoading(true);
-    if (session?.bookingId) {
-      const variables = {
-        updateBookingStatusId: session.bookingId,
-        input: { status: 'CANCELLED' }
-      };
-      updateBookingStatus(variables).then(() => {
-        toggleOverlay(null); // Close the modal
-        setLoading(false);
-      });
-    } else {
-      console.error("Cannot update status ");
-    }
-  };
-
-  const handleCompleteSession = () => {
-    setLoading(true);
-    if (session?.bookingId) {
-      const variables = {
-        updateBookingStatusId: session.bookingId,
-        input: { status: 'COMPLETED' }
-      };
-      updateBookingStatus(variables).then(() => {
-        toggleOverlay(null); // Close the modal
-        setLoading(false);
-      });
-    } else {
-      console.error("Cannot update status ");
-    }
-  };
-
-  
-  
-  
-  useEffect(() => {
-    if (result.error) {
-      console.error('Error updating booking status:', result.error.message);
-    } else if (result.data) {
-      console.log('Booking status updated successfully:', result.data.updateBookingStatus);
-      // Optionally, you can perform actions based on the result, such as updating local state or displaying a success message
-    }
-  }, [result]);
-
-
-  
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
@@ -100,7 +45,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
             </TouchableOpacity>
           </View>
             <Text style={styles.sessionName}>{session.coacheeName}</Text>
-            <Text style={styles.subtitleText}>  Upcoming sessions with this trainee</Text>
+            <Text style={styles.subtitleText}>  Completed sessions with this trainee</Text>
           </>
         )}
 
@@ -143,23 +88,16 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 </View>
 
 
-{/* <View style={styles.buttons}> */}
-  <View style={styles.buttonContainer}>
-    <TouchableOpacity style={styles.cancelButton} onPress={handleCancelSchedule}>
-      <Text style={styles.cancelText}>Cancel Schedule</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={navigateToReSched}>
-      <Text style={styles.Text} >Re-Schedule</Text>
-    </TouchableOpacity>
+
+  
+  
   </View>
-</View>
-
-<TouchableOpacity style={styles.completeButton} onPress={handleCompleteSession}>
-      <Text style={styles.cancelText}>Mark as Complete</Text>
-    </TouchableOpacity>
 
 
-      {/* </View> */}
+
+
+
+      
     </Overlay>
   );
 };
@@ -300,4 +238,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default UpcomingModal;
+export default CompletedModal;

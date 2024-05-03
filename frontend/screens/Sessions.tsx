@@ -102,9 +102,10 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
 
     const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
     const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
+    const completedBookings = bookings.filter(booking => booking.status === 'COMPLETED');
 
         // Modify the sessionsToShow variable to filter based on searchText
-        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
         const filteredSessions = sessionsToShow.filter(booking => {
             const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
             return coacheeName.toLowerCase().includes(searchText.toLowerCase());
@@ -143,6 +144,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
 
+            <View style={MyCoaches.buttonRow}>
             <TouchableOpacity 
             style={[
                 MyCoaches.AllCoachesButton,
@@ -152,15 +154,26 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             <Text style={MyCoaches.buttonText}>Upcoming</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
-            activeButton === 'Pending' ? MyCoaches.activeButton : null,
+            <TouchableOpacity 
+            style={[
+                MyCoaches.AllCoachesButton,
+                activeButton === 'Completed' ? MyCoaches.activeButton : null, 
+            ]}
+                onPress={() => setActiveButton('Completed')}>
+            <Text style={MyCoaches.buttonText}>Completed</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+            style={[
+                MyCoaches.AllCoachesButton,
+                activeButton === 'Pending' ? MyCoaches.activeButton : null, 
             ]}
                 onPress={() => setActiveButton('Pending')}>
             <Text style={MyCoaches.buttonText}>Pending</Text>
             </TouchableOpacity>
+            </View>
 
-
-
+          
             <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
                 {filteredSessions.length > 0 ? (
                     <View>
@@ -210,6 +223,10 @@ const MyCoaches = StyleSheet.create({
         paddingTop:"25%",
         marginLeft: '25%',
         flexDirection: 'row', 
+    },
+
+    buttonRow:{
+        flexDirection: "row"
     },
 
     
@@ -286,10 +303,10 @@ const MyCoaches = StyleSheet.create({
   
     
     AllCoachesButton: {
-        width: 110, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: 100, // Adjust the width to make it square
+        height: 49, // Adjust the height to make it square
         marginTop: '5%',
-        marginLeft: '8%',
+        marginLeft: '6%',
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',
