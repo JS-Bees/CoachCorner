@@ -132,7 +132,7 @@ const AllCoaches = ({route}) => {
             <KeyboardAvoidingView
             style={MyCoaches.container}
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            <View style={MyCoaches.searchContainer}>
+            {/* <View style={MyCoaches.searchContainer}>
                 <SearchBar
                  placeholder='Search Coach'
                  onChangeText={handleSearchChange}
@@ -140,7 +140,7 @@ const AllCoaches = ({route}) => {
                  platform='android'
                  containerStyle={MyCoaches.searchBarContainer}
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
-            </View>
+            </View> */}
 
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
                <View>

@@ -154,7 +154,7 @@ const ChooseMovies = ({route}) => {
             email: email,
             password: password,
             address: workplaceAddress,
-            bio: " nice",
+            bio: "Enter Bio",
             birthday:  birthday,
             profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
             // Add other fields as needed

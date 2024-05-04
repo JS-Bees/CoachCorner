@@ -38,7 +38,11 @@ const MyCoaches_alt = () => {
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
-
+    
+    const handleNavigateBack = () => {
+        navigation.goBack();
+      };
+      
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -142,9 +146,7 @@ const filteredCoaches = FavoriteCoaches.filter(coach =>
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}></View>
             <View style={MyCoaches.iconContainer}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('CoacheeDashboard')}
-                >
+                <TouchableOpacity onPress={handleNavigateBack}>
                     <Icon
                         name="arrow-back-circle-outline"
                         size={30}

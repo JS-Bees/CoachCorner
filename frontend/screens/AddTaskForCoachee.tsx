@@ -78,6 +78,10 @@ const AddTaskPage = () => {
     setDate(new Date());
   };
 
+  const handleDelete = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
 
@@ -120,7 +124,7 @@ const AddTaskPage = () => {
      <TouchableOpacity onPress={handleSave}>
         <Text style={styles.addButtonText}>Save</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleDelete}>
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
      </View>

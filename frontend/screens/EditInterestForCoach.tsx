@@ -111,8 +111,8 @@ const handleNavigateBack = () => {
     }
    };
 
-  const handleSaveChanges = async () => {
-    // Check if either bio, address, or profile picture is empty or if they have changed
+   const handleSaveChanges = async () => {
+    // Check if either bio or address or profile picture is empty
     if (
       (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
       (editedBio.trim() === coachData?.findCoachByID.bio &&
@@ -145,14 +145,50 @@ const handleNavigateBack = () => {
       if (editedAddress.trim()) {
         setEditedAddress(editedAddress);
       }
-  
-      Alert.alert('Changes saved successfully.');
-  
     } catch (error) {
       console.error('Error saving changes:', error);
       Alert.alert('Error saving changes. Please try again.');
     }
+    
+    // Step 1: Retrieve all selected genres
+    const selectedGenres = lists.flatMap((list) => {
+      return list.items
+        .filter((item) => item.checked)
+        .map((item) => ({ name: item.text, type: list.title }));
+    });
+
+    const totalChecked = selectedGenres.length;
+    const ifZero = totalChecked > 0
+
+    if (totalChecked !== 9 && ifZero) {
+      Alert.alert('Please select exactly 9 genres in total.');
+      return;
+    }
+
+    const interestIds = coachData?.findCoachByID?.interests?.map((interest) => interest.id) || [];
+
+    const interestsInput = selectedGenres.map((genre, index) => ({
+      id: interestIds[index], 
+      name: genre.name,
+      type: genre.type,
+    }));
+
+    try {
+      const result = await executeMutationUpdateInterest({
+        input: interestsInput,
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+    } catch (error) {
+      console.error('Error updating interests:', error);
+      Alert.alert('Error updating interests. Please try again.');
+    }
+    Alert.alert('Changes saved successfully.');
+  
   };
+
   
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
@@ -247,17 +283,17 @@ const toggleCheckbox = (listIndex: number, itemIndex: number) => {
 
     // Check if the maximum limit (3) is reached for the respective category
     switch (updatedLists[listIndex].title) {
-      case 'Movie Genre':
+      case 'MovieGenre':
         if (movieGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
           return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
         }
         break;
-      case 'Book Genre':
+      case 'BookGenre':
         if (bookGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
           return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
         }
         break;
-      case 'Music Genre':
+      case 'MusicGenre':
         if (musicGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
           return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
         }

@@ -244,13 +244,13 @@ const SignUpForCoachee = ({route}) => {
                         placeholder="Full Name"
                         value={First_Name}
                         checkForInteger
-                        setValue={value => setFirst_Name(value.substring(0, 10))} // Limit to 9 characters
+                        setValue={value => setFirst_Name(value.substring(0, 15))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="Last Name"
                         value={Last_Name}
                         checkForInteger
-                        setValue={value => setLast_Name(value.substring(0, 10))} // Limit to 9 characters
+                        setValue={value => setLast_Name(value.substring(0, 15))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="johnsmith@gmail.com"

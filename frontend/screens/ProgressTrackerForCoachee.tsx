@@ -110,6 +110,17 @@ const ProgressTrackerForCoachee = () => {
         }
         return 0;
     });
+
+    const formatDate = (isoDateString: any) => {
+      const date = new Date(isoDateString);
+      const day = date.getDate();
+      const month = date.toLocaleString("en-GB", { month: "long" });
+      const year = date.getFullYear();
+      return `${month} ${day}, ${year}`;
+  };
+  
+
+    
   
     return (
         <View style={styles.container}>
@@ -149,7 +160,7 @@ const ProgressTrackerForCoachee = () => {
                     },
                   ]}
                 >
-                  {task.date}
+                  {formatDate(task.date)} {/* Use the formatted date */}
                 </Text>
               </View>
               <TouchableOpacity

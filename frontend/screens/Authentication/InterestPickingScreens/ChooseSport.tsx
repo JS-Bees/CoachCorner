@@ -73,7 +73,7 @@ const handleButtonPress = () => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-      <Text style={styles.header}> Which of these do you like to do during downtime?</Text>
+      <Text style={styles.header}> Which sport do you teach?</Text>
       <Text style={styles.subtitle}>Choose a sport</Text>
 
       <View style={styles.checkboxContainer}>

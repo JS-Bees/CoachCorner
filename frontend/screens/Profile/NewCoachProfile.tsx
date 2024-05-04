@@ -118,7 +118,7 @@ const NewCoachProfile = () => {
       const result = await executeMutation({
         input: {
           credentialPicture: imageUrl,
-          sportId: parseInt(userToken), // Example sport ID, adjust as needed
+          sportId: parseInt(coachData?.findCoachByID.sports[0].id)
         },
       });
 
@@ -135,6 +135,7 @@ const NewCoachProfile = () => {
 
     const toggleDrawer = () => {
         drawer.current?.openDrawer()
+        console.log(coachData?.findCoachByID.sports[0].id)
     };
 
 

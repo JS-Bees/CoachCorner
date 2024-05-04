@@ -87,7 +87,8 @@ const CoacheeDashboard = () => {
         { label: 'Basketball', value: 'Basketball' },
         { label: 'Soccer', value: 'Soccer' },
         { label: 'Tennis', value: 'Tennis' },
-        { label: 'Swimming', value: 'Swimming' },                                                              
+        { label: 'Swimming', value: 'Swimming' },               
+        { label: 'Volleyball', value: 'Volleyball' },                                                         
 
     ];
 

@@ -112,8 +112,8 @@ const handleNavigateBack = () => {
     }
    };
 
-  const handleSaveChanges = async () => {
-    // Check if either bio, address, or profile picture is empty or if they have changed
+   const handleSaveChanges = async () => {
+    // Check if either bio or address or profile picture is empty
     if (
       (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
       (editedBio.trim() === coacheeData?.findCoacheeByID.bio &&
@@ -146,14 +146,50 @@ const handleNavigateBack = () => {
       if (editedAddress.trim()) {
         setEditedAddress(editedAddress);
       }
-  
-      Alert.alert('Changes saved successfully.');
-  
     } catch (error) {
       console.error('Error saving changes:', error);
       Alert.alert('Error saving changes. Please try again.');
     }
+    
+    // Step 1: Retrieve all selected genres
+    const selectedGenres = lists.flatMap((list) => {
+      return list.items
+        .filter((item) => item.checked)
+        .map((item) => ({ name: item.text, type: list.title }));
+    });
+
+    const totalChecked = selectedGenres.length;
+    const ifZero = totalChecked > 0
+
+    if (totalChecked !== 9 && ifZero) {
+      Alert.alert('Please select exactly 9 genres in total.');
+      return;
+    }
+
+    const interestIds = coacheeData?.findCoacheeByID?.interests?.map((interest) => interest.id) || [];
+
+    const interestsInput = selectedGenres.map((genre, index) => ({
+      id: interestIds[index], 
+      name: genre.name,
+      type: genre.type,
+    }));
+
+    try {
+      const result = await executeMutationUpdateInterest({
+        input: interestsInput,
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+    } catch (error) {
+      console.error('Error updating interests:', error);
+      Alert.alert('Error updating interests. Please try again.');
+    }
+    Alert.alert('Changes saved successfully.');
+  
   };
+
   
   
 
@@ -183,18 +219,18 @@ const handleNavigateBack = () => {
 
   const [lists, setLists] = useState([
     {
-      title: 'Music Genre',
+      title: 'MusicGenre',
       items: [
         {text: 'Jazz', checked: false },
         {text: 'Classical', checked: false },
         {text: 'Pop', checked: false },
-        {text: 'KPop', checked: false },
+        {text: 'K-Pop', checked: false },
         {text: 'OPM', checked: false },
       ],
       isExpanded: false,
     },
     {
-      title: 'Movie Genre',
+      title: 'MovieGenre',
       items: [
         {text: 'Action', checked: false },
         {text: 'Thriller', checked: false },
@@ -207,7 +243,7 @@ const handleNavigateBack = () => {
       isExpanded: false,
     },
     {
-      title: 'Book Genre',
+      title: 'BookGenre',
       items: [
         { text: 'Science Fiction', checked: false },
         { text: 'Young Adult', checked: false },
@@ -232,13 +268,13 @@ const handleNavigateBack = () => {
         list.items.forEach(item => {
           if (item.checked) {
             switch (list.title) {
-              case 'Movie Genre':
+              case 'MovieGenre':
                 movieGenreCount++;
                 break;
-              case 'Book Genre':
+              case 'BookGenre':
                 bookGenreCount++;
                 break;
-              case 'Music Genre':
+              case 'MusicGenre':
                 musicGenreCount++;
                 break;
               default:

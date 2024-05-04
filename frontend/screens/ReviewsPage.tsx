@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, ScrollView,} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, ScrollView, ImageSourcePropType, Alert} from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
@@ -7,7 +7,7 @@ import ReviewTile from '../components/Profile Tiles/ReviewProfileTiles';
 import { useState } from 'react';
 import AddReviewBottomSheet from '../components/BottomSheet/AddReview';
 import { useQuery } from 'urql';
-import { GetCoachReviewsDocument } from '../generated-gql/graphql';
+import { GetCoachReviewsDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -23,6 +23,8 @@ interface ReviewsPageProps {
 }
 
 const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
+  
+  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
  
   const { profile } = route.params || {};
 
@@ -33,12 +35,52 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const handleAddReviewPress = () => {
-    setBottomSheetVisible(true);
-  };
+    if (hasCompletedBooking) {
+        // If there's a completed booking, allow the review addition
+        setBottomSheetVisible(true);
+    } else {
+        // If not, display an alert with a message
+        Alert.alert(
+            'Booking Required', // Title of the alert
+            'You need to have a completed booking with this coach to leave a review.', // Message of the alert
+            [{ text: 'OK', onPress: () => console.log('OK Pressed') }] // Alert button(s)
+        );
+    }
+};
 
   const handleCloseBottomSheet = () => {
     setBottomSheetVisible(false);
   };
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            setUserToken(token);
+        } catch (error) {
+            console.error('Error fetching token:', error);
+        }
+    };
+
+    fetchUserToken();
+}, []);
+
+// function to fetch coachee data by userID (token)
+const useFetchCoacheeByUserID = (userID: any) => {
+    const [coacheeResult] = useQuery({
+        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        variables: {
+            userId: parseInt(userID),
+        },
+    });
+
+    return coacheeResult;
+};
+const {
+    data: coacheeData,
+    loading: coacheeLoading,
+    error: coacheeError,
+} = useFetchCoacheeByUserID(userToken);
 
     // Fetch reviews using urql useQuery hook
     const [result] = useQuery({
@@ -58,13 +100,34 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
     reviews.forEach(review => {
       numReviewsByRating[review.starRating] = (numReviewsByRating[review.starRating] || 0) + 1;
     });
-  
+    
     // Calculate the total number of reviews and the average rating
     const totalReviews = reviews.length;
     const totalStars = reviews.reduce((sum, review) => sum + review.starRating, 0);
     const averageRating = totalReviews !== 0 ? totalStars / totalReviews : 0;
   
     const maxBarWidth = 150; // Adjust as needed
+
+    const coacheeName = coacheeData?.findCoacheeByID
+        ? `${coacheeData.findCoacheeByID.firstName} ${coacheeData.findCoacheeByID.id}`
+        : "Unknown Coachee";
+
+    console.log("Coachee Name and ID:", coacheeName);
+
+    const coachBeingRated = `${profile.name || "Unknown Coach"} (ID: ${profile.id || "N/A"})`;
+
+    console.log("Coach being rated and ID:", coachBeingRated);
+    console.log("")
+
+    //make a logic here, that checks if the coachee has an already completed booking with the profile.id
+
+    //  Check if the coachee has a completed booking with the coach's ID
+     const hasCompletedBooking = coacheeData?.findCoacheeByID?.bookings.some(
+      (booking) => booking.status === "COMPLETED" && (booking.coach.firstName + " " + booking.coach.lastName) === profile.name
+  );
+
+  console.log("Coachee has completed booking with this coach:", hasCompletedBooking);
+  
 
   return (
     <View style={styles.container}>
@@ -97,9 +160,10 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
   {totalReviews > 0 ? (
     reviews.map((review, index) => (
       <ReviewTile
+      
         key={index}
         review={{
-          imageSource: require('../assets/John_Doe.png'),
+          imageSource:{ uri: review.coachee.profilePicture },
           name: `${review.coachee.firstName} ${review.coachee.lastName}`,
           stars: review.starRating,
           reviewText: review.comment,
@@ -111,9 +175,19 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
   )}
 </ScrollView>
 
-      <TouchableOpacity style={styles.addReview} onPress={handleAddReviewPress}>
-        <Icon name="add-circle-outline" size={50} color='#7E3FF0' />
-      </TouchableOpacity>
+   
+{hasCompletedBooking ? (
+                <TouchableOpacity
+                    style={styles.addReview}
+                    onPress={handleAddReviewPress}
+                >
+                    <Icon name="add-circle-outline" size={50} color="#7E3FF0" />
+                </TouchableOpacity>
+            ) : (
+                <Text style={{ alignSelf: 'center', marginTop: 20 }}>
+                    You need a completed booking to add a review.
+                </Text>
+            )}
 
       <AddReviewBottomSheet isVisible={bottomSheetVisible} onClose={handleCloseBottomSheet} coachId={profile.id} />
     </View>

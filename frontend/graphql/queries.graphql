@@ -28,6 +28,14 @@ query FindCoacheeByID($userId: Int!) {
         bio
         address
         profilePicture
+        bookings {
+            coach {
+                firstName
+                lastName
+            }             
+            id
+            status
+            }  
         contacts {
         coach {
             id
@@ -68,10 +76,12 @@ query FindCoachByID($userId: Int!) {
         address
         profilePicture
         sports {
+            id
             type
         }  
         sports {
             sportsCredentials {
+            id
             credentialPicture
         }
         } 
@@ -204,6 +214,7 @@ query GetCoachReviews($userId: Int!) {
         lastName
         reviews {
             coachee {
+                profilePicture
                 firstName
                 lastName
             }

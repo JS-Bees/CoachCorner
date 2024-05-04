@@ -78,6 +78,10 @@ const AddTaskPageForCoach = () => {
     setDescription('');
     setDate(new Date());
   };
+
+  const handleDelete = () => {
+    navigation.goBack();
+  };
   
 
   return (
@@ -122,7 +126,7 @@ const AddTaskPageForCoach = () => {
      <TouchableOpacity onPress={handleSave}>
         <Text style={styles.addButtonText}>Save</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleDelete}>
         <Text style={styles.deleteButtonText}>Delete</Text>
       </TouchableOpacity>
      </View>

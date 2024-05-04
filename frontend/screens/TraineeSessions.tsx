@@ -45,6 +45,10 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
+        
+    const handleNavigateBack = () => {
+        navigation.goBack();
+      };
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -102,7 +106,7 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
         
             </View>
             <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("CoacheeDashboard")}>
+            <TouchableOpacity onPress={handleNavigateBack}>
             <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
             </TouchableOpacity>
             </View>
