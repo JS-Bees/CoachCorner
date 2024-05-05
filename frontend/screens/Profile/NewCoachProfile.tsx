@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, DrawerLayoutAndroid, ScrollView} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, DrawerLayoutAndroid, ScrollView, ActivityIndicator} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
@@ -39,6 +39,7 @@ const NewCoachProfile = () => {
     const [activeTab, setActiveTab] = useState(0);
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for selected image
+    const [uploading, setUploading] = useState<boolean>(false); // New state to track if an image is uploading
     const [, executeMutation] = useMutation(CreateSportsCredentialsDocument); // Mutation to update sports credentials
 
 
@@ -65,18 +66,25 @@ const NewCoachProfile = () => {
         fetchUserToken();
     }, []);
     const uploadImageToCloudinary = async (imageObject: any) => {
-        const uploadPreset = 'coachcorner';
-        const formData = new FormData();
-        formData.append('file', imageObject);
-        formData.append('upload_preset', uploadPreset);
+        setUploading(true); // Set loading to true when starting the upload
+        try {
+            const formData = new FormData();
+            formData.append('file', imageObject);
+            formData.append('upload_preset', 'coachcorner');
 
-        const cloudinaryResponse = await fetch('https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload', {
-            method: 'POST',
-            body: formData,
-        });
+            const response = await fetch('https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload', {
+                method: 'POST',
+                body: formData,
+            });
 
-        const cloudinaryData = await cloudinaryResponse.json();
-        return cloudinaryData.secure_url;
+            const data = await response.json();
+            return data.secure_url;
+        } catch (error) {
+            console.error('Error uploading image to Cloudinary:', error);
+            throw error;
+        } finally {
+            setUploading(false); // Reset loading state after upload
+        }
     };
 
 
@@ -287,16 +295,29 @@ const latestCredentialPicture = sportsCredentials
                         </View>
                         <View key="2">
                                 {/* Sports Credentials Tab */}
-                                <ScrollView>
-                                <Text style={styles.titleHeader}>Sports Credentials</Text>
-                                <TouchableOpacity onPress={selectImage} style={styles.imageUploadContainer}>
-                                    <Text style={styles.uploadText}>Upload Sports Credentials</Text>
-                                    <Icon name="cloud-upload-outline" size={30} color="#7E3FF0" />
-                                </TouchableOpacity>
-                               {/* Display the latest sports credential image */}
-                                {latestCredentialPicture && (
-                                    <Image source={{ uri: latestCredentialPicture  }} style={styles.uploadedImage}  />)}
-                                </ScrollView>
+                                <ScrollView style={styles.scrollView}>
+                <View style={styles.imageUploadContainer}>
+                    {uploading && (
+                        <ActivityIndicator
+                            size="small"
+                            color="#7E3FF0"
+                            style={styles.activityIndicator}
+                        />
+                    )}
+                    <TouchableOpacity onPress={selectImage}>
+                        <Text style={styles.uploadText}>Click to Upload Sports Credentials</Text>
+                        <Icon name="cloud-upload-outline" size={30} color="#7E3FF0" />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Display the latest sports credential image */}
+                {latestCredentialPicture && (
+                    <Image
+                        source={{ uri: latestCredentialPicture }}
+                        style={styles.uploadedImage}
+                    />
+                )}
+            </ScrollView>
                         </View>
                         <View key="3">
                             <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
@@ -495,12 +516,21 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
+        backgroundColor: '#f0f0f0', // Background color to make it more visible
+        position: 'relative', // Important for relative positioning
     },
     uploadText: {
         fontSize: 16,
         color: '#7E3FF0',
         marginRight: 10,
     },
+    activityIndicator: {
+        position: 'absolute', // Absolute positioning to allow centering
+        top: '100%', // Position at the middle of the container vertically
+        left: '50%', // Position at the middle of the container horizontally
+        transform: [{ translateX: -15 }, { translateY: -15 }], // Adjust for the size of the indicator to center it
+    },
+    
     uploadedImage: {
         width: 200,
         height: 200,
@@ -508,7 +538,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         margin: 10,
     },
-  
-  
+    scrollView: {
+        flex: 1,
+    },
 })
 export default NewCoachProfile;

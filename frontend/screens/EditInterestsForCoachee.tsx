@@ -9,6 +9,7 @@ import { RootStackParams } from '../App';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+import { ActivityIndicator } from 'react-native-paper';
 
 
 
@@ -31,7 +32,9 @@ const EditInterests = () => {
   const [editedBio, setEditedBio] = useState<string>('');
   const [editedAddress, setEditedAddress] = useState<string>('');
   const [editedProfilePicture, setEditedProfilePicture] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false); // Loading state for image upload
 
+  
   //reminder to add a separate modal asking the if they wish to continue after making changes
   //-------------------------------------------------------------------------------------------------------------------------------
   useEffect(() => {
@@ -57,27 +60,32 @@ const handleNavigateBack = () => {
 };
 
 
-  const uploadImageToCloudinary = async (imageObject: any) => {
-    try {
-      const uploadPreset = 'coachcorner';
-      const formData = new FormData();
-      formData.append('file', imageObject); // Append the Blob directly
-      formData.append('upload_preset', uploadPreset);
 
+const uploadImageToCloudinary = async (imageObject: any) => {
+  try {
+    setLoading(true); // Start loading
+    const uploadPreset = 'coachcorner';
+    const formData = new FormData();
+    formData.append('file', imageObject);
+    formData.append('upload_preset', uploadPreset);
 
-      const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload`, {
+    const cloudinaryResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/dkwht3l4g/image/upload`,
+      {
         method: 'POST',
         body: formData,
-      });
+      }
+    );
 
-      const cloudinaryData = await cloudinaryResponse.json();
-      
-      return cloudinaryData.secure_url;
-    } catch (error) {
-      console.error('Error uploading image to Cloudinary:', error);
-      throw error;
-    }
- };
+    const cloudinaryData = await cloudinaryResponse.json();
+    setLoading(false); // Stop loading after upload
+    return cloudinaryData.secure_url;
+  } catch (error) {
+    setLoading(false); // Stop loading if error
+    console.error('Error uploading image to Cloudinary:', error);
+    throw error;
+  }
+};
 
  const selectImage = async () => {
     try {
@@ -113,81 +121,106 @@ const handleNavigateBack = () => {
    };
 
    const handleSaveChanges = async () => {
-    // Check if either bio or address or profile picture is empty
-    if (
+    // Check if profile information has changed
+    const noProfileChanges =
       (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
       (editedBio.trim() === coacheeData?.findCoacheeByID.bio &&
         editedAddress.trim() === coacheeData?.findCoacheeByID.address &&
-        editedProfilePicture.trim() === coacheeData?.findCoacheeByID.profilePicture)
-    ) {
+        editedProfilePicture.trim() === coacheeData?.findCoacheeByID.profilePicture);
+  
+    if (noProfileChanges) {
       Alert.alert('No changes made.');
       return;
     }
   
     try {
-      const result = await executeMutation({
+      const profileResult = await executeMutation({
         updateCoacheeProfileId: parseInt(userToken),
         input: {
           bio: editedBio.trim() ? editedBio : coacheeData?.findCoacheeByID.bio || '',
           address: editedAddress.trim() ? editedAddress : coacheeData?.findCoacheeByID.address || '',
-          profilePicture: editedProfilePicture
-        }
+          profilePicture: editedProfilePicture,
+        },
       });
   
-      // Check if mutation was successful
-      if (result.error) {
-        throw new Error(result.error.message);
+      if (profileResult.error) {
+        throw new Error(profileResult.error.message);
       }
   
-      // Update the original bio and address if they were changed
+      // Update profile information locally
       if (editedBio.trim()) {
         setEditedBio(editedBio);
       }
       if (editedAddress.trim()) {
         setEditedAddress(editedAddress);
       }
+  
     } catch (error) {
-      console.error('Error saving changes:', error);
-      Alert.alert('Error saving changes. Please try again.');
+      console.error('Error saving profile changes:', error);
+      Alert.alert('Error saving profile changes. Please try again.');
     }
-    
-    // Step 1: Retrieve all selected genres
+  
+    // Step 1: Retrieve the current interests and selected genres
+    const existingInterests = coacheeData?.findCoacheeByID?.interests || [];
+  
+    // Step 2: Flatten the selected genres
     const selectedGenres = lists.flatMap((list) => {
       return list.items
         .filter((item) => item.checked)
-        .map((item) => ({ name: item.text, type: list.title }));
+        .map((item) => ({
+          name: item.text,
+          type: list.title,
+        }));
     });
-
-    const totalChecked = selectedGenres.length;
-    const ifZero = totalChecked > 0
-
-    if (totalChecked !== 9 && ifZero) {
-      Alert.alert('Please select exactly 9 genres in total.');
-      return;
-    }
-
-    const interestIds = coacheeData?.findCoacheeByID?.interests?.map((interest) => interest.id) || [];
-
-    const interestsInput = selectedGenres.map((genre, index) => ({
-      id: interestIds[index], 
-      name: genre.name,
-      type: genre.type,
-    }));
-
+  
+    const interestsInput = [];
+  
+    // Step 3: Create a function to add or replace interests
+    const ensureInterests = (existing, selected, type) => {
+      const requiredGenres = 3 - selected.length;
+      const existingOfType = existing.filter((e) => e.type === type);
+  
+      if (requiredGenres > 0) {
+        // Fill with existing interests if needed
+        const toAdd = existingOfType.slice(0, requiredGenres);
+        interestsInput.push(
+          ...selected,
+          ...toAdd.map((e) => ({
+            id: e.id,
+            name: e.name,
+            type: e.type,
+          }))
+        );
+      } else {
+        // Use existing IDs for the selected genres
+        interestsInput.push(
+          ...selected.map((s, i) => ({
+            id: existingOfType[i].id,
+            name: s.name,
+            type: s.type,
+          }))
+        );
+      }
+    };
+  
+    // Step 4: Add or replace genres with existing interests if needed
+    ensureInterests(existingInterests, selectedGenres.filter((g) => g.type === 'MovieGenre'), 'MovieGenre');
+    ensureInterests(existingInterests, selectedGenres.filter((g) => g.type === 'BookGenre'), 'BookGenre');
+    ensureInterests(existingInterests, selectedGenres.filter((g) => g.type === 'MusicGenre'), 'MusicGenre');
+  
     try {
       const result = await executeMutationUpdateInterest({
         input: interestsInput,
       });
-
+  
       if (result.error) {
         throw new Error(result.error.message);
       }
-    } catch (error) {
-      console.error('Error updating interests:', error);
-      Alert.alert('Error updating interests. Please try again.');
-    }
-    Alert.alert('Changes saved successfully.');
   
+      Alert.alert('Changes saved successfully.');
+    } catch (error) {
+      Alert.alert('Choose 3 interest when changing a genre');
+    }
   };
 
   
@@ -286,17 +319,17 @@ const handleNavigateBack = () => {
   
       // Check if the maximum limit (3) is reached for the respective category
       switch (updatedLists[listIndex].title) {
-        case 'Movie Genre':
+        case 'MovieGenre':
           if (movieGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
             return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
           }
           break;
-        case 'Book Genre':
+        case 'BookGenre':
           if (bookGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
             return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
           }
           break;
-        case 'Music Genre':
+        case 'MusicGenre':
           if (musicGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
             return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
           }
@@ -366,12 +399,16 @@ const handleNavigateBack = () => {
     <Text style={styles.headerText}>Edit Profile</Text>
     
     <Text style={styles.subHeaderText}>Profile Picture</Text>
-    <TouchableOpacity onPress={selectImage}>
-      <Image
-        source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')}
-        style={styles.circleImage}
-      />
-    </TouchableOpacity>
+    <TouchableOpacity onPress={selectImage} style={styles.imageContainer}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#fff" style={styles.activityIndicator} /> // Loading inside circle
+        ) : (
+          <Image
+            source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')}
+            style={styles.circleImage}
+          />
+        )}
+      </TouchableOpacity>
   
     <Text style={styles.subHeaderText}>Profile</Text>
     <View style={styles.inputContainer}>
@@ -465,13 +502,13 @@ const handleNavigateBack = () => {
       color: '#666',
       marginBottom: 10,
     },
-    circleImage: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      alignSelf: 'center',
-      marginTop: 10,
-    },
+    // circleImage: {
+    //   width: 120,
+    //   height: 120,
+    //   borderRadius: 60,
+    //   alignSelf: 'center',
+    //   marginTop: 10,
+    // },
     inputContainer: {
       marginBottom: 20,
     },
@@ -481,6 +518,26 @@ const handleNavigateBack = () => {
       borderRadius: 5,
       padding: 10,
       marginBottom: 10,
+    },
+    imageContainer: {
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'center', // Center the loading indicator
+      height: 120,
+      width: 120,
+      borderRadius: 60,
+      overflow: 'hidden',
+      backgroundColor: '#ccc', // Default background color for the circle
+    },
+    circleImage: {
+      alignSelf: 'center',
+      height: '100%',
+      width: '100%',
+      borderRadius: 60,
+    },
+    activityIndicator: {
+      position: 'absolute', // Position in the center
+      alignSelf: 'center',
     },
   });
 

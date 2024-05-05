@@ -72,6 +72,7 @@ const MyCoaches_alt = () => {
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'cache-and-network', // Ensure the data is fetched from the network if needed
     });
 
     const { fetching, data, error } = result;
