@@ -213,25 +213,57 @@ if (matchedCoaches.length === 0) {
 console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`));
 const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`);
 
-const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png');
+const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
 
-// Define the top coaches, using the default image if a coach's profile picture is missing or empty
-const TopCoaches: Profile[] = (coachData?.coaches || []).slice(1, 5).map((coach) => {
-    const isProfilePictureDefault = !coach.profilePicture.startsWith('https://res');
-    const profileImage = isProfilePictureDefault 
-        ? DEFAULT_PROFILE_PICTURE  // Use the default picture
-        : { uri: coach.profilePicture }; // Use the coach's actual profile picture if it's valid and not the placeholder
+// Compute the total star rating for each coach and then select the top two with the highest star ratings
+const topCoachesByStarRating = (coaches) => {
+    if (!coaches || coaches.length === 0) {
+        return [];
+    }
+
+    // Compute total star rating for each coach
+    const coachesWithTotalStarRatings = coaches.map((coach) => {
+        const totalStarRating = coach.reviews.reduce(
+            (acc, review) => acc + (review.starRating ?? 0),
+            0
+        );
+
+        return {
+            ...coach,
+            totalStarRating,
+        };
+    });
+
+    // Sort coaches by total star rating in descending order
+    const sortedCoachesByStarRating = coachesWithTotalStarRatings.sort(
+        (a, b) => b.totalStarRating - a.totalStarRating
+    );
+
+    // Return the top 2 coaches with the highest star ratings
+    return sortedCoachesByStarRating.slice(0, 2);
+};
+
+// Get the top two coaches with the highest star ratings
+const topCoaches = topCoachesByStarRating(coachData?.coaches);
+
+// Create Profile objects for top coaches to maintain consistent structure
+const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
+    const isProfilePictureDefault =
+        !coach.profilePicture || !coach.profilePicture.startsWith('https://res');
+    const profileImage = isProfilePictureDefault
+        ? DEFAULT_PROFILE_PICTURE
+        : { uri: coach.profilePicture };
 
     return {
         id: coach.id,
         name: `${coach.firstName} ${coach.lastName}`,
-        imageSource: profileImage, // Use the appropriate profile image
-        gainedStars: coach.reviews.reduce((acc, review) => acc + review.starRating, 0),
-        mainSport: coach.sports.length > 0 ? coach.sports[0].type : 'Unknown',
+        imageSource: profileImage,
+        gainedStars: coach.totalStarRating, // Use computed total star rating
+        mainSport: coach.sports?.[0]?.type ?? 'Unknown',
         about: coach.bio,
         workplaceAddress: coach.address,
     };
-}) || [];
+});
 
 
     const RecommendedCoaches: Profile[] = [
@@ -365,7 +397,7 @@ const TopCoaches: Profile[] = (coachData?.coaches || []).slice(1, 5).map((coach)
                    <View style={CoacheeDashboardStyle.profileTiles}>
                     <CoachProfiles
                         profiles={
-                            seeAllCoaches ? TopCoaches : TopCoaches.slice(0, 2)
+                            seeAllCoaches ? displayTopCoaches : displayTopCoaches.slice(0, 2)
                         }
                     />
                    </View>
