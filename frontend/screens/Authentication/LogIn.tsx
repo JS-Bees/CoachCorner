@@ -79,16 +79,17 @@ const LogIn = () => {
       password: Password,
     },
   });
-
+  
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      setEmail('');
-      setPassword('');
-      setEmailPasswordError('');
+       setEmail('');
+       setPassword('');
+       setEmailPasswordError('');
+       setLoading(false); // Reset isLoading to false when navigating back
     });
-
+   
     return unsubscribe;
-  }, [navigation]);
+   }, [navigation]);
 
   const storeToken = async (token: string) => {
     try {
@@ -111,7 +112,7 @@ const LogIn = () => {
   };
   
   const onLogInPressed = async () => {
-    if (isLoading) return; // Prevent multiple login attempts
+    if (isLoading) return; 
   
     setLoading(true); // Start loading
     
@@ -155,7 +156,7 @@ const LogIn = () => {
       } finally {
         setLoading(false); // Ensure loading stops
       }
-    }, 200); // 200ms delay to ensure state has updated
+    500}); // 200ms delay to ensure state has updated
   };
   
   
