@@ -211,18 +211,19 @@ export const createReview = mutationField('createReview', {
                 where: {
                     coachId: input.coachId,
                     coacheeId: input.coacheeId,
+                    status: 'COMPLETED',
                 },
-                include: {
-                    bookingSlots: {
-                        where: {
-                            status: 'COMPLETED',
-                        },
-                    },
-                },
+                // include: {
+                //     bookingSlots: {
+                //         where: {
+                //             status: 'COMPLETED',
+                //         },
+                //     },
+                // },
             });
 
             // Check if the booking exists and has a completed booking slot
-            if (!booking || booking.bookingSlots.length === 0) {
+            if (!booking) {
                 throw new Error(
                     'A completed booking slot is required to create a review.',
                 );
