@@ -55,6 +55,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     console.log(coacheeId, "CoacheeId")
     console.log(coacheeName, "CoacheeName")
 
+
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const handleNavigateBack = () => {
         setSuccessModalVisible(false); // Close the SuccessModal
@@ -81,13 +82,6 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
     const handleCreateBooking = async () => {
         setIsBookingProcessing(true);
-    
-        // Ensure coacheeId and coachId are valid and exist in the database
-        if (!coacheeId ||!userToken) {
-            alert("Coachee ID or Coach ID is missing or invalid. Please check and try again.");
-            setIsBookingProcessing(false); // Reset the processing state
-            return;
-        }
     
         // Ensure selectedSlots is defined and populated
         if (!selectedSlots || selectedSlots.length === 0) {
@@ -144,6 +138,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
         setIsBookingProcessing(false);
     };
 
+
     
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument,
@@ -175,6 +170,10 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
         },
 
     ]
+
+    
+    console.log("CoachID", coachData)
+    console.log("CoacheeId", coacheeId)
 
    
 

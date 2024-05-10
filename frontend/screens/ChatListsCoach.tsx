@@ -26,7 +26,7 @@ interface ChatMessage {
     message: string;
     sender: string;
     imageUrl: ImageSourcePropType;
-    contactedStatus: boolean;
+    contactedStatus: boolean;    
 }
 
 const ChatListPage: React.FC = () => {
@@ -40,6 +40,10 @@ const ChatListPage: React.FC = () => {
         console.log('Contact ID:', item.id);
         navigation.navigate('CoachChatPage', { chatMessage: item });
     };
+
+
+    
+   
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
 
@@ -76,6 +80,7 @@ const ChatListPage: React.FC = () => {
         error: coachChatListMessageError,
     } = useFetchMessagesForCoachlist(userToken);
 
+   
 
 
 
@@ -101,7 +106,6 @@ const ChatListPage: React.FC = () => {
         loading: coachLoading,
         error: coachError,
     } = useFetchCoachByUserID(userToken);
-
 
 
 
@@ -145,6 +149,7 @@ const ChatListPage: React.FC = () => {
                     sender: sender,
                     imageUrl: imageUrl,
                     contactedStatus: contact.contactedStatus,
+                    coacheeId: contact.coachee.id
                 };
             });
 

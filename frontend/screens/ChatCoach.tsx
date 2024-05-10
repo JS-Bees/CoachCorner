@@ -115,7 +115,11 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     };
 
-    console.log("coacheeId =", chatMessage.coacheeId)
+   
+
+
+
+    console.log("coacheeId = ", chatMessage.coacheeId)
 
 
     const handleSendMessage = async (content: string) => {
