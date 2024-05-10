@@ -62,31 +62,29 @@ mutation CreateMessage($input: CreateMessageInput!) {
     }
 }
 
-mutation CreateBooking(
-    $input: CreateBookingInput!
-    $slotsInput: [CreateBookingSlotInput!]!
-) {
-    createBooking(input: $input, slotsInput: $slotsInput) {
-        id
-        coach {
-            firstName
-            lastName
-        }
-        coachee {
-            firstName
-            lastName
-        }
-        serviceType
-        additionalNotes
-        status
-        bookingSlots {
-            id
-            date
-            startTime
-            endTime
-            status
-        }
+mutation CreateBooking($input: CreateBookingInput!, $slotsInput: [CreateBookingSlotInput!]!) {
+  createBooking(input: $input, slotsInput: $slotsInput) {
+    id
+    coach {
+      firstName
+      lastName
     }
+    coachee {
+      id
+      firstName
+      lastName
+    }
+    serviceType
+    additionalNotes
+    status
+    bookingSlots {
+      id
+      date
+      startTime
+      endTime
+      status
+    }
+  }
 }
 
 mutation CreateCoachTask($input: CreateCoachTaskInput!) {

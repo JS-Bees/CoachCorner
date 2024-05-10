@@ -10,7 +10,9 @@ import { CreateSportsCredentialsDocument, FindCoachByIdDocument } from '../../ge
 import {useQuery, useMutation} from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; 
+import * as ImagePicker from 'expo-image-picker';
+import SplashScreen from '../Authentication/SplashScreen';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 
@@ -32,7 +34,7 @@ interface CoachProfile {
 
 
 const NewCoachProfile = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const pagerRef = useRef<PagerView>(null);
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition, setDrawerPosition] = useState<'left' | 'right'>('right');
@@ -65,6 +67,9 @@ const NewCoachProfile = () => {
     
         fetchUserToken();
     }, []);
+
+    if (fetching) return <SplashScreen navigation={navigation} />;
+
     const uploadImageToCloudinary = async (imageObject: any) => {
         setUploading(true); // Set loading to true when starting the upload
         try {
@@ -89,44 +94,44 @@ const NewCoachProfile = () => {
 
 
   // Function to select and upload the image
-  const selectImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+ const selectImage = async () => {
+    try {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (!permissionResult.granted) {
-      alert('Permission to access the media library is required.');
-      return;
+        if (!permissionResult.granted) {
+            alert('Permission to access the media library is required.');
+            return;
+        }
+
+        const pickerResult = await ImagePicker.launchImageLibraryAsync();
+
+        if (pickerResult.canceled) {
+            return;
+        }
+
+        const imageUri = pickerResult.assets[0].uri;
+
+        const imageObject = {
+            uri: imageUri,
+            type: `image/${imageUri.split('.').pop()}`,
+            name: `image.${imageUri.split('.').pop()}`,
+        };
+
+        const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
+        setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
+        createSportsCredentials(uploadedImageUrl);
+    } catch (error) {
+        console.error('Error selecting image:', error);
     }
-
-    const pickerResult = await ImagePicker.launchImageLibraryAsync();
-
-    if (pickerResult.canceled) {
-      return;
-    }
-
-    const imageUri = pickerResult.assets[0].uri;
-
-    const imageObject = {
-      uri: imageUri,
-      type: `image/${imageUri.split('.').pop()}`,
-      name: `image.${imageUri.split('.').pop()}`,
-    };
-
-    const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
-    setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
-
-    // After uploading to Cloudinary, create sports credentials
-        // Store the uploaded image and create sports credentials
-    setSelectedImage(uploadedImageUrl);
-    createSportsCredentials(uploadedImageUrl);
-  };
+};
 
   // Function to create sports credentials with the uploaded image URL
-  const createSportsCredentials = async (imageUrl: any) => {
+  const createSportsCredentials = async (imageUrl: string) => {
     try {
       const result = await executeMutation({
         input: {
           credentialPicture: imageUrl,
-          sportId: parseInt(coachData?.findCoachByID.sports[0].id)
+          sportId: coachData?.findCoachByID.sports[0]?.id?? 0
         },
       });
 
@@ -188,9 +193,9 @@ const latestCredentialPicture = sportsCredentials
         {
             coachName: (coachData?.findCoachByID.firstName + " " + coachData?.findCoachByID.lastName),
             mainSport: (coachData?.findCoachByID.sports && coachData.findCoachByID.sports.length > 0)
-            ? coachData.findCoachByID.sports[0].type // Accessing the type from the first sport in the array
-            : "No sports listed", // Fallback if no sports are found
-            imageSource: coachData?.findCoachByID.profilePicture,
+            ? [coachData.findCoachByID.sports[0].type] // Wrap the result in an array
+             : ["No sports listed"], // Also wrap the fallback value in an array
+            imageSource: coachData?.findCoachByID.profilePicture || 'default_image_url',
             about: coachData?.findCoachByID.bio || '',
             achievements: "None at the moment",
             workplaceAddress: coachData?.findCoachByID.address || '',
@@ -261,9 +266,6 @@ const latestCredentialPicture = sportsCredentials
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => goToPage(1)} style={[styles.tabButton, activeTab === 1 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>Sports Credential</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => goToPage(2)} style={[styles.tabButton, activeTab === 2 && styles.activeTabButton]}>
-                            <Text style={styles.buttonHeader}>Affliates</Text>
                         </TouchableOpacity>
                     </View>
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>

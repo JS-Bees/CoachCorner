@@ -9,6 +9,8 @@ import AddReviewBottomSheet from '../components/BottomSheet/AddReview';
 import { useQuery } from 'urql';
 import { GetCoachReviewsDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/SplashScreen';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -19,10 +21,11 @@ type ReviewsPageNavigationProp = NativeStackNavigationProp<RootStackParams, 'Rev
 
 interface ReviewsPageProps {
   route: ReviewsPageRouteProp;
-  navigation: ReviewsPageNavigationProp;
+  navigation: StackNavigationProp<RootStackParams, 'ReviewsPage'>; // Use StackNavigationProp here
 }
 
 const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
+  
   
   const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
  
@@ -90,7 +93,7 @@ const {
   
     const { data, fetching, error } = result;
   
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
   
     const reviews = data?.findCoachByID?.reviews || [];
@@ -184,9 +187,11 @@ const {
                     <Icon name="add-circle-outline" size={50} color="#7E3FF0" />
                 </TouchableOpacity>
             ) : (
-                <Text style={{ alignSelf: 'center', marginTop: 20 }}>
-                    You need a completed booking to add a review.
-                </Text>
+              <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
+              <Text style={{ alignSelf: 'center', color: 'white' }}>
+                  You need a completed booking to add a review.
+              </Text>
+          </View>
             )}
 
       <AddReviewBottomSheet isVisible={bottomSheetVisible} onClose={handleCloseBottomSheet} coachId={profile.id} />

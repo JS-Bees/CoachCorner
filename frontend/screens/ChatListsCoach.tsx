@@ -18,6 +18,8 @@ import {
     FindMessagesForCoacheeListDocument,
 } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
+import { StackNavigationProp } from '@react-navigation/stack';
+import LoadingBar from '../components/LoadingBar';
 
 interface ChatMessage {
     id: number;
@@ -28,8 +30,7 @@ interface ChatMessage {
 }
 
 const ChatListPage: React.FC = () => {
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
 
     const handleNavigateBack = () => {
         navigation.goBack();
@@ -75,6 +76,10 @@ const ChatListPage: React.FC = () => {
         error: coachChatListMessageError,
     } = useFetchMessagesForCoachlist(userToken);
 
+
+
+
+
     // console.log(
     //     'chat list messages',
     //     coachChatListMessageData?.findMessagesForCoachList,
@@ -96,6 +101,9 @@ const ChatListPage: React.FC = () => {
         loading: coachLoading,
         error: coachError,
     } = useFetchCoachByUserID(userToken);
+
+
+
 
     useEffect(() => {
         // console.log('coachData:', coachData);
@@ -178,12 +186,16 @@ const ChatListPage: React.FC = () => {
                 <Text style={styles.header}> Messages </Text>
             </View>
 
-            <FlatList
-                data={filteredChatMessages} // Use the filtered array here
-                keyExtractor={(item) => item.id}
-                renderItem={renderChatMessage}
-                style={styles.chatList}
-            />
+            {coachLoading || coachChatListMessageLoading ? (
+                <LoadingBar navigation={navigation} />
+            ) : (
+                <FlatList
+                    data={filteredChatMessages}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderChatMessage}
+                    style={styles.chatList}
+                />
+            )}
         </View>
     );
 };

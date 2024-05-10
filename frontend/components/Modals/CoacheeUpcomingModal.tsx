@@ -30,7 +30,7 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
   
 
   const navigateToChat = () => {
-    navigation.navigate('ChatPage');
+    navigation.navigate('ChatList');
   };
   
   
@@ -49,7 +49,7 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
-    overlayStyle={styles.overlay} animationType="fade"  >
+    overlayStyle={styles.overlay} animationType="none"  >
       <View style={styles.container}>
         {session && (
           <>

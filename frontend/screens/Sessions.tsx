@@ -9,7 +9,6 @@ import {
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SearchBar } from '@rneui/themed';
 import CoacheeSessions from '../components/Profile Tiles/CoacheeSessionsTiles';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -18,6 +17,8 @@ import { FindCoachByIdDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/SplashScreen';
 
 
 
@@ -34,8 +35,7 @@ interface CoachSessionsProps {
 
 const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
@@ -92,7 +92,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     } = useFetchCoachByUserID(userToken);
 
     const { fetching, data, error } = result;
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>
 
 
@@ -179,6 +179,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                     <View>
                         <CoacheeSessions sessions={filteredSessions.map(booking => ({
                             coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                            coacheeId: `${booking.coacheeId}`,
                             bookingId: Number(booking.id),
                             serviceType: `${booking.serviceType}`,
                             additionalNotes: `${booking.additionalNotes}`,

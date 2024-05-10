@@ -24,13 +24,14 @@ import {
     FindCoacheesOfCoachDocument,
     FindCoachByIdDocument,
 } from '../generated-gql/graphql';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/SplashScreen';
 
 const { width, height } = Dimensions.get('window');
 
 const MyClients_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null);
     const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
@@ -79,7 +80,7 @@ const MyClients_alt = () => {
     });
 
     const { fetching, data, error } = result;
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
     const contacts = data?.findCoachByID.contacts;

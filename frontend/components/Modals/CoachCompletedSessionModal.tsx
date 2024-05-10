@@ -25,14 +25,14 @@ const CompletedModal: React.FC<SessionModalProps> = ({ visible, session, toggleO
   
 
   const navigateToChat = () => {
-    navigation.navigate('ChatPage');
+    navigation.navigate('CoachChatListsPage');
   };
 
 
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
-    overlayStyle={styles.overlay} animationType="fade"  >
+    overlayStyle={styles.overlay} animationType="none"  >
       <View style={styles.container}>
         {session && (
           <>

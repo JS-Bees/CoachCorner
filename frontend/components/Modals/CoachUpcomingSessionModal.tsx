@@ -29,14 +29,11 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
   
 
   const navigateToChat = () => {
-    navigation.navigate('ChatPage');
+    navigation.navigate('CoachChatListsPage');
   };
 
   
-  const navigateToReSched = () => {
-    navigation.navigate("ReschedulePage", { session, slotsId: session?.slotsId });
-  };
-  
+
 
   const handleCancelSchedule = () => {
     setLoading(true);
@@ -87,7 +84,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
-    overlayStyle={styles.overlay} animationType="fade"  >
+    overlayStyle={styles.overlay} animationType="none"  >
       <View style={styles.container}>
         {session && (
           <>
@@ -148,15 +145,12 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
     <TouchableOpacity style={styles.cancelButton} onPress={handleCancelSchedule}>
       <Text style={styles.cancelText}>Cancel Schedule</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={navigateToReSched}>
-      <Text style={styles.Text} >Re-Schedule</Text>
+
+    <TouchableOpacity style={styles.completeButton} onPress={handleCompleteSession}>
+      <Text style={styles.cancelText}>Mark as Complete</Text>
     </TouchableOpacity>
   </View>
 </View>
-
-<TouchableOpacity style={styles.completeButton} onPress={handleCompleteSession}>
-      <Text style={styles.cancelText}>Mark as Complete</Text>
-    </TouchableOpacity>
 
 
       {/* </View> */}
@@ -253,7 +247,7 @@ const styles = StyleSheet.create({
     bottom:  '-30%', 
     left:  0,
     right:  0,
-    paddingHorizontal:  10, 
+    paddingHorizontal:  5, 
   },
   button: {
     backgroundColor: '#7E3FF0', // Set the background color for the cancel button
@@ -281,8 +275,6 @@ const styles = StyleSheet.create({
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
-    top: "15%",
-    left: "5%"
   },
   dateText: {
     marginLeft: "15%",

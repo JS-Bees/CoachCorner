@@ -6,7 +6,7 @@ import { RootStackParams } from '../../App';
 import CustomInput from '../../components/Custom components/CustomBookingInput';
 import Slot from '../../components/SlotsProps';
 import AddSlotModal from '../../components/Modals/AddSlots';
-import { CreateBookingDocument } from '../../generated-gql/graphql';
+import { CreateBookingDocument, FindCoacheeByIdDocument } from '../../generated-gql/graphql';
 import { FindCoachByIdDocument } from '../../generated-gql/graphql';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,6 +14,8 @@ import { parse, formatISO } from 'date-fns';
 import { useEffect } from 'react';
 import SuccessModal from '../../components/Modals/SuccessModal';
 import { useMutation, useQuery } from 'urql';
+import LoadingBar from '../../components/LoadingBar';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 
@@ -30,6 +32,7 @@ interface NewBookingPageProps {
 
 export interface CoachProfile {
     coachName: string;
+   
     
 }
   
@@ -45,20 +48,14 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [endTimeError, setEndTimeError] = useState('');
-    const [dateError, setDateError] = useState('');
-    const [isSaveDisabled, setIsSaveDisabled] = useState(false);
 
 
-    const { coacheeId, coacheeName} = route.params || {}
+    const {coacheeId, coacheeName} = route.params || {}
 
     console.log(coacheeId, "CoacheeId")
     console.log(coacheeName, "CoacheeName")
 
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const handleNavigateBack = () => {
         setSuccessModalVisible(false); // Close the SuccessModal
         navigation.goBack(); // Navigate back to the previous screen
@@ -83,40 +80,30 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     
 
     const handleCreateBooking = async () => {
-
         setIsBookingProcessing(true);
-
-        if (userToken === null) {
-            console.error('User token is null');
-            alert("User token is missing. Please log in and try again.");
+    
+        // Ensure coacheeId and coachId are valid and exist in the database
+        if (!coacheeId ||!userToken) {
+            alert("Coachee ID or Coach ID is missing or invalid. Please check and try again.");
             setIsBookingProcessing(false); // Reset the processing state
             return;
         }
     
-        // Check if serviceType or additionalNotes is empty or blank
-        if (serviceType.trim() === "" || additionalNotes.trim() === "") {
-            alert("Service type or additional notes cannot be blank. Please fill in the missing inputs.");
+        // Ensure selectedSlots is defined and populated
+        if (!selectedSlots || selectedSlots.length === 0) {
+            alert("No slots selected. Please select a slot and try again.");
             setIsBookingProcessing(false); // Reset the processing state
             return;
         }
-        
     
-        const input = {
-            coacheeId: coacheeId,//should be coachID rightnow its showing bookingID
-            coachId: parseInt(userToken),
-            serviceType: serviceType,
-            additionalNotes: additionalNotes,
-            status: "PENDING"
-        };
-    
+        // Define slotsInput based on selectedSlots
         const slotsInput = selectedSlots.map(slot => {
             const date = parse(slot.date, 'EEEE, do MMMM', new Date());
     
             // Format startTime and endTime to ISO 8601 format
             const startTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.startTime.split(':')[0]), parseInt(slot.startTime.split(':')[1])));
             const endTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.endTime.split(':')[0]), parseInt(slot.endTime.split(':')[1])));
-           
-            
+    
             // Include the date in the slotsInput array
             return {
                 status: 'UPCOMING',
@@ -126,49 +113,44 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             };
         });
     
-       
-        const { data, error } = await createBookingMutation({
-            variables: { input, slotsInput }
-        });
-
+        const input = {
+            coacheeId: coacheeId,
+            coachId: parseInt(userToken),
+            serviceType: serviceType,
+            additionalNotes: additionalNotes,
+            status: "PENDING"
+        };
     
         try {
             const { data, error } = await createBookingMutation({
                 input,
-                slotsInput
+                slotsInput // Use slotsInput in your mutation
             });
     
             if (error) {
                 console.error('Failed to create booking:', error);
+                alert("An error occurred while creating the booking. Please try again later.");
             } else {
                 console.log('Booking created successfully:', data);
                 setIsBookingProcessing(false);
                 setSuccessModalVisible(true);
             }
     
-            console.log("Input:", input);
-            console.log("Slots Input:", slotsInput);
         } catch (error) {
             alert("An error occurred while creating the booking. Please try again later.");
             console.error('Error creating booking:', error);
-
-        }
-        if (!error) {
-            setSuccessModalVisible(true);
-            setSelectedSlots([]);
-            setServiceType('');
-            setAdditionalNotes('');
-          
         }
     
+        setIsBookingProcessing(false);
     };
 
+    
     const [{ data: coachData, fetching, error }] = useQuery({
-        query: FindCoachByIdDocument, // Use the Coachee query document
+        query: FindCoachByIdDocument,
         variables: {
-            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userId: parseInt(userToken),
         },
-        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network',
     });
 
     
@@ -211,7 +193,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     
                     <Text style={styles.subheaderText}>Coach Name</Text>
                     {CoachProfiles[0].coachName ? (
-                        <CustomInput value={CoachProfiles[0].coachName} />) : null}
+                    <CustomInput value={CoachProfiles[0].coachName} />) : null}
                     <Text style={styles.subheaderText}> Trainee Name </Text>
                     <CustomInput value={`${coacheeName}`}/>
 
@@ -229,7 +211,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     </View>
 
                     <Text style={styles.subheaderText}> Service Type </Text>
-                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)} />
+                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)}/>
                     <Text style={styles.subheaderText}> Additional Notes </Text>
                     <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)}/>
 

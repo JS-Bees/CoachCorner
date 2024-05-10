@@ -123,9 +123,9 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     // Check if profile information has changed
     const noProfileChanges =
       (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
-      (editedBio.trim() === coachData?.findCoachByID.bio &&
-        editedAddress.trim() === coachData?.findCoachByID.address &&
-        editedProfilePicture.trim() === coachData?.findCoachByID.profilePicture);
+      (editedBio.trim() === coachData?.findCoachByID?.bio &&
+        editedAddress.trim() === coachData?.findCoachByID?.address &&
+        editedProfilePicture.trim() === coachData?.findCoachByID?.profilePicture);
   
     if (noProfileChanges) {
       Alert.alert('No changes made.');
@@ -136,8 +136,8 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       const profileResult = await executeMutation({
         updateCoachProfileId: parseInt(userToken),
         input: {
-          bio: editedBio.trim() ? editedBio : coachData?.findCoachByID.bio || '',
-          address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID.address || '',
+          bio: editedBio.trim() ? editedBio : coachData?.findCoachByID?.bio || '',
+          address: editedAddress.trim() ? editedAddress : coachData?.findCoachByID?.address || '',
           profilePicture: editedProfilePicture,
         },
       });
@@ -357,7 +357,7 @@ const toggleCheckbox = (listIndex: number, itemIndex: number) => {
 
 
   const renderList = (list: List, index: number) => (
-    <View key={index} style={styles.listContainer}>
+    <View key={index} style={styles.container}>
       <TouchableOpacity onPress={() => toggleList(index)}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: "2%",}}>
           <Text style={{ fontSize: 20, color: "#7E3FF0", fontWeight: "400"}}>{list.title}</Text>

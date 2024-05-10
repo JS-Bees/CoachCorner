@@ -153,9 +153,7 @@ const NewCoachDashboard = () => {
         return null;
     }
 
-    const navigateToNotifications = () => {
-        navigation.navigate("NotificationPage");
-    };
+    
     const navigateToCoachProfile = () => {
         navigation.navigate("NewCoachProfile");
     };
@@ -189,11 +187,6 @@ const NewCoachDashboard = () => {
                 />
             
             </TouchableOpacity>
-           <TouchableOpacity onPress={navigateToNotifications}>
-           <View style={CoacheeDashboardStyle.iconContainer}>
-            <Icon name="notifications-outline" size={35} color='#7E3FF0' />
-            </View>
-           </TouchableOpacity>
             <KeyboardAvoidingView
                 style={CoacheeDashboardStyle.container}
                 behavior={Platform.OS === "android" ? 'height' : 'padding'}

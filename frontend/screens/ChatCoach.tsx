@@ -111,9 +111,11 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     const handleNavigateToBooking = () => {
         console.log(chatMessage.coacheeId, "the id")
-        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.id, coacheeName: chatMessage.sender,});
+        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.coacheeId, coacheeName: chatMessage.sender,});
 
     };
+
+    console.log("coacheeId =", chatMessage.coacheeId)
 
 
     const handleSendMessage = async (content: string) => {

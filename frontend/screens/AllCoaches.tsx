@@ -17,6 +17,9 @@ import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native
 import { FindCoachesBySportDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/SplashScreen';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,8 +29,7 @@ const { width, height } = Dimensions.get('window');
 
 const AllCoaches = ({route}) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
@@ -81,7 +83,7 @@ const AllCoaches = ({route}) => {
 
         console.log(coacheeData?.findCoacheeByID.firstName)
 
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
     // Extract coaches data from the GraphQL response
@@ -142,7 +144,7 @@ const AllCoaches = ({route}) => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View> */}
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "3%", height: 250, marginLeft: '4%'}}>
                <View>
                <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
                </View>

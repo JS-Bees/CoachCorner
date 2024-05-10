@@ -24,13 +24,14 @@ import {
     FindCoacheeByIdDocument,
 } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/SplashScreen';
 
 const { width, height } = Dimensions.get('window');
 
 const MyCoaches_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('Favorite'); // 'All' or 'Favorite'
@@ -77,7 +78,7 @@ const MyCoaches_alt = () => {
 
     const { fetching, data, error } = result;
 
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
     // Extract coaches data from the GraphQL response

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Overlay, Icon } from '@rneui/themed';
 import CoacheeSessions from '../Profile Tiles/CoacheeSessionsTiles';
@@ -27,26 +27,36 @@ const screenHeight = Dimensions.get('window').height;
 const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [result, updateBookingStatus] = useMutation<UpdateBookingStatusMutation>(UpdateBookingStatusDocument);
+  const [loading, setLoading] = useState(false);
 
   
 
   const navigateToChat = () => {
-    navigation.navigate('ChatPage');
+    navigation.navigate('CoachChatListsPage');
   };
 
-  // const handleConfirmSchedule = () => {
-  //   if (session?.bookingId) {
-  //     const variables = {
-  //       updateBookingStatusId: session.bookingId,
-  //       input: { status: 'UPCOMING' }
-  //     };
-  //     updateBookingStatus(variables);
-  //     toggleOverlay(null); // Close the modal
-  //   } else {
-  //     console.error("Cannot update status ");
-  //   }
-  // };
+  const navigateToReSched = () => {
+    navigation.navigate("ReschedulePage", { session, slotsId: session?.slotsId, coacheeId: session});
+  };
   
+
+  const handleCancelSchedule = () => {
+    setLoading(true);
+    if (session?.bookingId) {
+      const variables = {
+        updateBookingStatusId: session.bookingId,
+        input: { status: 'CANCELLED' }
+      };
+      updateBookingStatus(variables).then(() => {
+        toggleOverlay(null); // Close the modal
+        navigateToReSched();
+        setLoading(false);
+      });
+    } else {
+      console.error("Cannot update status ");
+    }
+  };
+
   
   useEffect(() => {
     if (result.error) {
@@ -63,7 +73,7 @@ const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
-    overlayStyle={styles.overlay} animationType="fade"  >
+    overlayStyle={styles.overlay} animationType="none"  >
       <View style={styles.container}>
         {session && (
           <>
@@ -114,9 +124,15 @@ const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
   />
 </View>
 
-  <View style={styles.awaitingText}>
-      <Text style={styles.cancelText}>Awaiting trainee confirmation</Text>
-    </View>
+  <View>
+  <TouchableOpacity style={styles.button} onPress={handleCancelSchedule}>
+      <Text style={styles.re_schedText} >Re-Schedule</Text>
+    </TouchableOpacity>
+  </View>
+
+   <View>
+    <Text style={styles.awaitingText}>Awaiting Trainee Confirmation</Text>
+   </View>
 
 
 
@@ -212,9 +228,8 @@ const styles = StyleSheet.create({
     paddingHorizontal:  10, 
   },
   button: {
-    marginTop: '-5%',
-    marginLeft: '80%',
-    backgroundColor: '#7E3FF0',
+    marginTop: '15%',
+    marginLeft: '60%',
     width: 140,
     height: 45,
     borderRadius: 15,
@@ -226,6 +241,7 @@ const styles = StyleSheet.create({
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
+    color:"#908D93",
   },
   dateText: {
     marginLeft: "15%",
@@ -240,7 +256,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 30
-  }
+  },
+  re_schedText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#7E3FF0"
+  },
+  
 });
 
 export default PendingModal;

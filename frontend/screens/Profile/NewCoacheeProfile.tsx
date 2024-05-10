@@ -10,6 +10,8 @@ import { FindCoacheeByIdDocument,} from '../../generated-gql/graphql';
 import { useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
+import SplashScreen from '../Authentication/SplashScreen';
+import { StackNavigationProp } from '@react-navigation/stack';
 // import  Cloudinary  from "cloudinary-react-native";
 
 
@@ -31,7 +33,7 @@ interface CoacheeProfile {
 
 
 const NewCoacheeProfile = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const pagerRef = useRef<PagerView>(null);
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition] = useState<'left' | 'right'>('right');
@@ -60,6 +62,7 @@ const NewCoacheeProfile = () => {
     
         fetchUserToken();
     }, []);
+    if (fetching) return <SplashScreen navigation={navigation} />;
 
     
     const toggleDrawer = () => {
@@ -176,9 +179,7 @@ const NewCoacheeProfile = () => {
                         <TouchableOpacity onPress={() => goToPage(1)} style={[styles.tabButton, activeTab === 1 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>Achievements</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => goToPage(2)} style={[styles.tabButton, activeTab === 2 && styles.activeTabButton]}>
-                            <Text style={styles.buttonHeader}>Affliates</Text>
-                        </TouchableOpacity>
+
                     </View>
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>
                         <View key="1">

@@ -87,15 +87,6 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             </View>
 
             <View style={styles.affliationsContainer}>
-                <Text style={styles.aboutText}>Affliations</Text>
-            </View>
-            <View style={styles.affliationsContainer}>
-                <Text style={styles.affliationsText}>
-                    None at the moment
-                </Text>
-            </View>
-
-            <View style={styles.affliationsContainer}>
                 <Text style={styles.aboutText}></Text>
             </View>
             <View style={styles.buttonContainer}>
