@@ -22,8 +22,8 @@ interface CoachProfile {
     mainSport: string[];
     imageSource: string;
     about: string;
-    achievements: string;
     workplaceAddress: string;
+    sportsCredentials: string[]; // Array to store image URLs for sports credentials
     interests: {
         MovieGenre: string[];
         BookGenre: string[];
@@ -93,9 +93,17 @@ const NewCoachProfile = () => {
     };
 
 
-  // Function to select and upload the image
- const selectImage = async () => {
+  // Function to select and upload the image, only limits to 5
+// Function to select and upload the image
+const selectImage = async () => {
+    // Check if the user has already uploaded 5 images
+    if (CoachProfiles[0].sportsCredentials.length >= 5) {
+        alert('You can only upload a maximum of 5 images for sports credentials.');
+        return;
+    }
+
     try {
+        // Proceed with image selection if the limit has not been reached
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (!permissionResult.granted) {
@@ -124,6 +132,7 @@ const NewCoachProfile = () => {
         console.error('Error selecting image:', error);
     }
 };
+
 
   // Function to create sports credentials with the uploaded image URL
   const createSportsCredentials = async (imageUrl: string) => {
@@ -197,8 +206,8 @@ const latestCredentialPicture = sportsCredentials
              : ["No sports listed"], // Also wrap the fallback value in an array
             imageSource: coachData?.findCoachByID.profilePicture || 'default_image_url',
             about: coachData?.findCoachByID.bio || '',
-            achievements: "None at the moment",
             workplaceAddress: coachData?.findCoachByID.address || '',
+            sportsCredentials: coachData?.findCoachByID.sports[0]?.sportsCredentials.map(credential => credential.credentialPicture) || [],
             interests: {
                 MovieGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'MovieGenre').map(interest => interest.name) || [],
                 BookGenre: coachData?.findCoachByID.interests.filter(interest => interest.type === 'BookGenre').map(interest => interest.name) || [],
@@ -207,6 +216,7 @@ const latestCredentialPicture = sportsCredentials
         },
 
     ]
+    console.log(sportsCredentials)
     
     const navigationView = () => (
         <View style={styles.drawerContainer}>
@@ -298,31 +308,30 @@ const latestCredentialPicture = sportsCredentials
                         <View key="2">
                                 {/* Sports Credentials Tab */}
                                 <ScrollView style={styles.scrollView}>
-                <View style={styles.imageUploadContainer}>
-                    {uploading && (
-                        <ActivityIndicator
-                            size="small"
-                            color="#7E3FF0"
-                            style={styles.activityIndicator}
-                        />
-                    )}
-                    <TouchableOpacity onPress={selectImage}>
-                        <Text style={styles.uploadText}>Click to Upload Sports Credentials</Text>
-                        <Icon name="cloud-upload-outline" size={30} color="#7E3FF0" />
-                    </TouchableOpacity>
-                </View>
+    {CoachProfiles[0].sportsCredentials.map((imageUrl, index) => (
+        <Image
+            key={index}
+            source={{ uri: imageUrl }}
+            style={styles.uploadedImage}
+        />
+    ))}
+    {CoachProfiles[0].sportsCredentials.length < 5 && (
+        <View style={styles.imageUploadContainer}>
+            {uploading && (
+                <ActivityIndicator
+                    size="small"
+                    color="#7E3FF0"
+                    style={styles.activityIndicator}
+                />
+            )}
+            <TouchableOpacity onPress={selectImage}>
+                <Text style={styles.uploadText}>Click to Upload Sports Credentials</Text>
+                <Icon name="cloud-upload-outline" size={30} color="#7E3FF0" />
+            </TouchableOpacity>
+        </View>
+    )}
+</ScrollView>
 
-                {/* Display the latest sports credential image */}
-                {latestCredentialPicture && (
-                    <Image
-                        source={{ uri: latestCredentialPicture }}
-                        style={styles.uploadedImage}
-                    />
-                )}
-            </ScrollView>
-                        </View>
-                        <View key="3">
-                            <Text style={styles.achievementsText}>{CoachProfiles[0].achievements}</Text>
                         </View>
                     </PagerView>
                 </View>
@@ -542,6 +551,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
+        marginBottom: 20, // Add margin to the bottom to ensure space for multiple images
     },
 })
 export default NewCoachProfile;
