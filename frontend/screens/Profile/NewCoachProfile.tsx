@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image, DrawerLayoutAndroid, ScrollView, ActivityIndicator} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Image, DrawerLayoutAndroid, ScrollView, ActivityIndicator, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
@@ -93,8 +93,7 @@ const NewCoachProfile = () => {
     };
 
 
-  // Function to select and upload the image, only limits to 5
-// Function to select and upload the image
+// Function to select and upload the image, only limits to 5
 const selectImage = async () => {
     // Check if the user has already uploaded 5 images
     if (CoachProfiles[0].sportsCredentials.length >= 5) {
@@ -125,13 +124,33 @@ const selectImage = async () => {
             name: `image.${imageUri.split('.').pop()}`,
         };
 
-        const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
-        setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
-        createSportsCredentials(uploadedImageUrl);
+        // Ask for confirmation before uploading
+        Alert.alert(
+            'Confirmation',
+            'Are you sure you want to upload this image? Credential pictures cannot be changed once uploaded for security reasons.',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'OK',
+                    onPress: async () => {
+                        const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
+                        setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
+                        createSportsCredentials(uploadedImageUrl);
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     } catch (error) {
         console.error('Error selecting image:', error);
     }
 };
+
+
+
 
 
   // Function to create sports credentials with the uploaded image URL
@@ -268,8 +287,10 @@ const latestCredentialPicture = sportsCredentials
                             <Icon name="settings-outline" size={30} color="#FDDE6E" style={styles.settingsIcon} />
                         </TouchableOpacity>
                     </View>
+                    <View>
                     <Text style={styles.headerText}>{CoachProfiles[0].coachName}</Text>
                     <Text style={styles.subText}>{CoachProfiles[0].mainSport}</Text>
+                    </View>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
@@ -374,14 +395,13 @@ const styles = StyleSheet.create({
     },
     headerText: {
         paddingTop: "5%",
-        right: "18%",
+        paddingRight: "10%",
         fontSize: 25,
         fontWeight: "400",
         color: "#7E3FF0"
     },
     subText: {
         paddingTop: "1%",
-        right: "30%",
         fontSize: 18,
         fontWeight: "300",
         color: "#838086"

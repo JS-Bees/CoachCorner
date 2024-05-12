@@ -40,10 +40,10 @@ const CredentialsPage = () => {
   const sportsCredentials = data?.findCoachByID?.sports?.[0]?.sportsCredentials;
 
   return (
-    <>
+    <View style={styles.container}>
       <Text style={styles.titleText}>Credential Pictures</Text>
-      <ScrollView contentContainerStyle={[styles.scrollViewContainer, {top: "-50%" }]}>
-        {sportsCredentials && sportsCredentials.length > 0? (
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        {sportsCredentials && sportsCredentials.length > 0 ? (
           sportsCredentials.map((credential, index) => (
             <Image
               key={index}
@@ -55,12 +55,18 @@ const CredentialsPage = () => {
           <Text style={styles.noCredentialsText}>No credentials uploaded yet.</Text>
         )}
       </ScrollView>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   scrollViewContainer: {
+    paddingTop: '10%',
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -75,7 +81,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#888',
     textAlign: 'center',
-    top: '15%'
   },
   loadingContainer: {
     flex: 1,
@@ -88,8 +93,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
+    paddingTop: '14%',
+    color: "#7E3FF0",
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 10, // Add some space between the title and the images
   },
 });
 
