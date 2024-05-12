@@ -170,8 +170,9 @@ const NewCoacheeProfile = () => {
                             <Icon name="settings-outline" size={30} color="#FDDE6E" style={styles.settingsIcon} />
                         </TouchableOpacity>
                     </View>
+                    <View>
                     <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName},  {CoacheeProfiles[0].age}</Text>
-                    {/* <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text> */}
+                    </View>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         paddingTop: "5%",
-        right: "14%",
+        paddingRight: "45%",
         fontSize: 25,
         fontWeight: "400",
         color: "#7E3FF0"

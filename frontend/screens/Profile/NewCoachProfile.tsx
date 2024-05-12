@@ -8,6 +8,7 @@ import {
     DrawerLayoutAndroid,
     ScrollView,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,8 +32,8 @@ interface CoachProfile {
     mainSport: string[];
     imageSource: string;
     about: string;
-    achievements: string;
     workplaceAddress: string;
+    sportsCredentials: string[]; // Array to store image URLs for sports credentials
     interests: {
         MovieGenre: string[];
         BookGenre: string[];
@@ -63,6 +64,10 @@ const NewCoachProfile = () => {
         },
         requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
+
+    const handleNavigatetoReviewsPageCoach = () => {
+        navigation.navigate('ReviewsPageCoach');
+    };
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -105,9 +110,18 @@ const NewCoachProfile = () => {
         }
     };
 
-    // Function to select and upload the image
+    // Function to select and upload the image, only limits to 5
     const selectImage = async () => {
+        // Check if the user has already uploaded 5 images
+        if (CoachProfiles[0].sportsCredentials.length >= 5) {
+            alert(
+                'You can only upload a maximum of 5 images for sports credentials.',
+            );
+            return;
+        }
+
         try {
+            // Proceed with image selection if the limit has not been reached
             const permissionResult =
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -130,9 +144,27 @@ const NewCoachProfile = () => {
                 name: `image.${imageUri.split('.').pop()}`,
             };
 
-            const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
-            setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
-            createSportsCredentials(uploadedImageUrl);
+            // Ask for confirmation before uploading
+            Alert.alert(
+                'Confirmation',
+                'Are you sure you want to upload this image? Credential pictures cannot be changed once uploaded for security reasons.',
+                [
+                    {
+                        text: 'Cancel',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'OK',
+                        onPress: async () => {
+                            const uploadedImageUrl =
+                                await uploadImageToCloudinary(imageObject);
+                            setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
+                            createSportsCredentials(uploadedImageUrl);
+                        },
+                    },
+                ],
+                { cancelable: true },
+            );
         } catch (error) {
             console.error('Error selecting image:', error);
         }
@@ -186,10 +218,6 @@ const NewCoachProfile = () => {
         navigation.navigate('EditProfileForCoach');
     };
 
-    const handleNavigatetoReviewsPageCoach = () => {
-        navigation.navigate('ReviewsPageCoach');
-    };
-
     const handleNavigateLogOut = () => {
         navigation.navigate('LogIn');
     };
@@ -219,8 +247,11 @@ const NewCoachProfile = () => {
             imageSource:
                 coachData?.findCoachByID.profilePicture || 'default_image_url',
             about: coachData?.findCoachByID.bio || '',
-            achievements: 'None at the moment',
             workplaceAddress: coachData?.findCoachByID.address || '',
+            sportsCredentials:
+                coachData?.findCoachByID.sports[0]?.sportsCredentials.map(
+                    (credential) => credential.credentialPicture,
+                ) || [],
             interests: {
                 MovieGenre:
                     coachData?.findCoachByID.interests
@@ -237,6 +268,7 @@ const NewCoachProfile = () => {
             },
         },
     ];
+    console.log(sportsCredentials);
 
     const navigationView = () => (
         <View style={styles.drawerContainer}>
@@ -251,12 +283,14 @@ const NewCoachProfile = () => {
                 <Icon name="settings-outline" size={30} color="grey" />
                 <Text style={styles.buttonText}>Account Settings</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.drawerButton}
-                onPress={handleNavigatetoReviewsPageCoach}
-            >
+            <TouchableOpacity style={styles.drawerButton}>
                 <Icon name="pulse-outline" size={30} color="grey" />
-                <Text style={styles.buttonText}>My Reviews</Text>
+                <Text
+                    style={styles.buttonText}
+                    onPress={handleNavigatetoReviewsPageCoach}
+                >
+                    My Reviews
+                </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton}>
                 <Icon name="notifications-outline" size={30} color="grey" />
@@ -310,12 +344,14 @@ const NewCoachProfile = () => {
                             />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.headerText}>
-                        {CoachProfiles[0].coachName}
-                    </Text>
-                    <Text style={styles.subText}>
-                        {CoachProfiles[0].mainSport}
-                    </Text>
+                    <View>
+                        <Text style={styles.headerText}>
+                            {CoachProfiles[0].coachName}
+                        </Text>
+                        <Text style={styles.subText}>
+                            {CoachProfiles[0].mainSport}
+                        </Text>
+                    </View>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity
                             onPress={() => goToPage(0)}
@@ -407,41 +443,39 @@ const NewCoachProfile = () => {
                         <View key="2">
                             {/* Sports Credentials Tab */}
                             <ScrollView style={styles.scrollView}>
-                                <View style={styles.imageUploadContainer}>
-                                    {uploading && (
-                                        <ActivityIndicator
-                                            size="small"
-                                            color="#7E3FF0"
-                                            style={styles.activityIndicator}
+                                {CoachProfiles[0].sportsCredentials.map(
+                                    (imageUrl, index) => (
+                                        <Image
+                                            key={index}
+                                            source={{ uri: imageUrl }}
+                                            style={styles.uploadedImage}
                                         />
-                                    )}
-                                    <TouchableOpacity onPress={selectImage}>
-                                        <Text style={styles.uploadText}>
-                                            Click to Upload Sports Credentials
-                                        </Text>
-                                        <Icon
-                                            name="cloud-upload-outline"
-                                            size={30}
-                                            color="#7E3FF0"
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-
-                                {/* Display the latest sports credential image */}
-                                {latestCredentialPicture && (
-                                    <Image
-                                        source={{
-                                            uri: latestCredentialPicture,
-                                        }}
-                                        style={styles.uploadedImage}
-                                    />
+                                    ),
+                                )}
+                                {CoachProfiles[0].sportsCredentials.length <
+                                    5 && (
+                                    <View style={styles.imageUploadContainer}>
+                                        {uploading && (
+                                            <ActivityIndicator
+                                                size="small"
+                                                color="#7E3FF0"
+                                                style={styles.activityIndicator}
+                                            />
+                                        )}
+                                        <TouchableOpacity onPress={selectImage}>
+                                            <Text style={styles.uploadText}>
+                                                Click to Upload Sports
+                                                Credentials
+                                            </Text>
+                                            <Icon
+                                                name="cloud-upload-outline"
+                                                size={30}
+                                                color="#7E3FF0"
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
                                 )}
                             </ScrollView>
-                        </View>
-                        <View key="3">
-                            <Text style={styles.achievementsText}>
-                                {CoachProfiles[0].achievements}
-                            </Text>
                         </View>
                     </PagerView>
                 </View>
@@ -483,14 +517,13 @@ const styles = StyleSheet.create({
     },
     headerText: {
         paddingTop: '5%',
-        right: '18%',
+        paddingRight: '10%',
         fontSize: 25,
         fontWeight: '400',
         color: '#7E3FF0',
     },
     subText: {
         paddingTop: '1%',
-        right: '30%',
         fontSize: 18,
         fontWeight: '300',
         color: '#838086',
@@ -661,6 +694,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
+        marginBottom: 20, // Add margin to the bottom to ensure space for multiple images
     },
 });
 export default NewCoachProfile;
