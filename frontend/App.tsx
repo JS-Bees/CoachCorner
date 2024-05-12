@@ -47,6 +47,7 @@ import AddTaskPage from './screens/AddTaskForCoachee';
 import AddTaskPageForCoach from './screens/AddTaskForCoach';
 import PreviewTask from './screens/PreviewTaskForCoach';
 import PreviewTaskForCoachee from './screens/PreviewTaskForCoachee';
+import ReviewsPageCoach from './screens/ReviewsPageCoach';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
 registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
@@ -71,7 +72,6 @@ import { createClient as createWSClient, SubscribePayload } from 'graphql-ws';
 const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
-
 
 const wsClient = createWSClient({
     // APIurl: 'ws://192.168.254.142:5050/graphql',
@@ -156,6 +156,7 @@ export type RootStackParams = {
     AddTaskPageForCoachee: any;
     PreviewTask: any;
     PreviewTaskForCoachee: any;
+    ReviewsPageCoach: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -382,6 +383,11 @@ export default function App() {
                         component={CoachChatListsPage}
                         options={{ headerShown: false }}
                     />
+                    <RootStack.Screen
+                        name="ReviewsPageCoach"
+                        component={ReviewsPageCoach}
+                        options={{ headerShown: false }}
+                    />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
@@ -493,7 +499,7 @@ function NewCoachTabNavigator() {
                 options={{ headerShown: false }}
             />
             <CoachTab.Screen
-                name="Trainees" 
+                name="Trainees"
                 component={MyClients_alt}
                 options={{ headerShown: false }}
             />
