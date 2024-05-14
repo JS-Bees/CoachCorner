@@ -173,10 +173,7 @@ const LogIn = () => {
         // }); // 200ms delay to ensure state has updated
     };
 
-    const onForgotPressed = () => {
-        // Add logic for password reset here
-    };
-
+  
     const onSignUpPressed = () => {
         if (CoachOrCoachee === 'coach') {
             navigation.navigate('SignUpCoach');
@@ -387,7 +384,7 @@ const Log_In_Style = StyleSheet.create({
         paddingLeft: 2,
     },
     subtitleText: {
-        bottom: 23,
+        bottom: "20%",
         fontSize: 15,
         fontWeight: '200',
         fontFamily: 'Roboto',

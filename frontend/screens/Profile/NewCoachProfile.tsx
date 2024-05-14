@@ -284,9 +284,9 @@ const NewCoachProfile = () => {
                 <Text style={styles.buttonText}>Account Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton}>
-                <Icon name="pulse-outline" size={30} color="grey" />
+                <Icon name="pulse-outline" size={30} color="#7E3FF0"/>
                 <Text
-                    style={styles.buttonText}
+                    style={styles.buttonText3}
                     onPress={handleNavigatetoReviewsPageCoach}
                 >
                     My Reviews
@@ -309,7 +309,7 @@ const NewCoachProfile = () => {
                 onPress={handleNavigateLogOut}
             >
                 <Icon name="log-out-outline" size={30} color="#7E3FF0" />
-                <Text style={styles.buttonText}>Log Out</Text>
+                <Text style={styles.buttonText3}>Log Out</Text>
             </TouchableOpacity>
         </View>
     );
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         paddingTop: '5%',
-        paddingRight: '10%',
+        paddingRight: '40%',
         fontSize: 25,
         fontWeight: '400',
         color: '#7E3FF0',

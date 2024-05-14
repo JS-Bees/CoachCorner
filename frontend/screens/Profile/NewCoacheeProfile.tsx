@@ -177,9 +177,6 @@ const NewCoacheeProfile = () => {
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => goToPage(1)} style={[styles.tabButton, activeTab === 1 && styles.activeTabButton]}>
-                            <Text style={styles.buttonHeader}>Achievements</Text>
-                        </TouchableOpacity>
 
                     </View>
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>
@@ -208,12 +205,7 @@ const NewCoacheeProfile = () => {
                             </View>
                            </ScrollView>
                         </View>
-                        <View key="2">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
-                        </View>
-                        <View key="3">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
-                        </View>
+                      
                     </PagerView>
                 </View>
             </View>
@@ -278,13 +270,12 @@ const styles = StyleSheet.create({
     },
     tabContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        marginLeft: "10%",
         paddingVertical: 10,
         width: '100%',
     },
     tabButton: {
         padding: 10,
-        alignItems: "center"
     },
     pagerView: {
         flex: 1,

@@ -92,9 +92,6 @@ const CoacheeDashboard = () => {
 
     ];
 
-    const toggleSportsSelection = () => {
-        setSportsVisible(!sportsVisible);
-    };
 
 
     const handleSeeAllPress = () => {
@@ -104,16 +101,11 @@ const CoacheeDashboard = () => {
         }
     };
 
-    const navigateToNotifications = () => {
-        navigation.navigate('NotificationPage');
-    };
-    const handleButtonClick = () => {
-        // If sportsVisible is true and a sport is checked, navigate to AllCoaches
-        if (sportsVisible && selectedSport) {
-            navigation.navigate('AllCoachesPage', { selectedSport: selectedSport });
-        } else {
-            toggleSportsSelection(); // Toggle the visibility of sports selection
-        }
+   
+    const handleSportSelection = (sport: string) => {
+        setSelectedSport(sport);
+        setSportsVisible(false); // Hide the sports selection
+        navigation.navigate('AllCoachesPage', { selectedSport: sport });
     };
     
 
@@ -317,55 +309,14 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                 />
             </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={navigateToNotifications}>
-                <View style={CoacheeDashboardStyle.iconContainer}>
-                    <Icon
-                        name="notifications-outline"
-                        size={35}
-                        color="#7E3FF0"
-                    />
-                </View>
-            </TouchableOpacity>
             <KeyboardAvoidingView
                 style={CoacheeDashboardStyle.container}
                 behavior={Platform.OS === 'android' ? 'height' : 'padding'}
             >
-            <View style={{ flex: 1, justifyContent: 'center', padding: 30 }}>
-                <View style={{ alignItems: 'center' }}>
-                    <TouchableOpacity onPress={toggleSportsSelection} style={CoacheeDashboardStyle.sportSelectionContainer}>
-                        <Text style={{ color: sportsVisible ? 'grey' : 'grey' }}>
-                            {sportsVisible ? 'Swipe to the right for more' : 'Choose Sport'}
-                            <Icon name={sportsVisible ? 'chevron-up' : 'chevron-down'} size={15} color="#7E3FF0" />
-                        </Text>
-                    </TouchableOpacity>
-                    {sportsVisible && (
-                        <View style={CoacheeDashboardStyle.sportsContainer}>
-    <ScrollView
-        horizontal // Enable horizontal scrolling
-        showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
-    >
-        <View style={CoacheeDashboardStyle.rows}>
-            {sports.map((sport, index) => (
-                <RadioButton.Item
-                    key={index}
-                    label={sport.label}
-                    value={sport.value}
-                    status={selectedSport === sport.value ? 'checked' : 'unchecked'}
-                    labelStyle={CoacheeDashboardStyle.radioButtonLabel}
-                    style={CoacheeDashboardStyle.radioButton}
-                    onPress={() => setSelectedSport(sport.value)} // Update selectedSport state when clicked
-                    theme={{ colors: { accent: '#7E3FF0' } }} // Change accent color to purple (#7E3FF0)
-                />
-            ))}
-        </View>
-    </ScrollView>
-</View>
-                    )}
-                </View>
-            </View>
+        
                 <ScrollView
                     contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 360 }}
+                    style={{ marginTop: '10%', height: 360 }}
                 >
                     <View style={CoacheeDashboardStyle.frameContainer}>
                         <Text style={CoacheeDashboardStyle.frameText}>
@@ -384,10 +335,40 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                                 marginTop: '-15%',
                             }}
                         />
-                    <TouchableOpacity onPress={handleButtonClick} style={CoacheeDashboardStyle.buttonContainer2}>
-                        <Text style={CoacheeDashboardStyle.buttonText}>Find Coach</Text>
-                    </TouchableOpacity>
+
                     </View>
+
+                    <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
+
+                    
+
+                    <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: "3%"}}>
+                        <View style={{ alignItems: 'center' }}>
+                        <ScrollView
+                                 horizontal // Enable horizontal scrolling
+                                    showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
+                                 contentContainerStyle={CoacheeDashboardStyle.sportsContainer}
+                            >
+                                <View style={CoacheeDashboardStyle.rows}>
+                                     {sports.map((sport, index) => (
+                                    <RadioButton.Item
+                                        key={index}
+                                        label={sport.label}
+                                        value={sport.value}
+                                        status={selectedSport === sport.value ? 'checked' : 'unchecked'}
+                                        labelStyle={CoacheeDashboardStyle.radioButtonLabel}
+                                        style={CoacheeDashboardStyle.radioButton}
+                                        onPress={() => handleSportSelection(sport.value)}// Update selectedSport state when clicked
+                                        theme={{ colors: { accent: '#7E3FF0' } }} // Change accent color to purple (#7E3FF0)
+                                    />
+                                ))}
+                            </View>
+                        </ScrollView>
+                 
+                   
+                    </View>
+                 </View>
+                    
 
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.greetings}>
@@ -402,7 +383,7 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                     />
                    </View>
 
-                    <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                    <View style={CoacheeDashboardStyle.recCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.greetings}>
                             {' '}
                             Recommend for you{' '}
@@ -447,7 +428,13 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
 
     topCoachesContainer: {
-        paddingTop: '10%',
+        paddingTop: '1%',
+        marginTop: "-15%",
+        marginLeft: '7%',
+        flexDirection: 'row',
+    },
+    recCoachesContainer: {
+
         marginLeft: '7%',
         flexDirection: 'row',
     },
@@ -456,6 +443,15 @@ const CoacheeDashboardStyle = StyleSheet.create({
         fontFamily: 'Roboto',
         fontSize: 18,
         color: '#656466',
+    },
+
+    header: {
+        fontFamily: 'Roboto',
+        fontSize: 20,
+        color: '#7E3FF0',
+        fontWeight: "400",
+        marginTop: "5%",
+        left: "9%",
     },
     name: {
         fontFamily: 'Roboto',
@@ -532,10 +528,10 @@ const CoacheeDashboardStyle = StyleSheet.create({
 
     frameContainer: {
         backgroundColor: '#461a96',
-        marginTop: '5%',
+        marginTop: '2%',
         marginLeft: '7%',
         width: '85%',
-        height: '22%',
+        height: '15%',
         overflow: 'hidden',
         borderRadius: 16,
     },
@@ -602,13 +598,11 @@ const CoacheeDashboardStyle = StyleSheet.create({
         alignItems: 'center', // Center items vertically
         justifyContent: 'center', // Center items horizontally
         paddingHorizontal: 10, // Add padding to the container
-        marginTop: 10, // Add some margin from the toggle button
     },
     rows: {
         flexDirection: 'row',
         position: 'relative',
         paddingHorizontal: -20, // Adjusted horizontal padding to create less space between buttons
-        marginBottom: 10, // Add some margin to separate rows
     },
     radioButton: {
         marginLeft: -17, // Adjusted margin to reduce the space between radio buttons and labels
