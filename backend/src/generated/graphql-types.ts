@@ -459,6 +459,8 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
   }
   Mutation: { // field return type
+    coachLogin: NexusGenRootTypes['Coach']; // Coach!
+    coacheeLogin: NexusGenRootTypes['Coachee']; // Coachee!
     createBooking: NexusGenRootTypes['Booking']; // Booking!
     createCoach: NexusGenRootTypes['Coach']; // Coach!
     createCoachInterest: NexusGenRootTypes['CoachInterest']; // CoachInterest!
@@ -666,6 +668,8 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
   }
   Mutation: { // field return type name
+    coachLogin: 'Coach'
+    coacheeLogin: 'Coachee'
     createBooking: 'Booking'
     createCoach: 'Coach'
     createCoachInterest: 'CoachInterest'
@@ -745,6 +749,14 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    coachLogin: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+    coacheeLogin: { // args
+      email: string; // String!
+      password: string; // String!
+    }
     createBooking: { // args
       input: NexusGenInputs['CreateBookingInput']; // CreateBookingInput!
       slotsInput: NexusGenInputs['CreateBookingSlotInput'][]; // [CreateBookingSlotInput!]!
