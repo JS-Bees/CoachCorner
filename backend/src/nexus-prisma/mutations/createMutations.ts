@@ -1,4 +1,4 @@
-import { mutationField, nonNull, arg, list } from 'nexus';
+import { mutationField, nonNull, arg, list, stringArg } from 'nexus';
 import { Context } from '../context';
 import bcrypt from 'bcrypt';
 import * as yup from 'yup';
@@ -42,6 +42,7 @@ import {
     contactSchema,
     interestListSchema,
     interestSchema,
+    loginSchema,
     reviewSchema,
     sportSchema,
     sportsCredentialsSchema,
@@ -457,6 +458,88 @@ export const createMessage = mutationField('createMessage', {
             return message;
         } catch (error) {
             // Handle validation errors or other exceptions
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});
+
+export const coachLogin = mutationField('coachLogin', {
+    type: Coach,
+    args: {
+        email: nonNull(stringArg()),
+        password: nonNull(stringArg()),
+    },
+    resolve: async (_, { email, password }, context: Context) => {
+        try {
+            // Validate arguments using the yup schema
+            loginSchema.validateSync({ email, password });
+
+            const coach = await context.db.coach.findUnique({
+                where: { email, active: true },
+            });
+
+            if (coach) {
+                const passwordMatch = await bcrypt.compare(
+                    password,
+                    coach.password,
+                );
+                if (passwordMatch) {
+                    return coach;
+                } else {
+                    throw new Error('Incorrect email/password.');
+                }
+            } else {
+                throw new Error('Incorrect email/password.');
+            }
+        } catch (error) {
+            // Handle validation errors
+            if (error instanceof yup.ValidationError) {
+                // You can customize the error message based on the validation error
+                throw new Error(error.message);
+            }
+            // Rethrow other errors
+            throw error;
+        }
+    },
+});
+
+export const coacheeLogin = mutationField('coacheeLogin', {
+    type: Coachee,
+    args: {
+        email: nonNull(stringArg()),
+        password: nonNull(stringArg()),
+    },
+    resolve: async (_, { email, password }, context: Context) => {
+        try {
+            // Validate arguments using the yup schema
+            loginSchema.validateSync({ email, password });
+
+            // Search for a Coachee with the provided email
+            const coachee = await context.db.coachee.findUnique({
+                where: { email, active: true }, // Include the 'active' condition
+            });
+
+            if (coachee) {
+                // If a Coachee is found, compare the password
+                const passwordMatch = await bcrypt.compare(
+                    password,
+                    coachee.password,
+                );
+                if (passwordMatch) {
+                    return coachee;
+                } else {
+                    throw new Error('Incorrect email/password.');
+                }
+            } else {
+                throw new Error('Incorrect email/password.');
+            }
+        } catch (error) {
+            // Handle validation errors
             if (error instanceof yup.ValidationError) {
                 // You can customize the error message based on the validation error
                 throw new Error(error.message);
