@@ -7,7 +7,7 @@ import {
     Platform,
     Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -100,6 +100,14 @@ const CoacheeDashboard = () => {
             navigation.navigate('MyCoaches_alt');
         }
     };
+
+    const scrollViewRef = useRef(null);
+
+    const handleIconPress = () => {
+        if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ x: width, animated: true });
+        }
+    }; 
 
    
     const handleSportSelection = (sport: string) => {
@@ -337,37 +345,40 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                         />
 
                     </View>
-
-                    <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
-
-                    
-
-                    <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: "3%"}}>
-                        <View style={{ alignItems: 'center' }}>
-                        <ScrollView
-                                 horizontal // Enable horizontal scrolling
-                                    showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
-                                 contentContainerStyle={CoacheeDashboardStyle.sportsContainer}
-                            >
-                                <View style={CoacheeDashboardStyle.rows}>
-                                     {sports.map((sport, index) => (
-                                    <RadioButton.Item
-                                        key={index}
-                                        label={sport.label}
-                                        value={sport.value}
-                                        status={selectedSport === sport.value ? 'checked' : 'unchecked'}
-                                        labelStyle={CoacheeDashboardStyle.radioButtonLabel}
-                                        style={CoacheeDashboardStyle.radioButton}
-                                        onPress={() => handleSportSelection(sport.value)}// Update selectedSport state when clicked
-                                        theme={{ colors: { accent: '#7E3FF0' } }} // Change accent color to purple (#7E3FF0)
-                                    />
-                                ))}
-                            </View>
-                        </ScrollView>
-                 
-                   
-                    </View>
-                 </View>
+                    <View style={{ flex: 1 }}>
+            <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
+            <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: '3%' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <ScrollView
+                        ref={scrollViewRef}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={CoacheeDashboardStyle.sportsContainer}
+                    >
+                        <View style={CoacheeDashboardStyle.rows}>
+                            {sports.map((sport, index) => (
+                                <RadioButton.Item
+                                    key={index}
+                                    label={sport.label}
+                                    value={sport.value}
+                                    status={selectedSport === sport.value ? 'checked' : 'unchecked'}
+                                    labelStyle={CoacheeDashboardStyle.radioButtonLabel}
+                                    style={CoacheeDashboardStyle.radioButton}
+                                    onPress={() => handleSportSelection(sport.value)}
+                                    theme={{ colors: { accent: '#7E3FF0' } }}
+                                />
+                            ))}
+                        </View>
+                    </ScrollView>
+                    <Icon
+                        name="chevron-forward"
+                        size={23}
+                        color="#7E3FF0"
+                        onPress={handleIconPress}
+                    />
+                </View>
+            </View>
+        </View>
                     
 
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
@@ -419,7 +430,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
 
     nameAndGreetingsContainer: {
-        paddingTop: '20%',
+        paddingTop: '15%',
         marginLeft: '25%',
         flexDirection: 'row',
         borderBlockColor: '#461a96',
@@ -606,7 +617,6 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
     radioButton: {
         marginLeft: -17, // Adjusted margin to reduce the space between radio buttons and labels
-        fontSize: 10, // Adjust the font size of the label
         borderColor: '#7E3FF0', // Add the desired border color for the radio buttons
     },
     radioButtonLabel: {

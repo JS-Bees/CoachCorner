@@ -17,6 +17,8 @@ import { CreateCoacheeDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 // import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
 
 
@@ -169,49 +171,7 @@ const SignUpForCoachee = ({route}) => {
                 workplaceAddress: StreetAdd,
                 
             });
-
-            // const coachInput = {firstName: First_Name,
-            //     lastName: Last_Name,
-            //     birthday: date,
-            //     email: Email,
-            //     password: Password,
-            //     address: StreetAdd,
-            //     profilePicture: profilePic,
-            //     mantra: mantra,
-            //     bio: bio,
-            //     coachingRole: coachingRole}
-
-            // const interestsInput = selectedHobbies.map(hobby => ({ hobby }));
-            
-            
-        //     const { data, error, fetching } = await SignUpForCoachee({
-        //         input: coachInput,
-        //         interestsInput: interestsInput,
-        //       });
-        //     navigateToHobbies()
-
-        //     if (Error) {
-        //         console.error(Error + "lol");
-
-        //     } else {
-        //         setSuccessMessage('Signed up successfully!');
-        //         toggleModal();
-        //         setFirst_Name('');
-        //         setLast_Name('');
-        //         setEmail('');
-        //         setPassword('');
-        //         setRepeat_Password('');
-        //         setStreetAddress('');
-        //         setCity('');
-        //         setPostal('');
-        //         setDateofBirth('');
-        //     }
-        // } catch (err) {
-        //     console.error(err);
-        //     // Reset loading state to false in case of an error
-        // } finally {
-        //     setIsLoading(false);
-        // }
+s
         console.log(Exact_Date)
         navigation.navigate('InterestPickingHobby', 
         {  firstName: First_Name,
@@ -289,14 +249,18 @@ const SignUpForCoachee = ({route}) => {
                     )}
 
                     {!showPicker && (
-                        <Pressable onPress={toggleDatePicker}>
-                            <TextInput
-                                style={styles.birthdayBorder}
-                                placeholder="Sat Aug 24 2000"
-                                value={dateOfBirth}
-                                onChangeText={setDateofBirth}
-                                editable={false}
-                            />
+                        <Pressable onPress={toggleDatePicker} style={styles.datePicker}>
+                            {dateOfBirth ? (
+                                <TextInput
+                                    style={styles.birthdayBorder}
+                                    placeholder="Sat Aug 24 2000"
+                                    value={dateOfBirth}
+                                    onChangeText={setDateofBirth}
+                                    editable={false}
+                                />
+                            ) : (
+                                <Icon name="calendar" size={30} color="#7E3FF0" />
+                            )}
                         </Pressable>
                     )}
                 </View>
@@ -426,6 +390,7 @@ const styles = StyleSheet.create({
         elevation: 6,
         shadowOpacity: 5,
         borderColor: '#e8e8e8',
+        marginRight: '-550%'
     },
     birthdayText: {
         color: '#a19e9e',
@@ -506,7 +471,13 @@ const styles = StyleSheet.create({
         fontWeight: '200',
         fontFamily: 'Roboto',
         color: '#656466',
-    }
+    },
+    datePicker: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: '5%',
+        marginRight: '85%'
+    },
   
 });
 

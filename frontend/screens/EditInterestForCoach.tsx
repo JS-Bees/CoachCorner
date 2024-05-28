@@ -282,6 +282,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         {text: 'Pop', checked: false },
         {text: 'K-Pop', checked: false },
         {text: 'OPM', checked: false },
+        {text: 'Rock', checked: false },
       ],
       isExpanded: false,
     },

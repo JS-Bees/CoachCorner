@@ -174,7 +174,7 @@ const {
       />
     ))
   ) : (
-    <Text style={{ alignSelf: 'center', marginTop: 20 }}>No reviews yet</Text>
+    <Text style={{ alignSelf: 'center', marginTop: 20 , fontSize: 25}}>No reviews yet</Text>
   )}
 </ScrollView>
 

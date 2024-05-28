@@ -251,7 +251,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
 
 
     nameAndGreetingsContainer: {
-        paddingTop:"20%",
+        paddingTop:"15%",
         marginLeft: '25%',
         flexDirection: 'row', 
     },

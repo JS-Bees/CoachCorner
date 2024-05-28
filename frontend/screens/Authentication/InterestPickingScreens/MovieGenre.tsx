@@ -204,12 +204,12 @@ const ChooseMovies = ({route}) => {
       <Text style={styles.subtitle}>Choose 3 Genres</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedMovies.Action} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Action')} />
-        <CustomCheckBox checked={checkedMovies.Comedy} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Comedy')} />
-        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Action" onPress={() => handleCheckboxChange('Horror')} />
-        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Comedy" onPress={() => handleCheckboxChange('Romance')} />
-        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Thriller" onPress={() => handleCheckboxChange('Horror')} />
-        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Drama" onPress={() => handleCheckboxChange('Romance')} />
+        <CustomCheckBox checked={checkedMovies.Romance} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Romance')} />
+        <CustomCheckBox checked={checkedMovies.Horror} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Horror')} />
+        <CustomCheckBox checked={checkedMovies.Action} checkedColor='#7E3FF0' label="Action" onPress={() => handleCheckboxChange('Action')} />
+        <CustomCheckBox checked={checkedMovies.Comedy} checkedColor='#7E3FF0' label="Comedy" onPress={() => handleCheckboxChange('Comedy')} />
+        <CustomCheckBox checked={checkedMovies.Thriller} checkedColor='#7E3FF0' label="Thriller" onPress={() => handleCheckboxChange('Thriller')} />
+        <CustomCheckBox checked={checkedMovies.Drama} checkedColor='#7E3FF0' label="Drama" onPress={() => handleCheckboxChange('Drama')} />
       </View>
 
       <TouchableOpacity

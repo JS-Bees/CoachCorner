@@ -90,7 +90,7 @@
     "react-native-stack": "^1.0.0-alpha11",
     "react-native-svg": "13.9.0",
     "react-native-tab-view": "^3.5.2",
-    "react-native-vector-icons": "^10.0.0",
+    "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.6",
     "urql": "^4.0.5"
   },

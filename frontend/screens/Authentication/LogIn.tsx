@@ -55,7 +55,7 @@ const LogIn = () => {
     };
 
     const handleOpenSlideIn = () => {
-        setIsSlideInVisible(true);
+        setIsSlideInVisible(true); 
     };
 
     const handleCloseSlideIn = () => {
@@ -121,6 +121,15 @@ const LogIn = () => {
                 setLoading(false); // Stop loading before returning
                 return;
             }
+            // Check if the email ends with @gmail.com or @example.com
+            const validDomains = ['@gmail.com', '@example.com'];
+            const emailDomain = Email.substring(Email.lastIndexOf('@'));
+
+            if (!validDomains.includes(emailDomain)) {
+                setEmailPasswordError('Invalid email domain. Please use a valid email.');
+                setLoading(false); // Stop loading before returning
+                return;
+            }
 
             // Check the results of the query after it's completed
             if (CoachOrCoachee === 'coach') {
@@ -134,10 +143,10 @@ const LogIn = () => {
                     navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
                 } else if (coachData.error) {
                     console.log('Coach error message is being ran');
-                    const errorMessage = coachData.error
-                        ? coachData.error.message.replace('[GraphQL] ', '')
-                        : 'An error occurred';
-                    setEmailPasswordError(errorMessage);
+                    // const errorMessage = coachData.error
+                    //     ? coachData.error.message.replace('[GraphQL] ', '')
+                    //     : 'An error occurred';
+                    setEmailPasswordError("Invalid Email or Password");
                     //handleLoginErrorCoach;
                 }
             } else if (CoachOrCoachee === 'coachee') {
@@ -153,10 +162,10 @@ const LogIn = () => {
                     navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
                 } else if (coacheeData.error) {
                     console.log('Coach error message is being ran');
-                    const errorMessage = coacheeData.error
-                        ? coacheeData.error.message.replace('[GraphQL] ', '')
-                        : 'An error occurred';
-                    setEmailPasswordError(errorMessage);
+                    // const errorMessage = coacheeData.error
+                    //     ? coacheeData.error.message.replace('[GraphQL] ', '')
+                    //     : 'An error occurred';
+                    setEmailPasswordError("Invalid Email or Password");
                     // handleLoginErrorCoachee;
                 }
             } else {
@@ -212,7 +221,7 @@ const LogIn = () => {
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handleTraineeButtonPress}>
                             <Text style={Log_In_Style.buttonsText}>
-                                Trainee
+                                Coachee
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -240,7 +249,6 @@ const LogIn = () => {
                             placeholder="johnsmith@gmail.com"
                             value={Email}
                             onChangeText={handleEmailChange}
-                            errorMessage={EmailPasswordError}
                         />
                         <Input
                             leftIcon={

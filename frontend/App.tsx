@@ -83,7 +83,7 @@ const wsClient = createWSClient({
 const client = new Client({
     // url: 'http://192.168.1.6:5050/graphql',
     url: apiUrl!,
-    // fetchSubscriptions: true, // added this to try and fix fetching
+    // fetchSubscriptions: true, // added this tog try and fix fetching
     exchanges: [
         cacheExchange,
         fetchExchange,
