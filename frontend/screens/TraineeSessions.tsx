@@ -39,6 +39,8 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
     const [userToken, setUserToken] = useState<string | null>(null);
+    const [bookings, setBookings] = useState<any[]>([]);
+    const pollingInterval = 5000;
  
 
 
@@ -49,7 +51,7 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
         
     const handleNavigateBack = () => {
         navigation.goBack();
-      };
+    };
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -69,29 +71,48 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             query: FindCoacheeByIdDocument,
             variables: { userId: parseInt(userID) },
         });
-
         return coacheeResult;
     };
 
     const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
 
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
         query: FindBookingsOfCoacheeDocument, 
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'network-only',
     });
 
-    const { fetching, data, error } = result;
+    const { data, error, fetching} = result;
+
+
+    useEffect(() => {
+    if (data) {
+    setBookings(data.findCoacheeByID.bookings);}
+    }, [data]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          refetch(); // Manually trigger the query
+        }, pollingInterval);
+      
+        return () => clearInterval(intervalId);
+    }, []);
+
+    if (error) {
+        return <Text>Error: {error.message}</Text>;
+    }
+      
+      
+
     if (fetching) return <SplashScreen navigation={navigation} />;
-    if (error) return <Text>Error: {error.message}</Text>
+    const booking = data?.findCoacheeByID.bookings;
+    if (!booking) return <Text>No bookings found.</Text>;
 
-    const bookings = data?.findCoacheeByID.bookings;
-    if (!bookings) return <Text>No bookings found.</Text>;
-
-    const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
-    const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
-    const completedBookings = bookings.filter(booking => booking.status === 'COMPLETED');
+    const upcomingBookings = booking.filter(booking => booking.status === 'UPCOMING');
+    const pendingBookings = booking.filter(booking => booking.status === 'PENDING');
+    const completedBookings = booking.filter(booking => booking.status === 'COMPLETED');
 
         // Modify the sessionsToShow variable to filter based on searchText
         const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;

@@ -1,15 +1,25 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Image, ActivityIndicator, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { RootStackParams } from '../App';
+import { useNavigation } from '@react-navigation/core';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useRoute } from '@react-navigation/native';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
+import Icon from 'react-native-vector-icons/Ionicons'
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
 
 const CredentialsPage = () => {
   const route = useRoute(); // Get the route parameters
+  const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
   const { coachId } = route.params; // Retrieve the coachId from the parameters
+
+   
+  const handleNavigateBack = () => {
+    navigation.goBack();
+   };
 
   // Fetch the coach data using the coachId
   const [{ data, fetching, error }] = useQuery({
@@ -42,6 +52,9 @@ const CredentialsPage = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>Credential Pictures</Text>
+      <TouchableOpacity onPress={handleNavigateBack} style={styles.icon}>
+            <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
+            </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         {sportsCredentials && sportsCredentials.length > 0 ? (
           sportsCredentials.map((credential, index) => (
@@ -64,9 +77,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: "white",
   },
   scrollViewContainer: {
-    paddingTop: '10%',
+    paddingTop: '2%',
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -98,6 +112,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10, // Add some space between the title and the images
+  },
+  icon: {
+    bottom: "5%",
+    right: "37%"
   },
 });
 

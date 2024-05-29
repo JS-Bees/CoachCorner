@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import StarRating from '../StarRating';
+import { useState } from 'react';
 
 interface Review {
     name: string;
@@ -14,23 +15,28 @@ interface ReviewTileProps {
 }
 
 const ReviewTile: React.FC<ReviewTileProps> = ({ review }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const handlePress = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
-        <View style={styles.reviewTile}>
+        <TouchableOpacity onPress={handlePress} style={styles.reviewTile}>
             <View style={styles.userInfo}>
                 <Image source={review.imageSource} style={styles.profileImage} />
-                <Text style={styles.name}>{review.name}</Text>
+                 <Text style={styles.name}>{review.name}</Text>
             </View>
-            <View style={styles.content}>
-                <StarRating gainedStars={review.stars} starColor="#FECB2E" />
-                <Text
-                    style={styles.reviewText}
-                    numberOfLines={3} // Adjust the maximum number of lines
-                    ellipsizeMode="tail" // Controls how text is truncated
-                >
-                    {review.reviewText}
-                </Text>
-            </View>
-        </View>
+             <View style={styles.content}>
+                 <StarRating gainedStars={review.stars} starColor="#FECB2E" />
+            <Text
+                style={styles.reviewText}
+                numberOfLines={isExpanded ? undefined : 3} // Adjust the maximum number of lines when collapsed
+                ellipsizeMode="tail" // Controls how text is truncated
+            >
+                {review.reviewText}
+            </Text>
+             </View>
+        </TouchableOpacity>
     );
 };
 

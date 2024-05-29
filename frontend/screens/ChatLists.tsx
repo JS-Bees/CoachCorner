@@ -86,6 +86,7 @@ const ChatListPage: React.FC = () => {
             variables: {
                 userId: parseInt(userID),
             },
+            requestPolicy: 'cache-and-network',
         });
 
         return coacheeResult;
@@ -184,6 +185,7 @@ const ChatListPage: React.FC = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={renderChatMessage}
                 style={styles.chatList}
+                ListEmptyComponent={<Text style={styles.noContactsText}>No contacts yet</Text>}
             />
         </View>
     );
@@ -233,6 +235,11 @@ const styles = StyleSheet.create({
         marginLeft: '-75%',
         flexDirection: 'row',
     },
+    noContactsText: {
+        marginTop: '10%',
+        fontSize: 24,
+        textAlign: 'center'
+    }
 });
 
 export default ChatListPage;

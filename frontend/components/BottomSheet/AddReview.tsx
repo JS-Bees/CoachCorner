@@ -14,10 +14,12 @@ interface AddReviewProps {
 
 const AddReviewBottomSheet: React.FC<AddReviewProps> = ({ isVisible, onClose, coachId }) => {
   const [userToken, setUserToken] = useState<string | null>(null);
-  const [text, onChangeText] = useState('');
+  const [text, setText] = useState('');
   const [rating, setRating] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
   const [, createReview] = useMutation(CreateReviewDocument);
+  const [, setWordCount] = useState(0);
+  const maxWords = 40;
 
   useEffect(() => {
     const fetchUserToken = async () => {
@@ -38,6 +40,17 @@ const AddReviewBottomSheet: React.FC<AddReviewProps> = ({ isVisible, onClose, co
 
   const handleBlur = () => {
     setIsFocused(false);
+  };
+
+  const onChangeText = (text: string) => {
+    // Split the text into words and count the number of words
+    const words = text.trim().split(/\s+/);
+    setWordCount(words.length);
+  
+    // Update the text if the word count is less than or equal to the limit
+    if (words.length <= maxWords) {
+      setText(text);
+    }
   };
 
   const borderColor = isFocused ? '#7E3FF0' : '#E1D1FA';

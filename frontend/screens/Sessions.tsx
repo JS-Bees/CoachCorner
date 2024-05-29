@@ -39,6 +39,8 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [bookings, setBookings] = useState<any[]>([]);
+    const pollingInterval = 1000;
 
  
 
@@ -68,12 +70,6 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         fetchUserToken();
     }, []);
 
-    const [result] = useQuery({
-        query: FindBookingsOfCoachDocument, 
-        variables: {
-            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
-        },
-    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const useFetchCoachByUserID = (userID: any) => {
@@ -91,18 +87,48 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         data: coachData,
     } = useFetchCoachByUserID(userToken);
 
-    const { fetching, data, error } = result;
+    const [result, refetch] = useQuery({
+        query: FindBookingsOfCoachDocument, 
+        variables: {
+            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+        },
+        requestPolicy: 'network-only',
+    });
+
+    const { data, error, fetching} = result;
+    useEffect(() => {
+        if (data) {
+        setBookings(data.findCoachByID.bookings);}
+    }, [data]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          refetch(); // Manually trigger the query
+        }, pollingInterval);
+      
+        return () => clearInterval(intervalId);
+    }, []);
+
+    
+    if (error) {
+        return <Text>Error: {error.message}</Text>;
+    }
+      
+   
+
+
+
     if (fetching) return <SplashScreen navigation={navigation} />;
-    if (error) return <Text>Error: {error.message}</Text>
+    
 
 
 
-    const bookings = data?.findCoachByID.bookings;
-    if (!bookings) return <Text>No bookings found.</Text>;
+    const booking = data?.findCoachByID.bookings;
+    if (!booking) return <Text>No bookings found.</Text>;
 
-    const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
-    const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
-    const completedBookings = bookings.filter(booking => booking.status === 'COMPLETED');
+    const upcomingBookings = booking.filter(booking => booking.status === 'UPCOMING');
+    const pendingBookings = booking.filter(booking => booking.status === 'PENDING');
+    const completedBookings = booking.filter(booking => booking.status === 'COMPLETED');
 
         // Modify the sessionsToShow variable to filter based on searchText
         const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;

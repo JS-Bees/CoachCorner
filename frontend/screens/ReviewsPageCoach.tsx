@@ -208,8 +208,8 @@ const ReviewsPage = () => {
             </View>
 
             <ScrollView style={styles.reviewsContainer}>
-                {totalReviews > 0 ? (
-                    reviews.map((review, index) => (
+            {totalReviews > 0 ? (
+                [...reviews].reverse().map((review, index) => (
                         <ReviewTile
                             key={index}
                             review={{
