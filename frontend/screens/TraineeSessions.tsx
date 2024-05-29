@@ -40,7 +40,7 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     const [activeButton, setActiveButton] = useState('Upcoming'); 
     const [userToken, setUserToken] = useState<string | null>(null);
     const [bookings, setBookings] = useState<any[]>([]);
-    const pollingInterval = 5000;
+    const pollingInterval = 1000;
  
 
 
