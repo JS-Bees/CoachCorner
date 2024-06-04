@@ -171,7 +171,6 @@ const SignUpForCoachee = ({route}) => {
                 workplaceAddress: StreetAdd,
                 
             });
-s
         console.log(Exact_Date)
         navigation.navigate('InterestPickingHobby', 
         {  firstName: First_Name,

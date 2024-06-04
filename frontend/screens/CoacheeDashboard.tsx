@@ -30,6 +30,13 @@ import { BackHandler } from 'react-native';
 
 
 const { width, height } = Dimensions.get('window');
+const initialStates = () => ({
+    seeAllCoaches: false,
+    sportsVisible: false,
+    selectedSport: '',
+    checked: 'second',
+    userToken: null,
+});
 
 const CoacheeDashboard = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,9 +54,11 @@ const CoacheeDashboard = () => {
     const [sportsVisible, setSportsVisible] = useState(false);
     const [selectedSport, setSelectedSport] = useState('');
     const [checked, setChecked] = React.useState('second');
+    const [states, setStates] = useState(initialStates());
 
     useFocusEffect(
         React.useCallback(() => {
+            setStates(initialStates()); // Reset the states when the screen is focused
           // When the screen is focused, add a back button event listener
           const onBackPress = () => {
             // Optionally, you can show a confirmation dialog
@@ -169,13 +178,12 @@ const CoacheeDashboard = () => {
 const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
 const coaches = coachData?.coaches || [];
 
-console.log(coaches)
 
-const genrePriority = ['Movie Genre', 'Book Genre', 'Music Genre'];
+const genrePriority = ['MovieGenre', 'BookGenre', 'MusicGenre'];
 const genreWeights = {
-    'Movie Genre': 3,
-    'Book Genre': 2,
-    'Music Genre': 1
+    'MovieGenre': 3,
+    'BookGenre': 2,
+    'MusicGenre': 1
 };
 
 const findFirstMatchingInterest = (interests, type) => {
@@ -200,11 +208,13 @@ const sortedCoaches = coaches.map(coach => {
 
     return { coach, weightedMatchingInterests };
 }).filter(coach => coach !== null).sort((a, b) => b.weightedMatchingInterests - a.weightedMatchingInterests);
+// Log the first names of the sorted coaches
+console.log("Sorted Coaches First Names:", sortedCoaches.map(coach => coach.coach.firstName));
 
-const matchedCoaches = sortedCoaches.slice(0, 2);
+const matchedCoaches = sortedCoaches.slice(0, 3);
 
 if (matchedCoaches.length === 0) {
-    const randomIndex = Math.floor(Math.random() * coaches.length);
+    const randomIndex = Math.floor(Math.random() * 1);
     const randomCoach = coaches[randomIndex];
     matchedCoaches.push({ coach: randomCoach, weightedMatchingInterests: 0 });
 }
