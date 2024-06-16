@@ -8,6 +8,7 @@ import {
     Pressable,
     Platform,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
@@ -83,33 +84,36 @@ const SignUpForCoach = ({route}) => {
         setErrorModalVisible(!errorModalVisible);
     };
 
-    const onChange = ({ type }: any, selectedDate: any) => {
+    const onChange = ({ type }, selectedDate) => {
         if (type === 'set') {
-          const currentDate = selectedDate;
-          const minDate = new Date();
-          minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
-          const maxDate = new Date();
-          maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
-      
-          // Check if the selected date is within the allowed range
-          if (currentDate >= minDate && currentDate <= maxDate) {
-            setdate(currentDate);
-            if (Platform.OS === 'android') {
-              toggleDatePicker();
-              setDateofBirth(currentDate.toDateString());
+            const currentDate = selectedDate;
+            const minDate = new Date();
+            minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
+    
+            // Check if the selected date is within the allowed range
+            if (currentDate >= minDate && currentDate <= maxDate) {
+                setdate(currentDate);
+                if (Platform.OS === 'android') {
+                    toggleDatePicker();
+                    setDateofBirth(currentDate.toDateString());
+                }
+            } else {
+                // Close the date picker
+                toggleDatePicker();
+    
+                // Show an alert if the selected date is outside the allowed range
+                Alert.alert(
+                    'Invalid Date',
+                    `Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`,
+                    [{ text: 'OK' }]
+                );
             }
-          } else {
-            // Close the date picker
-            toggleDatePicker();
-      
-            // Show an error message if the selected date is outside the allowed range
-            setErrorMessage(`Please select a valid date btween ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
-            setErrorModalVisible(true);
-          }
         } else {
-          toggleDatePicker();
+            toggleDatePicker();
         }
-      };
+    };
 
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
@@ -125,56 +129,58 @@ const SignUpForCoach = ({route}) => {
         const regex = /\d/;
         return regex.test(First_Name) || regex.test(Last_Name);
     }
-
+    
     const onNext = async () => {
-            // Validate the input fields
-            if (
-                First_Name.trim() === '' ||
-                Last_Name.trim() === '' ||
-                Email.trim() === '' ||
-                Password.trim() === '' ||
-                Repeat_Password.trim() === '' ||
-                StreetAdd.trim() === '' ||
-                City.trim() === '' ||
-                Postal.trim() === '' ||
-                Password.trim() !== Repeat_Password.trim() 
-                
-                
-            ) {
-                // Display an error message for incomplete fields
-                setErrorMessage('Please fill in all the required fields.');
-                setErrorModalVisible(true);
-                setIsLoading(false);
-                return; // Return early to prevent further execution
-            }
-
-            
-            // Check for integers in First_Name and Last_Name
-            if (containsInteger(First_Name, Last_Name)) {
-                setErrorMessage('First Name and Last Name cannot contain integers.');
-                setErrorModalVisible(true);
-                setIsLoading(false);
-                return; // Return early if validation fails
-            }
-            // setIsLoading(true); // Set isLoading to true when the signup process starts
-
-      
-
-            // Log the data before making the API call
-            console.log("Signing up with data:", {
-                firstName: First_Name,
-                lastName: Last_Name,
-                birthday: Exact_Date,
-                email: Email,
-                password: Password,
-                workplaceAddress: StreetAdd,
-                CoachorCoachee: CoachorCoachee,
-                
-            });
-
-        console.log(Exact_Date)
+        // Validate the input fields
+        if (
+            First_Name.trim() === '' ||
+            Last_Name.trim() === '' ||
+            Email.trim() === '' ||
+            Password.trim() === '' ||
+            Repeat_Password.trim() === '' ||
+            StreetAdd.trim() === '' ||
+            City.trim() === '' ||
+            Postal.trim() === '' ||
+            Password.trim() !== Repeat_Password.trim()
+        ) {
+            // Display an error message for incomplete fields
+            setErrorMessage('Please fill in all the required fields.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early to prevent further execution
+        }
+    
+        // Check for integers in First_Name and Last_Name
+        if (containsInteger(First_Name, Last_Name)) {
+            setErrorMessage('First Name and Last Name cannot contain integers.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early if validation fails
+        }
+    
+        // Check if email ends with @gmail.com
+        if (!Email.endsWith('@gmail.com')) {
+            setErrorMessage('Email must end with @gmail.com.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early if email does not end with @gmail.com
+        }
+    
+        // Log the data before making the API call
+        console.log("Signing up with data:", {
+            firstName: First_Name,
+            lastName: Last_Name,
+            birthday: Exact_Date,
+            email: Email,
+            password: Password,
+            workplaceAddress: StreetAdd,
+            CoachorCoachee: CoachorCoachee,
+        });
+    
+        console.log(Exact_Date);
         navigation.navigate('SportPicking', 
-        {  firstName: First_Name,
+        {  
+            firstName: First_Name,
             lastName: Last_Name,
             email: Email,
             birthday: Exact_Date.toISOString(),
@@ -183,12 +189,9 @@ const SignUpForCoach = ({route}) => {
             profilePic: profilePic,
             bio: bio,
             coachOrCoachee: CoachorCoachee
-            
-
-        }); 
-        
-            
+        });
     };
+    
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>

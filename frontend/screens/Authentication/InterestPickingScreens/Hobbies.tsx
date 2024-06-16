@@ -81,7 +81,7 @@ const handleButtonPress = () => {
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
       <Text style={styles.header}> Which genre of music do you prefer to enjoy during your downtime?</Text>
-      <Text style={styles.subtitle}>Choose maximum of 3</Text>
+      <Text style={styles.subtitle}>Choose 3 Genres</Text>
 
       <View style={styles.checkboxContainer}>
         <CustomCheckBox checked={checkedHobby.Rock} checkedColor='#7E3FF0' label="Rock" onPress={() => handleCheckboxChange('Rock')} />

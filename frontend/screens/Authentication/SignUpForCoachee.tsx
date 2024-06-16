@@ -8,6 +8,7 @@ import {
     Pressable,
     Platform,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
@@ -84,33 +85,37 @@ const SignUpForCoachee = ({route}) => {
         setErrorModalVisible(!errorModalVisible);
     };
 
-    const onChange = ({ type }: any, selectedDate: any) => {
+    const onChange = ({ type }, selectedDate) => {
         if (type === 'set') {
-          const currentDate = selectedDate;
-          const minDate = new Date();
-          minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
-          const maxDate = new Date();
-          maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
-      
-          // Check if the selected date is within the allowed range
-          if (currentDate >= minDate && currentDate <= maxDate) {
-            setdate(currentDate);
-            if (Platform.OS === 'android') {
-              toggleDatePicker();
-              setDateofBirth(currentDate.toDateString());
+            const currentDate = selectedDate;
+            const minDate = new Date();
+            minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
+    
+            // Check if the selected date is within the allowed range
+            if (currentDate >= minDate && currentDate <= maxDate) {
+                setdate(currentDate);
+                if (Platform.OS === 'android') {
+                    toggleDatePicker();
+                    setDateofBirth(currentDate.toDateString());
+                }
+            } else {
+                // Close the date picker
+                toggleDatePicker();
+    
+                // Show an alert if the selected date is outside the allowed range
+                Alert.alert(
+                    'Invalid Date',
+                    `Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`,
+                    [{ text: 'OK' }]
+                );
             }
-          } else {
-            // Close the date picker
-            toggleDatePicker();
-      
-            // Show an error message if the selected date is outside the allowed range
-            setErrorMessage(`Please select a valid date be tween ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
-            setErrorModalVisible(true);
-          }
         } else {
-          toggleDatePicker();
+            toggleDatePicker();
         }
-      };
+    };
+
 
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
@@ -157,9 +162,14 @@ const SignUpForCoachee = ({route}) => {
                 setIsLoading(false);
                 return; // Return early if validation fails
             }
-            // setIsLoading(true); // Set isLoading to true when the signup process starts
-
-      
+    
+        // Check if email ends with @gmail.com
+        if (!Email.endsWith('@gmail.com')) {
+            setErrorMessage('Email must end with @gmail.com.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early if email does not end with @gmail.com
+        }
 
             // Log the data before making the API call
             console.log("Signing up with data:", {

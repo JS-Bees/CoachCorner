@@ -40,9 +40,18 @@ const AddTaskPage = () => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (selectedDate: React.SetStateAction<Date>) => {
-    setDate(selectedDate);
-    hideDatePicker();
+  const handleConfirm = (selectedDate: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set today to midnight
+  
+    // Check if selectedDate is today or in the past
+    if (selectedDate <= today) {
+      Alert.alert("Invalid Date", "Please select a future date.");
+    } else {
+      setDate(selectedDate); // Set new date
+    }
+  
+    hideDatePicker(); // Hide date picker modal
   };
 
   
@@ -138,11 +147,11 @@ const AddTaskPage = () => {
       />
       
      <View style={styles.buttonsContainer}>
-     <TouchableOpacity onPress={handleSave}>
-        <Text style={styles.addButtonText}>Save</Text>
+     <TouchableOpacity onPress={handleDelete}>
+        <Text style={styles.addButtonText}>Delete</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleDelete}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
+      <TouchableOpacity onPress={handleSave}>
+        <Text style={styles.deleteButtonText}>Save</Text>
       </TouchableOpacity>
      </View>
       </View>

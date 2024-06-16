@@ -216,14 +216,12 @@ const LogIn = () => {
             <View style={Log_In_Style.buttonsContainer}>
                 {!isSlideInVisible && (
                     <View style={Log_In_Style.buttonsContainer}>
-                        <TouchableOpacity onPress={handleCoachButtonPress}>
-                            <Text style={Log_In_Style.buttonsText}>Coach</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={handleTraineeButtonPress}>
-                            <Text style={Log_In_Style.buttonsText}>
-                                Coachee
-                            </Text>
-                        </TouchableOpacity>
+<TouchableOpacity style={Log_In_Style.buttons} onPress={handleCoachButtonPress}>
+                <Text style={Log_In_Style.buttonText}>Coach</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={Log_In_Style.buttons} onPress={handleTraineeButtonPress}>
+                <Text style={Log_In_Style.buttonText}>Coachee</Text>
+            </TouchableOpacity>
                     </View>
                 )}
 
@@ -420,6 +418,17 @@ const Log_In_Style = StyleSheet.create({
     buttonsText: {
         fontSize: 18,
         marginRight: '30%',
+    },
+    buttons: {
+        backgroundColor: '#7E3FF0', // Example background color
+        padding: 10,
+        borderRadius: 5,
+        marginLeft: '5%',  // Add left margin to separate buttons
+        marginRight: '5%', // Add right margin to separate buttons
+    },
+    buttonText: {
+        color: '#fff', // Example text color
+        fontSize: 16,
     },
 });
 

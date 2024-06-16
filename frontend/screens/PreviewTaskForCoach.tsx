@@ -31,8 +31,17 @@ const PreviewTask = ({ route }: any) => {
   };
 
   const handleConfirm = (selectedDate: Date) => {
-    setDate(selectedDate); // Set new date
-    hideDatePicker();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set today to midnight
+  
+    // Check if selectedDate is today or in the past
+    if (selectedDate <= today) {
+      Alert.alert("Invalid Date", "Please select a future date.");
+    } else {
+      setDate(selectedDate); // Set new date
+    }
+  
+    hideDatePicker(); // Hide date picker modal
   };
 
   const handleSaveTask = async () => {
