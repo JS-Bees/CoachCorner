@@ -496,11 +496,11 @@ export const SlotTime = objectType({
         // Using custom (which is DateTime) for date-time fields
         t.field('startTime', {
             type: 'DateTime',
-            resolve: (obj, args, ctx) => obj.startTime,
+            resolve: (obj: any, args, ctx) => obj.startTime,
         });
         t.field('endTime', {
             type: 'DateTime',
-            resolve: (obj, args, ctx) => obj.endTime,
+            resolve: (obj: any, args, ctx) => obj.endTime,
         });
     },
 });
