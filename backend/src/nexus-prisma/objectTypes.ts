@@ -481,3 +481,26 @@ export const Message = objectType({
         t.field(gqlTypes.Message.createdAt);
     },
 });
+
+// export const SlotTime = objectType({
+//     name: 'SlotTime',
+//     definition(t) {
+//         t.dateTime('startTime');
+//         t.dateTime('endTime');
+//     },
+// });
+
+export const SlotTime = objectType({
+    name: 'SlotTime',
+    definition(t) {
+        // Using custom (which is DateTime) for date-time fields
+        t.field('startTime', {
+            type: 'DateTime',
+            resolve: (obj, args, ctx) => obj.startTime,
+        });
+        t.field('endTime', {
+            type: 'DateTime',
+            resolve: (obj, args, ctx) => obj.endTime,
+        });
+    },
+});

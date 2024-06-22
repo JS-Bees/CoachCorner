@@ -290,6 +290,7 @@ type Query {
   findMessagesForCoachList(coacheeId: Int!): [Message!]!
   findMessagesForCoacheeList(coachId: Int!): [Message!]!
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
+  findOneToOneServiceSlotsByCoachId(coachId: Int!): [SlotTime!]!
   findfilteredMessagesByContactId(contactId: Int!, numberOfMessages: Int!): [Message!]!
 }
 
@@ -304,6 +305,11 @@ type Review {
   id: Int!
   starRating: Int!
   updatedAt: DateTime!
+}
+
+type SlotTime {
+  endTime: DateTime!
+  startTime: DateTime!
 }
 
 type Sport {

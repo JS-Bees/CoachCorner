@@ -1,7 +1,14 @@
 import { queryField, nonNull, stringArg, intArg, list } from 'nexus';
 import bcrypt from 'bcrypt';
 import * as yup from 'yup';
-import { Coachee, Coach, Booking, Contact, Message } from '../objectTypes';
+import {
+    Coachee,
+    Coach,
+    Booking,
+    Contact,
+    Message,
+    SlotTime,
+} from '../objectTypes';
 import { Context } from '../context';
 import {
     loginSchema,
@@ -685,6 +692,53 @@ export const findContactsOfCoachDespiteContactedStatus = queryField(
                 }
                 // Rethrow other errors
                 throw error;
+            }
+        },
+    },
+);
+
+export const findOneToOneServiceSlotsByCoachId = queryField(
+    'findOneToOneServiceSlotsByCoachId',
+    {
+        type: nonNull(list(SlotTime)), // Directly returning a list of SlotTime objects
+        args: {
+            coachId: nonNull(intArg()),
+        },
+        resolve: async (_, { coachId }, context: Context) => {
+            try {
+                // Retrieve bookings with serviceType "one-to-one" for the specified coach
+                const bookings = await context.db.booking.findMany({
+                    where: {
+                        coachId: coachId,
+                        serviceType: 'one-to-one',
+                        status: 'UPCOMING',
+                        active: true, // Assuming you want only active bookings
+                    },
+                    select: {
+                        bookingSlots: {
+                            select: {
+                                startTime: true,
+                                endTime: true,
+                            },
+                        },
+                    },
+                });
+
+                // Extract start and end times from booking slots
+                const slotTimes = bookings.flatMap((booking) =>
+                    booking.bookingSlots.map((slot) => ({
+                        startTime: slot.startTime, // Assuming startTime and endTime are Date objects
+                        endTime: slot.endTime,
+                    })),
+                );
+
+                return slotTimes;
+            } catch (error) {
+                console.error(
+                    'Error fetching one-to-one service slots:',
+                    error,
+                );
+                throw new Error('Failed to fetch one-to-one service slots.');
             }
         },
     },

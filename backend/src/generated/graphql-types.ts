@@ -300,6 +300,7 @@ export interface NexusGenObjects {
     starRating: number; // Int!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
+  SlotTime: {};
   Sport: { // root type
     active: boolean; // Boolean!
     coachId: number; // Int!
@@ -500,6 +501,7 @@ export interface NexusGenFieldTypes {
     findMessagesForCoachList: NexusGenRootTypes['Message'][]; // [Message!]!
     findMessagesForCoacheeList: NexusGenRootTypes['Message'][]; // [Message!]!
     findNonContactCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findOneToOneServiceSlotsByCoachId: NexusGenRootTypes['SlotTime'][]; // [SlotTime!]!
     findfilteredMessagesByContactId: NexusGenRootTypes['Message'][]; // [Message!]!
   }
   Review: { // field return type
@@ -513,6 +515,10 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     starRating: number; // Int!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  SlotTime: { // field return type
+    endTime: NexusGenScalars['DateTime']; // DateTime!
+    startTime: NexusGenScalars['DateTime']; // DateTime!
   }
   Sport: { // field return type
     active: boolean; // Boolean!
@@ -709,6 +715,7 @@ export interface NexusGenFieldTypeNames {
     findMessagesForCoachList: 'Message'
     findMessagesForCoacheeList: 'Message'
     findNonContactCoachesBySport: 'Coach'
+    findOneToOneServiceSlotsByCoachId: 'SlotTime'
     findfilteredMessagesByContactId: 'Message'
   }
   Review: { // field return type name
@@ -722,6 +729,10 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     starRating: 'Int'
     updatedAt: 'DateTime'
+  }
+  SlotTime: { // field return type name
+    endTime: 'DateTime'
+    startTime: 'DateTime'
   }
   Sport: { // field return type name
     active: 'Boolean'
@@ -884,6 +895,9 @@ export interface NexusGenArgTypes {
     findNonContactCoachesBySport: { // args
       coacheeID: number; // Int!
       sportType: string; // String!
+    }
+    findOneToOneServiceSlotsByCoachId: { // args
+      coachId: number; // Int!
     }
     findfilteredMessagesByContactId: { // args
       contactId: number; // Int!
