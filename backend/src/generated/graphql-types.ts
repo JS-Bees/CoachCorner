@@ -300,6 +300,7 @@ export interface NexusGenObjects {
     starRating: number; // Int!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
+  SlotTime: {};
   Sport: { // root type
     active: boolean; // Boolean!
     coachId: number; // Int!
@@ -459,6 +460,8 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
   }
   Mutation: { // field return type
+    coachLogin: NexusGenRootTypes['Coach']; // Coach!
+    coacheeLogin: NexusGenRootTypes['Coachee']; // Coachee!
     createBooking: NexusGenRootTypes['Booking']; // Booking!
     createCoach: NexusGenRootTypes['Coach']; // Coach!
     createCoachInterest: NexusGenRootTypes['CoachInterest']; // CoachInterest!
@@ -498,6 +501,7 @@ export interface NexusGenFieldTypes {
     findMessagesForCoachList: NexusGenRootTypes['Message'][]; // [Message!]!
     findMessagesForCoacheeList: NexusGenRootTypes['Message'][]; // [Message!]!
     findNonContactCoachesBySport: NexusGenRootTypes['Coach'][]; // [Coach!]!
+    findOneToOneServiceSlotsByCoachId: NexusGenRootTypes['SlotTime'][]; // [SlotTime!]!
     findfilteredMessagesByContactId: NexusGenRootTypes['Message'][]; // [Message!]!
   }
   Review: { // field return type
@@ -511,6 +515,10 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     starRating: number; // Int!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  SlotTime: { // field return type
+    endTime: NexusGenScalars['DateTime']; // DateTime!
+    startTime: NexusGenScalars['DateTime']; // DateTime!
   }
   Sport: { // field return type
     active: boolean; // Boolean!
@@ -666,6 +674,8 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
   }
   Mutation: { // field return type name
+    coachLogin: 'Coach'
+    coacheeLogin: 'Coachee'
     createBooking: 'Booking'
     createCoach: 'Coach'
     createCoachInterest: 'CoachInterest'
@@ -705,6 +715,7 @@ export interface NexusGenFieldTypeNames {
     findMessagesForCoachList: 'Message'
     findMessagesForCoacheeList: 'Message'
     findNonContactCoachesBySport: 'Coach'
+    findOneToOneServiceSlotsByCoachId: 'SlotTime'
     findfilteredMessagesByContactId: 'Message'
   }
   Review: { // field return type name
@@ -718,6 +729,10 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     starRating: 'Int'
     updatedAt: 'DateTime'
+  }
+  SlotTime: { // field return type name
+    endTime: 'DateTime'
+    startTime: 'DateTime'
   }
   Sport: { // field return type name
     active: 'Boolean'
@@ -745,6 +760,14 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    coachLogin: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+    coacheeLogin: { // args
+      email: string; // String!
+      password: string; // String!
+    }
     createBooking: { // args
       input: NexusGenInputs['CreateBookingInput']; // CreateBookingInput!
       slotsInput: NexusGenInputs['CreateBookingSlotInput'][]; // [CreateBookingSlotInput!]!
@@ -872,6 +895,9 @@ export interface NexusGenArgTypes {
     findNonContactCoachesBySport: { // args
       coacheeID: number; // Int!
       sportType: string; // String!
+    }
+    findOneToOneServiceSlotsByCoachId: { // args
+      coachId: number; // Int!
     }
     findfilteredMessagesByContactId: { // args
       contactId: number; // Int!

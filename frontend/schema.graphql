@@ -248,6 +248,8 @@ type Message {
 }
 
 type Mutation {
+  coachLogin(email: String!, password: String!): Coach!
+  coacheeLogin(email: String!, password: String!): Coachee!
   createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking!
   createCoach(input: CreateCoachInput!, interestsInput: [CreateCoachInterestInput!]!, sportsInput: [CreateSportInput!]!): Coach!
   createCoachInterest(input: CreateNewCoachInterestInput!): CoachInterest!
@@ -288,6 +290,7 @@ type Query {
   findMessagesForCoachList(coacheeId: Int!): [Message!]!
   findMessagesForCoacheeList(coachId: Int!): [Message!]!
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
+  findOneToOneServiceSlotsByCoachId(coachId: Int!): [SlotTime!]!
   findfilteredMessagesByContactId(contactId: Int!, numberOfMessages: Int!): [Message!]!
 }
 
@@ -302,6 +305,11 @@ type Review {
   id: Int!
   starRating: Int!
   updatedAt: DateTime!
+}
+
+type SlotTime {
+  endTime: DateTime!
+  startTime: DateTime!
 }
 
 type Sport {
