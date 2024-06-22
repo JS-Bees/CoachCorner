@@ -65,6 +65,9 @@ export const createCoachee = mutationField('createCoachee', {
             // Validate the coachee input
             coacheeSchema.validateSync(input);
 
+            // Convert email to lowercase
+            input.email = input.email.toLowerCase();
+
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
 
@@ -114,6 +117,9 @@ export const createCoach = mutationField('createCoach', {
         try {
             // Validate the coach input
             coachSchema.validateSync(input);
+
+            // Convert email to lowercase
+            input.email = input.email.toLowerCase();
 
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
