@@ -28,7 +28,7 @@ import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieG
 import PreviewPage from './screens/PreviewPage';
 import CoacheePreviewPage from './screens/CoacheePreviewPage';
 import ReviewsPage from './screens/ReviewsPage';
-import CredentialsPage from './screens/credentialsPage';
+import CredentialsPage from './screens/CredentialsPage';
 import NewCoachProfile from './screens/Profile/NewCoachProfile';
 import NotificationPage from './screens/NotificationPage';
 import AllCoaches from './screens/AllCoaches';
