@@ -5,6 +5,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import CustomInput from '../../components/Custom components/CustomBookingInput';
 import Slot from '../../components/SlotsProps';
+import DropDownPicker from 'react-native-dropdown-picker';
+import ServiceTypePicker from '../../components/Custom components/ServiceTypePicker';
 import AddSlotModal from '../../components/Modals/AddSlots';
 import { CreateBookingDocument, FindCoacheeByIdDocument } from '../../generated-gql/graphql';
 import { FindCoachByIdDocument } from '../../generated-gql/graphql';
@@ -14,7 +16,7 @@ import { parse, formatISO } from 'date-fns';
 import { useEffect } from 'react';
 import SuccessModal from '../../components/Modals/SuccessModal';
 import { useMutation, useQuery } from 'urql';
-import LoadingBar from '../../components/LoadingBar';
+
 import { StackNavigationProp } from '@react-navigation/stack';
 
 
@@ -43,11 +45,13 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     const [selectedSlots, setSelectedSlots] = useState<{
         status: string; startTime: string; endTime: string; date: string}[]>([]);
     const [createBookingResult, createBookingMutation] = useMutation(CreateBookingDocument);
-    const [serviceType, setServiceType] = useState('');
-    const [additionalNotes, setAdditionalNotes] = useState('');
+    const [serviceType, setServiceType] = useState<string | null>(null);
+    const [additionalNotes, setAdditionalNotes] = useState(' ');
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
+    const [open, setOpen] = useState(false);
+   
 
 
     const {coacheeId, coacheeName} = route.params || {}
@@ -78,6 +82,8 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
         }
         handleToggleAddSlotModal();
     };
+
+
     
 
     const handleCreateBooking = async () => {
@@ -87,6 +93,12 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
         if (!selectedSlots || selectedSlots.length === 0) {
             alert("No slots selected. Please select a slot and try again.");
             setIsBookingProcessing(false); // Reset the processing state
+            return;
+        }
+
+        if (!serviceType) {
+            alert("Please select a service type.");
+            setIsBookingProcessing(false);
             return;
         }
     
@@ -111,7 +123,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             coacheeId: coacheeId,
             coachId: parseInt(userToken),
             serviceType: serviceType,
-            additionalNotes: additionalNotes,
+            additionalNotes: additionalNotes || ' ',
             status: "PENDING"
         };
     
@@ -210,7 +222,11 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     </View>
 
                     <Text style={styles.subheaderText}> Service Type </Text>
-                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)}/>
+                    {/* <CustomInput multiline={false} onChangeText={text => setServiceType(text)}/> */}
+
+                    <ServiceTypePicker setServiceType={setServiceType} />
+                    
+
                     <Text style={styles.subheaderText}> Additional Notes </Text>
                     <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)}/>
 

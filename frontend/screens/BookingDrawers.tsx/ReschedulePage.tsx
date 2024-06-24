@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { UpdateBookingDataDocument } from '../../generated-gql/graphql';
 import { UpdateBookingStatusDocument } from '../../generated-gql/graphql';
+import ServiceTypePicker from '../../components/Custom components/ServiceTypePicker';
 import { CreateBookingDocument } from '../../generated-gql/graphql';
 import CustomInput from '../../components/Custom components/CustomBookingInput';
 import Slot from '../../components/SlotsProps';
@@ -53,7 +54,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
     const [isAddSlotModalVisible, setAddSlotModalVisible] = useState(false);
     const [selectedSlots, setSelectedSlots] = useState<{
         status: string; startTime: string; endTime: string; date: string; slotsId: number}[]>([]);
-    const [serviceType, setServiceType] = useState(session.serviceType || ''); 
+        const [serviceType, setServiceType] = useState<string | null>(null);
     const [additionalNotes, setAdditionalNotes] = useState(session.additionalNotes || ''); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
@@ -92,7 +93,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
     
         try {
             // Cancel the previous booking
-            await updateBookingStatus({ updateBookingStatusId: previousBookingId, input: { status: 'CANCELLED' } });
+            await updateBookingStatus({ updateBookingStatusId: session.bookingId, input: { status: 'CANCELLED' } });
     
             // Create the new booking
             const input = {
@@ -221,7 +222,8 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
     
 
                     <Text style={styles.subheaderText}> Service Type </Text>
-                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)} value={serviceType}/>
+                    {/* <CustomInput multiline={false} onChangeText={text => setServiceType(text)} value={serviceType}/> */}
+                    <ServiceTypePicker setServiceType={setServiceType} />
                     <Text style={styles.subheaderText}> Additional Notes </Text>
                     <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)} value={additionalNotes}/>
 

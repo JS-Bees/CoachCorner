@@ -45,6 +45,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
       updateBookingStatus(variables).then(() => {
         toggleOverlay(null); // Close the modal
         setLoading(false);
+        alert('Cancelled this Session');
       });
     } else {
       console.error("Cannot update status ");
@@ -61,6 +62,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
       updateBookingStatus(variables).then(() => {
         toggleOverlay(null); // Close the modal
         setLoading(false);
+        alert('Marked as Complete');
       });
     } else {
       console.error("Cannot update status ");

@@ -41,6 +41,7 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
       };
       updateBookingStatus(variables);
       toggleOverlay(null); // Close the modal
+      alert('Confirmed Schedule');
     } else {
       console.error("Cannot update status ");
     }
