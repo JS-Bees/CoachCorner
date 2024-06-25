@@ -158,12 +158,13 @@ const SignUpForCoach = ({route}) => {
             return; // Return early if validation fails
         }
     
-        // Check if email ends with @gmail.com
-        if (!Email.endsWith('@gmail.com')) {
-            setErrorMessage('Email must end with @gmail.com.');
+        // Check if email has at least 5 characters before "@"
+        const emailParts = Email.split('@');
+        if (emailParts.length !== 2 || emailParts[0].length < 5) {
+            setErrorMessage('Email must have at least 5 characters before the "@" symbol.');
             setErrorModalVisible(true);
             setIsLoading(false);
-            return; // Return early if email does not end with @gmail.com
+            return; // Return early if email validation fails
         }
     
         // Log the data before making the API call
