@@ -67,7 +67,7 @@ const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
     }
   }, [result]);
 
-  console.log("Session in modal:", session)
+  // console.log("Session in modal:", session)
 
   
 

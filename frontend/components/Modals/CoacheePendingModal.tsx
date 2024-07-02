@@ -57,7 +57,7 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
     }
   }, [result]);
 
-  console.log("Session in modal:", session)
+  // console.log("Session in modal:", session)
 
   
 

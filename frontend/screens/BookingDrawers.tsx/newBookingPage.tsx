@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Text, KeyboardAvoidingView, ScrollView, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import CustomInput from '../../components/Custom components/CustomBookingInput';
 import Slot from '../../components/SlotsProps';
-import DropDownPicker from 'react-native-dropdown-picker';
 import ServiceTypePicker from '../../components/Custom components/ServiceTypePicker';
 import AddSlotModal from '../../components/Modals/AddSlots';
-import { CreateBookingDocument, FindCoacheeByIdDocument } from '../../generated-gql/graphql';
+import { CreateBookingDocument} from '../../generated-gql/graphql';
 import { FindCoachByIdDocument } from '../../generated-gql/graphql';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -74,14 +72,32 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     const handleAddSlot = (startTime: string, endTime: string, date: string) => {
         // Check if the number of selected slots is less than 3
         if (selectedSlots.length < 3) {
+            // Check if the new slot overlaps with any existing slot
+            const isOverlapping = selectedSlots.some(slot => {
+                return slot.date === date && (
+                    (startTime >= slot.startTime && startTime < slot.endTime) ||
+                    (endTime > slot.startTime && endTime <= slot.endTime) ||
+                    (startTime <= slot.startTime && endTime >= slot.endTime)
+                );
+            });
+    
+            if (isOverlapping) {
+                alert("You cannot select overlapping slots.");
+                return; // Exit function if slots overlap
+            }
+    
+            // If no overlapping slots, add the new slot
             const newSlot = { startTime, endTime, date };
             setSelectedSlots([...selectedSlots, newSlot]);
         } else {
             // Alert the user or provide some feedback that they can't add more slots
             console.log('You can only select up to 3 slots.');
+            alert("You can only select up to 3 slots");
         }
-        handleToggleAddSlotModal();
+    
+        handleToggleAddSlotModal(); // Close the modal after adding or alerting
     };
+    
 
 
     
@@ -107,8 +123,10 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             const date = parse(slot.date, 'EEEE, do MMMM', new Date());
     
             // Format startTime and endTime to ISO 8601 format
-            const startTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.startTime.split(':')[0]), parseInt(slot.startTime.split(':')[1])));
-            const endTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.endTime.split(':')[0]), parseInt(slot.endTime.split(':')[1])));
+            const startTime = parse(slot.startTime, "hh:mm a", new Date())
+            const endTime = parse(slot.endTime, "hh:mm a", new Date())
+
+            console.log(date, startTime, endTime)
     
             // Include the date in the slotsInput array
             return {
@@ -117,6 +135,8 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                 startTime,
                 endTime,
             };
+
+            
         });
     
         const input = {

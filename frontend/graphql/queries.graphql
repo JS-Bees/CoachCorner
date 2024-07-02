@@ -311,3 +311,10 @@ query FindMessagesForCoacheeList($coachId: Int!) {
         id
     }
 }
+
+query FindOneToOneServiceSlotsByCoachId($coachId: Int!) {
+  findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
+  startTime
+  endTime
+  }
+}

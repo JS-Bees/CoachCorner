@@ -43,7 +43,7 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
     }
   }, [result]);
 
-  console.log("Session in modal:", session)
+  // console.log("Session in modal:", session)
 
   
 
