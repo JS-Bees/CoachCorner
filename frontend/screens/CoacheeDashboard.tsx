@@ -175,54 +175,39 @@ const CoacheeDashboard = () => {
         return null;
     }
     
-const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
-const coaches = coachData?.coaches || [];
-
-
-const genrePriority = ['MovieGenre', 'BookGenre', 'MusicGenre'];
-const genreWeights = {
-    'MovieGenre': 3,
-    'BookGenre': 2,
-    'MusicGenre': 1
-};
-
-const findFirstMatchingInterest = (interests, type) => {
-    return interests.find(interest => interest.type === type);
-};
-
-const sortedCoaches = coaches.map(coach => {
-    if (!coach) {
-        console.log("Coach data is undefined.");
-        return null;
-    }
-
-    let weightedMatchingInterests = 0;
-    genrePriority.forEach(type => {
-        const coacheeInterest = findFirstMatchingInterest(coacheeInterests, type);
-        const coachInterest = findFirstMatchingInterest(coach.interests, type);
-
-        if (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name) {
-            weightedMatchingInterests += genreWeights[type];
+    const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
+    const coaches = coachData?.coaches || [];
+    
+    const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+    
+    const findMatchingInterestsCount = (coacheeInterests, coachInterests) => {
+        return genreTypes.reduce((count, genreType) => {
+            const coacheeInterest = coacheeInterests.find(interest => interest.type === genreType);
+            const coachInterest = coachInterests.find(interest => interest.type === genreType);
+            return count + (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name ? 1 : 0);
+        }, 0);
+    };
+    
+    const matchedCoaches = coaches.map(coach => {
+        if (!coach) {
+            console.log("Coach data is undefined.");
+            return null;
         }
-    });
-
-    return { coach, weightedMatchingInterests };
-}).filter(coach => coach !== null).sort((a, b) => b.weightedMatchingInterests - a.weightedMatchingInterests);
-// Log the first names of the sorted coaches
-console.log("Sorted Coaches First Names:", sortedCoaches.map(coach => coach.coach.firstName));
-
-const matchedCoaches = sortedCoaches.slice(0, 3);
-
-if (matchedCoaches.length === 0) {
-    const randomIndex = Math.floor(Math.random() * 1);
-    const randomCoach = coaches[randomIndex];
-    matchedCoaches.push({ coach: randomCoach, weightedMatchingInterests: 0 });
-}
-
-// Use optional chaining and nullish coalescing to safely access properties
-console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`));
-const matchedCoachesNames = matchedCoaches.map(match => `${match.coach?.firstName ?? 'N/A'} ${match.coach?.lastName ?? 'N/A'}`);
-
+    
+        const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
+        return { coach, matchingInterestCount };
+    }).filter(coach => coach !== null).sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
+    
+    if (matchedCoaches.length === 0) {
+        const randomIndex = Math.floor(Math.random() * coaches.length);
+        const randomCoach = coaches[randomIndex];
+        matchedCoaches.push({ coach: randomCoach, matchingInterestCount: 0 });
+    }
+    
+    // Log matched coaches
+    console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName ?? 'N/A'} ${match.coach.lastName ?? 'N/A'}`));
+    const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName ?? 'N/A'} ${match.coach.lastName ?? 'N/A'}`);
+    
 const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
 
 // Compute the total star rating for each coach and then select the top two with the highest star ratings

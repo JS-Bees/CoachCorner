@@ -25,7 +25,8 @@ import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { Calendar } from 'react-native-calendars'; // Import the calendar
+import Modal from 'react-native-modal/dist/modal';
 const { width, height } = Dimensions.get('window');
 
 interface Booking {
@@ -58,6 +59,9 @@ const NewCoachDashboard = () => {
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [searchText, setSearchText] = useState('');
+    const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -166,17 +170,40 @@ const NewCoachDashboard = () => {
         return traineeName.includes(searchText.toLowerCase());
     });
 
+    const handleOpenCalendar = () => {
+        setIsCalendarVisible(true);
+    };
+
+    const handleCloseCalendar = () => {
+        setIsCalendarVisible(false);
+    };
+
+    const markedDates = upcomingBookings?.reduce((acc: any, booking: Booking) => {
+        booking.bookingSlots.forEach(slot => {
+            const formattedDate = format(new Date(slot.date), 'yyyy-MM-dd');
+            acc[formattedDate] = {
+                selected: true,
+                marked: true,
+                selectedColor: '#7E3FF0',
+            };
+        });
+        return acc;
+    }, {});
+
+    const handleDayPress = (day: { dateString: string }) => {
+        setSelectedDate(day.dateString);
+        setIsCalendarVisible(false); // Close the calendar after selecting a date
+    };
+
+
     return (
         <View style={CoacheeDashboardStyle.container}>
             <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
-                <Text style={CoacheeDashboardStyle.greetings}>
-                    Welcome Back Coach!
-                </Text>
-                
+                <Text style={CoacheeDashboardStyle.greetings}>Welcome Back Coach!</Text>
             </View>
             <TouchableOpacity onPress={navigateToCoachProfile}>
-            <Image
-                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
+                <Image
+                    source={{ uri: coachData?.findCoachByID.profilePicture }}
                     style={{
                         width: 40,
                         height: 40,
@@ -185,51 +212,60 @@ const NewCoachDashboard = () => {
                         borderRadius: 20,
                     }}
                 />
-            
             </TouchableOpacity>
             <KeyboardAvoidingView
                 style={CoacheeDashboardStyle.container}
                 behavior={Platform.OS === "android" ? 'height' : 'padding'}
-                keyboardVerticalOffset={Platform.OS === "android" ?  0 :  0}>
+                keyboardVerticalOffset={Platform.OS === "android" ? 0 : 0}
+            >
                 <View style={CoacheeDashboardStyle.searchContainer}>
                     <SearchBar
-                     placeholder='Search client name...'
-                     onChangeText={handleSearchChange}
-                    value={searchText}
-                    platform='android'
-                     containerStyle={CoacheeDashboardStyle.searchBarContainer}
-                     inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}/>
+                        placeholder='Search client name...'
+                        onChangeText={handleSearchChange}
+                        value={searchText}
+                        platform='android'
+                        containerStyle={CoacheeDashboardStyle.searchBarContainer}
+                        inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}
+                    />
                 </View>
-                
-
-                <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 350}}>
-            <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
-            </View>
-            {filteredBookings && filteredBookings.length > 0 ? (
-                <UpcomingDashboard
-                    upcoming={(filteredBookings || []).map((booking: Booking) => ({
-                        traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
-                        imageSource: { uri: booking.coachee.profilePicture },
-                        time: booking.bookingSlots.map((slot) => ({
-                            startTime: format(new Date(slot.startTime), 'h:mm a'),
-                            endTime: format(new Date(slot.endTime), 'h:mm a'),
-                        })),
-                        date: booking.bookingSlots.map((slot) => format(new Date(slot.date), 'MMMM dd')),
-                    }))}
-                />
-            ) : (
-                <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, color: "#d3d3d3"  }}>
-                    No Sessions at the moment
-                </Text>
-            )}
-        </ScrollView>
-
-
+                <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{ marginTop: "1%", height: 350 }}>
+                    <View style={CoacheeDashboardStyle.topCoachesContainer}>
+                        <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
+                    </View>
+                    {filteredBookings && filteredBookings.length > 0 ? (
+                        <UpcomingDashboard
+                            upcoming={(filteredBookings || []).map((booking: Booking) => ({
+                                traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                                imageSource: { uri: booking.coachee.profilePicture },
+                                time: booking.bookingSlots.map((slot) => ({
+                                    startTime: format(new Date(slot.startTime), 'h:mm a'),
+                                    endTime: format(new Date(slot.endTime), 'h:mm a'),
+                                })),
+                                date: booking.bookingSlots.map((slot) => format(new Date(slot.date), 'MMMM dd')),
+                                isHighlighted: booking.bookingSlots.some(slot => format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate),
+                            }))}
+                        />
+                    ) : (
+                        <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 20, color: "#d3d3d3" }}>
+                            No Sessions at the moment
+                        </Text>
+                    )}
+                </ScrollView>
+                <TouchableOpacity style={CoacheeDashboardStyle.calendarButton} onPress={handleOpenCalendar}>
+                    <Text style={CoacheeDashboardStyle.calendarButtonText}>Open Calendar</Text>
+                </TouchableOpacity>
             </KeyboardAvoidingView>
-
-            
-    
+            <Modal visible={isCalendarVisible} animationType="fade" transparent={false}>
+    <View style={CoacheeDashboardStyle.modalContainer}>
+        <Calendar
+            markedDates={markedDates}
+            onDayPress={handleDayPress}
+        />
+        <TouchableOpacity style={CoacheeDashboardStyle.closeButton} onPress={handleCloseCalendar}>
+            <Text style={CoacheeDashboardStyle.closeButtonText}>Close Calendar</Text>
+        </TouchableOpacity>
+    </View>
+</Modal>
         </View>
     );
 };
@@ -355,7 +391,53 @@ const CoacheeDashboardStyle = StyleSheet.create({
     coachNameText: {
        alignItems:'center',
        justifyContent: "center",
-    }
+    },
+    calendarButton: {
+        backgroundColor: '#7E3FF0',
+        padding: 5, // Reduce the padding to make the button smaller
+        borderRadius: 10, // Reduce the border radius for a smaller appearance
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10, // Reduce marginBottom
+        marginTop: 5, // Reduce marginTop
+        width: '40%', // Set a fixed width for the button
+        alignSelf: 'center', // Center the button horizontally
+    },
+    calendarButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: '#FFFFFF', // Set background color to white
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    closeButton: {
+        backgroundColor: '#7E3FF0',
+        padding: 10,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+    },
+    closeButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+        highlightedTile: {
+        backgroundColor: '#7E3FF0', // Highlight color
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 10,
+    },
+        normalTile: {
+        backgroundColor: '#ffffff', // Normal background color
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 10,
+    },
+    
    
 });
 

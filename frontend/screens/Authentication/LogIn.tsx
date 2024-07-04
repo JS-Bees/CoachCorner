@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity,
     ActivityIndicator,
+    Keyboard,
 } from 'react-native';
 import LogInButton from '../../components/Custom components/CustomButton';
 import SlideInComponent from '../../components/SlideInComponent';
@@ -59,6 +60,7 @@ const LogIn = () => {
     };
 
     const handleCloseSlideIn = () => {
+        Keyboard.dismiss(); // This will hide the keyboard
         setIsSlideInVisible(false);
     };
 
