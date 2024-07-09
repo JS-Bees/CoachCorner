@@ -1,5 +1,6 @@
 import { mutationField, nonNull, arg, list, stringArg } from 'nexus';
 import { Context } from '../context';
+import { supabase } from '../context';
 import bcrypt from 'bcrypt';
 import * as yup from 'yup';
 import {
@@ -85,6 +86,13 @@ export const createCoachee = mutationField('createCoachee', {
                     interests: true,
                 },
             });
+
+            const { data, error } = await supabase.auth.signUp({
+                email: coachee.email,
+                password: input.password,
+            });
+
+            console.log(data);
 
             return coachee;
         } catch (error) {
