@@ -12,6 +12,7 @@
     "installDep": "npm install --force"
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^1.2.5",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@expo-google-fonts/blinker": "^0.2.3",
