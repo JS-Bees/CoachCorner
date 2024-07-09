@@ -517,6 +517,7 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   SlotTime: { // field return type
+    date: NexusGenScalars['DateTime']; // DateTime!
     endTime: NexusGenScalars['DateTime']; // DateTime!
     startTime: NexusGenScalars['DateTime']; // DateTime!
   }
@@ -731,6 +732,7 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
   }
   SlotTime: { // field return type name
+    date: 'DateTime'
     endTime: 'DateTime'
     startTime: 'DateTime'
   }

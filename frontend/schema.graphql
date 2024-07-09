@@ -308,6 +308,7 @@ type Review {
 }
 
 type SlotTime {
+  date: DateTime!
   endTime: DateTime!
   startTime: DateTime!
 }

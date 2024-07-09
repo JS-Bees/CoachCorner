@@ -494,5 +494,9 @@ export const SlotTime = objectType({
             type: 'DateTime',
             resolve: (obj: any, args, ctx) => obj.endTime,
         });
+        t.field('date', {
+            type: 'DateTime',
+            resolve: (obj: any, args, ctx) => obj.endTime,
+        });
     },
 });
