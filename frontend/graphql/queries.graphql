@@ -316,5 +316,6 @@ query FindOneToOneServiceSlotsByCoachId($coachId: Int!) {
   findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
   startTime
   endTime
+  date
   }
 }

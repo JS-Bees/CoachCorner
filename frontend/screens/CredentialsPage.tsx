@@ -1,12 +1,12 @@
-import React from 'react';
-import { StyleSheet, View, Text, Image, ActivityIndicator, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Image, ActivityIndicator, Dimensions, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useRoute } from '@react-navigation/native';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
@@ -15,19 +15,26 @@ const CredentialsPage = () => {
   const route = useRoute(); // Get the route parameters
   const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
   const { coachId } = route.params; // Retrieve the coachId from the parameters
+  const [refreshing, setRefreshing] = useState(false); // State for refreshing
 
-   
   const handleNavigateBack = () => {
     navigation.goBack();
-   };
+  };
 
   // Fetch the coach data using the coachId
-  const [{ data, fetching, error }] = useQuery({
+  const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: FindCoachByIdDocument,
     variables: {
       userId: coachId, // The ID passed from PreviewPage
     },
   });
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    reexecuteQuery({ requestPolicy: 'network-only' });
+    setRefreshing(false);
+  }, [reexecuteQuery]);
+
 
   if (fetching) {
     return (
@@ -53,9 +60,12 @@ const CredentialsPage = () => {
     <View style={styles.container}>
       <Text style={styles.titleText}>Credential Pictures</Text>
       <TouchableOpacity onPress={handleNavigateBack} style={styles.icon}>
-            <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
-            </TouchableOpacity>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
+      </TouchableOpacity>
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContainer}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         {sportsCredentials && sportsCredentials.length > 0 ? (
           sportsCredentials.map((credential, index) => (
             <Image
@@ -115,7 +125,8 @@ const styles = StyleSheet.create({
   },
   icon: {
     bottom: "5%",
-    right: "37%"
+    right: "37%",
+    zIndex: 1,
   },
 });
 

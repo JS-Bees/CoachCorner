@@ -38,7 +38,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const ReviewsPage = () => {
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null);
+    const pollingInterval = 1000;
     // const { profile } = route.params || {};
 
     const handleNavigateBack = () => {
@@ -100,12 +102,22 @@ const ReviewsPage = () => {
     // } = useFetchCoacheeByUserID(userToken);
 
     // Fetch reviews using urql useQuery hook
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
         query: GetCoachReviewsDocument,
-        variables: { userId: parseInt(userToken) }, // Provide your user ID here
+        variables: { userId: userToken ? parseInt(userToken) : 0 },
     });
 
     const { data, fetching, error } = result;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+            setLastRefetchTime(new Date());
+            console.log('Refetching data at', new Date().toLocaleTimeString());
+        }, pollingInterval);
+
+        return () => clearInterval(interval);
+    }, [refetch, pollingInterval]);
 
     if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;

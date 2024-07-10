@@ -196,7 +196,7 @@ const CoacheeDashboard = () => {
     
         const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
         return { coach, matchingInterestCount };
-    }).filter(coach => coach !== null).sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
+    }).filter(coach => coach !== null).sort((a, b) => b!.matchingInterestCount - a!.matchingInterestCount);
     
     if (matchedCoaches.length === 0) {
         const randomIndex = Math.floor(Math.random() * coaches.length);
@@ -205,8 +205,8 @@ const CoacheeDashboard = () => {
     }
     
     // Log matched coaches
-    console.log('Matched Coaches:', matchedCoaches.map(match => `${match.coach.firstName ?? 'N/A'} ${match.coach.lastName ?? 'N/A'}`));
-    const matchedCoachesNames = matchedCoaches.map(match => `${match.coach.firstName ?? 'N/A'} ${match.coach.lastName ?? 'N/A'}`);
+    console.log('Matched Coaches:', matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`));
+    const matchedCoachesNames = matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`);
     
 const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
 
@@ -271,7 +271,7 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
             ? DEFAULT_PROFILE_PICTURE 
             : { uri: matchedCoaches[0]?.coach?.profilePicture },
             gainedStars: matchedCoaches[0]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-            mainSport: matchedCoaches[0]?.coach?.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
+            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown", //debugged this line since it was giving undefined value error
             about: matchedCoaches[0]?.coach?.bio,
             workplaceAddress: matchedCoaches[0]?.coach?.address,
         },
@@ -282,7 +282,7 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
             ? DEFAULT_PROFILE_PICTURE 
             : { uri: matchedCoaches[1]?.coach?.profilePicture },
             gainedStars: matchedCoaches[1]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-            mainSport: matchedCoaches[1]?.coach?.sports.length > 0 ? matchedCoaches[1].coach.sports[0].type : "Unknown",
+            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
             about: matchedCoaches[1]?.coach?.bio,
             workplaceAddress: matchedCoaches[1]?.coach?.address,
         },

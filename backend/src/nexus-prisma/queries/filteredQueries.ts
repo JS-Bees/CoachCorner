@@ -717,6 +717,7 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
                     select: {
                         bookingSlots: {
                             select: {
+                                date: true,
                                 startTime: true,
                                 endTime: true,
                             },
@@ -729,9 +730,10 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
                     booking.bookingSlots.map((slot) => ({
                         startTime: slot.startTime, // Assuming startTime and endTime are Date objects
                         endTime: slot.endTime,
+                        date: slot.date,
                     })),
                 );
-
+                console.log(slotTimes)
                 return slotTimes;
             } catch (error) {
                 console.error(

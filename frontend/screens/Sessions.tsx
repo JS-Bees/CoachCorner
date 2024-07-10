@@ -39,6 +39,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [bookings, setBookings] = useState<any[]>([]);
     const pollingInterval = 1000;
 
@@ -86,6 +87,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const {
         data: coachData,
     } = useFetchCoachByUserID(userToken);
+    
 
     const [result, refetch] = useQuery({
         query: FindBookingsOfCoachDocument, 
@@ -96,6 +98,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     });
 
     const { data, error, fetching} = result;
+    
     useEffect(() => {
         if (data) {
         setBookings(data.findCoachByID.bookings);}
