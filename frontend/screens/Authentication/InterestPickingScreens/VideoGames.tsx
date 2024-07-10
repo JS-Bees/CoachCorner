@@ -75,6 +75,7 @@ const ChooseVideoGames = ({route}) => {
         workplaceAddress: workplaceAddress,
         coachOrCoachee: coachOrCoachee,
       });
+      console.log(selectedSports)
     };
     
 

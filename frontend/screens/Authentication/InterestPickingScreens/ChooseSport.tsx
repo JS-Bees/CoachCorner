@@ -1,100 +1,99 @@
 import React, { useState } from 'react';
-import CustomCheckBox from '../../../components/Custom components/CustomCheckBox';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/Ionicons';
+import { RadioButton } from 'react-native-paper';
 
 type Sports = 'Soccer' | 'Basketball' | 'Volleyball' | 'Badminton';
 
-const ChooseSport = ({route}) => {
-  const navigation =
-  useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const [checkedSport, setCheckedSport] = useState<Record<Sports, boolean>>({
-        Soccer: false,
-        Basketball: false,
-        Volleyball: false,
-        Badminton: false,  
-    });
-    const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
-    
-    const handleCheckboxChange = (sport: Sports) => {
-      setCheckedSport((prevCheckedHobby) => {
-        const newCheckedSport = { ...prevCheckedHobby };
-        const checkedCount = Object.values(newCheckedSport).filter((value) => value).length;
-  
-        if (checkedCount === 2 && !newCheckedSport[sport]) {
-          // If trying to check more than 4, uncheck the current checkbox
-          newCheckedSport[sport] = false;
-        } else {
-          // Toggle the state of the clicked checkbox
-          newCheckedSport[sport] = !newCheckedSport[sport];
-        }
-  
-        return newCheckedSport;
+const ChooseSport = ({ route }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+
+  const [checkedSport, setCheckedSport] = useState<Sports | null>(null);
+
+  const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee } = route.params;
+
+  const handleCheckboxChange = (sport: Sports) => {
+    setCheckedSport(sport);
+  };
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  const handleButtonPress = () => {
+    if (checkedSport) {
+      const selectedSports = [{ sport: checkedSport }];
+      console.log(selectedSports);
+      console.log(firstName);
+      navigation.navigate('InterestPickingHobby', {
+        selectedSports,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        birthday: birthday,
+        workplaceAddress: workplaceAddress,
+        coachOrCoachee: coachOrCoachee,
       });
-    };
-
-    const areAnyChecked = Object.values(checkedSport).some((value) => value);
-    const isMaxChecksReached = Object.values(checkedSport).filter((value) => value).length >= 2;
- 
-    const handleGoBack = () => {
-      navigation.goBack();
-    };
-
-
-const handleButtonPress = () => {
-  // Filter out the selected hobbies
-  const selectedSports = Object.keys(checkedSport)
-      .filter(sport => checkedSport[sport])
-      .map(sport => ({
-          sport
-      }));
-
-  console.log(selectedSports);
-  console.log(firstName)
-  navigation.navigate("InterestPickingHobby", 
-  { selectedSports,
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    password: password,
-    birthday: birthday,
-    workplaceAddress: workplaceAddress,
-    coachOrCoachee: coachOrCoachee,
-  });
-};
-
-
+    }
+  };
+  
   return (
     <View style={styles.container}>
-
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
-      <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
-     </TouchableOpacity>
+        <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
+      </TouchableOpacity>
       <Text style={styles.header}> Which sport do you teach?</Text>
       <Text style={styles.subtitle}>Choose 1 sport</Text>
 
-      <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedSport.Soccer} checkedColor='#7E3FF0' label="Soccer" onPress={() => handleCheckboxChange('Soccer')} />
-        <CustomCheckBox checked={checkedSport.Basketball} checkedColor='#7E3FF0' label="Basketball" onPress={() => handleCheckboxChange('Basketball')} />
-        <CustomCheckBox checked={checkedSport.Volleyball} checkedColor='#7E3FF0' label="Volleyball" onPress={() => handleCheckboxChange('Volleyball')} />
-        <CustomCheckBox checked={checkedSport.Badminton} checkedColor='#7E3FF0' label="Badminton" onPress={() => handleCheckboxChange('Badminton')} />
-    
+      <View style={styles.radioContainer}>
+        <RadioButton.Item
+          label="Soccer"
+          value="Soccer"
+          status={checkedSport === 'Soccer' ? 'checked' : 'unchecked'}
+          onPress={() => handleCheckboxChange('Soccer')}
+          labelStyle={styles.radioButtonLabel}
+          style={styles.radioButtonItem}
+        />
+        <RadioButton.Item
+          label="Basketball"
+          value="Basketball"
+          status={checkedSport === 'Basketball' ? 'checked' : 'unchecked'}
+          onPress={() => handleCheckboxChange('Basketball')}
+          labelStyle={styles.radioButtonLabel}
+          style={styles.radioButtonItem}
+        />
+        <RadioButton.Item
+          label="Volleyball"
+          value="Volleyball"
+          status={checkedSport === 'Volleyball' ? 'checked' : 'unchecked'}
+          onPress={() => handleCheckboxChange('Volleyball')}
+          labelStyle={styles.radioButtonLabel}
+          style={styles.radioButtonItem}
+        />
+        <RadioButton.Item
+          label="Badminton"
+          value="Badminton"
+          status={checkedSport === 'Badminton' ? 'checked' : 'unchecked'}
+          onPress={() => handleCheckboxChange('Badminton')}
+          labelStyle={styles.radioButtonLabel}
+          style={styles.radioButtonItem}
+        />
       </View>
 
       <TouchableOpacity
-        style={[styles.button, (!areAnyChecked || isMaxChecksReached) && styles.disabledButton]}
+        style={[styles.button, !checkedSport && styles.disabledButton]}
         onPress={handleButtonPress}
-        disabled={!areAnyChecked || isMaxChecksReached}
+        disabled={!checkedSport}
       >
         <Text style={{ color: 'white', fontSize: 15, height: 40, paddingHorizontal: 10, paddingVertical: 10 }}>Continue</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,8 +115,20 @@ const styles = StyleSheet.create({
     color: '#908D93',
     textAlign: 'center',
   },
-  checkboxContainer: {
+  radioContainer: {
     marginTop: '5%',
+    alignItems: 'center',
+  },
+  radioButtonItem: {
+    flexDirection: 'row-reverse', // Reverse the direction to swap positions
+    alignItems: 'center',
+    justifyContent: 'space-between', // Center align button and label
+    width: '50%', // Fixed width for each RadioButton.Item
+  },
+  radioButtonLabel: {
+    fontSize: 16, // Adjust the font size as needed
+    marginRight: 10, // Adjust the margin to position the label closer to the radio button
+    textAlign: 'left', // Ensure label text alignment
   },
   button: {
     marginTop: '5%',
@@ -128,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   disabledButton: {
-    backgroundColor: '#D4C5ED', 
+    backgroundColor: '#D4C5ED',
   },
   iconContainer: {
     marginTop: "15%",

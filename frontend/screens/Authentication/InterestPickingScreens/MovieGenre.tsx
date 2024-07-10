@@ -180,12 +180,12 @@ const ChooseMovies = ({route}) => {
           // Navigate to the next screen or perform other actions upon successful signup
         } else {
           console.log("This is a coach")
-          console.log(selectedSport, selectedGames, selectedHobbies, selectedMovie)
+          console.log(selectedSports, selectedGames, selectedHobbies, selectedMovie)
           console.log(firstName, lastName, email, password , workplaceAddress,birthday)
           console.error('No data returned from mutation');
         }
       } catch (error) {
-        console.log(selectedGames, selectedHobbies, selectedMovie, selectedSport)
+        console.log(selectedGames, selectedHobbies, selectedMovie, selectedSports)
         console.error('Error creating coachee:', error);
         // Handle errors appropriately
       }

@@ -1,28 +1,20 @@
-import React, { useState} from 'react';
-import { CheckBox, Text,} from 'react-native-elements';
-import { View } from 'react-native'
-
+import React from 'react';
+import { CheckBox, Text } from 'react-native-elements';
+import { View } from 'react-native';
 
 interface CustomCheckBoxProps {
   label: string;
   checkedColor: string;
   onPress: () => void;
-  checked?: boolean;
+  checked: boolean; // Make this prop required to control the checked state from the parent component
 }
 
-const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({ label, checkedColor, onPress }) => {
-  const [checked, setChecked] = useState(false);
-
-  const toggleCheckbox = () => {
-    setChecked(!checked);
-    onPress();
-  };
-
+const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({ label, checkedColor, onPress, checked }) => {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: "15%"}}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: '15%' }}>
       <CheckBox 
         checked={checked}
-        onPress={toggleCheckbox}
+        onPress={onPress}
         checkedColor={checkedColor}
       />
       <Text>{label}</Text>
