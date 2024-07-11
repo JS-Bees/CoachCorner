@@ -348,13 +348,14 @@ const styles = StyleSheet.create({
   },
   starsContainer: {
     flexDirection: 'row',
-    bottom: "84%",
-    left: "1.5%"
+    bottom: "79.5%",
+    left: "1.6%"
   },
   reviewsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end', // Adjust alignment of extra buttons
     alignItems: 'center',
+    bottom: "80%"
   },
   gap: {
     marginLeft: "5%", // Adjust the spacing between the buttons

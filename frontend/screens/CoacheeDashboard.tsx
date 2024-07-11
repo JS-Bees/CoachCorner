@@ -342,7 +342,7 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                     </View>
                     <View style={{ flex: 1 }}>
             <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
-            <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: '3%' }}>
+            <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: '15%' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <ScrollView
                         ref={scrollViewRef}
