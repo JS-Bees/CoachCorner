@@ -65,7 +65,7 @@ export const createCoachee = mutationField('createCoachee', {
             // Validate the coachee input
             coacheeSchema.validateSync(input);
 
-            // Convert email to Lowercase
+            // Convert email to lowercase
             const lowerCaseEmail = input.email.toLowerCase();
 
             // Validate the interests input
