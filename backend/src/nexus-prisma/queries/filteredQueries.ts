@@ -36,8 +36,11 @@ export const findCoachByEmailAndPassword = queryField(
                 // Validate arguments using the yup schema
                 loginSchema.validateSync({ email, password });
 
+                // Convert email to lowercase
+                const lowerCaseEmail = email.toLowerCase();
+
                 const coach = await context.db.coach.findUnique({
-                    where: { email, active: true },
+                    where: { email: lowerCaseEmail, active: true },
                 });
 
                 if (coach) {
@@ -79,9 +82,12 @@ export const findCoacheeByEmailAndPassword = queryField(
                 // Validate arguments using the yup schema
                 loginSchema.validateSync({ email, password });
 
+                // Convert email to lowercase
+                const lowerCaseEmail = email.toLowerCase();
+
                 // Search for a Coachee with the provided email
                 const coachee = await context.db.coachee.findUnique({
-                    where: { email, active: true }, // Include the 'active' condition
+                    where: { email: lowerCaseEmail, active: true }, // Include the 'active' condition
                 });
 
                 if (coachee) {
