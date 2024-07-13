@@ -56,7 +56,7 @@ const LogIn = () => {
     };
 
     const handleOpenSlideIn = () => {
-        setIsSlideInVisible(true); 
+        setIsSlideInVisible(true);
     };
 
     const handleCloseSlideIn = () => {
@@ -124,14 +124,14 @@ const LogIn = () => {
                 return;
             }
             // Check if the email ends with @gmail.com or @example.com
-            const validDomains = ['@gmail.com', '@example.com'];
-            const emailDomain = Email.substring(Email.lastIndexOf('@'));
+            // const validDomains = ['@gmail.com', '@example.com'];
+            // const emailDomain = Email.substring(Email.lastIndexOf('@'));
 
-            if (!validDomains.includes(emailDomain)) {
-                setEmailPasswordError('Invalid email domain. Please use a valid email.');
-                setLoading(false); // Stop loading before returning
-                return;
-            }
+            // if (!validDomains.includes(emailDomain)) {
+            //     setEmailPasswordError('Invalid email domain. Please use a valid email.');
+            //     setLoading(false); // Stop loading before returning
+            //     return;
+            // }
 
             // Check the results of the query after it's completed
             if (CoachOrCoachee === 'coach') {
@@ -148,7 +148,7 @@ const LogIn = () => {
                     // const errorMessage = coachData.error
                     //     ? coachData.error.message.replace('[GraphQL] ', '')
                     //     : 'An error occurred';
-                    setEmailPasswordError("Invalid Email or Password");
+                    setEmailPasswordError('Invalid Email or Password');
                     //handleLoginErrorCoach;
                 }
             } else if (CoachOrCoachee === 'coachee') {
@@ -167,7 +167,7 @@ const LogIn = () => {
                     // const errorMessage = coacheeData.error
                     //     ? coacheeData.error.message.replace('[GraphQL] ', '')
                     //     : 'An error occurred';
-                    setEmailPasswordError("Invalid Email or Password");
+                    setEmailPasswordError('Invalid Email or Password');
                     // handleLoginErrorCoachee;
                 }
             } else {
@@ -184,7 +184,6 @@ const LogIn = () => {
         // }); // 200ms delay to ensure state has updated
     };
 
-  
     const onSignUpPressed = () => {
         if (CoachOrCoachee === 'coach') {
             navigation.navigate('SignUpCoach');
@@ -218,12 +217,18 @@ const LogIn = () => {
             <View style={Log_In_Style.buttonsContainer}>
                 {!isSlideInVisible && (
                     <View style={Log_In_Style.buttonsContainer}>
-<TouchableOpacity style={Log_In_Style.buttons} onPress={handleCoachButtonPress}>
-                <Text style={Log_In_Style.buttonText}>Coach</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={Log_In_Style.buttons} onPress={handleTraineeButtonPress}>
-                <Text style={Log_In_Style.buttonText}>Coachee</Text>
-            </TouchableOpacity>
+                        <TouchableOpacity
+                            style={Log_In_Style.buttons}
+                            onPress={handleCoachButtonPress}
+                        >
+                            <Text style={Log_In_Style.buttonText}>Coach</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={Log_In_Style.buttons}
+                            onPress={handleTraineeButtonPress}
+                        >
+                            <Text style={Log_In_Style.buttonText}>Coachee</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
 
@@ -392,7 +397,7 @@ const Log_In_Style = StyleSheet.create({
         paddingLeft: 2,
     },
     subtitleText: {
-        bottom: "20%",
+        bottom: '20%',
         fontSize: 15,
         fontWeight: '200',
         fontFamily: 'Roboto',
@@ -425,7 +430,7 @@ const Log_In_Style = StyleSheet.create({
         backgroundColor: '#7E3FF0', // Example background color
         padding: 10,
         borderRadius: 5,
-        marginLeft: '5%',  // Add left margin to separate buttons
+        marginLeft: '5%', // Add left margin to separate buttons
         marginRight: '5%', // Add right margin to separate buttons
     },
     buttonText: {

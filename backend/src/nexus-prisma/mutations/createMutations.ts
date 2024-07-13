@@ -92,16 +92,16 @@ export const createCoachee = mutationField('createCoachee', {
             });
 
             // Need this for Email Verification
-            // const { data, error } = await supabase.auth.signUp({
-            //     email: coachee.email,
-            //     password: input.password,
-            // });
+            const { data, error } = await supabase.auth.signUp({
+                email: coachee.email,
+                password: input.password,
+            });
 
-            // if (error) {
-            //     throw error;
-            // }
+            if (error) {
+                throw error;
+            }
 
-            // console.log(data);
+            console.log(data);
 
             return coachee;
         } catch (error) {
@@ -168,6 +168,18 @@ export const createCoach = mutationField('createCoach', {
                     sports: true,
                 },
             });
+
+            // Need this for Email Verification
+            const { data, error } = await supabase.auth.signUp({
+                email: coach.email,
+                password: input.password,
+            });
+
+            if (error) {
+                throw error;
+            }
+
+            console.log(data);
 
             return coach;
         } catch (error) {
@@ -509,6 +521,26 @@ export const coachLogin = mutationField('coachLogin', {
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
 
+            // Use Supabase to find the user by email
+            const { data: user, error } = await supabase
+                .from('profiles') // Adjust the table name according to your Supabase setup
+                .select('*')
+                .eq('email', lowerCaseEmail);
+            // .single(); // Assuming you want to find a single user
+
+            if (user) {
+                console.log('sp user', user);
+                if (user[0].email_confirmed_at == null) {
+                    console.log('user email not confirmed');
+                    throw new Error('User email not confirmed.');
+                }
+            }
+
+            if (error) {
+                console.log('sp error: ', error);
+                throw new Error('User not found or an error occurred.');
+            }
+
             const coach = await context.db.coach.findUnique({
                 where: { email: lowerCaseEmail, active: true },
             });
@@ -551,6 +583,26 @@ export const coacheeLogin = mutationField('coacheeLogin', {
 
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
+
+            // Use Supabase to find the user by email
+            const { data: user, error } = await supabase
+                .from('profiles') // Adjust the table name according to your Supabase setup
+                .select('*')
+                .eq('email', lowerCaseEmail);
+            // .single(); // Assuming you want to find a single user
+
+            if (user) {
+                console.log('sp user', user);
+                if (user[0].email_confirmed_at == null) {
+                    console.log('user email not confirmed');
+                    throw new Error('User email not confirmed.');
+                }
+            }
+
+            if (error) {
+                console.log('sp error: ', error);
+                throw new Error('User not found or an error occurred.');
+            }
 
             // Search for a Coachee with the provided email
             const coachee = await context.db.coachee.findUnique({
