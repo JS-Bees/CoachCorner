@@ -29,6 +29,7 @@ interface ChatMessage {
 }
 
 const ChatListPage: React.FC = () => {
+    
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -42,7 +43,7 @@ const ChatListPage: React.FC = () => {
     };
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-
+    const pollingInterval = 1000;
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -58,22 +59,36 @@ const ChatListPage: React.FC = () => {
     }, []);
 
     const useFetchMessagesForCoachlist = (userID: any) => {
-        const [chatListMessageResult] = useQuery({
+        const [chatListMessageResult,  refetch] = useQuery({
             query: FindMessagesForCoachListDocument,
             variables: {
                 coacheeId: parseInt(userID),
             },
-            requestPolicy: 'cache-and-network',
+            requestPolicy: 'network-only',
         });
-
-        return chatListMessageResult;
+        return { chatListMessageResult, refetch };
     };
+
+    const { chatListMessageResult, refetch } = useFetchMessagesForCoachlist(userToken);
 
     const {
         data: coacheeChatListMessageData,
         loading: coacheeChatListMessageLoading,
         error: coacheeChatListMessageError,
-    } = useFetchMessagesForCoachlist(userToken);
+    } = chatListMessageResult;
+
+    console.log(coacheeChatListMessageData)
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          refetch(); // Manually trigger the query
+        }, pollingInterval);
+        // console.log('Refetching data at', new Date().toLocaleTimeString());
+        // console.log("this is the refetched data:", coacheeChatListMessageData)
+        return () => clearInterval(intervalId);
+    }, []);
+
+
 
     // console.log(
     //     'chat list messages',
@@ -98,6 +113,7 @@ const ChatListPage: React.FC = () => {
         error: coacheeError,
     } = useFetchCoacheeByUserID(userToken);
 
+   
     useEffect(() => {
         // console.log('coacheeData:', coacheeData);
         const contacts = coacheeData?.findCoacheeByID.contacts;
