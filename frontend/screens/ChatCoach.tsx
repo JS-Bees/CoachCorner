@@ -206,7 +206,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                         size={30}
                         color="#7E3FF0"
                     /> */}
-                    <Text>Add Session</Text>
+                    <Text style={styles.buttonText}>Add Session</Text>
                 </TouchableOpacity>
             </View>
             <View
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontStyle: "italic",
         color: "#7E3FF0"
-    }
+    },
 });
 
 export default ChatPage;
