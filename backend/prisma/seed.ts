@@ -1,9 +1,6 @@
 import {
-    Games,
-    Hobbies,
-    MovieGenres,
     PrismaClient,
-    Sport,
+    // Sport,
 } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -13,7 +10,7 @@ async function seedDatabase() {
     try {
         const hashedPassword = await bcrypt.hash('password', 10); // Hash the password
 
-        // Seed Coach data
+        // Coach data
         await db.coach.createMany({
             data: [
                 {
@@ -21,15 +18,10 @@ async function seedDatabase() {
                     firstName: 'Michael',
                     lastName: 'Jordan',
                     password: hashedPassword, // Use hashed password
-                    workplaceAddress: 'WorkplaceAddress1',
+                    address: 'address 1',
                     birthday: new Date(),
-                    sport: Sport.BASKETBALL,
-                    games: [Games.MOBILELEGENDS, Games.DOTA],
-                    hobbies: [Hobbies.COOKING, Hobbies.PAINTING],
-                    moviesGenres: [MovieGenres.ACTION, MovieGenres.COMEDY],
-                    affiliations: 'Enter affiliations here',
+                    // add sport and 3 interests
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -37,15 +29,9 @@ async function seedDatabase() {
                     firstName: 'Serena',
                     lastName: 'Williams',
                     password: hashedPassword,
-                    workplaceAddress: 'WorkplaceAddress2',
+                    address: 'address 2',
                     birthday: new Date(),
-                    sport: Sport.VOLLEYBALL,
-                    games: [Games.VALORANT, Games.MINECRAFT],
-                    hobbies: [Hobbies.WRITING, Hobbies.SINGING],
-                    moviesGenres: [MovieGenres.ROMANCE, MovieGenres.DRAMA],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -53,15 +39,9 @@ async function seedDatabase() {
                     firstName: 'Lionel',
                     lastName: 'Messi',
                     password: hashedPassword,
-                    workplaceAddress: 'WorkplaceAddress3',
+                    address: 'address 3',
                     birthday: new Date(),
-                    sport: Sport.SOCCER,
-                    games: [Games.CALLOFDUTY, Games.PUBG],
-                    hobbies: [Hobbies.DANCING, Hobbies.TRAVELLING],
-                    moviesGenres: [MovieGenres.HORROR, MovieGenres.THRILLER],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -69,18 +49,9 @@ async function seedDatabase() {
                     firstName: 'Rafael',
                     lastName: 'Nadal',
                     password: hashedPassword,
-                    workplaceAddress: 'WorkplaceAddress4',
+                    address: 'address 4',
                     birthday: new Date(),
-                    sport: Sport.BADMINTON,
-                    games: [Games.MOBILELEGENDS, Games.STREETFIGHTER],
-                    hobbies: [Hobbies.READING, Hobbies.PHOTOGRAPHY],
-                    moviesGenres: [
-                        MovieGenres.DOCUMENTARY,
-                        MovieGenres.MUSICAL,
-                    ],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -88,21 +59,15 @@ async function seedDatabase() {
                     firstName: 'Usain',
                     lastName: 'Bolt',
                     password: hashedPassword,
-                    workplaceAddress: 'WorkplaceAddress5',
+                    address: 'address 5',
                     birthday: new Date(),
-                    sport: Sport.SWIMMING,
-                    games: [Games.CLASHOFCLANS, Games.CANDYCRUSH],
-                    hobbies: [Hobbies.HIKING, Hobbies.BAKING],
-                    moviesGenres: [MovieGenres.ADVENTURE, MovieGenres.FANTASY],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
             ],
         });
 
-        // Seed Coachee data
+        // Coachee data
         await db.coachee.createMany({
             data: [
                 {
@@ -110,14 +75,9 @@ async function seedDatabase() {
                     firstName: 'John',
                     lastName: 'Doey',
                     password: hashedPassword,
-                    address: 'CoacheeAddress1',
+                    address: 'Coachee Address 1',
                     birthday: new Date(),
-                    games: [Games.VALORANT, Games.MINECRAFT],
-                    hobbies: [Hobbies.READING, Hobbies.SINGING],
-                    moviesGenres: [MovieGenres.DRAMA, MovieGenres.ROMANCE],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -125,14 +85,9 @@ async function seedDatabase() {
                     firstName: 'Jane',
                     lastName: 'Smith',
                     password: hashedPassword,
-                    address: 'CoacheeAddress2',
+                    address: 'Coachee Address 2',
                     birthday: new Date(),
-                    games: [Games.MOBILELEGENDS, Games.DOTA],
-                    hobbies: [Hobbies.COOKING, Hobbies.PAINTING],
-                    moviesGenres: [MovieGenres.ACTION, MovieGenres.COMEDY],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -140,14 +95,9 @@ async function seedDatabase() {
                     firstName: 'Alice',
                     lastName: 'Johnson',
                     password: hashedPassword,
-                    address: 'CoacheeAddress3',
+                    address: 'Coachee Address 3',
                     birthday: new Date(),
-                    games: [Games.ARKNIGHTS, Games.AZURELANE],
-                    hobbies: [Hobbies.TRAVELLING, Hobbies.WRITING],
-                    moviesGenres: [MovieGenres.ANIME, MovieGenres.FANTASY],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -155,17 +105,9 @@ async function seedDatabase() {
                     firstName: 'Robert',
                     lastName: 'Smith',
                     password: hashedPassword,
-                    address: 'CoacheeAddress4',
+                    address: 'Coachee Address 4',
                     birthday: new Date(),
-                    games: [Games.LOL, Games.PUBG],
-                    hobbies: [Hobbies.HIKING, Hobbies.PHOTOGRAPHY],
-                    moviesGenres: [
-                        MovieGenres.DOCUMENTARY,
-                        MovieGenres.MUSICAL,
-                    ],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
                 {
@@ -173,38 +115,247 @@ async function seedDatabase() {
                     firstName: 'Emily',
                     lastName: 'Davis',
                     password: hashedPassword,
-                    address: 'CoacheeAddress5',
+                    address: 'Coachee Address 5',
                     birthday: new Date(),
-                    games: [Games.STREETFIGHTER, Games.TEKKEN],
-                    hobbies: [Hobbies.DANCING, Hobbies.BAKING],
-                    moviesGenres: [MovieGenres.HORROR, MovieGenres.MYSTERY],
-                    affiliations: 'Enter affiliations here',
                     bio: 'Enter bio here',
-                    mantra: 'Enter mantra here',
                     profilePicture: 'profile picture',
                 },
             ],
         });
 
-        // Create coaching relationships
-        await db.coachingRelationship.createMany({
+        // Contacts
+        await db.contact.createMany({
             data: [
                 {
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 1, // Coachee with ID 1
+                    coachId: 2, // Coach with ID  2
+                    coacheeId: 1, // Coachee with ID  1
+                    contactedStatus: true,
                 },
                 {
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 3, // Coachee with ID 3
+                    coachId: 2, // Coach with ID  2
+                    coacheeId: 2, // Coachee with ID  2
+                    contactedStatus: true,
                 },
                 {
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 5, // Coachee with ID 5
+                    coachId: 3, // Coach with ID  3
+                    coacheeId: 5, // Coachee with ID  5
+                    contactedStatus: true,
+                },
+                // not contacted
+                {
+                    coachId: 4, // Coach with ID  4
+                    coacheeId: 1, // Coachee with ID  1
+                    contactedStatus: false,
+                },
+                {
+                    coachId: 5, // Coach with ID  5
+                    coacheeId: 1, // Coachee with ID  1
+                    contactedStatus: false,
                 },
             ],
         });
 
-        // Create bookings (before booking slots)
+        // Sports
+        await db.sport.createMany({
+            data: [
+                {
+                    coachId: 1,
+                    type: 'Basketball',
+                },
+                {
+                    coachId: 2,
+                    type: 'Tennis',
+                },
+                {
+                    coachId: 3,
+                    type: 'Soccer',
+                },
+                {
+                    coachId: 4,
+                    type: 'Volleyball',
+                },
+                {
+                    coachId: 5,
+                    type: 'Swimming',
+                },
+            ],
+        });
+
+        // Sports Credentials
+        await db.sportsCredential.createMany({
+            data: [
+                {
+                    sportId: 1,
+                    credentialPicture: 'Basketball Cert',
+                },
+                {
+                    sportId: 2,
+                    credentialPicture: 'Tennis Cert',
+                },
+                {
+                    sportId: 3,
+                    credentialPicture: 'Soccer Cert',
+                },
+                {
+                    sportId: 4,
+                    credentialPicture: 'Volleyball Cert',
+                },
+                {
+                    sportId: 5,
+                    credentialPicture: 'Swimming Cert',
+                },
+            ],
+        });
+
+        // ^Connect/update these all later since it was edited (see booking and booking slots)
+
+        // Coach Tasks
+        await db.coachTask.createMany({
+            data: [
+                {
+                    coachId: 1,
+                    title: 'Complete Weekly Report',
+                    description:
+                        'Submit a weekly report of your coaching activities.',
+                    completionStatus: 'COMPLETED',
+                    date: new Date('2024-03-05'),
+                },
+                {
+                    coachId: 1,
+                    title: 'Prepare for Upcoming Coaching Sessions',
+                    description:
+                        'Plan and prepare materials for upcoming coaching sessions.',
+                    completionStatus: 'UNCOMPLETED',
+                    date: new Date('2024-03-06'),
+                },
+            ],
+        });
+
+        // Coachee Tasks
+        await db.coacheeTask.createMany({
+            data: [
+                {
+                    coacheeId: 1,
+                    title: 'Complete Daily Reflection',
+                    description:
+                        'Reflect on your progress and set goals for the next day.',
+                    completionStatus: 'COMPLETED',
+                    date: new Date('2024-03-01'),
+                },
+                {
+                    coacheeId: 1,
+                    title: 'Attend Fitness Class',
+                    description:
+                        'Attend a fitness class to improve physical health.',
+                    completionStatus: 'UNCOMPLETED',
+                    date: new Date('2024-03-02'),
+                },
+            ],
+        });
+
+        // Coach Interests
+        await db.coachInterest.createMany({
+            data: [
+                {
+                    coachId: 1,
+                    type: 'Movie Genre',
+                    name: 'Romance',
+                },
+                {
+                    coachId: 1,
+                    type: 'Movie Genre',
+                    name: 'Horror',
+                },
+                {
+                    coachId: 1,
+                    type: 'Movie Genre',
+                    name: 'Action',
+                },
+                {
+                    coachId: 1,
+                    type: 'Music Genre',
+                    name: 'Rock',
+                },
+                {
+                    coachId: 1,
+                    type: 'Music Genre',
+                    name: 'Jazz',
+                },
+                {
+                    coachId: 1,
+                    type: 'Music Genre',
+                    name: 'Classical',
+                },
+                {
+                    coachId: 1,
+                    type: 'Literature Genre',
+                    name: 'Science Fiction',
+                },
+                {
+                    coachId: 1,
+                    type: 'Literature Genre',
+                    name: 'Young Adult',
+                },
+                {
+                    coachId: 1,
+                    type: 'Literature Genre',
+                    name: 'Fantasy',
+                },
+            ],
+        });
+
+        // Coachee Interests
+        await db.coacheeInterest.createMany({
+            data: [
+                {
+                    coacheeId: 1,
+                    type: 'Movie Genre',
+                    name: 'Romance',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Movie Genre',
+                    name: 'Horror',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Movie Genre',
+                    name: 'Action',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Music Genre',
+                    name: 'Rock',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Music Genre',
+                    name: 'Pop',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Music Genre',
+                    name: 'K-Pop',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Literature Genre',
+                    name: 'Romance',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Literature Genre',
+                    name: 'Mystery',
+                },
+                {
+                    coacheeId: 1,
+                    type: 'Literature Genre',
+                    name: 'Horror',
+                },
+            ],
+        });
+
+        // Bookings (before booking slots)
         await db.booking.createMany({
             data: [
                 {
@@ -232,7 +383,7 @@ async function seedDatabase() {
                     coachId: 2, // Coach with ID 2
                     coacheeId: 1, // Coachee with ID 1
                     serviceType: 'Volleyball Coaching Again',
-                    status: 'PENDING',
+                    status: 'UPCOMING',
                     additionalNotes: 'Bring equipment',
                 },
             ],
@@ -246,66 +397,77 @@ async function seedDatabase() {
                     date: new Date('2023-08-01'),
                     startTime: new Date('2023-08-01T14:00:00'),
                     endTime: new Date('2023-08-01T15:00:00'),
+                    status: 'UPCOMING',
                 },
                 {
                     bookingId: 1, // Booking with ID 1
                     date: new Date('2023-08-03'),
                     startTime: new Date('2023-08-03T15:00:00'),
                     endTime: new Date('2023-08-03T16:00:00'),
+                    status: 'COMPLETED',
                 },
                 {
                     bookingId: 1, // Booking with ID 1
                     date: new Date('2023-08-05'),
                     startTime: new Date('2023-08-05T14:00:00'),
                     endTime: new Date('2023-08-05T15:00:00'),
+                    status: 'CANCELLED',
                 },
                 {
                     bookingId: 2, // Booking with ID 2
                     date: new Date('2023-09-06'),
                     startTime: new Date('2023-09-06T15:00:00'),
                     endTime: new Date('2023-09-06T16:00:00'),
+                    status: 'CANCELLED',
                 },
                 {
                     bookingId: 2, // Booking with ID 2
                     date: new Date('2023-09-10'),
                     startTime: new Date('2023-09-10T14:00:00'),
                     endTime: new Date('2023-09-10T15:00:00'),
+                    status: 'UPCOMING',
                 },
                 {
                     bookingId: 2, // Booking with ID 2
                     date: new Date('2023-09-11'),
                     startTime: new Date('2023-09-11T15:00:00'),
                     endTime: new Date('2023-09-11T16:00:00'),
+                    status: 'CANCELLED',
                 },
                 {
                     bookingId: 3, // Booking with ID 3
                     date: new Date('2023-10-16'),
                     startTime: new Date('2023-10-16T15:00:00'),
                     endTime: new Date('2023-10-16T16:00:00'),
+                    status: 'UPCOMING',
                 },
                 {
                     bookingId: 3, // Booking with ID 3
                     date: new Date('2023-10-20'),
                     startTime: new Date('2023-10-20T14:00:00'),
                     endTime: new Date('2023-10-20T15:00:00'),
+                    status: 'COMPLETED',
                 },
                 {
                     bookingId: 3, // Booking with ID 3
                     date: new Date('2023-10-21'),
                     startTime: new Date('2023-10-21T15:00:00'),
                     endTime: new Date('2023-10-21T16:00:00'),
+                    status: 'COMPLETED',
                 },
                 {
                     bookingId: 4, // Booking with ID 4
                     date: new Date('2023-11-04'),
                     startTime: new Date('2023-11-04T13:00:00'),
                     endTime: new Date('2023-11-04T14:00:00'),
+                    status: 'CANCELLED',
                 },
                 {
                     bookingId: 4, // Booking with ID 4
                     date: new Date('2023-11-05'),
                     startTime: new Date('2023-11-05T16:00:00'),
                     endTime: new Date('2023-11-05T17:00:00'),
+                    status: 'COMPLETED',
                 },
             ],
         });
@@ -340,7 +502,7 @@ async function seedDatabase() {
             ],
         });
 
-        // CONNECTING/UPDATING
+        // ----- CONNECTING/UPDATING -----
 
         // Connect bookings to booking slots
         await db.booking.update({

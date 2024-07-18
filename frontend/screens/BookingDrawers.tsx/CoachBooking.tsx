@@ -13,6 +13,8 @@ import { useRoute } from '@react-navigation/native';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import CoachInformationModal from './CoachInformationModal';
+
 
 interface RouteParams {
     coacheeId: string
@@ -25,6 +27,16 @@ interface RouteParams {
 
 const CoachBookingDrawer = () => {
     const route = useRoute()
+    const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
+
+    const showInformationModal = () => {
+        setConfirmModalVisible(true);
+    };
+
+    const hideInformationModal = () => {
+        setConfirmModalVisible(false);
+    };
+
 
     
 
@@ -94,7 +106,7 @@ const CoachBookingDrawer = () => {
             <Text style={styles.text}>{`${coacheeFirstName} ${coacheeLastName}`}</Text>
             <Divider style ={styles.divider}/>
             </View>
-
+            
             <TouchableOpacity onPress={handleOpenBottomSheet} style={styles.button}>
             <MaterialCommunityIcons name="book-account-outline" size={40} color="#6E5DB0" />
             </TouchableOpacity>
@@ -106,9 +118,18 @@ const CoachBookingDrawer = () => {
                 visible={isDrawerVisible}
                 onRequestClose={handleOpenBottomSheet}>
                 {isDrawerVisible && <BookingDrawer onClose={handleClose} coacheeId={coacheeId}/>}
-            </Modal>
 
+            </Modal>
             
+            <View>
+            <TouchableOpacity onPress={showInformationModal}>
+            <MaterialCommunityIcons name="information" size={24} color="#6E5DB0" style={styles.iconContainer}/>
+            </TouchableOpacity>
+            </View>            
+            <CoachInformationModal
+                visible={isConfirmModalVisible}
+                onConfirm={hideInformationModal}
+            />
 
         </View>
 
@@ -153,7 +174,13 @@ const styles = StyleSheet.create ({
         top: '-10%',
         width: '90%',
         color:'grey'
-    }
+    },
+
+    iconContainer: {
+        alignItems: 'center', // Center the icon horizontally
+        marginLeft: '70%',
+        marginTop: '-3%'
+      },
 })
 
 

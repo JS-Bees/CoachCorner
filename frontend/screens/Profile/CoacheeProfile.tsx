@@ -8,8 +8,8 @@ import {
     ScrollView,
 } from 'react-native';
 import { TextInput, IconButton, Button } from 'react-native-paper';
-import ProfileSvg from '../../components/ProfileSvg';
-import BottomComponent from '../../components/BottomSvg';
+import ProfileSvg from '../../components/SVGs/ProfileSvg';
+import BottomComponent from '../../components/SVGs/BottomSvg';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FindCoacheeByIdDocument } from '../../generated-gql/graphql';
@@ -76,9 +76,7 @@ const CoacheeProfile = () => {
     };
     
 
-    const [mantra, setMantra] = React.useState(
-        coacheeData?.findCoacheeByID.mantra,
-    );
+    
     const [age, setAge] = React.useState('18');
     const [bio, setBio] = React.useState(coacheeData?.findCoacheeByID.bio);
     const [affliation, setAffiliate] = React.useState(
@@ -129,7 +127,7 @@ const CoacheeProfile = () => {
 
     useEffect(() => {
         if (coacheeData) {
-            setMantra(coacheeData.findCoacheeByID.mantra);
+          
             setBio(coacheeData.findCoacheeByID.bio);
             setAffiliate(coacheeData.findCoacheeByID.affiliations);
             setAddres(coacheeData.findCoacheeByID.address);
@@ -209,6 +207,7 @@ const CoacheeProfile = () => {
                 console.log('sheeesh error', e);
             });
     };
+    
 
     return (
         <View style={styles.container}>
@@ -236,8 +235,6 @@ const CoacheeProfile = () => {
                 <TextInput
                     style={styles.mantraTextInput}
                     placeholder="Enter mantra"
-                    value={mantra}
-                    onChangeText={(text) => setMantra(text.substring(0, 25))}
                     editable={isEditing}
                     underlineColor="transparent"
                 />

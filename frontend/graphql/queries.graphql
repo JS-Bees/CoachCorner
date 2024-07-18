@@ -1,135 +1,205 @@
 # copy paste queries from playground here
 
-query getAllCoaches {
-    coaches {
+# New queries
+
+query FindCoachByEmailAndPassword($email: String!, $password: String!) {
+    findCoachByEmailAndPassword(email: $email, password: $password) {
         id
-        birthday
-        email
         firstName
-        games
-        hobbies
         lastName
-        moviesGenres
-        sport
-        workplaceAddress
-        isCoach
     }
 }
 
 query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
     findCoacheeByEmailAndPassword(email: $email, password: $password) {
         id
-        address
-        birthday
-        email
         firstName
-        games
-        hobbies
         lastName
-        moviesGenres
-        isCoach
     }
 }
 
-query FindCoachByEmailAndPassword($email: String!, $password: String!) {
-    findCoachByEmailAndPassword(email: $email, password: $password) {
+query FindCoacheeByID($userId: Int!) {
+    findCoacheeByID(userID: $userId) {
         id
-        birthday
-        email
         firstName
-        games
-        hobbies
         lastName
-        moviesGenres
-        sport
-        workplaceAddress
-        isCoach
+        email
+        password
+        bio
+        address
+        profilePicture
+        bookings {
+            coach {
+                firstName
+                lastName
+            }             
+            id
+            status
+            }  
+        contacts {
+        coach {
+            id
+            }
+            contactedStatus
+            id
+        }  
+        interests {
+            id
+            type
+            name
+        }
+        reviews {
+            starRating
+            comment
+        }
+        tasks {
+            active
+            completionStatus
+            createdAt
+            date
+            description
+            id
+            title
+            updatedAt
+        }
     }
 }
 
-query FindCoacheeByID($userID: Int!) {
-    findCoacheeByID(userID: $userID) {
+query FindCoachByID($userId: Int!) {
+    findCoachByID(userID: $userId) {
         id
-        address
-        birthday
-        email
         firstName
-        games
-        hobbies
+        lastName
+        email
+        password
+        bio
+        address
+        profilePicture
+        sports {
+            id
+            type
+        }  
+        sports {
+            sportsCredentials {
+            id
+            credentialPicture
+        }
+        } 
+        interests {
+            id
+            type
+            name
+        }
+        reviews {
+            starRating
+            comment
+        }
+        tasks {
+            active
+            completionStatus
+            createdAt
+            date
+            description
+            id
+            title
+            updatedAt
+        }
+    }
+}
+
+query FindCoachesBySport($sportType: String!) {
+    findCoachesBySport(sportType: $sportType) {
+        id
+        firstName
         lastName
         bio
-        affiliations
-        mantra
+        address
         profilePicture
-        moviesGenres
-        isCoach
-        bookings {
-            status
-            coachId
+        reviews {
+            starRating
+            comment
         }
-        coachingRelationships {
-            id
-            coachId
-            coach {
-                firstName
-                lastName
-                sport
-            }
+    }
+}
 
-        }
-        bookings {
+query FindFavoriteCoaches($userId: Int!) {
+    findCoacheeByID(userID: $userId) {
+        contacts {
+            id
+            coachId
+            contactedStatus
             coach {
                 firstName
                 lastName
+                bio
+                address
+                sports {
+                    type
+                }
+                profilePicture
+                reviews {
+                    starRating
+                    comment
+                }
+            }
+        }
+    }
+}
+
+query FindCoacheesOfCoach($userId: Int!) {
+    findCoachByID(userID: $userId) {
+        contacts {
+            id
+            coacheeId
+            contactedStatus
+            coachee {
+                firstName
+                lastName
+                profilePicture
+                bio
+            }
+        }
+    }
+}
+
+query FindBookingsOfCoach($userId: Int!) {
+    findCoachByID(userID: $userId) {
+        bookings {
+            bookingSlots {
+                id
+                date
+                startTime
+                endTime
             }
             id
             status
+            additionalNotes
+            serviceType
+            coachee {
+                firstName
+                lastName
+                profilePicture
+            }
+            coacheeId
+        }
+    }
+}
+
+query FindBookingsOfCoachee($userId: Int!) {
+    findCoacheeByID(userID: $userId) {
+        bookings {
+            id
+            status
             coachId
+            coach {
+                firstName
+                lastName
+                profilePicture
+            }
             serviceType
             additionalNotes
             bookingSlots {
-                date
-                endTime
-                startTime
-            }
-        }
-       
-    }
-}
-
-query FindCoachByID($userID: Int!) {
-    findCoachByID(userID: $userID) {
-        id
-        birthday
-        email
-        firstName
-        games
-        hobbies
-        lastName
-        sport
-        moviesGenres
-        workplaceAddress
-        bio
-        affiliations
-        mantra
-        profilePicture
-        isCoach
-        coachingRelationships {
-            id
-            coacheeId
-            coachee {
-                firstName
-                lastName
-            }
-        }
-        bookings {
-            coachee {
-                firstName
-                lastName
-            }
-            id
-            status
-            bookingSlots {
+                id
                 date
                 startTime
                 endTime
@@ -137,114 +207,115 @@ query FindCoachByID($userID: Int!) {
         }
     }
 }
-query FindCoachesBySport($sport: Sport!) {
-    findCoachesBySport(sport: $sport) {
-        id
-        firstName
-        sport
-        email
-        lastName
-        birthday
-        password
-        workplaceAddress
-        games
-        hobbies
-        moviesGenres
-        affiliations
-        bio
-        mantra
-        profilePicture
-        coachingRelationships {
-            id
-            coacheeId
-        }
-        isCoach
-        active
-    }
-}
 
-query FindBookingByID($bookingID: Int!) {
-    findBookingByID(bookingID: $bookingID) {
-        id
-        coacheeId
-        coachId
-        serviceType
-        status
-        additionalNotes
-        bookingSlots {
-            id
-            bookingId
-            date
-            startTime
-            endTime
-        }
-    }
-}
-
-query FindUnaddedCoachesBySport($sport: Sport!, $coacheeID: Int!) {
-    findUnaddedCoachesBySport(sport: $sport, coacheeID: $coacheeID) {
-        id
-        firstName
-        lastName
-        email
-        sport
-        bio
-        workplaceAddress
-        affiliations
-        coachingRelationships {
-            coacheeId
-        }
-    }
-}
-
-query FindCoachByIdReview($userID: Int!) {
-    findCoachByID(userID: $userID) {
-        id
+query GetCoachReviews($userId: Int!) {
+    findCoachByID(userID: $userId) {
         firstName
         lastName
         reviews {
-            coacheeId
-            starRating
-            comment
             coachee {
+                profilePicture
                 firstName
                 lastName
+            }
+            starRating
+            comment
+        }
+    }
+}
+
+query GetSortedCoaches {
+    coaches {
+        id
+        firstName
+        lastName
+        bio
+        address
+        profilePicture
+        sports {
+            type
+        }
+
+        reviews {
+            starRating
+            comment
+        }
+        interests {
+            type
+            name
+        }
+    }
+}
+
+query FindfilteredMessagesByContactId(
+    $contactId: Int!
+    $numberOfMessages: Int!
+) {
+    findfilteredMessagesByContactId(
+        contactId: $contactId
+        numberOfMessages: $numberOfMessages
+    ) {
+        contactId
+        content
+        createdAt
+        id
+    }
+}
+
+query FindCoacheeContactsByID($userId: Int!) {
+    findCoacheeByID(userID: $userId) {
+        id
+        contacts {
+            id
+            contactedStatus
+            coach {
+                id
+                firstName
+                lastName
+                profilePicture
             }
         }
     }
 }
 
-query FindBookingsByStatusAndCoachID($status: BookingStatus!, $coachID: Int!) {
-    findBookingsByStatusAndCoachID(status: $status, coachID: $coachID) {
+query FindCoachContactsByID($userId: Int!) {
+    findCoachByID(userID: $userId) {
         id
-        serviceType
-        status
-        additionalNotes
-        coacheeId
-        bookingSlots {
+        contacts {
             id
-            date
-            startTime
-            endTime
+            contactedStatus
+            coachee {
+                id
+                firstName
+                lastName
+                profilePicture
+            }
         }
     }
 }
 
-query FindBookingsByStatusAndCoacheeID(
-    $status: BookingStatus!
-    $coacheeID: Int!
-) {
-    findBookingsByStatusAndCoacheeID(status: $status, coacheeID: $coacheeID) {
+query FindMessagesForCoachList($coacheeId: Int!) {
+    findMessagesForCoachList(coacheeId: $coacheeId) {
+        contactId
+        content
+        createdAt
         id
-        serviceType
-        status
-        additionalNotes
-        coachId
-        bookingSlots {
-            id
-            date
-            startTime
-            endTime
-        }
     }
+}
+
+query FindMessagesForCoacheeList($coachId: Int!) {
+    findMessagesForCoacheeList(coachId: $coachId) {
+        contactId
+        content
+        createdAt
+        id
+    }
+}
+
+query FindOneToOneServiceSlotsByCoachId($coachId: Int!) {
+  findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
+  startTime
+  endTime
+  date
+  }
 }

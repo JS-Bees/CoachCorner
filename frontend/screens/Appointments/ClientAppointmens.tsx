@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import SvgComponent from '../../components/BackgroundSvg';
+import SvgComponent from '../../components/SVGs/BackgroundSvg';
 import { DataTable, Button, IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { RootStackParams } from '../App';

@@ -1,6 +1,6 @@
 import React from 'react';
 import LogInPage from './screens/Authentication/LogIn';
-import SignUpA from './screens/Authentication/SignUpA';
+import RolePicking from './screens/Authentication/RolePicking';
 import SignUpCoachee from './screens/Authentication/SignUpForCoachee';
 import SignUpCoach from './screens/Authentication/SignUpForCoach';
 import CoachProfile from './screens/Profile/CoachProfile';
@@ -11,13 +11,49 @@ import CoachBookingDrawer from './screens/BookingDrawers.tsx/CoachBooking';
 import ClientBookingDrawer from './screens/BookingDrawers.tsx/ClientBooking';
 import CoachAppointments from './screens/Appointments/CoachAppointments';
 import ClientAppointments from './screens/Appointments/ClientAppointmens';
+import NewCoacheeProfile from './screens/Profile/NewCoacheeProfile';
+import NewCoachDashboard from './screens/NewCoachDashboard';
 import MyClients from './screens/MyClients';
 import MyCoaches from './screens/MyCoaches';
+import CoachSearchPage from './screens/MyCoaches_alt';
+import MyClients_alt from './screens/MyClients_alt';
+import Booking_Sessions from './screens/Sessions';
+import SplashScreen from './screens/Authentication/SplashScreen';
+import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
+import ChooseSport from './screens/Authentication/InterestPickingScreens/ChooseSport';
+import ChooseVideoGames from './screens/Authentication/InterestPickingScreens/VideoGames';
+import ChooseHobbies from './screens/Authentication/InterestPickingScreens/Hobbies';
+import ChooseMovies from './screens/Authentication/InterestPickingScreens/MovieGenre';
+import PreviewPage from './screens/PreviewPage';
+import CoacheePreviewPage from './screens/CoacheePreviewPage';
+import ReviewsPage from './screens/ReviewsPage';
+import CredentialsPage from './screens/CredentialsPage';
+import NewCoachProfile from './screens/Profile/NewCoachProfile';
+import NotificationPage from './screens/NotificationPage';
+import AllCoaches from './screens/AllCoaches';
+import EditInterests from './screens/EditInterestsForCoachee';
+import EditInterestsForCoach from './screens/EditInterestForCoach';
+import NewBookingPage from './screens/BookingDrawers.tsx/newBookingPage';
+import ChatListPage from './screens/ChatLists';
+import CoachChatPage from './screens/ChatCoach';
+import CoachChatListsPage from './screens/ChatListsCoach';
+import Trainee_Sessions from './screens/TraineeSessions';
+import MyCoaches_alt from './screens/MyCoaches_alt';
+import ReschedulePage from './screens/BookingDrawers.tsx/ReschedulePage';
+import ProgressTracker from './screens/ProgressTrackerForCoach';
+import ProgressTrackerForCoachee from './screens/ProgressTrackerForCoachee';
+import AddTaskPage from './screens/AddTaskForCoachee';
+import AddTaskPageForCoach from './screens/AddTaskForCoach';
+import PreviewTask from './screens/PreviewTaskForCoach';
+import PreviewTaskForCoachee from './screens/PreviewTaskForCoachee';
+import ReviewsPageCoach from './screens/ReviewsPageCoach';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
 registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
@@ -27,17 +63,51 @@ import {
     Provider as UrqlProvider,
     cacheExchange,
     fetchExchange,
+    // dedupExchange,
+    subscriptionExchange,
 } from 'urql';
+
+import { createClient as createWSClient, SubscribePayload } from 'graphql-ws';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
+const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
+
+const wsClient = createWSClient({
+    // url: 'ws://192.168.1.2:5050/graphql',
+    url: apiUrlWs!,
+});
+
+// const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+
 const client = new Client({
+    // url: 'http://192.168.1.2:5050/graphql',
     url: apiUrl!,
-    exchanges: [cacheExchange, fetchExchange],
+    // fetchSubscriptions: true, // added this tog try and fix fetching
+    exchanges: [
+        cacheExchange,
+        fetchExchange,
+        subscriptionExchange({
+            forwardSubscription(operation) {
+                return {
+                    subscribe: (sink) => {
+                        const dispose = wsClient.subscribe(
+                            operation as SubscribePayload,
+                            sink,
+                        );
+                        return {
+                            unsubscribe: dispose,
+                        };
+                    },
+                };
+            },
+        }),
+    ],
 });
 
 export type RootStackParams = {
     LogIn: any;
+    LogIn_alt: any;
     SignUpA: any;
     SignUpCoachee: any;
     SignUpCoach: any;
@@ -46,6 +116,7 @@ export type RootStackParams = {
     Appointments: any;
     CoacheeProfile: any;
     CoachProfile: any;
+    NewCoacheeProfile: any;
     MyClients: any;
     MyCoaches: any;
     SearchList: any;
@@ -53,10 +124,44 @@ export type RootStackParams = {
     ClientBookingDrawer: any;
     ConfirmBookingDrawer: any;
     CoachAppointments: any;
+    CoachChatPage: any;
+    CoachChatListsPage: any;
     ClientAppointments: any;
+    NewCoachDashboard: any;
+    NewCoachProfile: any;
+    MyCoaches_alt: any;
+    BookingPage: any;
+    ChatPage: any;
+    chooseSport: any;
+    ChooseVideoGames: any;
+    ChooseHobbies: any;
+    ChooseMovies: any;
+    SplashScreen: any;
+    PreviewPage: any;
+    ReviewsPage: any;
+    CredentialsPage: any;
+    BookingSessions: any;
+    NotificationPage: any;
+    CoacheePreviewPage: any;
+    AllCoaches: any;
+    NewBookingPage: any;
+    EditInterests: any;
+    EditInterestForCoach: any;
+    ChatList: any;
+    ProgressTracker: any;
+    ProgressTrackerForCoachee: any;
+    AddTaskPage: any;
+    Trainee_Sessions: any;
+    ReschedulePage: any;
+    AddTaskPageForCoachee: any;
+    PreviewTask: any;
+    PreviewTaskForCoachee: any;
+    ReviewsPageCoach: any;
 };
 
 const RootStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+const CoachTab = createBottomTabNavigator();
 
 export default function App() {
     return (
@@ -64,13 +169,18 @@ export default function App() {
             <NavigationContainer>
                 <RootStack.Navigator initialRouteName="LogIn">
                     <RootStack.Screen
+                        name="SplashScreen"
+                        component={SplashScreen}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
                         name="LogIn"
                         component={LogInPage}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
-                        name="SignUpA"
-                        component={SignUpA}
+                        name="RolePicking"
+                        component={RolePicking}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -85,7 +195,12 @@ export default function App() {
                     />
                     <RootStack.Screen
                         name="CoacheeDashboard"
-                        component={CoacheeDashboard}
+                        component={TabNavigator}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="NewCoachDashboard"
+                        component={NewCoachTabNavigator}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -104,6 +219,11 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
+                        name="NewCoachProfile"
+                        component={NewCoachProfile}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
                         name="CoachAppointments"
                         component={CoachAppointments}
                         options={{ headerShown: false }}
@@ -111,6 +231,11 @@ export default function App() {
                     <RootStack.Screen
                         name="ClientAppointments"
                         component={ClientAppointments}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="NewCoacheeProfile"
+                        component={NewCoacheeProfile}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -138,8 +263,261 @@ export default function App() {
                         component={ClientBookingDrawer}
                         options={{ headerShown: false }}
                     />
+                    <RootStack.Screen
+                        name="MyCoaches_alt"
+                        component={CoachSearchPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="MyClients_alt"
+                        component={MyClients_alt}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ChatPage"
+                        component={ChatPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ChatList"
+                        component={ChatListPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="SportPicking"
+                        component={ChooseSport}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="InterestPickingGames"
+                        component={ChooseVideoGames}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="InterestPickingHobby"
+                        component={ChooseHobbies}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="InterestPickingMovie"
+                        component={ChooseMovies}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="AllCoachesPage"
+                        component={AllCoaches}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="PreviewPage"
+                        component={PreviewPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CoacheePreviewPage"
+                        component={CoacheePreviewPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ReviewsPage"
+                        component={ReviewsPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CredentialsPage"
+                        component={CredentialsPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="NotificationPage"
+                        component={NotificationPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="NewBookingPage"
+                        component={NewBookingPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="EditProfile"
+                        component={EditInterests}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="EditProfileForCoach"
+                        component={EditInterestsForCoach}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="AddTaskPage"
+                        component={AddTaskPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ReschedulePage"
+                        component={ReschedulePage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="AddTaskPageForCoach"
+                        component={AddTaskPageForCoach}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="PreviewTask"
+                        component={PreviewTask}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="PreviewTaskForCoachee"
+                        component={PreviewTaskForCoachee}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CoachChatPage"
+                        component={CoachChatPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="CoachChatListsPage"
+                        component={CoachChatListsPage}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="ReviewsPageCoach"
+                        component={ReviewsPageCoach}
+                        options={{ headerShown: false }}
+                    />
                 </RootStack.Navigator>
             </NavigationContainer>
         </UrqlProvider>
+    );
+}
+
+function TabNavigator() {
+    const getTabBarIcon = (routeName: string) => {
+        switch (routeName) {
+            case 'Home':
+                return 'home';
+            case 'My Coaches':
+                return 'sports';
+            case 'Sessions':
+                return 'schedule';
+            case 'Taskboard':
+                return 'list';
+            case 'Chats':
+                return 'chat';
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    const iconName = getTabBarIcon(route.name);
+                    return iconName ? (
+                        <MaterialIcons
+                            name={iconName}
+                            size={size}
+                            color={color}
+                        />
+                    ) : null;
+                },
+                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
+                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+            })}
+        >
+            <Tab.Screen
+                name="Home"
+                component={CoacheeDashboard}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="My Coaches"
+                component={MyCoaches_alt}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Sessions"
+                component={Trainee_Sessions}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Taskboard"
+                component={ProgressTrackerForCoachee}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Chats"
+                component={ChatListPage}
+                options={{ headerShown: false }}
+            />
+        </Tab.Navigator>
+    );
+}
+
+function NewCoachTabNavigator() {
+    const coachTabBarIcon = (routeName: string) => {
+        switch (routeName) {
+            case 'Home':
+                return 'home';
+            case 'Trainees':
+                return 'sports';
+            case 'Sessions':
+                return 'schedule';
+            case 'Taskboard':
+                return 'list';
+            case 'Chats':
+                return 'chat';
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <CoachTab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ color, size }) => {
+                    const iconName = coachTabBarIcon(route.name);
+                    return iconName ? (
+                        <MaterialIcons
+                            name={iconName}
+                            size={size}
+                            color={color}
+                        />
+                    ) : null;
+                },
+                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
+                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+            })}
+        >
+            <CoachTab.Screen
+                name="Home"
+                component={NewCoachDashboard}
+                options={{ headerShown: false }}
+            />
+            <CoachTab.Screen
+                name="Trainees"
+                component={MyClients_alt}
+                options={{ headerShown: false }}
+            />
+            <CoachTab.Screen
+                name="Sessions"
+                component={Booking_Sessions}
+                options={{ headerShown: false }}
+            />
+            <Tab.Screen
+                name="Taskboard"
+                component={ProgressTracker}
+                options={{ headerShown: false }}
+            />
+            <CoachTab.Screen
+                name="Chats"
+                component={CoachChatListsPage}
+                options={{ headerShown: false }}
+            />
+        </CoachTab.Navigator>
     );
 }

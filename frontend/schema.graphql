@@ -13,7 +13,7 @@ type Booking {
   createdAt: DateTime!
   id: Int!
   serviceType: String!
-  status: BookingStatus!
+  status: String!
   updatedAt: DateTime!
 }
 
@@ -26,74 +26,109 @@ type BookingSlot {
   endTime: DateTime!
   id: Int!
   startTime: DateTime!
+  status: String!
   updatedAt: DateTime!
-}
-
-enum BookingStatus {
-  CANCELLED
-  COMPLETED
-  CONFIRMED
-  PENDING
 }
 
 type Coach {
   active: Boolean!
-  affiliations: String!
+  address: String!
   bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
-  coachingRelationships: [CoachingRelationship!]!
+  contacts: [Contact!]!
   createdAt: DateTime!
   email: String!
   firstName: String!
-  games: [Games!]!
-  hobbies: [Hobbies!]!
   id: Int!
-  isCoach: Boolean!
+  interests: [CoachInterest!]!
   lastName: String!
-  mantra: String!
-  moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String!
   reviews: [Review!]!
-  sport: Sport!
+  sports: [Sport!]!
+  tasks: [CoachTask!]!
   updatedAt: DateTime!
-  workplaceAddress: String!
+}
+
+type CoachInterest {
+  active: Boolean!
+  coach: Coach!
+  coachId: Int!
+  createdAt: DateTime!
+  id: Int!
+  name: String!
+  type: String!
+  updatedAt: DateTime!
+}
+
+type CoachTask {
+  active: Boolean!
+  coach: Coach!
+  coachId: Int!
+  completionStatus: String!
+  createdAt: DateTime!
+  date: DateTime!
+  description: String!
+  id: Int!
+  title: String!
+  updatedAt: DateTime!
 }
 
 type Coachee {
   active: Boolean!
   address: String!
-  affiliations: String!
   bio: String!
   birthday: DateTime!
   bookings: [Booking!]!
-  coachingRelationships: [CoachingRelationship!]!
+  contacts: [Contact!]!
   createdAt: DateTime!
   email: String!
   firstName: String!
-  games: [Games!]!
-  hobbies: [Hobbies!]!
   id: Int!
-  isCoach: Boolean!
+  interests: [CoacheeInterest!]!
   lastName: String!
-  mantra: String!
-  moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String!
   reviews: [Review!]!
+  tasks: [CoacheeTask!]!
   updatedAt: DateTime!
 }
 
-type CoachingRelationship {
+type CoacheeInterest {
+  active: Boolean!
+  coachee: Coachee!
+  coacheeId: Int!
+  createdAt: DateTime!
+  id: Int!
+  name: String!
+  type: String!
+  updatedAt: DateTime!
+}
+
+type CoacheeTask {
+  active: Boolean!
+  coachee: Coachee!
+  coacheeId: Int!
+  completionStatus: String!
+  createdAt: DateTime!
+  date: DateTime!
+  description: String!
+  id: Int!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type Contact {
   active: Boolean!
   coach: Coach!
   coachId: Int!
   coachee: Coachee!
   coacheeId: Int!
+  contactedStatus: Boolean!
   createdAt: DateTime!
   id: Int!
-  messagingStarted: Boolean!
+  messages: [Message!]!
   updatedAt: DateTime!
 }
 
@@ -102,51 +137,85 @@ input CreateBookingInput {
   coachId: Int!
   coacheeId: Int!
   serviceType: String!
-  status: BookingStatus!
+  status: String!
 }
 
 input CreateBookingSlotInput {
   date: DateTime!
   endTime: DateTime!
   startTime: DateTime!
+  status: String!
 }
 
 input CreateCoachInput {
-  affiliations: String!
+  address: String!
   bio: String!
   birthday: DateTime!
   email: String!
   firstName: String!
-  games: [Games!]!
-  hobbies: [Hobbies!]!
   lastName: String!
-  mantra: String!
-  moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String!
-  sport: Sport!
-  workplaceAddress: String!
+}
+
+input CreateCoachInterestInput {
+  name: String!
+  type: String!
+}
+
+input CreateCoachTaskInput {
+  coachId: Int!
+  completionStatus: String!
+  date: DateTime!
+  description: String!
+  title: String!
 }
 
 input CreateCoacheeInput {
   address: String!
-  affiliations: String!
   bio: String!
   birthday: DateTime!
   email: String!
   firstName: String!
-  games: [Games!]!
-  hobbies: [Hobbies!]!
   lastName: String!
-  mantra: String!
-  moviesGenres: [MovieGenres!]!
   password: String!
   profilePicture: String!
 }
 
-input CreateCoachingRelationshipInput {
+input CreateCoacheeInterestInput {
+  name: String!
+  type: String!
+}
+
+input CreateCoacheeTaskInput {
+  coacheeId: Int!
+  completionStatus: String!
+  date: DateTime!
+  description: String!
+  title: String!
+}
+
+input CreateContactInput {
   coachId: Int!
   coacheeId: Int!
+  contactedStatus: Boolean!
+}
+
+input CreateMessageInput {
+  contactId: Int!
+  content: String!
+}
+
+input CreateNewCoachInterestInput {
+  coachId: Int!
+  name: String!
+  type: String!
+}
+
+input CreateNewCoacheeInterestInput {
+  coacheeId: Int!
+  name: String!
+  type: String!
 }
 
 input CreateReviewInput {
@@ -156,89 +225,73 @@ input CreateReviewInput {
   starRating: Int!
 }
 
+input CreateSportInput {
+  type: String!
+}
+
+input CreateSportsCredentialsInput {
+  credentialPicture: String!
+  sportId: Int!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
 scalar DateTime
 
-enum Games {
-  ARKNIGHTS
-  AZURELANE
-  CALLOFDUTY
-  CANDYCRUSH
-  CLASHOFCLANS
-  COUNTERSTRIKE
-  DOTA
-  GENSHINIMPACT
-  LOL
-  MINECRAFT
-  MOBILELEGENDS
-  OVERWATCH
-  PUBG
-  STREETFIGHTER
-  TEKKEN
-  VALORANT
-}
-
-enum Hobbies {
-  BAKING
-  COOKING
-  DANCING
-  HIKING
-  PAINTING
-  PHOTOGRAPHY
-  READING
-  SINGING
-  TRAVELLING
-  WRITING
-}
-
-input MessagingStartedInput {
-  messagingStarted: Boolean!
-}
-
-enum MovieGenres {
-  ACTION
-  ADVENTURE
-  ANIME
-  COMEDY
-  DOCUMENTARY
-  DRAMA
-  FANTASY
-  HORROR
-  KDRAMA
-  MUSICAL
-  MYSTERY
-  ROMANCE
-  SCIFI
-  THRILLER
+type Message {
+  contact: Contact!
+  contactId: Int!
+  content: String!
+  createdAt: DateTime!
+  id: Int!
 }
 
 type Mutation {
+  coachLogin(email: String!, password: String!): Coach!
+  coacheeLogin(email: String!, password: String!): Coachee!
   createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking!
-  createCoach(input: CreateCoachInput!): Coach!
-  createCoachee(input: CreateCoacheeInput!): Coachee!
-  createCoachingRelationship(input: CreateCoachingRelationshipInput!): CoachingRelationship!
+  createCoach(input: CreateCoachInput!, interestsInput: [CreateCoachInterestInput!]!, sportsInput: [CreateSportInput!]!): Coach!
+  createCoachInterest(input: CreateNewCoachInterestInput!): CoachInterest!
+  createCoachTask(input: CreateCoachTaskInput!): CoachTask!
+  createCoachee(input: CreateCoacheeInput!, interestsInput: [CreateCoacheeInterestInput!]!): Coachee!
+  createCoacheeInterest(input: CreateNewCoacheeInterestInput!): CoacheeInterest!
+  createCoacheeTask(input: CreateCoacheeTaskInput!): CoacheeTask!
+  createContact(input: CreateContactInput!): Contact!
+  createMessage(input: CreateMessageInput!): Message!
   createReview(input: CreateReviewInput!): Review!
+  createSportsCredentials(input: CreateSportsCredentialsInput!): SportsCredential!
+  updateBookingSlotStatus(id: Int!, input: UpdateBookingSlotStatusInput!): BookingSlot!
   updateBookingStatus(id: Int!, input: UpdateBookingStatusInput!): Booking!
+  updateCoachInterests(input: [UpdateCoachInterestInput!]!): [CoachInterest!]!
   updateCoachProfile(id: Int!, input: UpdateCoachProfileInput!): Coach!
+  updateCoachTask(id: Int!, input: UpdateCoachTaskInput!): CoachTask!
+  updateCoacheeInterests(input: [UpdateCoacheeInterestInput!]!): [CoacheeInterest!]!
   updateCoacheeProfile(id: Int!, input: UpdateCoacheeProfileInput!): Coachee!
-  updateCoachingRelationshipActiveStatus(active: Boolean!, id: Int!): CoachingRelationship!
-  updateMessagingStartedCoachingRelationship(id: Int!, input: MessagingStartedInput!): CoachingRelationship!
+  updateCoacheeTask(id: Int!, input: UpdateCoacheeTaskInput!): CoacheeTask!
+  updateContactedStatus(id: Int!, input: UpdateContactedStatusInput!): Contact!
+  updatePendingBooking(addSlots: [CreateBookingSlotInput!]!, bookingData: UpdateBookingInput!, bookingId: Int!, deleteSlotsIds: [Int!]!, updateSlots: [UpdateBookingSlotInput!]!, updateSlotsIds: [Int!]!): Booking!
 }
 
 type Query {
   coachees: [Coachee!]!
   coaches: [Coach!]!
   findBookingByID(bookingID: Int!): Booking!
-  findBookingsByStatusAndCoachID(coachID: Int!, status: BookingStatus!): [Booking!]!
-  findBookingsByStatusAndCoacheeID(coacheeID: Int!, status: BookingStatus!): [Booking!]!
+  findBookingsByStatusAndCoachID(coachID: Int!, status: String!): [Booking!]!
+  findBookingsByStatusAndCoacheeID(coacheeID: Int!, status: String!): [Booking!]!
   findCoachByEmailAndPassword(email: String!, password: String!): Coach!
   findCoachByID(userID: Int!): Coach!
   findCoacheeByEmailAndPassword(email: String!, password: String!): Coachee!
   findCoacheeByID(userID: Int!): Coachee!
-  findCoachesBySport(sport: Sport!): [Coach!]!
-  findUnaddedCoachesBySport(coacheeID: Int!, sport: Sport!): [Coach!]!
+  findCoachesBySport(sportType: String!): [Coach!]!
+  findContactsOfCoach(coachId: Int!): [Contact!]!
+  findContactsOfCoachDespiteContactedStatus(coachId: Int!): [Contact!]!
+  findMessagesByContactId(contactId: Int!): [Message!]!
+  findMessagesForCoachList(coacheeId: Int!): [Message!]!
+  findMessagesForCoacheeList(coachId: Int!): [Message!]!
+  findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach!]!
+  findOneToOneServiceSlotsByCoachId(coachId: Int!): [SlotTime!]!
+  findfilteredMessagesByContactId(contactId: Int!, numberOfMessages: Int!): [Message!]!
 }
 
 type Review {
@@ -254,30 +307,96 @@ type Review {
   updatedAt: DateTime!
 }
 
-enum Sport {
-  BADMINTON
-  BASKETBALL
-  SOCCER
-  SWIMMING
-  VOLLEYBALL
+type SlotTime {
+  date: DateTime!
+  endTime: DateTime!
+  startTime: DateTime!
+}
+
+type Sport {
+  active: Boolean!
+  coach: Coach!
+  coachId: Int!
+  createdAt: DateTime!
+  id: Int!
+  sportsCredentials: [SportsCredential!]!
+  type: String!
+  updatedAt: DateTime!
+}
+
+type SportsCredential {
+  active: Boolean!
+  createdAt: DateTime!
+  credentialPicture: String!
+  id: Int!
+  sport: Sport!
+  sportId: Int!
+  updatedAt: DateTime!
+}
+
+type Subscription {
+  newMessage(channelName: String!): Message!
+}
+
+input UpdateBookingInput {
+  additionalNotes: String!
+  serviceType: String!
+}
+
+input UpdateBookingSlotInput {
+  date: DateTime!
+  endTime: DateTime!
+  id: Int!
+  startTime: DateTime!
+  status: String!
+}
+
+input UpdateBookingSlotStatusInput {
+  status: String!
 }
 
 input UpdateBookingStatusInput {
-  status: BookingStatus!
+  status: String!
+}
+
+input UpdateCoachInterestInput {
+  id: Int!
+  name: String!
+  type: String!
 }
 
 input UpdateCoachProfileInput {
-  affiliations: String!
+  address: String!
   bio: String!
-  mantra: String!
   profilePicture: String!
-  workplaceAddress: String!
+}
+
+input UpdateCoachTaskInput {
+  completionStatus: String!
+  date: DateTime!
+  description: String!
+  title: String!
+}
+
+input UpdateCoacheeInterestInput {
+  id: Int!
+  name: String!
+  type: String!
 }
 
 input UpdateCoacheeProfileInput {
   address: String!
-  affiliations: String!
   bio: String!
-  mantra: String!
   profilePicture: String!
+}
+
+input UpdateCoacheeTaskInput {
+  completionStatus: String!
+  date: DateTime!
+  description: String!
+  title: String!
+}
+
+input UpdateContactedStatusInput {
+  contactedStatus: Boolean!
 }

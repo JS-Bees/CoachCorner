@@ -13,7 +13,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import SVGComponent from '../UpperSVG';
+import SVGComponent from '../SVGs/UpperSVG';
 import DragSheetButton from '../DragSheetButton';
 import { ListItemProps } from '../ListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
