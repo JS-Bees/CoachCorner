@@ -18,11 +18,6 @@ import {
     idAndSportSchema,
 } from '../validation';
 
-interface LatestMessage {
-    contact_id: number;
-    latest_message: string;
-}
-
 export const findCoachByEmailAndPassword = queryField(
     'findCoachByEmailAndPassword',
     {
