@@ -105,10 +105,6 @@ const ChatListPage: React.FC = () => {
 
 
 
-   
-
-
-
 
     // console.log(
     //     'chat list messages',
