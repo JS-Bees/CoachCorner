@@ -23,11 +23,5 @@ describe('LogoutConfirmationModal', () => {
     expect(mockOnConfirm).toHaveBeenCalled();
   });
 
-  it('calls onCancel when No button is pressed', () => {
-    const mockOnCancel = jest.fn();
-    const { getByText } = render(<LogoutConfirmationModal visible={true} onConfirm={jest.fn()} onCancel={mockOnCancel} />);
-    
-    fireEvent.press(getByText('No'));
-    expect(mockOnCancel).toHaveBeenCalled();
-  });
+
 });

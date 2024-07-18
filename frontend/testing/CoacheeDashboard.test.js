@@ -14,8 +14,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {
     ScrollView,
     KeyboardAvoidingView,
@@ -60,6 +58,28 @@ const CoacheeDashboard = () => {
             return () => backHandler.remove();
         }, [])
     );
+
+    it('navigates to My Clients on button press', async () => {
+        const { getByText } = render(<CoachDashboard />);
+        const navigate = useNavigation().navigate;
+
+        await waitFor(() => {
+            fireEvent.press(getByText('My Clients'));
+        });
+
+        expect(navigate).toHaveBeenCalledWith('MyClients');
+    });
+
+    it('navigates to Appointments on button press', async () => {
+        const { getByText } = render(<CoachDashboard />);
+        const navigate = useNavigation().navigate;
+
+        await waitFor(() => {
+            fireEvent.press(getByText('Appointments'));
+        });
+
+        expect(navigate).toHaveBeenCalledWith('CoachAppointments');
+    });
 
     useEffect(() => {
         const fetchUserToken = async () => {

@@ -4,8 +4,6 @@ import ClientBookingDrawer from '../path/to/ClientBookingDrawer'; // Adjust the 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { useQuery } from 'urql';
-import ConfirmBookingDrawer from '../../components/BottomSheet/ConfirmBookingDrawer';
-import ClientInformationModal from './ClientInformationModal';
 
 // Mock necessary modules and components
 jest.mock('@react-navigation/native', () => ({
@@ -37,6 +35,26 @@ describe('ClientBookingDrawer', () => {
       },
     });
 
+    beforeEach(() => {
+      navigation = { navigate: jest.fn(), addListener: jest.fn(() => jest.fn()) };
+      useNavigation.mockReturnValue(navigation);
+      useRoute.mockReturnValue({
+        params: {
+          coacheeId: '1',
+          coacheeFirstName: 'John',
+          coacheeLastName: 'Doe',
+        },
+      });
+      useQuery.mockReturnValue([{ data: null, fetching: false, error: null }, jest.fn()]);
+      AsyncStorage.getItem.mockResolvedValue('123');
+    });
+  
+    test('renders correctly', () => {
+      const { getByText } = render(<CoachBookingDrawer />);
+  
+      expect(getByText('John Doe')).toBeTruthy();
+    });
+
     useQuery.mockReturnValue([
       {
         data: {
@@ -50,6 +68,18 @@ describe('ClientBookingDrawer', () => {
         error: null,
       },
     ]);
+
+    test('handles bottom sheet visibility', async () => {
+      const { getByTestId } = render(<CoachBookingDrawer />);
+  
+      const bottomSheetButton = getByTestId('open-bottom-sheet-button');
+      fireEvent.press(bottomSheetButton);
+  
+      await waitFor(() => {
+        const modal = getByTestId('bottom-sheet-modal');
+        expect(modal.props.visible).toBe(true);
+      });
+    });
 
     AsyncStorage.getItem.mockResolvedValue('1');
   });

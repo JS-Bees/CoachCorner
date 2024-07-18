@@ -2,8 +2,6 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useMutation } from 'urql';
 import AddTaskPage from '../path/to/AddTaskPage'; // Adjust the path accordingly
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
@@ -62,6 +60,25 @@ describe('AddTaskPage', () => {
     });
   });
 
+  it('should handle task saving', async () => {
+    const executeMutation = jest.fn().mockResolvedValue({ data: {} });
+    useMutation.mockReturnValue([, executeMutation]);
+
+    AsyncStorage.getItem.mockResolvedValue('123');
+
+    const { getByPlaceholderText, getByText } = render(<AddTaskPageForCoach />);
+
+    const titleInput = getByPlaceholderText('Title...');
+    const descriptionInput = getByPlaceholderText('Description...');
+    const saveButton = getByText('Save');
+
+    fireEvent.changeText(titleInput, 'Test Title');
+    fireEvent.changeText(descriptionInput, 'Test Description');
+    fireEvent.press(saveButton);
+
+  });
+
+  
   it('handles save with valid inputs', async () => {
     const { getByText, getByPlaceholderText } = render(<AddTaskPage />);
     fireEvent.changeText(getByPlaceholderText('Title...'), 'Test Title');
