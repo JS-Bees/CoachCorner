@@ -11,10 +11,7 @@ import { GetCoachReviewsDocument, FindCoacheeByIdDocument } from '../generated-g
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 import SplashScreen from './Authentication/SplashScreen';
-
 import Icon from 'react-native-vector-icons/Ionicons';
-
-
 
 type ReviewsPageRouteProp = RouteProp<RootStackParams, 'ReviewsPage'>;
 type ReviewsPageNavigationProp = NativeStackNavigationProp<RootStackParams, 'ReviewsPage'>;
@@ -174,7 +171,7 @@ const {
       />
     ))
   ) : (
-    <Text style={{ alignSelf: 'center', marginTop: 20 , fontSize: 15}}>No reviews yet</Text>
+    <Text style={{ alignSelf: 'center', marginTop: 15 , fontSize: 18}}>No reviews yet</Text>
   )}
 </ScrollView>
 
@@ -187,13 +184,12 @@ const {
                     <Icon name="add-circle-outline" size={50} color="#7E3FF0" />
                 </TouchableOpacity>
             ) : (
-              <View style={{ paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5, bottom: "80%"}}>
+              <View style={{ paddingHorizontal: 15, paddingVertical: 12, borderRadius: 5, bottom: "80%"}}>
               <Text style={{ alignSelf: 'center', color: 'grey' }}>
                   You need a completed booking to add a review.
               </Text>
           </View>
             )}
-
       <AddReviewBottomSheet isVisible={bottomSheetVisible} onClose={handleCloseBottomSheet} coachId={profile.id} />
     </View>
   );
@@ -207,7 +203,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: "row",
     top: "7%",
-    left: "6.5%",
+    left: "6%",
     zIndex: 1,
   },
   coachHeader: {
@@ -251,7 +247,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   ratingText: {
-    bottom: "3%",
+    bottom: "5%",
     marginRight: 10,
     fontSize: 20,
   },

@@ -47,7 +47,7 @@ const ChooseSport = ({ route }) => {
         <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
       </TouchableOpacity>
       <Text style={styles.header}> Which sport do you teach?</Text>
-      <Text style={styles.subtitle}>Choose 1 sport</Text>
+      <Text style={styles.subtitle}>Choose 1 sport only</Text>
 
       <View style={styles.radioContainer}>
         <RadioButton.Item
