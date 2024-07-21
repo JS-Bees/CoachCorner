@@ -83,7 +83,7 @@ const ChooseMovies = ({route}) => {
       
     
       try {
-        const { data, errors, fetching } = await createCoachee({
+        const { data, error, fetching } = await createCoachee({
           input: {
             firstName: firstName,
             lastName: lastName,
@@ -106,8 +106,8 @@ const ChooseMovies = ({route}) => {
     
         });
     
-        if (errors) {
-          console.error('GraphQL errors:', errors);
+        if (error) {
+          console.error('GraphQL errors:', error);
         } else if (data && data.createCoachee) {
           console.log('Coachee created:', data.createCoachee);
           // Navigate to the next screen or perform other actions upon successful signup
@@ -147,7 +147,7 @@ const ChooseMovies = ({route}) => {
       
     
       try {
-        const { data, errors } = await createCoach({
+        const { data, error } = await createCoach({
           input: {
             firstName: firstName,
             lastName: lastName,
@@ -173,8 +173,8 @@ const ChooseMovies = ({route}) => {
 
         });
     
-        if (errors) {
-          console.error('GraphQL errors:', errors);
+        if (error) {
+          console.error('GraphQL errors:', error);
         } else if (data && data.createCoach) {
           console.log('Coach created:', data.createCoach);
           // Navigate to the next screen or perform other actions upon successful signup

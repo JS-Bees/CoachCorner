@@ -93,20 +93,6 @@ const LogIn = () => {
         }
     };
 
-    // const handleLoginErrorCoach = () => {
-    //     const errorMessage = coachResult.error
-    //         ? coachResult.error.message.replace('[GraphQL] ', '')
-    //         : 'An error occurred';
-    //     setEmailPasswordError(errorMessage);
-    // };
-
-    // const handleLoginErrorCoachee = () => {
-    //     const errorMessage = coacheeResult.error
-    //         ? coacheeResult.error.message.replace('[GraphQL] ', '')
-    //         : 'An error occurred';
-    //     setEmailPasswordError(errorMessage);
-    // };
-
     const onLogInPressed = async () => {
         if (isLoading) return;
 

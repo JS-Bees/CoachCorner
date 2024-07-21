@@ -63,6 +63,7 @@
     "moment": "^2.29.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-joyride": "^2.8.2",
     "react-native": "0.72.6",
     "react-native-calendars": "^1.1305.0",
     "react-native-data-table": "^0.2.2",
