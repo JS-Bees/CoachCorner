@@ -105,6 +105,7 @@ const ReviewsPage = () => {
     const [result, refetch] = useQuery({
         query: GetCoachReviewsDocument,
         variables: { userId: userToken ? parseInt(userToken) : 0 },
+        requestPolicy: "cache-and-network"
     });
 
     const { data, fetching, error } = result;

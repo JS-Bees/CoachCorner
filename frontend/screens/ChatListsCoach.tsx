@@ -46,6 +46,7 @@ const ChatListPage: React.FC = () => {
    
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const pollingInterval = 1000;
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
@@ -62,25 +63,45 @@ const ChatListPage: React.FC = () => {
         fetchUserToken();
     }, []);
 
+    // const useFetchMessagesForCoachlist = (userID: any) => {
+    //     const [chatListMessageResult] = useQuery({
+    //         query: FindMessagesForCoacheeListDocument,
+    //         variables: {
+    //             coachId: parseInt(userID),
+    //         },
+    //         requestPolicy: 'cache-and-network',
+    //     });
+
+    //     return chatListMessageResult;
+    // };
+
     const useFetchMessagesForCoachlist = (userID: any) => {
-        const [chatListMessageResult] = useQuery({
+        const [chatListMessageResult,  refetch] = useQuery({
             query: FindMessagesForCoacheeListDocument,
             variables: {
                 coachId: parseInt(userID),
             },
-            requestPolicy: 'cache-and-network',
+            requestPolicy: 'network-only',
         });
-
-        return chatListMessageResult;
+        return { chatListMessageResult, refetch };
     };
+
+    const { chatListMessageResult, refetch } = useFetchMessagesForCoachlist(userToken);
 
     const {
         data: coachChatListMessageData,
         loading: coachChatListMessageLoading,
         error: coachChatListMessageError,
-    } = useFetchMessagesForCoachlist(userToken);
+    } = chatListMessageResult;
 
-   
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          refetch(); // Manually trigger the query
+        }, pollingInterval);
+        // console.log('Refetching data at', new Date().toLocaleTimeString());
+        // console.log("this is the refetched data:", coacheeChatListMessageData)
+        return () => clearInterval(intervalId);
+    }, []);
 
 
 

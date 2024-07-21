@@ -79,6 +79,7 @@ const MyClients_alt = () => {
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'cache-and-network',
     });
 
     const { fetching, data, error } = result;
