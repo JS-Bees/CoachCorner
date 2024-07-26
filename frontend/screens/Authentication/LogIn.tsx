@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Keyboard,
+    BackHandler,
 } from 'react-native';
 import LogInButton from '../../components/Custom components/CustomButton';
 import SlideInComponent from '../../components/SlideInComponent';
@@ -81,7 +82,20 @@ const LogIn = () => {
             setLoading(false); // Reset isLoading to false when navigating back
         });
 
-        return unsubscribe;
+        // Prevent back button from working
+        const backAction = () => {
+            return true; // Prevents default back action
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => {
+            unsubscribe(); // Cleanup navigation listener
+            backHandler.remove(); // Cleanup back handler
+        };
     }, [navigation]);
 
     const storeToken = async (token: string) => {

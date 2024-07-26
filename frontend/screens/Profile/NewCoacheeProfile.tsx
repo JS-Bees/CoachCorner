@@ -171,7 +171,7 @@ const NewCoacheeProfile = () => {
                         </TouchableOpacity>
                     </View>
                     <View>
-                    <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName},  {CoacheeProfiles[0].age}</Text>
+                    <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName}</Text>
                     </View>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>

@@ -263,7 +263,6 @@ const CoacheeProfile = () => {
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.age}> Age </Text>
                     <View>
                         <TextInput
                             style={styles.ageInput}

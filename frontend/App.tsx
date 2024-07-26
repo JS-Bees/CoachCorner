@@ -54,7 +54,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import { CopilotProvider } from "react-native-copilot";
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -165,8 +165,11 @@ const CoachTab = createBottomTabNavigator();
 
 export default function App() {
     return (
+        
         <UrqlProvider value={client}>
+         
             <NavigationContainer>
+            <CopilotProvider stopOnOutsideClick>
                 <RootStack.Navigator initialRouteName="LogIn">
                     <RootStack.Screen
                         name="SplashScreen"
@@ -389,7 +392,9 @@ export default function App() {
                         options={{ headerShown: false }}
                     />
                 </RootStack.Navigator>
+                </CopilotProvider>
             </NavigationContainer>
+            
         </UrqlProvider>
     );
 }

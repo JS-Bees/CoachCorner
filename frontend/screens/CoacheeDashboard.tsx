@@ -6,6 +6,7 @@ import {
     Image,
     Platform,
     Alert,
+    Animated
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { RootStackParams } from '../App';
@@ -13,7 +14,7 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { useQuery } from 'urql';
+import { Context, useQuery } from 'urql';
 // import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import Profile from '../components/Profile Tiles/CoachProfileTile';
@@ -27,8 +28,7 @@ import { FindCoacheeByIdDocument, GetSortedCoachesDocument} from '../generated-g
 import { RadioButton } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
-
-
+import TourModal from '../components/Tour';
 const { width, height } = Dimensions.get('window');
 const initialStates = () => ({
     seeAllCoaches: false,
@@ -55,6 +55,46 @@ const CoacheeDashboard = () => {
     const [selectedSport, setSelectedSport] = useState('');
     const [checked, setChecked] = React.useState('second');
     const [states, setStates] = useState(initialStates());
+    const [isTourVisible, setTourVisible] = useState(false);
+    const [animation] = useState(new Animated.Value(0)); // Create animated value
+
+    const handleTour = () => {
+        setTourVisible(true);
+      };
+    
+      const closeTour = () => {
+        setTourVisible(false);
+      };
+
+      useEffect(() => {
+        // Start the animation loop
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(animation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(animation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start();
+    }, [animation]);
+
+    const iconAnimationStyle = {
+        transform: [
+            {
+                translateY: animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -10], // Moves the icon up and down
+                }),
+            },
+        ],
+    };
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -100,8 +140,7 @@ const CoacheeDashboard = () => {
         { label: 'Volleyball', value: 'Volleyball' },                                                         
 
     ];
-
-
+    
 
     const handleSeeAllPress = () => {
         setSeeAllCoaches(!seeAllCoaches);
@@ -342,8 +381,17 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                     </View>
                     <View style={{ flex: 1 }}>
             <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
+
+            <TouchableOpacity style={CoacheeDashboardStyle.tourButton} onPress={handleTour}>
+                <Animated.View style={iconAnimationStyle}>
+                    <Icon name="information-circle-outline" size={24} color="#7E3FF0" />
+                </Animated.View>
+                <Text style={CoacheeDashboardStyle.tooltip}>Need help?</Text>
+                <TourModal visible={isTourVisible} onClose={closeTour} />
+            </TouchableOpacity>
             <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: '15%' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    
                     <ScrollView
                         ref={scrollViewRef}
                         horizontal
@@ -620,8 +668,22 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
     profileTiles: {
         marginLeft: "3%"
-    }
-    
+    },
+    tourButton: {
+        position: 'absolute',
+        top: '5%',
+        right: '8%',
+        backgroundColor: 'white',
+        borderRadius: 50,
+        padding: 10,
+        alignItems: 'center',
+    },
+      tooltip: {
+        marginTop: 5,
+        fontSize: 12,
+        color: '#7E3FF0',
+    },
+
 });
 
 export default CoacheeDashboard;
