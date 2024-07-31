@@ -186,11 +186,11 @@ const LogIn = () => {
 
     const onSignUpPressed = () => {
         if (CoachOrCoachee === 'coach') {
-            navigation.navigate('SignUpCoach');
-            console.log('Navigating to signup for coach');
+            // Navigate to the landing page and pass a parameter
+            navigation.navigate('LandingPage', { userType: 'coach' });
         } else {
-            navigation.navigate('SignUpCoachee');
-            console.log('Navigating to signup for coachee');
+            // Navigate to the landing page and pass a parameter
+            navigation.navigate('LandingPage', { userType: 'coachee' });
         }
     };
 

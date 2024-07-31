@@ -25,7 +25,7 @@ import {
     FindCoachByIdDocument,
 } from '../generated-gql/graphql';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 const { width, height } = Dimensions.get('window');
 

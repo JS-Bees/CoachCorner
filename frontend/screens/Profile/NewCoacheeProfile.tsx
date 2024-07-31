@@ -10,7 +10,7 @@ import { FindCoacheeByIdDocument,} from '../../generated-gql/graphql';
 import { useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SplashScreen from '../Authentication/SplashScreen';
+import SplashScreen from '../Authentication/LoadingSplash';
 import { StackNavigationProp } from '@react-navigation/stack';
 // import  Cloudinary  from "cloudinary-react-native";
 

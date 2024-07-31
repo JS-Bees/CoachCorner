@@ -327,6 +327,16 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
         },
     ];
 
+    const scrollY = new Animated.Value(0);
+
+    const opacity = scrollY.interpolate({
+      inputRange: [0, 200], // Adjust this range based on your needs
+      outputRange: [1, -1.2], // Opacity goes from 1 to 0
+      extrapolate: 'clamp',
+    });
+
+    
+    
     return (
         <View style={CoacheeDashboardStyle.container}>
             <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
@@ -359,26 +369,30 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                 <ScrollView
                     contentInsetAdjustmentBehavior="scrollableAxes"
                     style={{ marginTop: '10%', height: 360 }}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                        { useNativeDriver: false }
+                      )}
+                      scrollEventThrottle={16}
                 >
-                    <View style={CoacheeDashboardStyle.frameContainer}>
-                        <Text style={CoacheeDashboardStyle.frameText}>
-                            Find the right coach for you!
-                        </Text>
-                        <Text style={CoacheeDashboardStyle.frameDescription}>
-                            Get trained by expert coaches in different sport
-                            fields
-                        </Text>
-                        <Image
-                            source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')}
-                            style={{
-                                width: 120,
-                                height: 120,
-                                marginLeft: '65%',
-                                marginTop: '-15%',
-                            }}
-                        />
+                    <Animated.View style={[CoacheeDashboardStyle.frameContainer, { opacity: opacity }]}>
+            <Text style={CoacheeDashboardStyle.frameText}>
+              Find the right coach for you!
+            </Text>
+            <Text style={CoacheeDashboardStyle.frameDescription}>
+              Get trained by expert coaches in different sport fields
+            </Text>
+            <Image
+              source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')}
+              style={{
+                width: 120,
+                height: 120,
+                marginLeft: '65%',
+                marginTop: '-15%',
+              }}
+            />
+          </Animated.View>
 
-                    </View>
                     <View style={{ flex: 1 }}>
             <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
 

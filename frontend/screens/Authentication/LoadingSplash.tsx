@@ -10,7 +10,7 @@ type SplashScreenProps = {
 
 
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
+const LoadingSplash: React.FC<SplashScreenProps> = ({ navigation }) => {
     const [loadingProgress, setLoadingProgress] = useState(new Animated.Value(0))
 
     useEffect(() => {
@@ -76,4 +76,4 @@ const SplashStyle =  StyleSheet.create({
     },
 })
 
-export default SplashScreen;
+export default LoadingSplash;

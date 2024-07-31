@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
+    
     },
     arrowIcon: {
         marginLeft: '25%',
@@ -287,6 +288,8 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         marginLeft: 10,
+        width: "50%"
+    
     },
     bookmark: {
         marginLeft: 'auto',

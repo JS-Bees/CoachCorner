@@ -18,7 +18,7 @@ import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 
 

@@ -259,21 +259,20 @@ const SignUpForCoachee = ({route}) => {
                         />
                     )}
 
-                    {!showPicker && (
-                        <Pressable onPress={toggleDatePicker} style={styles.datePicker}>
-                            {dateOfBirth ? (
-                                <TextInput
-                                    style={styles.birthdayBorder}
-                                    placeholder="Sat Aug 24 2000"
-                                    value={dateOfBirth}
-                                    onChangeText={setDateofBirth}
-                                    editable={false}
-                                />
-                            ) : (
-                                <Icon name="calendar" size={30} color="#7E3FF0" />
-                            )}
-                        </Pressable>
-                    )}
+                    {
+                        !showPicker && (
+                            <Pressable onPress={toggleDatePicker} >
+                              <InputSignUpPages
+                                value={dateOfBirth}
+                                setValue={setDateofBirth}
+                                placeholder="Sat Aug 24 2000"
+                                onFocus={toggleDatePicker}
+                                onBlur={() => {}} 
+                                editable={false} // Read-only
+                              />
+                            </Pressable>)
+                    }
+                    
                 </View>
 
                 <View style={styles.customContainer}>

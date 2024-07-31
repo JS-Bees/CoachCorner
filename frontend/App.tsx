@@ -18,7 +18,7 @@ import MyCoaches from './screens/MyCoaches';
 import CoachSearchPage from './screens/MyCoaches_alt';
 import MyClients_alt from './screens/MyClients_alt';
 import Booking_Sessions from './screens/Sessions';
-import SplashScreen from './screens/Authentication/SplashScreen';
+import LoadingSplash from './screens/Authentication/LoadingSplash';
 import ChatPage from './screens/Chat';
 import SearchList from './screens/SearchList/SearchList';
 import ChooseSport from './screens/Authentication/InterestPickingScreens/ChooseSport';
@@ -48,6 +48,8 @@ import AddTaskPageForCoach from './screens/AddTaskForCoach';
 import PreviewTask from './screens/PreviewTaskForCoach';
 import PreviewTaskForCoachee from './screens/PreviewTaskForCoachee';
 import ReviewsPageCoach from './screens/ReviewsPageCoach';
+import LandingPage from './screens/Authentication/Landing Pages/LandingPage';
+import IntroInterests from './screens/Authentication/Landing Pages/IntroInterests';
 import { enGB, registerTranslation } from 'react-native-paper-dates';
 registerTranslation('en-GB', enGB);
 import { NavigationContainer } from '@react-navigation/native';
@@ -55,6 +57,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CopilotProvider } from "react-native-copilot";
+import IntroSplash from './screens/Authentication/IntroSplash';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -157,6 +160,9 @@ export type RootStackParams = {
     PreviewTask: any;
     PreviewTaskForCoachee: any;
     ReviewsPageCoach: any;
+    IntroSplash: any;
+    LandingPage: any;
+    IntroInterests: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -170,10 +176,15 @@ export default function App() {
          
             <NavigationContainer>
             <CopilotProvider stopOnOutsideClick>
-                <RootStack.Navigator initialRouteName="LogIn">
+                <RootStack.Navigator initialRouteName="IntroSplash">
                     <RootStack.Screen
                         name="SplashScreen"
-                        component={SplashScreen}
+                        component={LoadingSplash}
+                        options={{ headerShown: false }}
+                    />
+                    <RootStack.Screen
+                        name="IntroSplash"
+                        component={IntroSplash}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -184,6 +195,16 @@ export default function App() {
                     <RootStack.Screen
                         name="RolePicking"
                         component={RolePicking}
+                        options={{ headerShown: false }}
+                    />
+                     <RootStack.Screen
+                        name="LandingPage"
+                        component={LandingPage}
+                        options={{ headerShown: false }}
+                    />
+                     <RootStack.Screen
+                        name="IntroInterests"
+                        component={IntroInterests}
                         options={{ headerShown: false }}
                     />
                     <RootStack.Screen
@@ -406,7 +427,7 @@ function TabNavigator() {
                 return 'home';
             case 'My Coaches':
                 return 'sports';
-            case 'Sessions':
+            case 'Schedules':
                 return 'schedule';
             case 'Taskboard':
                 return 'list';
@@ -445,7 +466,7 @@ function TabNavigator() {
                 options={{ headerShown: false }}
             />
             <Tab.Screen
-                name="Sessions"
+                name="Schedules"
                 component={Trainee_Sessions}
                 options={{ headerShown: false }}
             />
@@ -470,7 +491,7 @@ function NewCoachTabNavigator() {
                 return 'home';
             case 'Trainees':
                 return 'sports';
-            case 'Sessions':
+            case 'Schedules':
                 return 'schedule';
             case 'Taskboard':
                 return 'list';
@@ -509,7 +530,7 @@ function NewCoachTabNavigator() {
                 options={{ headerShown: false }}
             />
             <CoachTab.Screen
-                name="Sessions"
+                name="Schedules"
                 component={Booking_Sessions}
                 options={{ headerShown: false }}
             />

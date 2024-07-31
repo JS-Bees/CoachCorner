@@ -46,6 +46,7 @@ const ChooseSport = ({ route }) => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
         <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
       </TouchableOpacity>
+      <Text style={styles.headerTop}>Great! We just need your preferred choices in our list to match you with fellow users</Text>
       <Text style={styles.header}> Which sport do you teach?</Text>
       <Text style={styles.subtitle}>Choose 1 sport</Text>
 
@@ -107,6 +108,16 @@ const styles = StyleSheet.create({
     color: '#656466',
     textAlign: 'center',
   },
+  headerTop: {
+    marginTop: '10%',
+    fontSize: 16,
+    fontWeight: '200',
+    fontFamily: 'Roboto',
+    color: '#656466',
+    textAlign: 'center',
+    left: "10%",
+    width: "80%"
+  },
   subtitle: {
     marginTop: '5%',
     fontSize: 14,
@@ -117,7 +128,7 @@ const styles = StyleSheet.create({
   },
   radioContainer: {
     marginTop: '5%',
-    alignItems: 'center',
+    left: "10%"
   },
   radioButtonItem: {
     flexDirection: 'row-reverse', // Reverse the direction to swap positions

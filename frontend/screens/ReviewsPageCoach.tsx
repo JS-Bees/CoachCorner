@@ -21,7 +21,7 @@ import {
 } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -290,6 +290,7 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         left: '15%',
         color: '#7E3FF0',
+        width: "75%"
     },
     reviewsContainer: {
         marginTop: '-10%',

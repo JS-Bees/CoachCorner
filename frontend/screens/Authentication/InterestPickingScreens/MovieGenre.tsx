@@ -227,6 +227,7 @@ const ChooseMovies = ({ route }) => {
                 downtime?
             </Text>
             <Text style={styles.subtitle}>Choose 3 Genres</Text>
+            
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
@@ -266,6 +267,8 @@ const ChooseMovies = ({ route }) => {
                     onPress={() => handleCheckboxChange('Drama')}
                 />
             </View>
+
+            <Text style={styles.subtitle}>Please note that we will take you back to the Log In to properly log in your account</Text>
 
             <View>
                 {isLoading ? (
