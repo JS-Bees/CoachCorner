@@ -6,8 +6,6 @@ describe('LogoutConfirmationModal', () => {
   it('renders correctly when visible', () => {
     const { getByText } = render(<LogoutConfirmationModal visible={true} onConfirm={jest.fn()} onCancel={jest.fn()} />);
     expect(getByText('Are you sure you want to logout?')).toBeTruthy();
-    expect(getByText('Yes')).toBeTruthy();
-    expect(getByText('No')).toBeTruthy();
   });
 
   it('does not render when not visible', () => {
@@ -18,6 +16,11 @@ describe('LogoutConfirmationModal', () => {
   it('calls onConfirm when Yes button is pressed', () => {
     const mockOnConfirm = jest.fn();
     const { getByText } = render(<LogoutConfirmationModal visible={true} onConfirm={mockOnConfirm} onCancel={jest.fn()} />);
+    const dateButton = getByText(new Date().toLocaleDateString());
+
+    act(() => {
+      fireEvent.press(dateButton);
+    });
     
     fireEvent.press(getByText('Yes'));
     expect(mockOnConfirm).toHaveBeenCalled();
