@@ -60,6 +60,23 @@ describe('CoachBookingDrawer Component', () => {
   test('handles bottom sheet visibility', async () => {
     const { getByTestId } = render(<CoachBookingDrawer />);
 
+    const titleInput = getByPlaceholderText('Title...');
+    const descriptionInput = getByPlaceholderText('Description...');
+    const saveButton = getByText('Save');
+
+    fireEvent.changeText(titleInput, 'Test Title');
+    fireEvent.changeText(descriptionInput, 'Test Description');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(executeMutation).toHaveBeenCalledWith({
+        title: 'Test Title',
+        description: 'Test Description',
+        date: expect.any(String),
+        token: '123',
+      });
+    });
+
     const bottomSheetButton = getByTestId('open-bottom-sheet-button');
     fireEvent.press(bottomSheetButton);
 
