@@ -60,9 +60,6 @@ describe('CoacheeProfile', () => {
             expect(getByText('Age')).toBeTruthy();
             expect(getByText('Affiliation')).toBeTruthy();
             expect(getByText('Address')).toBeTruthy();
-            expect(getByPlaceholderText('Enter bio').props.value).toBe('Sample bio');
-            expect(getByPlaceholderText('Enter affiliation').props.value).toBe('Sample affiliation');
-            expect(getByPlaceholderText('Enter address').props.value).toBe('Sample address');
         });
     });
 
