@@ -38,12 +38,6 @@ describe('CoachProfile', () => {
         },
     };
 
-    beforeEach(() => {
-        (useNavigation as jest.Mock).mockReturnValue(navigation);
-        (useQuery as jest.Mock).mockReturnValue([{ data: mockData, fetching: false, error: null }]);
-        (useMutation as jest.Mock).mockReturnValue([jest.fn()]);
-        (AsyncStorage.getItem as jest.Mock).mockResolvedValue('123');
-    });
 
     afterEach(() => {
         jest.clearAllMocks();
