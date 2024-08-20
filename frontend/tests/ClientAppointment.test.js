@@ -46,6 +46,30 @@ describe('ClientAppointments', () => {
       expect(AsyncStorage.getItem).toHaveBeenCalledWith('userToken');
     });
   });
+  
+  it('should handle date selection and validation', async () => {
+    AsyncStorage.getItem.mockResolvedValue('123');
+
+    const { getByText } = render(<AddTaskPageForCoach />);
+    const dateButton = getByText(new Date().toLocaleDateString());
+
+    act(() => {
+      fireEvent.press(dateButton);
+    });
+
+    await waitFor(() => {
+      expect(getByText('Confirm')).toBeTruthy();
+    });
+
+    const invalidDate = new Date();
+    invalidDate.setDate(invalidDate.getDate() - 1); // Yesterday
+
+    act(() => {
+      fireEvent.press(getByText('Confirm'), 'onPress', { date: invalidDate });
+    });
+
+    expect(Alert.alert).toHaveBeenCalledWith("Invalid Date", "Please select a future date.");
+  });
 
   it('displays appointments based on selected category', async () => {
     const { getByText, getByTestId } = render(<ClientAppointments />);
@@ -60,6 +84,4 @@ describe('ClientAppointments', () => {
     fireEvent.press(getByTestId('backButton'));
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
-
-  // Add more tests for other interactions and states
 });
