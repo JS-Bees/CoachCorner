@@ -88,8 +88,6 @@ describe('SignUpForCoachee', () => {
     fireEvent.changeText(getByPlaceholderText('johnsmith@gmail.com'), 'john.doe@example.com');
     fireEvent.changeText(getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(getByPlaceholderText('Repeat Password'), 'password123');
-    fireEvent.changeText(getByPlaceholderText('Street Address'), '123 Main St');
-    fireEvent.changeText(getByPlaceholderText('Postal Code'), '5000');
 
     const nextButton = getByText('Next');
     fireEvent.press(nextButton);
