@@ -64,6 +64,9 @@ describe('SearchList', () => {
   it('handles navigation goBack', () => {
     const { getByRole } = render(<SearchList />);
     const backButton = getByRole('button', { name: /arrow-back/i });
+    const dateButton = getByText(new Date().toLocaleDateString());
+
+  
 
     fireEvent.press(backButton);
     expect(mockNavigation.goBack).toHaveBeenCalled();
@@ -75,6 +78,5 @@ describe('SearchList', () => {
     await waitFor(() => fireEvent.press(getByText('Coach A')));
     expect(getByText('Coach A')).toBeTruthy(); // Ensure that Coach A data is passed to the bottom sheet
 
-    // You can add more assertions here to check if the bottom sheet is visible
   });
 });
