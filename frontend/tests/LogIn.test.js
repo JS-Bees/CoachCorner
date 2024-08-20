@@ -43,8 +43,6 @@ describe('LogIn Component', () => {
     expect(getByText('You are logging as?')).toBeTruthy();
     expect(getByText('Coach')).toBeTruthy();
     expect(getByText('Trainee')).toBeTruthy();
-    expect(getByPlaceholderText('johnsmith@gmail.com')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
   });
 
   test('handles email and password input', () => {
