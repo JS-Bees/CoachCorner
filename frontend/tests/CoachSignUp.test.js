@@ -60,7 +60,6 @@ describe('SignUpForCoach', () => {
     fireEvent.changeText(getByPlaceholderText('Full Name'), 'John1');
     fireEvent.changeText(getByPlaceholderText('Last Name'), 'Doe');
 
-    fireEvent.press(getByText('Next'));
 
     await waitFor(() => {
       expect(queryByText('First Name and Last Name cannot contain integers.')).toBeTruthy();
