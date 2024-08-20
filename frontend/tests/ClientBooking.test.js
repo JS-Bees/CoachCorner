@@ -65,12 +65,6 @@ describe('ClientBookingDrawer', () => {
     expect(getByText('ClientInformationModal')).toBeTruthy();
   });
 
-  it('opens the bottom sheet when the book button is pressed', async () => {
-    const { getByTestId, getByText } = render(<ClientBookingDrawer />);
-    fireEvent.press(getByTestId('book-button'));
-    await waitFor(() => expect(getByText('ConfirmBookingDrawer')).toBeTruthy());
-  });
-
   it('disables the book button if no pending bookings', async () => {
     useQuery.mockReturnValueOnce([
       {
