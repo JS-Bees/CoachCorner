@@ -206,7 +206,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                         size={30}
                         color="#7E3FF0"
                     /> */}
-                    <Text style={styles.buttonText}>Add Schedule</Text>
+                    <Text style={styles.buttonText}>Add Appointment</Text>
                 </TouchableOpacity>
             </View>
             <View

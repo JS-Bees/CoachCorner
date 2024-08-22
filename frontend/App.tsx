@@ -427,7 +427,7 @@ function TabNavigator() {
                 return 'home';
             case 'My Coaches':
                 return 'sports';
-            case 'Schedules':
+            case 'Appointments':
                 return 'schedule';
             case 'Taskboard':
                 return 'list';
@@ -466,7 +466,7 @@ function TabNavigator() {
                 options={{ headerShown: false }}
             />
             <Tab.Screen
-                name="Schedules"
+                name="Appointments"
                 component={Trainee_Sessions}
                 options={{ headerShown: false }}
             />
@@ -491,7 +491,7 @@ function NewCoachTabNavigator() {
                 return 'home';
             case 'Trainees':
                 return 'sports';
-            case 'Schedules':
+            case 'Appointments':
                 return 'schedule';
             case 'Taskboard':
                 return 'list';
@@ -530,7 +530,7 @@ function NewCoachTabNavigator() {
                 options={{ headerShown: false }}
             />
             <CoachTab.Screen
-                name="Schedules"
+                name="Appointments"
                 component={Booking_Sessions}
                 options={{ headerShown: false }}
             />
