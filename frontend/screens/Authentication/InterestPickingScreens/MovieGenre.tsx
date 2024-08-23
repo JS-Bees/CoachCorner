@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomCheckBox from '../../../components/Custom components/CustomCheckBox';
 import {
     View,
@@ -48,7 +48,7 @@ const ChooseMovies = ({ route }) => {
     const { selectedHobbies } = route.params;
     const { selectedGames } = route.params;
     const { selectedSports } = route.params;
-
+    
     const handleCheckboxChange = (MovieGenre: Movie) => {
         setCheckedGames((prevCheckedMovies) => {
             const newCheckedHobby = { ...prevCheckedMovies };
@@ -77,6 +77,12 @@ const ChooseMovies = ({ route }) => {
         navigation.goBack();
     };
 
+    // useEffect(() => {
+    //   const sports = selectedSports.map(sportObj => sportObj.sport); // Extract sport values
+    //   const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
+    //   console.log("address + birthday" + workplaceAddress + addressWithSports)
+    // }); // Dependency array ensures useEffect runs when these values change
+  
   const handleButtonPress = async () => {
 
     if(coachOrCoachee == 'coachee') {
@@ -96,29 +102,33 @@ const ChooseMovies = ({ route }) => {
         }));
       
     
-      try {
-        const { data, errors, fetching } = await createCoachee({
-          input: {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            address: workplaceAddress,
-            bio: "Enter Bio",
-            birthday:  birthday,
-            profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
-            // Add other fields as needed
-          },
-          interestsInput: [
-            ...selectedMovie.map(MovieGenre => ({
-              type: 'MovieGenre',
-              name: MovieGenre.MovieGenre,
-            })),
-            ...selectedGamesInterests,
-            ...selectedHobbiesInterests,
-          ],
-    
-        });
+        try {
+        
+          const sports = selectedSports.map(sportObj => sportObj.sport); // Extract sport values
+          const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
+      
+          // Perform the mutation with combined address and sports data
+          const { data, errors, fetching } = await createCoachee({
+            input: {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              password: password,
+              address: addressWithSports,
+              bio: "Enter Bio",
+              birthday: birthday, // Keep birthday as it is
+              profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
+              // Add other fields as needed
+            },
+            interestsInput: [
+              ...selectedMovie.map(MovieGenre => ({
+                type: 'MovieGenre',
+                name: MovieGenre.MovieGenre,
+              })),
+              ...selectedGamesInterests,
+              ...selectedHobbiesInterests,
+            ],
+          });
     
         if (errors) {
           console.error('GraphQL errors:', errors);

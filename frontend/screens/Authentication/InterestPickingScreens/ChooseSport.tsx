@@ -6,7 +6,7 @@ import { RootStackParams } from '../../../App';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { RadioButton } from 'react-native-paper';
 
-type Sports = 'Soccer' | 'Basketball' | 'Volleyball' | 'Badminton';
+type Sports = 'Soccer' | 'Basketball' | 'Volleyball' | 'Swimming';
 
 const ChooseSport = ({ route }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -40,14 +40,18 @@ const ChooseSport = ({ route }) => {
       });
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
         <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
       </TouchableOpacity>
-      <Text style={styles.headerTop}>Great! We just need your preferred choices in our list to match you with fellow users</Text>
-      <Text style={styles.header}> Which sport do you teach?</Text>
+      <Text style={styles.headerTop}>
+        Great! We just need your preferred choices in our list to match you with fellow users
+      </Text>
+      <Text style={styles.header}>
+        {coachOrCoachee === 'Coach' ? 'Which sport do you teach?' : 'What sports are you interested in?'}
+      </Text>
       <Text style={styles.subtitle}>Choose 1 sport</Text>
 
       <View style={styles.radioContainer}>
@@ -76,10 +80,10 @@ const ChooseSport = ({ route }) => {
           style={styles.radioButtonItem}
         />
         <RadioButton.Item
-          label="Badminton"
-          value="Badminton"
-          status={checkedSport === 'Badminton' ? 'checked' : 'unchecked'}
-          onPress={() => handleCheckboxChange('Badminton')}
+          label="Swimming"
+          value="Swimming"
+          status={checkedSport === 'Swimming' ? 'checked' : 'unchecked'}
+          onPress={() => handleCheckboxChange('Swimming')}
           labelStyle={styles.radioButtonLabel}
           style={styles.radioButtonItem}
         />
@@ -95,6 +99,7 @@ const ChooseSport = ({ route }) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

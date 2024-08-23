@@ -102,6 +102,7 @@ const NewCoacheeProfile = () => {
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
             achievements: "None at the moment",
+            // address: coacheeData?.findCoacheeByID.address.split('|')[0], // Extract address before |
             address: coacheeData?.findCoacheeByID.address,
             age: 19,
             interests: coacheeData?.findCoacheeByID.interests.reduce((acc, interest) => {

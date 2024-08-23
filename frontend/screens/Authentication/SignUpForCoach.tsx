@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ScrollView,
     View,
@@ -9,6 +9,7 @@ import {
     Platform,
     ActivityIndicator,
     Alert,
+    BackHandler,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
@@ -19,9 +20,6 @@ import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-// import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
-
 
 const SignUpForCoach = ({route}) => {
     const navigation =
@@ -50,6 +48,21 @@ const SignUpForCoach = ({route}) => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
+    
+    useEffect(() => {
+        const backAction = () => {
+            navigation.navigate('LogIn'); // Navigate back to the login page
+            return true; // Return true to prevent the default back button behavior
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
+    }, [navigation]);
+    
 
     
 
@@ -57,24 +70,6 @@ const SignUpForCoach = ({route}) => {
         setShowPicker(!showPicker);
    
     };
-
-    
-    // const navigateToHobbies = () => {
-    //     navigation.navigate('InterestPickingHobby', 
-    //     {  firstName: First_Name,
-    //         lastName: Last_Name,
-    //         birthday: date,
-    //         email: Email,
-    //         password: Password,
-    //         workplaceAddress: StreetAdd,
-    //         profilePic: profilePic,
-    //         mantra: mantra,
-    //         bio: bio,
-    //         coachingRole: coachingRole,
-            
-
-    //     }); 
-    // };
 
     const toggleModal = () => {
         setShowModal(!showModal);
