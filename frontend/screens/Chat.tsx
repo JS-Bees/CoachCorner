@@ -119,7 +119,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     };
 
     const handleNavigateToBooking = () => {
-        navigation.navigate('Sessions');
+        navigation.navigate('Appointments');
     };
     const handleSendMessage = async (content: string) => {
         // Check if the message content is not empty

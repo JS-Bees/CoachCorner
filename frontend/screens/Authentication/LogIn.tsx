@@ -420,21 +420,23 @@ const Log_In_Style = StyleSheet.create({
         flexDirection: 'row',
         bottom: '70%',
         justifyContent: 'space-between',
-        marginLeft: '12%',
+        paddingHorizontal: '10%',
+        marginLeft: '2%'
     },
     buttonsText: {
         fontSize: 18,
         marginRight: '30%',
     },
     buttons: {
-        backgroundColor: '#7E3FF0', // Example background color
+        borderColor: '#7E3FF0', // Example background color
+        borderWidth: 1,
         padding: 10,
-        borderRadius: 5,
-        marginLeft: '5%', // Add left margin to separate buttons
-        marginRight: '5%', // Add right margin to separate buttons
+        borderRadius: 20,
+        alignItems: "center",
+        width: "45%",
     },
     buttonText: {
-        color: '#fff', // Example text color
+        color: '#7E3FF0', // Example text color
         fontSize: 16,
     },
 });
