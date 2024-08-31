@@ -53,7 +53,7 @@ import { publishNewMessage } from '../subscriptions/subscriptions';
 export const createCoachee = mutationField('createCoachee', {
     type: Coachee,
     args: {
-        input: nonNull(arg({ type: CreateCoacheeInput })),
+        input: arg({ type: CreateCoacheeInput }),
         interestsInput: nonNull(
             list(nonNull(arg({ type: CreateCoacheeInterestInput }))),
         ),
