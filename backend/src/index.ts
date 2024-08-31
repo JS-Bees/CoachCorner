@@ -38,7 +38,7 @@ const schema = makeSchema({
         inputTypes,
         queries,
         filteredQueries,
-        // createMutation,
+        createMutation,
         updateMutation,
         // fauxDeleteMutations,
         subscriptions,
