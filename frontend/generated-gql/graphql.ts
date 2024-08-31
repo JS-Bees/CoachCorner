@@ -113,7 +113,7 @@ export type Coachee = {
   password: Scalars['String']['output'];
   profilePicture: Scalars['String']['output'];
   reviews?: Maybe<Array<Maybe<Review>>>;
-  sport?: Maybe<Scalars['String']['output']>;
+  sport: Scalars['String']['output'];
   tasks?: Maybe<Array<Maybe<CoacheeTask>>>;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -206,7 +206,7 @@ export type CreateCoacheeInput = {
   lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
   profilePicture: Scalars['String']['input'];
-  sport?: InputMaybe<Scalars['String']['input']>;
+  sport: Scalars['String']['input'];
 };
 
 export type CreateCoacheeInterestInput = {
@@ -670,7 +670,7 @@ export type CreateCoacheeMutationVariables = Exact<{
 }>;
 
 
-export type CreateCoacheeMutation = { __typename?: 'Mutation', createCoachee?: { __typename?: 'Coachee', id: number, firstName: string, lastName: string, sport?: string | null, email: string } | null };
+export type CreateCoacheeMutation = { __typename?: 'Mutation', createCoachee?: { __typename?: 'Coachee', id: number, firstName: string, lastName: string, sport: string, email: string } | null };
 
 export type CreateReviewMutationVariables = Exact<{
   input: CreateReviewInput;

@@ -48,7 +48,7 @@ const ChooseMovies = ({ route }) => {
     const { selectedHobbies } = route.params;
     const { selectedGames } = route.params;
     const { selectedSports } = route.params;
-    
+
     const handleCheckboxChange = (MovieGenre: Movie) => {
         setCheckedGames((prevCheckedMovies) => {
             const newCheckedHobby = { ...prevCheckedMovies };
@@ -82,143 +82,166 @@ const ChooseMovies = ({ route }) => {
     //   const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
     //   console.log("address + birthday" + workplaceAddress + addressWithSports)
     // }); // Dependency array ensures useEffect runs when these values change
-  
-  const handleButtonPress = async () => {
 
-    if(coachOrCoachee == 'coachee') {
-      console.log(coachOrCoachee)
-      const selectedMovie = Object.keys(checkedMovies)
-        .filter(MovieGenre => checkedMovies[MovieGenre])
-        .map(MovieGenre => ({ MovieGenre }));
-  
-        const selectedGamesInterests = selectedGames.map(BookGenre => ({
-          type: 'BookGenre',
-          name: BookGenre.BookGenre,
-        }));
-      
-        const selectedHobbiesInterests = selectedHobbies.map(MusicGenre => ({
-          type: 'MusicGenre',
-          name: MusicGenre.MusicGenre,
-        }));
-      
-    
-        try {
-        
-          const sports = selectedSports.map(sportObj => sportObj.sport); // Extract sport values
-         
-        const newLastName = `${lastName} ${sports}`;
+    const handleButtonPress = async () => {
+        if (coachOrCoachee == 'coachee') {
+            console.log(coachOrCoachee);
+            const selectedMovie = Object.keys(checkedMovies)
+                .filter((MovieGenre) => checkedMovies[MovieGenre])
+                .map((MovieGenre) => ({ MovieGenre }));
 
-          // Perform the mutation with combined address and sports data
-          const { data, errors, fetching } = await createCoachee({
-            input: {
-              firstName: firstName,
-              lastName: newLastName,
-              email: email,
-              password: password,
-              address: workplaceAddress,
-              bio: "Enter Bio",
-              birthday: birthday, // Keep birthday as it is
-              profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
-              // Add other fields as needed
-            },
-            interestsInput: [
-              ...selectedMovie.map(MovieGenre => ({
-                type: 'MovieGenre',
-                name: MovieGenre.MovieGenre,
-              })),
-              ...selectedGamesInterests,
-              ...selectedHobbiesInterests,
-            ],
-          });
-    
-        if (errors) {
-          console.error('GraphQL errors:', errors);
-        } else if (data && data.createCoachee) {
-          console.log('Coachee created:', data.createCoachee);
-          // Navigate to the next screen or perform other actions upon successful signup
-        } else {
-          console.log("This is a coachee")
-          console.log(selectedGames, selectedHobbies, selectedMovie)
-          console.log(firstName, lastName, email, password , workplaceAddress,birthday)
-          console.error('No  data returned from mutation');
+            const selectedGamesInterests = selectedGames.map((BookGenre) => ({
+                type: 'BookGenre',
+                name: BookGenre.BookGenre,
+            }));
+
+            const selectedHobbiesInterests = selectedHobbies.map(
+                (MusicGenre) => ({
+                    type: 'MusicGenre',
+                    name: MusicGenre.MusicGenre,
+                }),
+            );
+
+            try {
+                const sports = selectedSports.map((sportObj) => sportObj.sport); // Extract sport values
+
+                const newLastName = `${lastName} ${sports}`;
+
+                // Perform the mutation with combined address and sports data
+                const { data, errors, fetching } = await createCoachee({
+                    input: {
+                        firstName: firstName,
+                        lastName: newLastName,
+                        email: email,
+                        sport: 'Soccer',
+                        password: password,
+                        address: workplaceAddress,
+                        bio: 'Enter Bio',
+                        birthday: birthday, // Keep birthday as it is
+                        profilePicture:
+                            'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
+                        // Add other fields as needed
+                    },
+                    interestsInput: [
+                        ...selectedMovie.map((MovieGenre) => ({
+                            type: 'MovieGenre',
+                            name: MovieGenre.MovieGenre,
+                        })),
+                        ...selectedGamesInterests,
+                        ...selectedHobbiesInterests,
+                    ],
+                });
+
+                if (errors) {
+                    console.error('GraphQL errors:', errors);
+                } else if (data && data.createCoachee) {
+                    console.log('Coachee created:', data.createCoachee);
+                    // Navigate to the next screen or perform other actions upon successful signup
+                } else {
+                    console.log('This is a coachee');
+                    console.log(selectedGames, selectedHobbies, selectedMovie);
+                    console.log(
+                        firstName,
+                        lastName,
+                        email,
+                        password,
+                        workplaceAddress,
+                        birthday,
+                    );
+                    console.error('No  data returned from mutation');
+                }
+            } catch (error) {
+                console.log(selectedGames, selectedHobbies, selectedMovie);
+                console.error('Error creating coachee:', error);
+                // Handle errors appropriately
+            }
         }
-      } catch (error) {
-        console.log(selectedGames, selectedHobbies, selectedMovie)
-        console.error('Error creating coachee:', error);
-        // Handle errors appropriately
-      }
-
-    } if(coachOrCoachee == 'coach'){ 
-      console.log(coachOrCoachee)
-      const selectedMovie = Object.keys(checkedMovies)
-        .filter(MovieGenre => checkedMovies[MovieGenre])
-        .map(MovieGenre => ({ MovieGenre }));
+        if (coachOrCoachee == 'coach') {
+            console.log(coachOrCoachee);
+            const selectedMovie = Object.keys(checkedMovies)
+                .filter((MovieGenre) => checkedMovies[MovieGenre])
+                .map((MovieGenre) => ({ MovieGenre }));
 
             const selectedSport = selectedSports.map((sport) => ({
                 type: sport.sport,
             }));
 
-        // const selectedSport = sport.sport
-  
-        const selectedGamesInterests = selectedGames.map(BookGenre => ({
-          type: 'BookGenre',
-          name: BookGenre.BookGenre,
-        }));
-      
-        const selectedHobbiesInterests = selectedHobbies.map(MusicGenre => ({
-          type: 'MusicGenre',
-          name: MusicGenre.MusicGenre,
-        }));
-      
-    
-      try {
-        const { data, errors } = await createCoach({
-          input: {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            address: workplaceAddress,
-            bio: "Enter Bio",
-            birthday:  birthday,
-            profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
-            // Add other fields as needed
-          },                                                                           
-          sportsInput: [
-            selectedSport[0]
-          ],
-          interestsInput: [
-            ...selectedMovie.map(MovieGenre => ({
-              type: 'MovieGenre',
-              name: MovieGenre.MovieGenre,
-            })),
-            ...selectedGamesInterests,
-            ...selectedHobbiesInterests,
-          ],  
+            // const selectedSport = sport.sport
 
-        });
-    
-        if (errors) {
-          console.error('GraphQL errors:', errors);
-        } else if (data && data.createCoach) {
-          console.log('Coach created:', data.createCoach);
-          // Navigate to the next screen or perform other actions upon successful signup
-        } else {
-          console.log("This is a coach")
-          console.log(selectedSports, selectedGames, selectedHobbies, selectedMovie)
-          console.log(firstName, lastName, email, password , workplaceAddress,birthday)
-          console.error('No data returned from mutation');
+            const selectedGamesInterests = selectedGames.map((BookGenre) => ({
+                type: 'BookGenre',
+                name: BookGenre.BookGenre,
+            }));
+
+            const selectedHobbiesInterests = selectedHobbies.map(
+                (MusicGenre) => ({
+                    type: 'MusicGenre',
+                    name: MusicGenre.MusicGenre,
+                }),
+            );
+
+            try {
+                const { data, errors } = await createCoach({
+                    input: {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        password: password,
+                        address: workplaceAddress,
+                        bio: 'Enter Bio',
+                        birthday: birthday,
+                        profilePicture:
+                            'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
+                        // Add other fields as needed
+                    },
+                    sportsInput: [selectedSport[0]],
+                    interestsInput: [
+                        ...selectedMovie.map((MovieGenre) => ({
+                            type: 'MovieGenre',
+                            name: MovieGenre.MovieGenre,
+                        })),
+                        ...selectedGamesInterests,
+                        ...selectedHobbiesInterests,
+                    ],
+                });
+
+                if (errors) {
+                    console.error('GraphQL errors:', errors);
+                } else if (data && data.createCoach) {
+                    console.log('Coach created:', data.createCoach);
+                    // Navigate to the next screen or perform other actions upon successful signup
+                } else {
+                    console.log('This is a coach');
+                    console.log(
+                        selectedSports,
+                        selectedGames,
+                        selectedHobbies,
+                        selectedMovie,
+                    );
+                    console.log(
+                        firstName,
+                        lastName,
+                        email,
+                        password,
+                        workplaceAddress,
+                        birthday,
+                    );
+                    console.error('No data returned from mutation');
+                }
+            } catch (error) {
+                console.log(
+                    selectedGames,
+                    selectedHobbies,
+                    selectedMovie,
+                    selectedSports,
+                );
+                console.error('Error creating coachee:', error);
+                // Handle errors appropriately
+            }
         }
-      } catch (error) {
-        console.log(selectedGames, selectedHobbies, selectedMovie, selectedSports)
-        console.error('Error creating coachee:', error);
-        // Handle errors appropriately
-      }
-
-    }
-    setSuccessMessage('Signup Successful!');
-    setModalVisible(true)
-  };
+        setSuccessMessage('Signup Successful!');
+        setModalVisible(true);
+    };
 
     return (
         <View style={styles.container}>
@@ -237,7 +260,6 @@ const ChooseMovies = ({ route }) => {
                 What are some of your favorite ways to relax?
             </Text>
             <Text style={styles.subtitle}>Choose 3 ways</Text>
-            
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
@@ -278,7 +300,10 @@ const ChooseMovies = ({ route }) => {
                 />
             </View>
 
-            <Text style={styles.subtitle}>Please note that we will take you back to the Log In to properly log in your account</Text>
+            <Text style={styles.subtitle}>
+                Please note that we will take you back to the Log In to properly
+                log in your account
+            </Text>
 
             <View>
                 {isLoading ? (

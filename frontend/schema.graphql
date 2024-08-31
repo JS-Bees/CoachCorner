@@ -91,7 +91,7 @@ type Coachee {
   password: String!
   profilePicture: String!
   reviews: [Review]
-  sport: String
+  sport: String!
   tasks: [CoacheeTask]
   updatedAt: DateTime!
 }
@@ -181,7 +181,7 @@ input CreateCoacheeInput {
   lastName: String!
   password: String!
   profilePicture: String!
-  sport: String
+  sport: String!
 }
 
 input CreateCoacheeInterestInput {
