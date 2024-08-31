@@ -47,7 +47,6 @@ model Coachee {
   password            String   
   profilePicture      String            @map("profile_picture")
   bio                 String
-  sport               String
 
   interests           CoacheeInterest[]
   tasks               CoacheeTask[]

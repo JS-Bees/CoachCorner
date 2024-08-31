@@ -12,7 +12,6 @@ export const CreateCoacheeInput = inputObjectType({
         t.field(gqlTypes.Coachee.password);
         t.field(gqlTypes.Coachee.profilePicture);
         t.field(gqlTypes.Coachee.bio);
-        t.field(gqlTypes.Coachee.sport);
 
         // Handle the generation of the sport and interest objects in the mutations
     },
