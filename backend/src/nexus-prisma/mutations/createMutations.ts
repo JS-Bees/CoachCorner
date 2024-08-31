@@ -50,58 +50,58 @@ import {
 import { publishNewMessage } from '../subscriptions/subscriptions';
 
 // Make this accept coachee interest input
-export const createCoachee = mutationField('createCoachee', {
-    type: Coachee,
-    args: {
-        input: nonNull(arg({ type: CreateCoacheeInput })),
-        interestsInput: nonNull(
-            list(nonNull(arg({ type: CreateCoacheeInterestInput }))),
-        ),
-        // ^ not sure if this needs to be revised to not include arg
-        // if there's an issue with the args in the resolve portion start backend to generate interface
-    },
-    resolve: async (_, { input, interestsInput }, context: Context) => {
-        try {
-            // Validate the coachee input
-            coacheeSchema.validateSync(input);
+// export const createCoachee = mutationField('createCoachee', {
+//     type: Coachee,
+//     args: {
+//         input: nonNull(arg({ type: CreateCoacheeInput })),
+//         interestsInput: nonNull(
+//             list(nonNull(arg({ type: CreateCoacheeInterestInput }))),
+//         ),
+//         // ^ not sure if this needs to be revised to not include arg
+//         // if there's an issue with the args in the resolve portion start backend to generate interface
+//     },
+//     resolve: async (_, { input, interestsInput }, context: Context) => {
+//         try {
+//             // Validate the coachee input
+//             coacheeSchema.validateSync(input);
 
-            // Convert email to lowercase
-            const lowerCaseEmail = input.email.toLowerCase();
+//             // Convert email to lowercase
+//             const lowerCaseEmail = input.email.toLowerCase();
 
-            // Validate the interests input
-            interestListSchema.validateSync(interestsInput);
+//             // Validate the interests input
+//             interestListSchema.validateSync(interestsInput);
 
-            const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
-            const coacheeData = {
-                ...input,
-                password: hashedPassword,
-                email: lowerCaseEmail,
-            };
-            // Create the coachee and its interests in a single transaction
-            const coachee = await context.db.coachee.create({
-                data: {
-                    ...coacheeData,
-                    interests: {
-                        create: interestsInput,
-                    },
-                },
-                include: {
-                    interests: true,
-                },
-            });
+//             const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
+//             const coacheeData = {
+//                 ...input,
+//                 password: hashedPassword,
+//                 email: lowerCaseEmail,
+//             };
+//             // Create the coachee and its interests in a single transaction
+//             const coachee = await context.db.coachee.create({
+//                 data: {
+//                     ...coacheeData,
+//                     interests: {
+//                         create: interestsInput,
+//                     },
+//                 },
+//                 include: {
+//                     interests: true,
+//                 },
+//             });
 
-            return coachee;
-        } catch (error) {
-            // Handle validation errors or other exceptions
-            if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
-                throw new Error(error.message);
-            }
-            // Rethrow other errors
-            throw error;
-        }
-    },
-});
+//             return coachee;
+//         } catch (error) {
+//             // Handle validation errors or other exceptions
+//             if (error instanceof yup.ValidationError) {
+//                 // You can customize the error message based on the validation error
+//                 throw new Error(error.message);
+//             }
+//             // Rethrow other errors
+//             throw error;
+//         }
+//     },
+// });
 
 // Make this accept coach interest and sports input
 export const createCoach = mutationField('createCoach', {
