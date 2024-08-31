@@ -226,8 +226,8 @@ const CoacheeDashboard = () => {
 
 
     
-const lastName = coacheeData?.findCoacheeByID?.lastName || '';
-const sportType = lastName.split(' ')[1]; // Extract 
+
+const sportType = coacheeData?.findCoacheeByID?.sport
 // const sportType = "Soccer";
 const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
 
