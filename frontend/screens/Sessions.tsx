@@ -207,7 +207,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                 {filteredSessions.length > 0 ? (
                     <View>
                         <CoacheeSessions sessions={filteredSessions.map(booking => ({
-                            coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                            coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName.split(' ')[0]}`,
                             coacheeId: `${booking.coacheeId}`,
                             bookingId: Number(booking.id),
                             serviceType: `${booking.serviceType}`,

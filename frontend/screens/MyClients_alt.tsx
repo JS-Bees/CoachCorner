@@ -107,7 +107,7 @@ const MyClients_alt = () => {
 
             return {
                 id: contact.coacheeId,
-                name: `${coachee.firstName} ${coachee.lastName}`,
+                name: `${coachee.firstName} ${coachee.lastName.split(' ')[0]}`,
                 imageSource: { uri: coachee.profilePicture },
                 contactId: contact.id,
                 contactedStatus: contact.contactedStatus,

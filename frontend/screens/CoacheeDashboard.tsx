@@ -163,6 +163,7 @@ const CoacheeDashboard = () => {
         setSportsVisible(false); // Hide the sports selection
         navigation.navigate('AllCoachesPage', { selectedSport: sport });
     };
+
     
 
     useEffect(() => {
@@ -178,6 +179,9 @@ const CoacheeDashboard = () => {
         fetchUserToken();
     }, []);
 
+    
+
+
     // function to fetch coachee data by userID (token)
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
@@ -189,11 +193,13 @@ const CoacheeDashboard = () => {
 
         return coacheeResult;
     };
+    
     const {
         data: coacheeData,
         loading: coacheeLoading,
         error: coacheeError,
     } = useFetchCoacheeByUserID(userToken);
+
 
     // function to fetch coach data by userID (token)
     const useFetchCoach = (userID: any) => {
@@ -213,40 +219,49 @@ const CoacheeDashboard = () => {
     if (!fontsloaded) {
         return null;
     }
-    
+
+
     const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
     const coaches = coachData?.coaches || [];
+
+
     
-    const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
-    
-    const findMatchingInterestsCount = (coacheeInterests, coachInterests) => {
-        return genreTypes.reduce((count, genreType) => {
-            const coacheeInterest = coacheeInterests.find(interest => interest.type === genreType);
-            const coachInterest = coachInterests.find(interest => interest.type === genreType);
-            return count + (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name ? 1 : 0);
-        }, 0);
-    };
-    
-    const matchedCoaches = coaches.map(coach => {
-        if (!coach) {
-            console.log("Coach data is undefined.");
-            return null;
-        }
-    
-        const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
-        return { coach, matchingInterestCount };
-    }).filter(coach => coach !== null).sort((a, b) => b!.matchingInterestCount - a!.matchingInterestCount);
-    
-    if (matchedCoaches.length === 0) {
-        const randomIndex = Math.floor(Math.random() * coaches.length);
-        const randomCoach = coaches[randomIndex];
-        matchedCoaches.push({ coach: randomCoach, matchingInterestCount: 0 });
-    }
-    
-    // Log matched coaches
-    console.log('Matched Coaches:', matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`));
-    const matchedCoachesNames = matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`);
-    
+const lastName = coacheeData?.findCoacheeByID?.lastName || '';
+const sportType = lastName.split(' ')[1]; // Extract 
+// const sportType = "Soccer";
+const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+
+// Filter coaches based on the specified sport type (Basketball)
+const filteredCoaches = coaches.filter(coach =>
+    coach.sports?.some(sport => sport.type === sportType)
+);
+
+const findMatchingInterestsCount = (coacheeInterests, coachInterests) => {
+  return genreTypes.reduce((count, genreType) => {
+    const coacheeInterest = coacheeInterests.find(interest => interest.type === genreType);
+    const coachInterest = coachInterests.find(interest => interest.type === genreType);
+    return count + (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name ? 1 : 0);
+  }, 0);
+};
+
+const matchedCoaches = filteredCoaches
+  .map(coach => {
+    const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
+    return { coach, matchingInterestCount };
+  })
+  .filter(coach => coach !== null)
+  .sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
+
+if (matchedCoaches.length === 0) {
+  const randomIndex = Math.floor(Math.random() * filteredCoaches.length);
+  const randomCoach = filteredCoaches[randomIndex];
+  matchedCoaches.push({ coach: randomCoach, matchingInterestCount: 0 });
+}
+
+// Log matched coaches
+console.log('Matched Coaches:', matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`));
+const matchedCoachesNames = matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`);
+
 const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
 
 // Compute the total star rating for each coach and then select the top two with the highest star ratings

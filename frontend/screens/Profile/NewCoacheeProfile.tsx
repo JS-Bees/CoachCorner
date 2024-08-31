@@ -97,7 +97,7 @@ const NewCoacheeProfile = () => {
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
-            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
+            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName.split(' ')[0]),
             // mainSport: "Basketball",
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,

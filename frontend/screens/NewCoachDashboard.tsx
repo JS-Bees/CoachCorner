@@ -287,7 +287,7 @@ const NewCoachDashboard = () => {
                     {filteredBookings && filteredBookings.length > 0 ? (
                         <UpcomingDashboard
                             upcoming={(filteredBookings || []).map((booking: Booking) => ({
-                                traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                                traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName.split(' ')[0]}`,
                                 imageSource: { uri: booking.coachee.profilePicture },
                                 time: booking.bookingSlots.map((slot) => ({
                                     startTime: format(new Date(slot.startTime), 'h:mm a'),

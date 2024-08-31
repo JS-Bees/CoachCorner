@@ -105,16 +105,17 @@ const ChooseMovies = ({ route }) => {
         try {
         
           const sports = selectedSports.map(sportObj => sportObj.sport); // Extract sport values
-          const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
-      
+         
+        const newLastName = `${lastName} ${sports}`;
+
           // Perform the mutation with combined address and sports data
           const { data, errors, fetching } = await createCoachee({
             input: {
               firstName: firstName,
-              lastName: lastName,
+              lastName: newLastName,
               email: email,
               password: password,
-              address: addressWithSports,
+              address: workplaceAddress,
               bio: "Enter Bio",
               birthday: birthday, // Keep birthday as it is
               profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
@@ -233,47 +234,46 @@ const ChooseMovies = ({ route }) => {
             </TouchableOpacity>
             <Text style={styles.header}>
                 {' '}
-                Which genre of movies do you prefer to enjoy during your
-                downtime?
+                What are some of your favorite ways to relax?
             </Text>
-            <Text style={styles.subtitle}>Choose 3 Genres</Text>
+            <Text style={styles.subtitle}>Choose 3 ways</Text>
             
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
                     checked={checkedMovies.Romance}
                     checkedColor="#7E3FF0"
-                    label="Romance"
+                    label="Reading"
                     onPress={() => handleCheckboxChange('Romance')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Horror}
                     checkedColor="#7E3FF0"
-                    label="Horror"
+                    label="Watching movies"
                     onPress={() => handleCheckboxChange('Horror')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Action}
                     checkedColor="#7E3FF0"
-                    label="Action"
+                    label="Listening to music"
                     onPress={() => handleCheckboxChange('Action')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Comedy}
                     checkedColor="#7E3FF0"
-                    label="Comedy"
+                    label="Exercising"
                     onPress={() => handleCheckboxChange('Comedy')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Thriller}
                     checkedColor="#7E3FF0"
-                    label="Thriller"
+                    label="Cooking"
                     onPress={() => handleCheckboxChange('Thriller')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Drama}
                     checkedColor="#7E3FF0"
-                    label="Drama"
+                    label="Napping"
                     onPress={() => handleCheckboxChange('Drama')}
                 />
             </View>
