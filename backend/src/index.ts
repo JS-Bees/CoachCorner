@@ -28,11 +28,11 @@ const PORT = 5050;
 const db = new PrismaClient();
 
 const schema = makeSchema({
-    // nonNullDefaults: {
-    //     // defaults to non-nullable (e.g. Person!)
-    //     input: true,
-    //     output: true,
-    // },
+    nonNullDefaults: {
+        // defaults to non-nullable (e.g. Person!)
+        input: true,
+        output: true,
+    },
     types: [
         objectTypes,
         inputTypes,
@@ -40,7 +40,7 @@ const schema = makeSchema({
         filteredQueries,
         createMutation,
         updateMutation,
-        // // fauxDeleteMutations,
+        // // // fauxDeleteMutations,
         subscriptions,
     ],
     outputs: {
