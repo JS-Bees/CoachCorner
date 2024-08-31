@@ -39,12 +39,10 @@ type Props = {
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
 
-    // Console logs
-    // console.log('Sender Name:', chatMessage.sender);
-    // console.log('image url', chatMessage.imageUrl.uri);
-    console.log('Contact IDzzz', chatMessage.id);
-    // console.log('Type of Contact ID', typeof chatMessage.id);
+    console.log("--------------------------------------")
+    console.log('Contact ID', + chatMessage.id);
     console.log('Contacted Status', chatMessage.contactedStatus);
+    console.log("--------------------------------------")
 
     const imageSource = chatMessage.imageUrl;
 
@@ -112,13 +110,30 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     };
 
     const handleNavigateToBooking = () => {
-        navigation.navigate('NewBookingPage');
+        console.log(chatMessage.coacheeId, "the id")
+        navigation.navigate('NewBookingPage', {coacheeId: chatMessage.coacheeId, coacheeName: chatMessage.sender,});
+
     };
 
+   
+
+
+
+    console.log("coacheeId = ", chatMessage.coacheeId)
+
+
     const handleSendMessage = async (content: string) => {
+        // Check if the message content is not empty
+        if (content.trim() === '') {
+            console.log(chatMessage.coacheeId)
+            console.log('Cannot send an empty message.');
+            return; // Exit the function if the message is empty
+        }
+    
         try {
+            console.log('Coach ID:', chatMessage.id);
             setCurrentMessage('');
-            const messageContent = content + ',;,';
+            const messageContent = content + ',;,'
             const response = await setCreateMessage({
                 input: {
                     contactId: chatMessage.id,
@@ -127,7 +142,6 @@ const ChatPage: React.FC<Props> = ({ route }) => {
             });
             console.log('Message created:', response.data);
         } catch (error) {
-            // Handle error, e.g., show an error message
             console.log(error);
         }
     };
@@ -187,11 +201,12 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     style={styles.bookmark}
                     onPress={handleNavigateToBooking}
                 >
-                    <MaterialIcons
-                        name="bookmark-outline"
+                    {/* <MaterialIcons
+                        name="more-time"
                         size={30}
                         color="#7E3FF0"
-                    />
+                    /> */}
+                    <Text style={styles.buttonText}>Add Appointment</Text>
                 </TouchableOpacity>
             </View>
             <View
@@ -201,7 +216,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                 }}
             >
                 <FlatList
-                    style={{ flex: 1 }}
+                     style={{ flex: 1, padding: 10, paddingBottom: 20,  }}
                     data={messages.slice().reverse()}
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
@@ -281,6 +296,7 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         marginLeft: 10,
+        width: "50%"
     },
     bookmark: {
         marginLeft: 'auto',
@@ -324,22 +340,28 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         padding: 10,
         marginBottom: 10,
-        alignSelf: 'flex-end', // Align the chat bubble to the right
-        flexWrap: 'wrap', // Allow the bubble to grow according to the content
+        alignSelf: 'flex-end',
+        maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
+        overflow: 'visible', // Ensure text can overflow the container
     },
     chatBubbleLeft: {
         backgroundColor: 'lightgray',
         borderRadius: 15,
         padding: 10,
         marginBottom: 10,
-        alignSelf: 'flex-start', // Align the chat bubble to the left
-        flexWrap: 'wrap', // Allow the bubble to grow according to the content
+        alignSelf: 'flex-start',
+        maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
+        overflow: 'visible', // Ensure text can overflow the container
     },
     messageTextRight: {
         color: 'white',
     },
     messageTextLeft: {
         color: 'black',
+    },
+    buttonText: {
+        fontStyle: "italic",
+        color: "#7E3FF0"
     },
 });
 

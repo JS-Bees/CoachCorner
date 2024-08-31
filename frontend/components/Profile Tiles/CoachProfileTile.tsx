@@ -52,6 +52,7 @@ const CoachProfiles: React.FC<CoachProfilesProp> = ({ profiles }) => {
   
 
     return (
+      
       <View style={CoachProfileStyle.coachProfiles}>
       {visibleProfiles.map((profile, index) => (
         <TouchableOpacity

@@ -250,6 +250,7 @@ type Message {
 }
 
 type Mutation {
+
   coachLogin(email: String!, password: String!): Coach
   coacheeLogin(email: String!, password: String!): Coachee
   createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking
@@ -294,6 +295,7 @@ type Query {
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach]
   findOneToOneServiceSlotsByCoachId(coachId: Int!): [SlotTime]!
   findfilteredMessagesByContactId(contactId: Int!, numberOfMessages: Int!): [Message]
+
 }
 
 type Review {

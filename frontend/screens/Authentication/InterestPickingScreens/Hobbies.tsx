@@ -80,17 +80,16 @@ const handleButtonPress = () => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-      <Text style={styles.header}> Which genre of music do you prefer to enjoy during your downtime?</Text>
-      <Text style={styles.subtitle}>Choose maximum of 3</Text>
+      <Text style={styles.header}>What hobbies do you prefer on your down time?</Text>
+      <Text style={styles.subtitle}>Choose 3 Hobbies</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedHobby.Rock} checkedColor='#7E3FF0' label="Rock" onPress={() => handleCheckboxChange('Rock')} />
-        <CustomCheckBox checked={checkedHobby.Jazz} checkedColor='#7E3FF0' label="Jazz" onPress={() => handleCheckboxChange('Jazz')} />
-        <CustomCheckBox checked={checkedHobby.Classical} checkedColor='#7E3FF0' label="Classical" onPress={() => handleCheckboxChange('Classical')} />
-        <CustomCheckBox checked={checkedHobby.Pop} checkedColor='#7E3FF0' label="Pop" onPress={() => handleCheckboxChange('Pop')} />
-        <CustomCheckBox checked={checkedHobby['K-Pop']} checkedColor='#7E3FF0' label="Pop" onPress={() => handleCheckboxChange('K-Pop')} />
-        <CustomCheckBox checked={checkedHobby.OPM} checkedColor='#7E3FF0' label="OPM" onPress={() => handleCheckboxChange('OPM')} />
-    
+        <CustomCheckBox checked={checkedHobby.Rock} checkedColor='#7E3FF0' label="Reading a Book" onPress={() => handleCheckboxChange('Rock')} />
+        <CustomCheckBox checked={checkedHobby.Jazz} checkedColor='#7E3FF0' label="Playing Games" onPress={() => handleCheckboxChange('Jazz')} />
+        <CustomCheckBox checked={checkedHobby.Classical} checkedColor='#7E3FF0' label="Playing an Instrument" onPress={() => handleCheckboxChange('Classical')} />
+        <CustomCheckBox checked={checkedHobby.Pop} checkedColor='#7E3FF0' label="Arts and Crafts" onPress={() => handleCheckboxChange('Pop')} />
+        <CustomCheckBox checked={checkedHobby['K-Pop']} checkedColor='#7E3FF0' label="Hiking" onPress={() => handleCheckboxChange('K-Pop')} />
+        <CustomCheckBox checked={checkedHobby.OPM} checkedColor='#7E3FF0' label="Gardening" onPress={() => handleCheckboxChange('OPM')} />
       </View>
 
 

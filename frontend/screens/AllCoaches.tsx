@@ -17,6 +17,9 @@ import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native
 import { FindCoachesBySportDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/LoadingSplash';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,8 +29,7 @@ const { width, height } = Dimensions.get('window');
 
 const AllCoaches = ({route}) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
@@ -81,11 +83,15 @@ const AllCoaches = ({route}) => {
 
         console.log(coacheeData?.findCoacheeByID.firstName)
 
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
     // Extract coaches data from the GraphQL response
+    
     const coaches = data.findCoachesBySport;
+    const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png');
+
+    
 
         // Map over the coaches array to create a new array of Profile objects
         const AllCoaches: Profile[] = coaches.map(coach => {
@@ -95,7 +101,9 @@ const AllCoaches = ({route}) => {
             return {
                 id: coach.id,
                 name: `${coach.firstName} ${coach.lastName}`,
-                imageSource:  { uri: coach.profilePicture },
+                imageSource: coach.profilePicture?.startsWith("https://res.cloudinary.com")
+                    ? { uri: coach.profilePicture }
+                    : DEFAULT_PROFILE_PICTURE,
                 gainedStars: averageStars, // Use the calculated average stars
                 mainSport: selectedSport, // Assuming mainSport is the selected sport
                 about: coach.bio,
@@ -126,7 +134,7 @@ const AllCoaches = ({route}) => {
             <KeyboardAvoidingView
             style={MyCoaches.container}
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            <View style={MyCoaches.searchContainer}>
+            {/* <View style={MyCoaches.searchContainer}>
                 <SearchBar
                  placeholder='Search Coach'
                  onChangeText={handleSearchChange}
@@ -134,9 +142,9 @@ const AllCoaches = ({route}) => {
                  platform='android'
                  containerStyle={MyCoaches.searchBarContainer}
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
-            </View>
+            </View> */}
 
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250}}>
+            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "3%", height: 250, marginLeft: '4%'}}>
                <View>
                <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
                </View>

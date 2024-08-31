@@ -73,6 +73,7 @@ mutation CreateBooking(
             lastName
         }
         coachee {
+            id
             firstName
             lastName
         }
@@ -118,8 +119,23 @@ mutation CreateCoacheeTask($input: CreateCoacheeTaskInput!) {
 }
 
 mutation CreateSportsCredentials($input: CreateSportsCredentialsInput!) {
-  createSportsCredentials(input: $input) {
-    credentialPicture
-    
-  }
+    createSportsCredentials(input: $input) {
+        credentialPicture
+    }
+}
+
+mutation CoachLogin($email: String!, $password: String!) {
+    coachLogin(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+    }
+}
+
+mutation CoacheeLogin($email: String!, $password: String!) {
+    coacheeLogin(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+    }
 }

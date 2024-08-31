@@ -463,6 +463,7 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
   }
   Mutation: { // field return type
+
     coachLogin: NexusGenRootTypes['Coach'] | null; // Coach
     coacheeLogin: NexusGenRootTypes['Coachee'] | null; // Coachee
     createBooking: NexusGenRootTypes['Booking'] | null; // Booking
@@ -506,6 +507,7 @@ export interface NexusGenFieldTypes {
     findNonContactCoachesBySport: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
     findOneToOneServiceSlotsByCoachId: Array<NexusGenRootTypes['SlotTime'] | null>; // [SlotTime]!
     findfilteredMessagesByContactId: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
+
   }
   Review: { // field return type
     active: boolean; // Boolean!
@@ -520,9 +522,11 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   SlotTime: { // field return type
+
     date: NexusGenScalars['DateTime'] | null; // DateTime
     endTime: NexusGenScalars['DateTime'] | null; // DateTime
     startTime: NexusGenScalars['DateTime'] | null; // DateTime
+
   }
   Sport: { // field return type
     active: boolean; // Boolean!

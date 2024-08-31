@@ -728,11 +728,13 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
                 // Extract start and end times from booking slots
                 const slotTimes = bookings.flatMap((booking) =>
                     booking.bookingSlots.map((slot) => ({
+
                         date: slot.date,
                         startTime: slot.startTime, // Assuming startTime and endTime are Date objects
                         endTime: slot.endTime,
                     })),
                 );
+
 
                 return slotTimes;
             } catch (error) {

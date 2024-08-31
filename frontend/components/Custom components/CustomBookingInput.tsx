@@ -25,6 +25,7 @@ const CustomInput: React.FC<CustomInputProps> = ({style, textAlignVertical, mult
         value={value}
         editable={editable}
         onChangeText={onChangeText}
+        maxLength={editable? 5 : undefined}
       />
     </View>
   );

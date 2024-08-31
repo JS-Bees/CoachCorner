@@ -10,6 +10,8 @@ import { FindCoacheeByIdDocument,} from '../../generated-gql/graphql';
 import { useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
+import SplashScreen from '../Authentication/LoadingSplash';
+import { StackNavigationProp } from '@react-navigation/stack';
 // import  Cloudinary  from "cloudinary-react-native";
 
 
@@ -31,7 +33,7 @@ interface CoacheeProfile {
 
 
 const NewCoacheeProfile = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const pagerRef = useRef<PagerView>(null);
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition] = useState<'left' | 'right'>('right');
@@ -60,6 +62,7 @@ const NewCoacheeProfile = () => {
     
         fetchUserToken();
     }, []);
+    if (fetching) return <SplashScreen navigation={navigation} />;
 
     
     const toggleDrawer = () => {
@@ -94,11 +97,12 @@ const NewCoacheeProfile = () => {
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
-            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
+            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName.split(' ')[0]),
             // mainSport: "Basketball",
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
             achievements: "None at the moment",
+            // address: coacheeData?.findCoacheeByID.address.split('|')[0], // Extract address before |
             address: coacheeData?.findCoacheeByID.address,
             age: 19,
             interests: coacheeData?.findCoacheeByID.interests.reduce((acc, interest) => {
@@ -147,6 +151,8 @@ const NewCoacheeProfile = () => {
         </View>
     );
 
+    
+
     return (
         <DrawerLayoutAndroid
             ref={drawer}
@@ -165,18 +171,14 @@ const NewCoacheeProfile = () => {
                             <Icon name="settings-outline" size={30} color="#FDDE6E" style={styles.settingsIcon} />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName},  {CoacheeProfiles[0].age}</Text>
-                    {/* <Text style={styles.subText}>{CoacheeProfiles[0].mainSport}</Text> */}
+                    <View>
+                    <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName}</Text>
+                    </View>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>
                             <Text style={styles.buttonHeader}>About</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => goToPage(1)} style={[styles.tabButton, activeTab === 1 && styles.activeTabButton]}>
-                            <Text style={styles.buttonHeader}>Achievements</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => goToPage(2)} style={[styles.tabButton, activeTab === 2 && styles.activeTabButton]}>
-                            <Text style={styles.buttonHeader}>Affliates</Text>
-                        </TouchableOpacity>
+
                     </View>
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>
                         <View key="1">
@@ -204,12 +206,7 @@ const NewCoacheeProfile = () => {
                             </View>
                            </ScrollView>
                         </View>
-                        <View key="2">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
-                        </View>
-                        <View key="3">
-                            <Text style={styles.achievementsText}>{CoacheeProfiles[0].achievements}</Text>
-                        </View>
+                      
                     </PagerView>
                 </View>
             </View>
@@ -251,7 +248,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         paddingTop: "5%",
-        right: "14%",
+        paddingRight: "45%",
         fontSize: 25,
         fontWeight: "400",
         color: "#7E3FF0"
@@ -274,13 +271,12 @@ const styles = StyleSheet.create({
     },
     tabContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        marginLeft: "10%",
         paddingVertical: 10,
         width: '100%',
     },
     tabButton: {
         padding: 10,
-        alignItems: "center"
     },
     pagerView: {
         flex: 1,

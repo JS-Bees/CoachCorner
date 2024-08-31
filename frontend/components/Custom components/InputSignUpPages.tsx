@@ -10,7 +10,7 @@ interface InputSignUpPagesProps extends TextInputProps {
   passwordToMatch?: string;
   checkForInteger?: boolean;
   checkEmailEnding?: boolean;
-  editable?: boolean; // Add the editable prop
+  editable?: boolean;
 }
 
 const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
@@ -19,7 +19,7 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
   placeholder,
   secureTextEntry,
   passwordToMatch,
-  checkForInteger, 
+  checkForInteger,
   checkEmailEnding,
   editable = true
 }) => {
@@ -27,21 +27,22 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
   const [errorText, setErrorText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-
   useEffect(() => {
-    if (passwordToMatch !== undefined && value !== passwordToMatch) {
-      setErrorText('Passwords do not match');
-    } else if (checkForInteger && /\d/.test(value)) {
-      setErrorText('Input cannot contain numbers');
-    } else if (checkEmailEnding && value.trim() !== '') {
-      if (!value.match(/.{5,}@gmail.com$/)) {
-        setErrorText('Invalid email, should end with "@gmail.com"');
-      } else if (
-        !value.endsWith('.com') &&
-        !value.endsWith('.co.uk') &&
-        !value.endsWith('.edu')
-      ) {
-        setErrorText('Invalid email ending');
+    if (value.trim() !== '') {
+      if (passwordToMatch !== undefined && value !== passwordToMatch) {
+        setErrorText('Passwords do not match');
+      } else if (secureTextEntry && value.length < 5) {
+        setErrorText('Password must be at least 5 characters long');
+      } else if (secureTextEntry && !/\d/.test(value)) {
+        setErrorText('Password must contain at least one number');
+      } else if (checkForInteger && /\d/.test(value)) {
+        setErrorText('Input cannot contain numbers');
+      } else if (checkEmailEnding) {
+        if (!value.match(/.{5,}@.+\.(com|co\.uk|edu|ph|gov)$/)) {
+          setErrorText('Invalid email, please input a proper email');
+        } else {
+          setErrorText('');
+        }
       } else {
         setErrorText('');
       }
@@ -49,7 +50,6 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
       setErrorText('');
     }
   }, [value, passwordToMatch, checkForInteger, checkEmailEnding]);
-  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -63,19 +63,17 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
     setIsFocused(false);
   };
 
-  const inputStyle = {  
+  const inputStyle = {
     height: 40,
     borderColor: isFocused ? '#7E3FF0' : (editable ? '#D4C5ED' : '#D8D5DB'),
     borderWidth: 1.5,
     borderRadius: 10,
     marginBottom: 10,
-    paddingLeft: 40, // Adjust paddingLeft to make space for the eye icon
-    paddingRight: 10, // Adjust paddingRight as needed
+    paddingLeft: 40,
+    paddingRight: 10,
     width: 300,
-    flexDirection: 'row', // Add flexDirection to align icon and input horizontally
-    
+    flexDirection: 'row',
   };
-
 
   return (
     <View style={styles.container}>
@@ -99,7 +97,6 @@ const InputSignUpPages: React.FC<InputSignUpPagesProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
         />
-        
 
         {secureTextEntry && (
           <TouchableOpacity 
@@ -147,7 +144,7 @@ const styles = StyleSheet.create({
     paddingRight: 30,
   },
   errorContainer: {
-    marginTop: 5, // Adjust this margin as needed
+    marginTop: 5,
   },
   errorText: {
     color: 'red',
@@ -155,7 +152,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   focusedInputContainer: {
-    borderColor: 'blue', // Add the focused border color
+    borderColor: 'blue',
   },
   eyeIcon: {
     position: 'absolute',

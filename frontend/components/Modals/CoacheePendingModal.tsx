@@ -30,7 +30,7 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
   
 
   const navigateToChat = () => {
-    navigation.navigate('ChatPage');
+    navigation.navigate('ChatList');
   };
 
   const handleConfirmSchedule = () => {
@@ -41,6 +41,7 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
       };
       updateBookingStatus(variables);
       toggleOverlay(null); // Close the modal
+      alert('Confirmed Schedule');
     } else {
       console.error("Cannot update status ");
     }
@@ -56,13 +57,13 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
     }
   }, [result]);
 
-  console.log("Session in modal:", session)
+  // console.log("Session in modal:", session)
 
   
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
-    overlayStyle={styles.overlay} animationType="fade"  >
+    overlayStyle={styles.overlay} animationType="none"  >
       <View style={styles.container}>
         {session && (
           <>

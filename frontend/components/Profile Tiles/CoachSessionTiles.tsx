@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import CoacheePendingModal from '../Modals/CoacheePendingModal';
 import CoacheeUpcomingModal from '../Modals/CoacheeUpcomingModal';
+import CoacheeCompletedModal from '../Modals/CoacheeCompletedSessionModal';
+
 import { format} from 'date-fns';
 import { Dimensions } from 'react-native';
 
@@ -37,6 +39,7 @@ const CoachSessions: React.FC<CoacheeSessionsProp> = ({ sessions }) => {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false);
   const [isUpcomingModalVisible, setUpcomingModalVisible] = useState(false);
+  const [isCompletedModalVisible, setCompletedModalVisible] = useState(false);
 
   const toggleOverlay = (session: Session | null) => {
     setSelectedSession(session);
@@ -44,13 +47,21 @@ const CoachSessions: React.FC<CoacheeSessionsProp> = ({ sessions }) => {
       if (session.status === 'PENDING') {
         setPendingModalVisible(true);
         setUpcomingModalVisible(false);
+        setCompletedModalVisible(false);
       } else if (session.status === 'UPCOMING') {
         setPendingModalVisible(false);
         setUpcomingModalVisible(true);
+        setCompletedModalVisible(false);
+      } else if (session.status === 'COMPLETED') {
+        setPendingModalVisible(false);
+        setUpcomingModalVisible(false);
+        setCompletedModalVisible(true);
       }
+
     } else {
       setPendingModalVisible(false);
       setUpcomingModalVisible(false);
+      setCompletedModalVisible(false);
     }
   };
   
@@ -102,6 +113,11 @@ const CoachSessions: React.FC<CoacheeSessionsProp> = ({ sessions }) => {
         visible={isUpcomingModalVisible}
         session={selectedSession}
         toggleOverlay={() => setUpcomingModalVisible(false)}
+      />
+      <CoacheeCompletedModal
+        visible={isCompletedModalVisible}
+        session={selectedSession}
+        toggleOverlay={() => setCompletedModalVisible(false)}
       />
     </View>
     );

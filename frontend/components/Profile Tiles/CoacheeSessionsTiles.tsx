@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import PendingModal from '../Modals/CoachPendingSessionModal';
 import UpcomingModal from '../Modals/CoachUpcomingSessionModal'
+import CompletedModal from '../Modals/CoachCompletedSessionModal';
 import { format} from 'date-fns';
 import { Dimensions } from 'react-native';
 
@@ -38,6 +39,7 @@ const CoacheeSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [isPendingModalVisible, setPendingModalVisible] = useState(false);
   const [isUpcomingModalVisible, setUpcomingModalVisible] = useState(false);
+  const [isCompletedModalVisible, setCompletedModalVisible] = useState(false);
 
   const toggleOverlay = (session: Session | null) => {
     setSelectedSession(session);
@@ -45,13 +47,20 @@ const CoacheeSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
       if (session.status === 'PENDING') {
         setPendingModalVisible(true);
         setUpcomingModalVisible(false);
+        setCompletedModalVisible(false);
       } else if (session.status === 'UPCOMING') {
         setPendingModalVisible(false);
         setUpcomingModalVisible(true);
+        setCompletedModalVisible(false);
+      } else if (session.status === 'COMPLETED') {
+        setCompletedModalVisible(true);
+        setPendingModalVisible(false);
+        setUpcomingModalVisible(false);
       }
     } else {
       setPendingModalVisible(false);
       setUpcomingModalVisible(false);
+      setCompletedModalVisible(false);
     }
   };
   
@@ -103,6 +112,11 @@ const CoacheeSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
         visible={isUpcomingModalVisible}
         session={selectedSession}
         toggleOverlay={() => setUpcomingModalVisible(false)}
+      />
+      <CompletedModal
+        visible={isCompletedModalVisible}
+        session={selectedSession}
+        toggleOverlay={() => setCompletedModalVisible(false)}
       />
     </View>
     );
