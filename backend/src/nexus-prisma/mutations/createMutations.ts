@@ -46,7 +46,6 @@ import {
     reviewSchema,
     sportSchema,
     sportsCredentialsSchema,
-    loginSchema,
 } from '../validation';
 import { publishNewMessage } from '../subscriptions/subscriptions';
 
@@ -68,7 +67,6 @@ export const createCoachee = mutationField('createCoachee', {
 
             // Convert email to lowercase
             const lowerCaseEmail = input.email.toLowerCase();
-
 
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
@@ -126,7 +124,6 @@ export const createCoach = mutationField('createCoach', {
 
             // Convert email to lowercase
             const lowerCaseEmail = input.email.toLowerCase();
-
 
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
@@ -496,13 +493,11 @@ export const coachLogin = mutationField('coachLogin', {
             // Validate arguments using the yup schema
             loginSchema.validateSync({ email, password });
 
-
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
 
             const coach = await context.db.coach.findUnique({
                 where: { email: lowerCaseEmail, active: true },
-
             });
 
             if (coach) {
@@ -541,14 +536,12 @@ export const coacheeLogin = mutationField('coacheeLogin', {
             // Validate arguments using the yup schema
             loginSchema.validateSync({ email, password });
 
-
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
 
             // Search for a Coachee with the provided email
             const coachee = await context.db.coachee.findUnique({
                 where: { email: lowerCaseEmail, active: true }, // Include the 'active' condition
-
             });
 
             if (coachee) {
