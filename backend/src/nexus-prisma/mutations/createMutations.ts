@@ -42,6 +42,7 @@ import {
     contactSchema,
     interestListSchema,
     interestSchema,
+    loginSchema,
     reviewSchema,
     sportSchema,
     sportsCredentialsSchema,
@@ -66,13 +67,18 @@ export const createCoachee = mutationField('createCoachee', {
             coacheeSchema.validateSync(input);
 
             // Convert email to lowercase
-            input.email = input.email.toLowerCase();
+            const lowerCaseEmail = input.email.toLowerCase();
+
 
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
 
             const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
-            const coacheeData = { ...input, password: hashedPassword };
+            const coacheeData = {
+                ...input,
+                password: hashedPassword,
+                email: lowerCaseEmail,
+            };
             // Create the coachee and its interests in a single transaction
             const coachee = await context.db.coachee.create({
                 data: {
@@ -119,7 +125,8 @@ export const createCoach = mutationField('createCoach', {
             coachSchema.validateSync(input);
 
             // Convert email to lowercase
-            input.email = input.email.toLowerCase();
+            const lowerCaseEmail = input.email.toLowerCase();
+
 
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
@@ -130,7 +137,11 @@ export const createCoach = mutationField('createCoach', {
             }
 
             const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
-            const coachData = { ...input, password: hashedPassword };
+            const coachData = {
+                ...input,
+                password: hashedPassword,
+                email: lowerCaseEmail,
+            };
             // Create the coach, its interests, and its sports in a single transaction
             const coach = await context.db.coach.create({
                 data: {
@@ -485,8 +496,13 @@ export const coachLogin = mutationField('coachLogin', {
             // Validate arguments using the yup schema
             loginSchema.validateSync({ email, password });
 
+
+            // Convert email to lowercase
+            const lowerCaseEmail = email.toLowerCase();
+
             const coach = await context.db.coach.findUnique({
-                where: { email, active: true },
+                where: { email: lowerCaseEmail, active: true },
+
             });
 
             if (coach) {
@@ -525,9 +541,14 @@ export const coacheeLogin = mutationField('coacheeLogin', {
             // Validate arguments using the yup schema
             loginSchema.validateSync({ email, password });
 
+
+            // Convert email to lowercase
+            const lowerCaseEmail = email.toLowerCase();
+
             // Search for a Coachee with the provided email
             const coachee = await context.db.coachee.findUnique({
-                where: { email, active: true }, // Include the 'active' condition
+                where: { email: lowerCaseEmail, active: true }, // Include the 'active' condition
+
             });
 
             if (coachee) {

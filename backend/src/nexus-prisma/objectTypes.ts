@@ -21,6 +21,7 @@ export const Coachee = objectType({
         t.field(gqlTypes.Coachee.password);
         t.field(gqlTypes.Coachee.profilePicture);
         t.field(gqlTypes.Coachee.bio);
+        t.field(gqlTypes.Coachee.sport);
 
         // t.field(gqlTypes.Coachee.interests);
         t.list.field('interests', {
@@ -482,13 +483,6 @@ export const Message = objectType({
     },
 });
 
-// export const SlotTime = objectType({
-//     name: 'SlotTime',
-//     definition(t) {
-//         t.dateTime('startTime');
-//         t.dateTime('endTime');
-//     },
-// });
 
 export const SlotTime = objectType({
     name: 'SlotTime',
