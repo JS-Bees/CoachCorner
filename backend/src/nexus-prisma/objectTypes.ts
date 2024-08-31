@@ -483,7 +483,6 @@ export const Message = objectType({
     },
 });
 
-
 export const SlotTime = objectType({
     name: 'SlotTime',
     definition(t) {

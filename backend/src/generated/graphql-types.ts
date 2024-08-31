@@ -72,7 +72,7 @@ export interface NexusGenInputs {
     lastName: string; // String!
     password: string; // String!
     profilePicture: string; // String!
-    sport?: string | null; // String
+    sport: string; // String!
   }
   CreateCoacheeInterestInput: { // input type
     name: string; // String!
@@ -252,7 +252,7 @@ export interface NexusGenObjects {
     lastName: string; // String!
     password: string; // String!
     profilePicture: string; // String!
-    sport?: string | null; // String
+    sport: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoacheeInterest: { // root type
@@ -417,7 +417,7 @@ export interface NexusGenFieldTypes {
     password: string; // String!
     profilePicture: string; // String!
     reviews: Array<NexusGenRootTypes['Review'] | null> | null; // [Review]
-    sport: string | null; // String
+    sport: string; // String!
     tasks: Array<NexusGenRootTypes['CoacheeTask'] | null> | null; // [CoacheeTask]
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
