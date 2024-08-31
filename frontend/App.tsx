@@ -77,15 +77,15 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    url: 'ws://192.168.1.6:5050/graphql',
-    // url: apiUrlWs!,
+    // url: 'ws://192.168.1.6:5050/graphql',
+    url: apiUrlWs!,
 });
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.6:5050/graphql',
-    // url: apiUrl!,
+    // url: 'http://192.168.1.6:5050/graphql',
+    url: apiUrl!,
     // fetchSubscriptions: true, // added this tog try and fix fetching
     exchanges: [
         cacheExchange,

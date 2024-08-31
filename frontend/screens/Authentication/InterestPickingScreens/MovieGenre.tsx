@@ -107,13 +107,15 @@ const ChooseMovies = ({ route }) => {
 
                 const newLastName = `${lastName} ${sports}`;
 
+                const chosenSport = sports.join(', ');
+
                 // Perform the mutation with combined address and sports data
                 const { data, errors, fetching } = await createCoachee({
                     input: {
                         firstName: firstName,
-                        lastName: newLastName,
+                        lastName: lastName,
                         email: email,
-                        sport: 'Soccer',
+                        sport: chosenSport,
                         password: password,
                         address: workplaceAddress,
                         bio: 'Enter Bio',
