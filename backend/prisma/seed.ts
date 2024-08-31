@@ -79,6 +79,7 @@ async function seedDatabase() {
                     birthday: new Date(),
                     bio: 'Enter bio here',
                     profilePicture: 'profile picture',
+                    sport: 'Soccer',
                 },
                 {
                     email: 'coachee2@example.com',
@@ -89,6 +90,7 @@ async function seedDatabase() {
                     birthday: new Date(),
                     bio: 'Enter bio here',
                     profilePicture: 'profile picture',
+                    sport: 'Soccer',
                 },
                 {
                     email: 'coachee3@example.com',
@@ -99,6 +101,7 @@ async function seedDatabase() {
                     birthday: new Date(),
                     bio: 'Enter bio here',
                     profilePicture: 'profile picture',
+                    sport: 'Soccer',
                 },
                 {
                     email: 'coachee4@example.com',
@@ -109,6 +112,7 @@ async function seedDatabase() {
                     birthday: new Date(),
                     bio: 'Enter bio here',
                     profilePicture: 'profile picture',
+                    sport: 'Soccer',
                 },
                 {
                     email: 'coachee5@example.com',
@@ -119,6 +123,7 @@ async function seedDatabase() {
                     birthday: new Date(),
                     bio: 'Enter bio here',
                     profilePicture: 'profile picture',
+                    sport: 'Soccer',
                 },
             ],
         });
