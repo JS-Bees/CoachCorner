@@ -583,7 +583,6 @@ export const coacheeLogin = mutationField('coacheeLogin', {
 
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
-            console.log('is this running');
 
             // Use Supabase to find the user by email
             const { data: user, error } = await supabase
