@@ -252,26 +252,14 @@ const uploadImageToCloudinary = async (imageObject: any) => {
 
   const [lists, setLists] = useState([
     {
-      title: 'MusicGenre',
-      items: [
-        {text: 'Jazz', checked: false },
-        {text: 'Classical', checked: false },
-        {text: 'Pop', checked: false },
-        {text: 'K-Pop', checked: false },
-        {text: 'OPM', checked: false },
-        {text: 'Rock', checked: false },
-      ],
-      isExpanded: false,
-    },
-    {
       title: 'MovieGenre',
       items: [
-        {text: 'Action', checked: false },
-        {text: 'Thriller', checked: false },
-        {text: 'Comedy', checked: false },
-        {text: 'Drama', checked: false },
-        {text: 'Horror', checked: false },
-        {text: 'Romance', checked: false },
+        {text: 'Reading', checked: false },
+        {text: 'Watching movies', checked: false },
+        {text: 'Music', checked: false },
+        {text: 'Exercising', checked: false },
+        {text: 'Cooking', checked: false },
+        {text: 'Napping', checked: false },
         
       ],
       isExpanded: false,
@@ -279,12 +267,24 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     {
       title: 'BookGenre',
       items: [
-        { text: 'Science Fiction', checked: false },
-        { text: 'Young Adult', checked: false },
-        { text: 'Fantasy', checked: false },
-        { text: 'Romance', checked: false },
-        { text: 'Mystery', checked: false },
-        { text: 'Horror', checked: false }
+        {text: 'Relaxing', checked: false },
+        {text: 'Socializing', checked: false },
+        {text: 'Traveling', checked: false },
+        {text: 'Exercising', checked: false },
+        {text: 'Shopping', checked: false },
+        {text: 'Hobbies', checked: false },
+      ],
+      isExpanded: false,
+    },
+    {
+      title: 'MusicGenre',
+      items: [
+        {text: 'Reading a Book', checked: false },
+        {text: 'Playing Games', checked: false },
+        {text: 'Playing Sports', checked: false },
+        {text: 'Arts and Crafts', checked: false },
+        {text: 'Hiking', checked: false },
+        {text: 'Gardening', checked: false },
       ],
       isExpanded: false,
     },

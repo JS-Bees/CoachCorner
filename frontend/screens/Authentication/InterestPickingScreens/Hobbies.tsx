@@ -6,18 +6,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
 import Icon from 'react-native-vector-icons/Ionicons'
 
-type Music = 'Rock' | 'Jazz' | 'Classical' | 'Pop' | 'K-Pop' | 'OPM';
+type Music = 'Reading a Book' | 'Playing Games' | 'Playing Sports' | 'Arts and Crafts' | 'Hiking' | 'Gardening';
 
 const ChooseHobbies = ({route}) => {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParams>>();
     const [checkedHobby, setCheckedGames] = useState<Record<Music, boolean>>({
-        Rock: false,
-        Jazz: false,
-        Classical: false,
-        Pop: false,  
-        "K-Pop": false,  
-        OPM: false,  
+        "Reading a Book": false,
+        "Playing Games": false,
+        "Playing Sports": false,
+        "Arts and Crafts": false,  
+        Hiking: false,  
+        Gardening: false,  
         
     });
     const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
@@ -84,12 +84,12 @@ const handleButtonPress = () => {
       <Text style={styles.subtitle}>Choose 3 Hobbies</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedHobby.Rock} checkedColor='#7E3FF0' label="Reading a Book" onPress={() => handleCheckboxChange('Rock')} />
-        <CustomCheckBox checked={checkedHobby.Jazz} checkedColor='#7E3FF0' label="Playing Games" onPress={() => handleCheckboxChange('Jazz')} />
-        <CustomCheckBox checked={checkedHobby.Classical} checkedColor='#7E3FF0' label="Playing an Instrument" onPress={() => handleCheckboxChange('Classical')} />
-        <CustomCheckBox checked={checkedHobby.Pop} checkedColor='#7E3FF0' label="Arts and Crafts" onPress={() => handleCheckboxChange('Pop')} />
-        <CustomCheckBox checked={checkedHobby['K-Pop']} checkedColor='#7E3FF0' label="Hiking" onPress={() => handleCheckboxChange('K-Pop')} />
-        <CustomCheckBox checked={checkedHobby.OPM} checkedColor='#7E3FF0' label="Gardening" onPress={() => handleCheckboxChange('OPM')} />
+        <CustomCheckBox checked={checkedHobby['Reading a Book']} checkedColor='#7E3FF0' label="Reading a Book" onPress={() => handleCheckboxChange('Reading a Book')} />
+        <CustomCheckBox checked={checkedHobby['Playing Games']} checkedColor='#7E3FF0' label="Playing Games" onPress={() => handleCheckboxChange('Playing Games')} />
+        <CustomCheckBox checked={checkedHobby['Playing Sports']} checkedColor='#7E3FF0' label="Playing Sports" onPress={() => handleCheckboxChange('Playing Sports')} />
+        <CustomCheckBox checked={checkedHobby['Arts and Crafts']} checkedColor='#7E3FF0' label="Arts and Crafts" onPress={() => handleCheckboxChange('Arts and Crafts')} />
+        <CustomCheckBox checked={checkedHobby.Hiking} checkedColor='#7E3FF0' label="Hiking" onPress={() => handleCheckboxChange('Hiking')} />
+        <CustomCheckBox checked={checkedHobby.Gardening} checkedColor='#7E3FF0' label="Gardening" onPress={() => handleCheckboxChange('Gardening')} />
       </View>
 
 
