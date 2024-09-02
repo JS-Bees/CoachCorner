@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Keyboard,
+    BackHandler,
 } from 'react-native';
 import LogInButton from '../../components/Custom components/CustomButton';
 import SlideInComponent from '../../components/SlideInComponent';
@@ -81,7 +82,20 @@ const LogIn = () => {
             setLoading(false); // Reset isLoading to false when navigating back
         });
 
-        return unsubscribe;
+        // Prevent back button from working
+        const backAction = () => {
+            return true; // Prevents default back action
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => {
+            unsubscribe(); // Cleanup navigation listener
+            backHandler.remove(); // Cleanup back handler
+        };
     }, [navigation]);
 
     const storeToken = async (token: string) => {
@@ -92,20 +106,6 @@ const LogIn = () => {
             console.error('Error storing token:', error);
         }
     };
-
-    // const handleLoginErrorCoach = () => {
-    //     const errorMessage = coachResult.error
-    //         ? coachResult.error.message.replace('[GraphQL] ', '')
-    //         : 'An error occurred';
-    //     setEmailPasswordError(errorMessage);
-    // };
-
-    // const handleLoginErrorCoachee = () => {
-    //     const errorMessage = coacheeResult.error
-    //         ? coacheeResult.error.message.replace('[GraphQL] ', '')
-    //         : 'An error occurred';
-    //     setEmailPasswordError(errorMessage);
-    // };
 
     const onLogInPressed = async () => {
         if (isLoading) return;
@@ -186,11 +186,11 @@ const LogIn = () => {
 
     const onSignUpPressed = () => {
         if (CoachOrCoachee === 'coach') {
-            navigation.navigate('SignUpCoach');
-            console.log('Navigating to signup for coach');
+            // Navigate to the landing page and pass a parameter
+            navigation.navigate('LandingPage', { userType: 'coach' });
         } else {
-            navigation.navigate('SignUpCoachee');
-            console.log('Navigating to signup for coachee');
+            // Navigate to the landing page and pass a parameter
+            navigation.navigate('LandingPage', { userType: 'coachee' });
         }
     };
 
@@ -420,21 +420,25 @@ const Log_In_Style = StyleSheet.create({
         flexDirection: 'row',
         bottom: '70%',
         justifyContent: 'space-between',
-        marginLeft: '12%',
+        paddingHorizontal: '10%',
+        marginLeft: '2%'
     },
     buttonsText: {
         fontSize: 18,
         marginRight: '30%',
     },
     buttons: {
-        backgroundColor: '#7E3FF0', // Example background color
+        borderColor: '#7E3FF0', // Example background color
+        borderWidth: 1,
         padding: 10,
-        borderRadius: 5,
-        marginLeft: '5%', // Add left margin to separate buttons
-        marginRight: '5%', // Add right margin to separate buttons
+
+        borderRadius: 20,
+        alignItems: "center",
+        width: "45%",
+
     },
     buttonText: {
-        color: '#fff', // Example text color
+        color: '#7E3FF0', // Example text color
         fontSize: 16,
     },
 });

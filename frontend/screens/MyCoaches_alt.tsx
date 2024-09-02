@@ -25,7 +25,7 @@ import {
 } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,6 +35,8 @@ const MyCoaches_alt = () => {
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('Favorite'); // 'All' or 'Favorite'
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); // State to keep track of last refetch time
+    const pollingInterval = 1000;
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
@@ -68,13 +70,24 @@ const MyCoaches_alt = () => {
 
     const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
 
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
         query: FindFavoriteCoachesDocument, // Pass the FindCoachesBySportDocument query
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
         requestPolicy: 'cache-and-network', // Ensure the data is fetched from the network if needed
     });
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+            setLastRefetchTime(new Date());
+            // console.log('Refetching data at', new Date().toLocaleTimeString());
+            // console.log("this is the refetched data:",data)
+        }, pollingInterval);
+
+        return () => clearInterval(interval);
+    }, [refetch, pollingInterval]);
 
     const { fetching, data, error } = result;
 

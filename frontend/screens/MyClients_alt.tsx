@@ -25,7 +25,7 @@ import {
     FindCoachByIdDocument,
 } from '../generated-gql/graphql';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,6 +35,8 @@ const MyClients_alt = () => {
     const [userToken, setUserToken] = useState<string | null>(null);
     const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); // State to keep track of last refetch time
+    const pollingInterval = 1000;
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
@@ -72,14 +74,26 @@ const MyClients_alt = () => {
 
     const { data: coachData } = useFetchCoacheeByUserID(userToken || '');
 
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
         query: FindCoacheesOfCoachDocument,
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'cache-and-network',
     });
 
     const { fetching, data, error } = result;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+            setLastRefetchTime(new Date());
+            // console.log('Refetching data at', new Date().toLocaleTimeString());
+        }, pollingInterval);
+
+        return () => clearInterval(interval);
+    }, [refetch, pollingInterval]);
+
     if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
@@ -93,7 +107,7 @@ const MyClients_alt = () => {
 
             return {
                 id: contact.coacheeId,
-                name: `${coachee.firstName} ${coachee.lastName}`,
+                name: `${coachee.firstName} ${coachee.lastName.split(' ')[0]}`,
                 imageSource: { uri: coachee.profilePicture },
                 contactId: contact.id,
                 contactedStatus: contact.contactedStatus,

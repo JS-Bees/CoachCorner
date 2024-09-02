@@ -131,12 +131,12 @@ const ProgressTrackerForCoachee = () => {
             <Text style={styles.headerText}>Taskboard</Text>
             
             <View style={styles.addTaskContainer}> 
-                <TouchableOpacity onPress={handleNavigateAddTask}>
+                <TouchableOpacity onPress={handleNavigateAddTask} style={styles.addTaskBorder}>
                     <Text style={styles.addTask}>Add Task</Text>
                  </TouchableOpacity>
             </View>
           </View>
-          <ScrollView>
+          <ScrollView style={styles.alignedTasks} >
           {sortedTasks.map((task) => (
               <TouchableOpacity onPress={() => handleNavigatePreviewTask(task)} key={task.id} style={styles.tile}>
               <View style={styles.taskInfo}>
@@ -189,8 +189,8 @@ const ProgressTrackerForCoachee = () => {
         backgroundColor: 'white',
       },
       iconContainer: {
-        marginTop: "12%",
-        marginLeft: "5%",
+        marginTop: "15%",
+        marginLeft: "9%",
         height: "17%"
       },
       headerText: {
@@ -200,12 +200,14 @@ const ProgressTrackerForCoachee = () => {
       },
       addTask: {
         color: "#7E3FF0",
-        fontStyle: "italic"
+        fontStyle: "italic",
+        
       },
       addTaskContainer: {
         marginTop: "15%",
-        bottom: "35%",
-        left: "75%"
+        bottom: "68%",
+        left: "60%",
+
       },
       tile: {
         flexDirection: 'row',
@@ -235,11 +237,23 @@ const ProgressTrackerForCoachee = () => {
         bottom: "5%",
         borderRadius: 12,
         borderWidth: 1,
-        left: "6%",
+        right: "40%",
         borderColor: '#7E3FF0',
         justifyContent: 'center',
         alignItems: 'center',
       },
+      addTaskBorder: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 50, // Ensures a circular shape
+        borderWidth: 1, // Adjust as needed
+        borderColor: '#7E3FF0', // Choose your border color
+        width: "30%",
+        alignItems: "center"
+      },
+      alignedTasks:  {
+        left: "5%"
+      }
     });
   
 export default ProgressTrackerForCoachee;

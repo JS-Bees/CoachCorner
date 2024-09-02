@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   addButtonText: {
-    color: '#7E3FF0',
+    color: 'red',
     fontSize: 16,
     fontWeight: '400',
     fontStyle: "italic"
   },
   deleteButtonText: {
-    color: 'red',
+    color: '#7E3FF0',
     marginLeft: "82%",
     fontSize: 16,
     fontWeight: '400',

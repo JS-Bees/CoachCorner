@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomCheckBox from '../../../components/Custom components/CustomCheckBox';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    ActivityIndicator,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
@@ -26,6 +32,7 @@ const ChooseMovies = ({ route }) => {
     });
     const [modalVisible, setModalVisible] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setLoading] = useState(false);
 
     const [, createCoach] = useMutation(CreateCoachDocument);
     const [, createCoachee] = useMutation(CreateCoacheeDocument);
@@ -91,14 +98,16 @@ const ChooseMovies = ({ route }) => {
 
             try {
                 const { data, error, fetching } = await createCoachee({
+
                     input: {
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
+                        sport: chosenSport,
                         password: password,
                         address: workplaceAddress,
                         bio: 'Enter Bio',
-                        birthday: birthday,
+                        birthday: birthday, // Keep birthday as it is
                         profilePicture:
                             'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
                         // Add other fields as needed
@@ -112,6 +121,7 @@ const ChooseMovies = ({ route }) => {
                         ...selectedHobbiesInterests,
                     ],
                 });
+
 
                 if (error) {
                     console.error('Error:', error);
@@ -192,6 +202,7 @@ const ChooseMovies = ({ route }) => {
                         ...selectedHobbiesInterests,
                     ],
                 });
+
 
                 if (error) {
                     console.error('Error:', error);
@@ -316,6 +327,7 @@ const ChooseMovies = ({ route }) => {
                     Sign Up
                 </Text>
             </TouchableOpacity>
+
             <SignupSuccessModal
                 visible={modalVisible}
                 message={successMessage}

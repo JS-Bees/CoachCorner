@@ -201,11 +201,12 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     style={styles.bookmark}
                     onPress={handleNavigateToBooking}
                 >
-                    <MaterialIcons
+                    {/* <MaterialIcons
                         name="more-time"
                         size={30}
                         color="#7E3FF0"
-                    />
+                    /> */}
+                    <Text style={styles.buttonText}>Add Appointment</Text>
                 </TouchableOpacity>
             </View>
             <View
@@ -295,6 +296,7 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         marginLeft: 10,
+        width: "50%"
     },
     bookmark: {
         marginLeft: 'auto',
@@ -356,6 +358,10 @@ const styles = StyleSheet.create({
     },
     messageTextLeft: {
         color: 'black',
+    },
+    buttonText: {
+        fontStyle: "italic",
+        color: "#7E3FF0"
     },
 });
 

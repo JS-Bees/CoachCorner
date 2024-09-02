@@ -10,7 +10,7 @@ import { FindCoacheeByIdDocument,} from '../../generated-gql/graphql';
 import { useQuery } from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SplashScreen from '../Authentication/SplashScreen';
+import SplashScreen from '../Authentication/LoadingSplash';
 import { StackNavigationProp } from '@react-navigation/stack';
 // import  Cloudinary  from "cloudinary-react-native";
 
@@ -97,11 +97,12 @@ const NewCoacheeProfile = () => {
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
-            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
+            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName.split(' ')[0]),
             // mainSport: "Basketball",
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
             achievements: "None at the moment",
+            // address: coacheeData?.findCoacheeByID.address.split('|')[0], // Extract address before |
             address: coacheeData?.findCoacheeByID.address,
             age: 19,
             interests: coacheeData?.findCoacheeByID.interests.reduce((acc, interest) => {
@@ -171,7 +172,7 @@ const NewCoacheeProfile = () => {
                         </TouchableOpacity>
                     </View>
                     <View>
-                    <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName},  {CoacheeProfiles[0].age}</Text>
+                    <Text style={styles.headerText}>{CoacheeProfiles[0].coacheeName}</Text>
                     </View>
                     <View style={styles.tabContainer}>
                         <TouchableOpacity onPress={() => goToPage(0)} style={[styles.tabButton, activeTab === 0 && styles.activeTabButton]}>

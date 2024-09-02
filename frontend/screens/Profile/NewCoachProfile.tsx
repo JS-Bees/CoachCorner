@@ -24,7 +24,7 @@ import { useQuery, useMutation } from 'urql';
 import PagerView from 'react-native-pager-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
-import SplashScreen from '../Authentication/SplashScreen';
+import SplashScreen from '../Authentication/LoadingSplash';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 interface CoachProfile {

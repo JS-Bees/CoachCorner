@@ -18,6 +18,14 @@ query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
     }
 }
 
+query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
+    findCoacheeByEmailAndPassword(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+    }
+}
+
 query FindCoacheeByID($userId: Int!) {
     findCoacheeByID(userID: $userId) {
         id
@@ -316,5 +324,6 @@ query FindOneToOneServiceSlotsByCoachId($coachId: Int!) {
   findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
   startTime
   endTime
+  date
   }
 }

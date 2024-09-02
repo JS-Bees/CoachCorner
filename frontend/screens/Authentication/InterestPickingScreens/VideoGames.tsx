@@ -75,6 +75,7 @@ const ChooseVideoGames = ({route}) => {
         workplaceAddress: workplaceAddress,
         coachOrCoachee: coachOrCoachee,
       });
+      console.log(selectedSports)
     };
     
 
@@ -85,16 +86,16 @@ const ChooseVideoGames = ({route}) => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-     <Text style={styles.header}> Which genre of books do you prefer to read during your downtime?</Text>
-     <Text style={styles.subtitle}>Choose 3 Genres</Text>
+     <Text style={styles.header}>What do you prefer to do on weekends?</Text>
+     <Text style={styles.subtitle}>Choose 3 Activities</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedGames['Science Fiction']} checkedColor='#7E3FF0' label="Science Fiction" onPress={() => handleCheckboxChange('Science Fiction')} />
-        <CustomCheckBox checked={checkedGames['Young Adult']} checkedColor='#7E3FF0' label="Young Adult" onPress={() => handleCheckboxChange('Young Adult')} />
-        <CustomCheckBox checked={checkedGames.Fantasy} checkedColor='#7E3FF0' label="Fantasy" onPress={() => handleCheckboxChange('Fantasy')} />
-        <CustomCheckBox checked={checkedGames.Romance} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Romance')} />
-        <CustomCheckBox checked={checkedGames.Mystery} checkedColor='#7E3FF0' label="Mystery" onPress={() => handleCheckboxChange('Mystery')} />
-        <CustomCheckBox checked={checkedGames.Horror} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Horror')} />
+        <CustomCheckBox checked={checkedGames['Science Fiction']} checkedColor='#7E3FF0' label="Relaxing" onPress={() => handleCheckboxChange('Science Fiction')} />
+        <CustomCheckBox checked={checkedGames['Young Adult']} checkedColor='#7E3FF0' label="Socializing" onPress={() => handleCheckboxChange('Young Adult')} />
+        <CustomCheckBox checked={checkedGames.Fantasy} checkedColor='#7E3FF0' label="Traveling" onPress={() => handleCheckboxChange('Fantasy')} />
+        <CustomCheckBox checked={checkedGames.Romance} checkedColor='#7E3FF0' label="Exercising" onPress={() => handleCheckboxChange('Romance')} />
+        <CustomCheckBox checked={checkedGames.Mystery} checkedColor='#7E3FF0' label="Shopping" onPress={() => handleCheckboxChange('Mystery')} />
+        <CustomCheckBox checked={checkedGames.Horror} checkedColor='#7E3FF0' label="Hobbies" onPress={() => handleCheckboxChange('Horror')} />
       </View>
 
       <TouchableOpacity

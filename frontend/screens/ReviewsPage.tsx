@@ -10,7 +10,7 @@ import { useQuery } from 'urql';
 import { GetCoachReviewsDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -174,7 +174,7 @@ const {
       />
     ))
   ) : (
-    <Text style={{ alignSelf: 'center', marginTop: 20 , fontSize: 25}}>No reviews yet</Text>
+    <Text style={{ alignSelf: 'center', marginTop: 20 , fontSize: 15}}>No reviews yet</Text>
   )}
 </ScrollView>
 
@@ -187,8 +187,8 @@ const {
                     <Icon name="add-circle-outline" size={50} color="#7E3FF0" />
                 </TouchableOpacity>
             ) : (
-              <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>
-              <Text style={{ alignSelf: 'center', color: 'white' }}>
+              <View style={{ paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5, bottom: "80%"}}>
+              <Text style={{ alignSelf: 'center', color: 'grey' }}>
                   You need a completed booking to add a review.
               </Text>
           </View>
@@ -215,7 +215,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "400",
     left: "15%",
-    color: "#7E3FF0"
+    color: "#7E3FF0",
+    width: "75%"
   },
   reviewsContainer: {
     marginTop: "-10%",

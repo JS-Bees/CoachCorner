@@ -96,14 +96,16 @@ const PreviewTaskForCoachee = ({ route }: any) => {
         <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.editIconContainer} onPress={handleEditTask}>
-        <Icon name="create-outline" size={30} color="#7E3FF0" />
+      <View style={styles.editIconContainer}>
+      <TouchableOpacity onPress={handleEditTask} style={styles.editButtonBorder}>
+        <Text style={styles.editButtonFontStyle}>Edit</Text>
       </TouchableOpacity>
+      </View>
 
       <View style={styles.content}>
         <Text style={styles.label}>Title:</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, isEditing && styles.inputEditable]}
           value={isEditing ? newTitle : title}
           onChangeText={setNewTitle}
           multiline
@@ -113,7 +115,7 @@ const PreviewTaskForCoachee = ({ route }: any) => {
         <Text style={styles.label}>Date:</Text>
         <TouchableOpacity onPress={isEditing ? showDatePicker : null}> 
           <TextInput
-            style={styles.input}
+            style={[styles.input, isEditing && styles.inputEditable]} 
             value={convertToDate(date)}
             editable={false} // Text field not editable, but clickable when editing
           />
@@ -121,7 +123,7 @@ const PreviewTaskForCoachee = ({ route }: any) => {
         
         <Text style={styles.label}>Description:</Text>
         <TextInput
-          style={[styles.input, styles.descriptionInput]}
+          style={[styles.input, styles.descriptionInput, isEditing && styles.inputEditable]} 
           value={isEditing ? newDescription : description}
           onChangeText={setNewDescription}
           multiline
@@ -153,48 +155,72 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9F9F9',
   },
   content: {
-    marginTop: 80,
+    marginTop: "30%",
+    marginLeft: "5%"
   },
   iconContainer: {
     position: 'absolute',
-    top: 40,
-    left: 16,
+    marginTop: "17%",
+    marginLeft: "10%",
     zIndex: 1,
   },
   editIconContainer: {
     position: 'absolute',
-    top: 40,
-    right: 16,
+    width: "100%",
+    height: "40%",
+    marginTop: "17%",
+    left: "75%",
     zIndex: 1,
   },
   label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    marginTop: "5%",
+    fontSize: 18,
     marginBottom: 10,
   },
   input: {
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+    right: "2%",
+    borderRadius: 10,
     padding: 8,
     backgroundColor: '#FFFFFF',
-    color: '#333',
+    color: '#838086',
+  },
+  inputEditable: {
+    borderColor: '#7E3FF0', // Change border color when editable
+    borderWidth: 1
+    
   },
   descriptionInput: {
     minHeight: 100, 
   },
   saveButton: {
-    backgroundColor: '#7E3FF0',
+    backgroundColor: "#7E3FF0",
     padding: 12,
-    borderRadius: 4,
     alignItems: 'center',
     marginTop: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    left: "3%",
+    borderRadius: 50, // Ensures a circular shape
+    borderWidth: 1, // Adjust as needed
+    borderColor: '#7E3FF0', // Choose your border color
+    width: "25%",
   },
   saveButtonText: {
-    color: '#FFFFFF',
+    color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontStyle: "italic",
+  },
+  editButtonFontStyle: {
+    color: "#7E3FF0",
+    fontStyle: "italic",
+  },
+  editButtonBorder: {
+    paddingVertical: 10,
+    borderRadius: 50, // Ensures a circular shape
+    borderWidth: 1, // Adjust as needed
+    borderColor: '#7E3FF0', // Choose your border color
+    width: "25%",
+    alignItems: "center"
   },
 });
 

@@ -229,7 +229,7 @@ const CoacheeProfile = () => {
              <View style={styles.profileInfo}>
                 <Text
                     style={styles.normalText}
-                >{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName}`}</Text>
+                >{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName.split(' ')[0]}`}</Text>
             </View>
             <View style={styles.mantraContainer}>
                 <TextInput
@@ -263,7 +263,6 @@ const CoacheeProfile = () => {
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.age}> Age </Text>
                     <View>
                         <TextInput
                             style={styles.ageInput}

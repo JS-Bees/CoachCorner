@@ -43,10 +43,10 @@ import {
     contactSchema,
     interestListSchema,
     interestSchema,
+    loginSchema,
     reviewSchema,
     sportSchema,
     sportsCredentialsSchema,
-    loginSchema,
 } from '../validation';
 import { publishNewMessage } from '../subscriptions/subscriptions';
 
@@ -521,6 +521,7 @@ export const coachLogin = mutationField('coachLogin', {
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
 
+
             // Use Supabase to find the user by email
             const { data: user, error } = await supabase
                 .from('profiles') // Adjust the table name according to your Supabase setup
@@ -540,6 +541,7 @@ export const coachLogin = mutationField('coachLogin', {
                 console.log('sp error: ', error);
                 throw new Error('User not found or an error occurred.');
             }
+
 
             const coach = await context.db.coach.findUnique({
                 where: { email: lowerCaseEmail, active: true },
@@ -584,6 +586,7 @@ export const coacheeLogin = mutationField('coacheeLogin', {
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();
 
+
             // Use Supabase to find the user by email
             const { data: user, error } = await supabase
                 .from('profiles') // Adjust the table name according to your Supabase setup
@@ -603,6 +606,7 @@ export const coacheeLogin = mutationField('coacheeLogin', {
                 console.log('sp error: ', error);
                 throw new Error('User not found or an error occurred.');
             }
+
 
             // Search for a Coachee with the provided email
             const coachee = await context.db.coachee.findUnique({
