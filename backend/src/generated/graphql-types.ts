@@ -520,9 +520,11 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   SlotTime: { // field return type
+
     date: NexusGenScalars['DateTime'] | null; // DateTime
     endTime: NexusGenScalars['DateTime'] | null; // DateTime
     startTime: NexusGenScalars['DateTime'] | null; // DateTime
+
   }
   Sport: { // field return type
     active: boolean; // Boolean!

@@ -77,12 +77,6 @@ const ChooseMovies = ({ route }) => {
         navigation.goBack();
     };
 
-    // useEffect(() => {
-    //   const sports = selectedSports.map(sportObj => sportObj.sport); // Extract sport values
-    //   const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
-    //   console.log("address + birthday" + workplaceAddress + addressWithSports)
-    // }); // Dependency array ensures useEffect runs when these values change
-
     const handleButtonPress = async () => {
         if (coachOrCoachee == 'coachee') {
             console.log(coachOrCoachee);
@@ -103,14 +97,8 @@ const ChooseMovies = ({ route }) => {
             );
 
             try {
-                const sports = selectedSports.map((sportObj) => sportObj.sport); // Extract sport values
+                const { data, error, fetching } = await createCoachee({
 
-                const newLastName = `${lastName} ${sports}`;
-
-                const chosenSport = sports.join(', ');
-
-                // Perform the mutation with combined address and sports data
-                const { data, errors, fetching } = await createCoachee({
                     input: {
                         firstName: firstName,
                         lastName: lastName,
@@ -134,23 +122,31 @@ const ChooseMovies = ({ route }) => {
                     ],
                 });
 
-                if (errors) {
-                    console.error('GraphQL errors:', errors);
+
+                if (error) {
+                    console.error('Error:', error);
+                    setSuccessMessage('Signup Failed.');
+                    setModalVisible(true);
                 } else if (data && data.createCoachee) {
                     console.log('Coachee created:', data.createCoachee);
                     // Navigate to the next screen or perform other actions upon successful signup
-                } else {
-                    console.log('This is a coachee');
-                    console.log(selectedGames, selectedHobbies, selectedMovie);
-                    console.log(
-                        firstName,
-                        lastName,
-                        email,
-                        password,
-                        workplaceAddress,
-                        birthday,
-                    );
-                    console.error('No  data returned from mutation');
+                }
+                // else {
+                //     console.log('This is a coachee');
+                //     console.log(selectedGames, selectedHobbies, selectedMovie);
+                //     console.log(
+                //         firstName,
+                //         lastName,
+                //         email,
+                //         password,
+                //         workplaceAddress,
+                //         birthday,
+                //     );
+                //     console.error('No  data returned from mutation');
+                // }
+                if (data) {
+                    setSuccessMessage('Signup Successful!');
+                    setModalVisible(true);
                 }
             } catch (error) {
                 console.log(selectedGames, selectedHobbies, selectedMovie);
@@ -183,7 +179,7 @@ const ChooseMovies = ({ route }) => {
             );
 
             try {
-                const { data, errors } = await createCoach({
+                const { data, error } = await createCoach({
                     input: {
                         firstName: firstName,
                         lastName: lastName,
@@ -207,42 +203,50 @@ const ChooseMovies = ({ route }) => {
                     ],
                 });
 
-                if (errors) {
-                    console.error('GraphQL errors:', errors);
+
+                if (error) {
+                    console.error('Error:', error);
+                    setSuccessMessage('Signup Failed.');
+                    setModalVisible(true);
                 } else if (data && data.createCoach) {
                     console.log('Coach created:', data.createCoach);
                     // Navigate to the next screen or perform other actions upon successful signup
-                } else {
-                    console.log('This is a coach');
-                    console.log(
-                        selectedSports,
-                        selectedGames,
-                        selectedHobbies,
-                        selectedMovie,
-                    );
-                    console.log(
-                        firstName,
-                        lastName,
-                        email,
-                        password,
-                        workplaceAddress,
-                        birthday,
-                    );
-                    console.error('No data returned from mutation');
+                }
+                // else {
+                //     console.log('This is a coach');
+                //     console.log(
+                //         selectedSport,
+                //         selectedGames,
+                //         selectedHobbies,
+                //         selectedMovie,
+                //     );
+                //     console.log(
+                //         firstName,
+                //         lastName,
+                //         email,
+                //         password,
+                //         workplaceAddress,
+                //         birthday,
+                //     );
+                //     console.error('No data returned from mutation');
+                // }
+                if (data) {
+                    setSuccessMessage('Signup Successful!');
+                    setModalVisible(true);
                 }
             } catch (error) {
                 console.log(
                     selectedGames,
                     selectedHobbies,
                     selectedMovie,
-                    selectedSports,
+                    selectedSport,
                 );
                 console.error('Error creating coachee:', error);
                 // Handle errors appropriately
             }
         }
-        setSuccessMessage('Signup Successful!');
-        setModalVisible(true);
+        // setSuccessMessage('Signup Successful!');
+        // setModalVisible(true);
     };
 
     return (
@@ -259,80 +263,71 @@ const ChooseMovies = ({ route }) => {
             </TouchableOpacity>
             <Text style={styles.header}>
                 {' '}
-                What are some of your favorite ways to relax?
+                Which genre of movies do you prefer to enjoy during your
+                downtime?
             </Text>
-            <Text style={styles.subtitle}>Choose 3 ways</Text>
+            <Text style={styles.subtitle}>Choose 3 Genres</Text>
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
                     checked={checkedMovies.Romance}
                     checkedColor="#7E3FF0"
-                    label="Reading"
+                    label="Romance"
                     onPress={() => handleCheckboxChange('Romance')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Horror}
                     checkedColor="#7E3FF0"
-                    label="Watching movies"
+                    label="Horror"
                     onPress={() => handleCheckboxChange('Horror')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Action}
                     checkedColor="#7E3FF0"
-                    label="Listening to music"
+                    label="Action"
                     onPress={() => handleCheckboxChange('Action')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Comedy}
                     checkedColor="#7E3FF0"
-                    label="Exercising"
+                    label="Comedy"
                     onPress={() => handleCheckboxChange('Comedy')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Thriller}
                     checkedColor="#7E3FF0"
-                    label="Cooking"
+                    label="Thriller"
                     onPress={() => handleCheckboxChange('Thriller')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Drama}
                     checkedColor="#7E3FF0"
-                    label="Napping"
+                    label="Drama"
                     onPress={() => handleCheckboxChange('Drama')}
                 />
             </View>
 
-            <Text style={styles.subtitle}>
-                Please note that we will take you back to the Log In to properly
-                log in your account
-            </Text>
+            <TouchableOpacity
+                style={[
+                    styles.button,
+                    !isMaxChecksReached && styles.disabledButton,
+                ]}
+                onPress={handleButtonPress}
+                disabled={!isMaxChecksReached}
+            >
+                <Text
+                    style={{
+                        color: 'white',
+                        fontSize: 15,
+                        height: 40,
+                        paddingHorizontal: 10,
+                        paddingVertical: 10,
+                    }}
+                >
+                    Sign Up
+                </Text>
+            </TouchableOpacity>
 
-            <View>
-                {isLoading ? (
-                    <ActivityIndicator size="large" color="#915bc7" />
-                ) : (
-                    <TouchableOpacity
-                        style={[
-                            styles.button,
-                            !isMaxChecksReached && styles.disabledButton,
-                        ]}
-                        onPress={handleButtonPress}
-                        disabled={!isMaxChecksReached}
-                    >
-                        <Text
-                            style={{
-                                color: 'white',
-                                fontSize: 15,
-                                height: 40,
-                                paddingHorizontal: 10,
-                                paddingVertical: 10,
-                            }}
-                        >
-                            Sign Up
-                        </Text>
-                    </TouchableOpacity>
-                )}
-            </View>
             <SignupSuccessModal
                 visible={modalVisible}
                 message={successMessage}

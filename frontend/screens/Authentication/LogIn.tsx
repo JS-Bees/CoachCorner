@@ -431,9 +431,11 @@ const Log_In_Style = StyleSheet.create({
         borderColor: '#7E3FF0', // Example background color
         borderWidth: 1,
         padding: 10,
+
         borderRadius: 20,
         alignItems: "center",
         width: "45%",
+
     },
     buttonText: {
         color: '#7E3FF0', // Example text color
