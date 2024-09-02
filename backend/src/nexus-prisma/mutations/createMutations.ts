@@ -72,7 +72,7 @@ export const createCoachee = mutationField('createCoachee', {
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
 
-            const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
+            const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
             const coacheeData = {
                 ...input,
                 password: hashedPassword,
@@ -146,7 +146,7 @@ export const createCoach = mutationField('createCoach', {
                 sportSchema.validateSync(sport);
             }
 
-            const hashedPassword = await bcrypt.hash(input.password, 10); // Hash the password with  10 salt rounds
+            const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
             const coachData = {
                 ...input,
                 password: hashedPassword,
