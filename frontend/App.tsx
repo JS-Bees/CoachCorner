@@ -58,6 +58,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CopilotProvider } from "react-native-copilot";
 import IntroSplash from './screens/Authentication/IntroSplash';
+import { StatusBar } from 'react-native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -170,10 +171,10 @@ const Tab = createBottomTabNavigator();
 const CoachTab = createBottomTabNavigator();
 
 export default function App() {
+    <StatusBar hidden={true} />
     return (
-        
         <UrqlProvider value={client}>
-         
+
             <NavigationContainer>
             <CopilotProvider stopOnOutsideClick>
                 <RootStack.Navigator initialRouteName="IntroSplash">
