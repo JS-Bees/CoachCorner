@@ -184,7 +184,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                 {upcomingBookings.length > 0 && (
                 <View style={MyCoaches.badgeContainer}>
                 <Text style={MyCoaches.badgeText}>{upcomingBookings.length}</Text>
-            </View>)}
+                </View>)}
                 
             </TouchableOpacity>
 
@@ -265,11 +265,13 @@ const MyCoaches = StyleSheet.create({
     },
 
     buttonRow:{
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: 'center', 
+        paddingHorizontal: 20, 
+        marginTop: "5%"
     },
-
     
-
     middleContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -344,8 +346,6 @@ const MyCoaches = StyleSheet.create({
     AllCoachesButton: {
         width: 100, // Adjust the width to make it square
         height: 49, // Adjust the height to make it square
-        marginTop: '5%',
-        marginLeft: '6%',
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',

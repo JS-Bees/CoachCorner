@@ -163,6 +163,10 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             ]}
                 onPress={() => setActiveButton('Upcoming')}>
             <Text style={MyCoaches.buttonText}>Upcoming</Text>
+                {upcomingBookings.length > 0 && (
+                <View style={MyCoaches.badgeContainer}>
+                <Text style={MyCoaches.badgeText}>{upcomingBookings.length}</Text>
+                </View>)}
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -181,6 +185,10 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             ]}
                 onPress={() => setActiveButton('Pending')}>
             <Text style={MyCoaches.buttonText}>Pending</Text>
+                {pendingBookings.length > 0 && (
+                <View style={MyCoaches.badgeContainer}>
+                <Text style={MyCoaches.badgeText}>{pendingBookings.length}</Text>
+            </View>)}
             </TouchableOpacity>
             </View>
 
@@ -249,7 +257,11 @@ const MyCoaches = StyleSheet.create({
     },
     
     buttonRow:{
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: 'center', 
+        paddingHorizontal: 20, 
+        marginTop: "5%"
     },
 
     miniContainer: {
@@ -317,8 +329,6 @@ const MyCoaches = StyleSheet.create({
     AllCoachesButton: {
         width: 100, // Adjust the width to make it square
         height: 49, // Adjust the height to make it square
-        marginTop: '5%',
-        marginLeft: '6%',
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',
@@ -341,7 +351,25 @@ const MyCoaches = StyleSheet.create({
     },
     activeButton: {
         backgroundColor: '#7E3FF0'
-    }
+    },
+    badgeContainer: {
+        position: 'absolute',
+        right: -10,
+        top: -10,
+        backgroundColor: '#7E3FF0',
+        borderRadius: 10,
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2, // Outline width
+        borderColor: 'white', // Outline color
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
    
 });
 
