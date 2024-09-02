@@ -98,12 +98,11 @@ const ChooseMovies = ({ route }) => {
 
             try {
                 const { data, error, fetching } = await createCoachee({
-
                     input: {
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
-                        sport: chosenSport,
+                        sport: 'volleyball',
                         password: password,
                         address: workplaceAddress,
                         bio: 'Enter Bio',
@@ -121,7 +120,6 @@ const ChooseMovies = ({ route }) => {
                         ...selectedHobbiesInterests,
                     ],
                 });
-
 
                 if (error) {
                     console.error('Error:', error);
@@ -202,7 +200,6 @@ const ChooseMovies = ({ route }) => {
                         ...selectedHobbiesInterests,
                     ],
                 });
-
 
                 if (error) {
                     console.error('Error:', error);

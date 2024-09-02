@@ -520,11 +520,9 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   SlotTime: { // field return type
-
     date: NexusGenScalars['DateTime'] | null; // DateTime
     endTime: NexusGenScalars['DateTime'] | null; // DateTime
     startTime: NexusGenScalars['DateTime'] | null; // DateTime
-
   }
   Sport: { // field return type
     active: boolean; // Boolean!
@@ -773,8 +771,8 @@ export interface NexusGenArgTypes {
       password: string; // String!
     }
     coacheeLogin: { // args
-      email: string; // String!
-      password: string; // String!
+      email?: string | null; // String
+      password?: string | null; // String
     }
     createBooking: { // args
       input: NexusGenInputs['CreateBookingInput']; // CreateBookingInput!

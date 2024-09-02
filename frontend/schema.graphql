@@ -251,7 +251,7 @@ type Message {
 
 type Mutation {
   coachLogin(email: String!, password: String!): Coach
-  coacheeLogin(email: String!, password: String!): Coachee
+  coacheeLogin(email: String, password: String): Coachee
   createBooking(input: CreateBookingInput!, slotsInput: [CreateBookingSlotInput!]!): Booking
   createCoach(input: CreateCoachInput!, interestsInput: [CreateCoachInterestInput!]!, sportsInput: [CreateSportInput!]!): Coach
   createCoachInterest(input: CreateNewCoachInterestInput!): CoachInterest
@@ -310,11 +310,9 @@ type Review {
 }
 
 type SlotTime {
-
   date: DateTime
   endTime: DateTime
   startTime: DateTime
-
 }
 
 type Sport {
