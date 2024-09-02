@@ -16,19 +16,19 @@ import { CreateCoachDocument } from '../../../generated-gql/graphql';
 import { CreateCoacheeDocument } from '../../../generated-gql/graphql';
 import SignupSuccessModal from '../../../components/PopUpModal';
 
-type Movie = 'Romance' | 'Horror' | 'Action' | 'Comedy' | 'Thriller' | 'Drama';
+type Movie = 'Reading' | 'Watching Movies' | 'Music' | 'Exercising' | 'Cooking' | 'Napping';
 
 const ChooseMovies = ({ route }) => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     const [checkedMovies, setCheckedGames] = useState<Record<Movie, boolean>>({
-        Romance: false,
-        Horror: false,
-        Action: false,
-        Comedy: false,
-        Thriller: false,
-        Drama: false,
+        Reading: false,
+        "Watching Movies": false,
+        Music: false,
+        Exercising: false,
+        Cooking: false,
+        Napping: false,
     });
     const [modalVisible, setModalVisible] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -48,7 +48,7 @@ const ChooseMovies = ({ route }) => {
     const { selectedHobbies } = route.params;
     const { selectedGames } = route.params;
     const { selectedSports } = route.params;
-    
+
     const handleCheckboxChange = (MovieGenre: Movie) => {
         setCheckedGames((prevCheckedMovies) => {
             const newCheckedHobby = { ...prevCheckedMovies };
@@ -82,142 +82,168 @@ const ChooseMovies = ({ route }) => {
     //   const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
     //   console.log("address + birthday" + workplaceAddress + addressWithSports)
     // }); // Dependency array ensures useEffect runs when these values change
-  
-  const handleButtonPress = async () => {
 
-    if(coachOrCoachee == 'coachee') {
-      console.log(coachOrCoachee)
-      const selectedMovie = Object.keys(checkedMovies)
-        .filter(MovieGenre => checkedMovies[MovieGenre])
-        .map(MovieGenre => ({ MovieGenre }));
-  
-        const selectedGamesInterests = selectedGames.map(BookGenre => ({
-          type: 'BookGenre',
-          name: BookGenre.BookGenre,
-        }));
-      
-        const selectedHobbiesInterests = selectedHobbies.map(MusicGenre => ({
-          type: 'MusicGenre',
-          name: MusicGenre.MusicGenre,
-        }));
-      
-    
-        try {
-        
-          const sports = selectedSports.map(sportObj => sportObj.sport); // Extract sport values
-          const addressWithSports = `${workplaceAddress}|${sports.join(',')}`;
-      
-          // Perform the mutation with combined address and sports data
-          const { data, errors, fetching } = await createCoachee({
-            input: {
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              password: password,
-              address: addressWithSports,
-              bio: "Enter Bio",
-              birthday: birthday, // Keep birthday as it is
-              profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
-              // Add other fields as needed
-            },
-            interestsInput: [
-              ...selectedMovie.map(MovieGenre => ({
-                type: 'MovieGenre',
-                name: MovieGenre.MovieGenre,
-              })),
-              ...selectedGamesInterests,
-              ...selectedHobbiesInterests,
-            ],
-          });
-    
-        if (errors) {
-          console.error('GraphQL errors:', errors);
-        } else if (data && data.createCoachee) {
-          console.log('Coachee created:', data.createCoachee);
-          // Navigate to the next screen or perform other actions upon successful signup
-        } else {
-          console.log("This is a coachee")
-          console.log(selectedGames, selectedHobbies, selectedMovie)
-          console.log(firstName, lastName, email, password , workplaceAddress,birthday)
-          console.error('No  data returned from mutation');
+    const handleButtonPress = async () => {
+        if (coachOrCoachee == 'coachee') {
+            console.log(coachOrCoachee);
+            const selectedMovie = Object.keys(checkedMovies)
+                .filter((MovieGenre) => checkedMovies[MovieGenre])
+                .map((MovieGenre) => ({ MovieGenre }));
+
+            const selectedGamesInterests = selectedGames.map((BookGenre) => ({
+                type: 'BookGenre',
+                name: BookGenre.BookGenre,
+            }));
+
+            const selectedHobbiesInterests = selectedHobbies.map(
+                (MusicGenre) => ({
+                    type: 'MusicGenre',
+                    name: MusicGenre.MusicGenre,
+                }),
+            );
+
+            try {
+                const sports = selectedSports.map((sportObj) => sportObj.sport); // Extract sport values
+
+                const newLastName = `${lastName} ${sports}`;
+
+                const chosenSport = sports.join(', ');
+
+                // Perform the mutation with combined address and sports data
+                const { data, errors, fetching } = await createCoachee({
+                    input: {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        sport: chosenSport,
+                        password: password,
+                        address: workplaceAddress,
+                        bio: 'Enter Bio',
+                        birthday: birthday, // Keep birthday as it is
+                        profilePicture:
+                            'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
+                        // Add other fields as needed
+                    },
+                    interestsInput: [
+                        ...selectedMovie.map((MovieGenre) => ({
+                            type: 'MovieGenre',
+                            name: MovieGenre.MovieGenre,
+                        })),
+                        ...selectedGamesInterests,
+                        ...selectedHobbiesInterests,
+                    ],
+                });
+
+                if (errors) {
+                    console.error('GraphQL errors:', errors);
+                } else if (data && data.createCoachee) {
+                    console.log('Coachee created:', data.createCoachee);
+                    // Navigate to the next screen or perform other actions upon successful signup
+                } else {
+                    console.log('This is a coachee');
+                    console.log(selectedGames, selectedHobbies, selectedMovie);
+                    console.log(
+                        firstName,
+                        lastName,
+                        email,
+                        password,
+                        workplaceAddress,
+                        birthday,
+                    );
+                    console.error('No  data returned from mutation');
+                }
+            } catch (error) {
+                console.log(selectedGames, selectedHobbies, selectedMovie);
+                console.error('Error creating coachee:', error);
+                // Handle errors appropriately
+            }
         }
-      } catch (error) {
-        console.log(selectedGames, selectedHobbies, selectedMovie)
-        console.error('Error creating coachee:', error);
-        // Handle errors appropriately
-      }
-
-    } if(coachOrCoachee == 'coach'){ 
-      console.log(coachOrCoachee)
-      const selectedMovie = Object.keys(checkedMovies)
-        .filter(MovieGenre => checkedMovies[MovieGenre])
-        .map(MovieGenre => ({ MovieGenre }));
+        if (coachOrCoachee == 'coach') {
+            console.log(coachOrCoachee);
+            const selectedMovie = Object.keys(checkedMovies)
+                .filter((MovieGenre) => checkedMovies[MovieGenre])
+                .map((MovieGenre) => ({ MovieGenre }));
 
             const selectedSport = selectedSports.map((sport) => ({
                 type: sport.sport,
             }));
 
-        // const selectedSport = sport.sport
-  
-        const selectedGamesInterests = selectedGames.map(BookGenre => ({
-          type: 'BookGenre',
-          name: BookGenre.BookGenre,
-        }));
-      
-        const selectedHobbiesInterests = selectedHobbies.map(MusicGenre => ({
-          type: 'MusicGenre',
-          name: MusicGenre.MusicGenre,
-        }));
-      
-    
-      try {
-        const { data, errors } = await createCoach({
-          input: {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: password,
-            address: workplaceAddress,
-            bio: "Enter Bio",
-            birthday:  birthday,
-            profilePicture: "https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png",
-            // Add other fields as needed
-          },                                                                           
-          sportsInput: [
-            selectedSport[0]
-          ],
-          interestsInput: [
-            ...selectedMovie.map(MovieGenre => ({
-              type: 'MovieGenre',
-              name: MovieGenre.MovieGenre,
-            })),
-            ...selectedGamesInterests,
-            ...selectedHobbiesInterests,
-          ],  
+            // const selectedSport = sport.sport
 
-        });
-    
-        if (errors) {
-          console.error('GraphQL errors:', errors);
-        } else if (data && data.createCoach) {
-          console.log('Coach created:', data.createCoach);
-          // Navigate to the next screen or perform other actions upon successful signup
-        } else {
-          console.log("This is a coach")
-          console.log(selectedSports, selectedGames, selectedHobbies, selectedMovie)
-          console.log(firstName, lastName, email, password , workplaceAddress,birthday)
-          console.error('No data returned from mutation');
+            const selectedGamesInterests = selectedGames.map((BookGenre) => ({
+                type: 'BookGenre',
+                name: BookGenre.BookGenre,
+            }));
+
+            const selectedHobbiesInterests = selectedHobbies.map(
+                (MusicGenre) => ({
+                    type: 'MusicGenre',
+                    name: MusicGenre.MusicGenre,
+                }),
+            );
+
+            try {
+                const { data, errors } = await createCoach({
+                    input: {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        password: password,
+                        address: workplaceAddress,
+                        bio: 'Enter Bio',
+                        birthday: birthday,
+                        profilePicture:
+                            'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
+                        // Add other fields as needed
+                    },
+                    sportsInput: [selectedSport[0]],
+                    interestsInput: [
+                        ...selectedMovie.map((MovieGenre) => ({
+                            type: 'MovieGenre',
+                            name: MovieGenre.MovieGenre,
+                        })),
+                        ...selectedGamesInterests,
+                        ...selectedHobbiesInterests,
+                    ],
+                });
+
+                if (errors) {
+                    console.error('GraphQL errors:', errors);
+                } else if (data && data.createCoach) {
+                    console.log('Coach created:', data.createCoach);
+                    // Navigate to the next screen or perform other actions upon successful signup
+                } else {
+                    console.log('This is a coach');
+                    console.log(
+                        selectedSports,
+                        selectedGames,
+                        selectedHobbies,
+                        selectedMovie,
+                    );
+                    console.log(
+                        firstName,
+                        lastName,
+                        email,
+                        password,
+                        workplaceAddress,
+                        birthday,
+                    );
+                    console.error('No data returned from mutation');
+                }
+            } catch (error) {
+                console.log(
+                    selectedGames,
+                    selectedHobbies,
+                    selectedMovie,
+                    selectedSports,
+                );
+                console.error('Error creating coachee:', error);
+                // Handle errors appropriately
+            }
         }
-      } catch (error) {
-        console.log(selectedGames, selectedHobbies, selectedMovie, selectedSports)
-        console.error('Error creating coachee:', error);
-        // Handle errors appropriately
-      }
-
-    }
-    setSuccessMessage('Signup Successful!');
-    setModalVisible(true)
-  };
+        setSuccessMessage('Signup Successful!');
+        setModalVisible(true);
+    };
 
     return (
         <View style={styles.container}>
@@ -233,52 +259,53 @@ const ChooseMovies = ({ route }) => {
             </TouchableOpacity>
             <Text style={styles.header}>
                 {' '}
-                Which genre of movies do you prefer to enjoy during your
-                downtime?
+                What are some of your favorite ways to relax?
             </Text>
-            <Text style={styles.subtitle}>Choose 3 Genres</Text>
-            
+            <Text style={styles.subtitle}>Choose 3 ways</Text>
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
-                    checked={checkedMovies.Romance}
+                    checked={checkedMovies.Reading}
                     checkedColor="#7E3FF0"
-                    label="Romance"
-                    onPress={() => handleCheckboxChange('Romance')}
+                    label="Reading"
+                    onPress={() => handleCheckboxChange('Reading')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Horror}
+                    checked={checkedMovies['Watching Movies']}
                     checkedColor="#7E3FF0"
-                    label="Horror"
-                    onPress={() => handleCheckboxChange('Horror')}
+                    label="Watching Movies"
+                    onPress={() => handleCheckboxChange('Watching Movies')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Action}
+                    checked={checkedMovies.Music}
                     checkedColor="#7E3FF0"
-                    label="Action"
-                    onPress={() => handleCheckboxChange('Action')}
+                    label="Music"
+                    onPress={() => handleCheckboxChange('Music')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Comedy}
+                    checked={checkedMovies.Exercising}
                     checkedColor="#7E3FF0"
-                    label="Comedy"
-                    onPress={() => handleCheckboxChange('Comedy')}
+                    label="Exercising"
+                    onPress={() => handleCheckboxChange('Exercising')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Thriller}
+                    checked={checkedMovies.Cooking}
                     checkedColor="#7E3FF0"
-                    label="Thriller"
-                    onPress={() => handleCheckboxChange('Thriller')}
+                    label="Cooking"
+                    onPress={() => handleCheckboxChange('Cooking')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Drama}
+                    checked={checkedMovies.Napping}
                     checkedColor="#7E3FF0"
-                    label="Drama"
-                    onPress={() => handleCheckboxChange('Drama')}
+                    label="Napping"
+                    onPress={() => handleCheckboxChange('Napping')}
                 />
             </View>
 
-            <Text style={styles.subtitle}>Please note that we will take you back to the Log In to properly log in your account</Text>
+            <Text style={styles.subtitle}>
+                Please note that we will take you back to the Log In to properly
+                log in your account
+            </Text>
 
             <View>
                 {isLoading ? (

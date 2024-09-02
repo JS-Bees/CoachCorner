@@ -232,7 +232,6 @@ const NewCoachProfile = () => {
         ? sportsCredentials[sportsCredentials.length - 1]?.credentialPicture
         : null;
 
-    console.log(coachData?.findCoachByID.address);
     const CoachProfiles: CoachProfile[] = [
         {
             coachName:
@@ -381,64 +380,43 @@ const NewCoachProfile = () => {
                         onPageSelected={handlePageChange}
                     >
                         <View key="1">
-                            <ScrollView>
-                                <Text style={styles.titleHeader}> Bio</Text>
-                                <Text style={styles.contentText}>
-                                    {CoachProfiles[0].about}
-                                </Text>
-                                <Text style={styles.titleHeader}>
-                                    {' '}
-                                    Workplace Address
-                                </Text>
-                                <Text style={styles.contentText}>
-                                    {CoachProfiles[0].workplaceAddress}
-                                </Text>
+                        <ScrollView>
+    <Text style={styles.titleHeader}>Bio</Text>
+    <Text style={styles.contentText}>{CoachProfiles[0].about}</Text>
+    
+    <Text style={styles.titleHeader}>Workplace Address</Text>
+    <Text style={styles.contentText}>{CoachProfiles[0].workplaceAddress}</Text>
 
-                                <Text style={styles.titleHeader}>
-                                    {' '}
-                                    Interests
-                                </Text>
+    <Text style={styles.titleHeader}>Interests</Text>
 
-                                <View style={styles.subcontentContainer}>
-                                    <Text style={styles.subHeader}>
-                                        {' '}
-                                        Movies Genre:
-                                    </Text>
-                                    <Text style={styles.subontentText}>
-                                        {CoachProfiles[0].interests?.MovieGenre?.join(
-                                            ', ',
-                                        )}
-                                        {'\n'}
-                                    </Text>
-                                </View>
+    <View style={styles.subcontentContainer}>
+        <Text style={styles.subHeader}>
+            What are some of your favorite ways to relax?
+        </Text>
+        <Text style={styles.subContentTextIndented}>
+            {CoachProfiles[0].interests?.MovieGenre?.join(', ')}
+        </Text>
+    </View>
 
-                                <View style={styles.subcontentContainer}>
-                                    <Text style={styles.subHeader}>
-                                        {' '}
-                                        Book Genre:
-                                    </Text>
-                                    <Text style={styles.subontentText}>
-                                        {' '}
-                                        {CoachProfiles[0].interests?.BookGenre?.join(
-                                            ', ',
-                                        )}
-                                        {'\n'}
-                                    </Text>
-                                </View>
+    <View style={styles.subcontentContainer}>
+        <Text style={styles.subHeader}>
+            What do you prefer to do on weekends?
+        </Text>
+        <Text style={styles.subContentTextIndented}>
+            {CoachProfiles[0].interests?.BookGenre?.join(', ')}
+        </Text>
+    </View>
 
-                                <View style={styles.subcontentContainer}>
-                                    <Text style={styles.subHeader}>
-                                        {' '}
-                                        Music Genre:
-                                    </Text>
-                                    <Text style={styles.subontentText}>
-                                        {CoachProfiles[0].interests?.MusicGenre?.join(
-                                            ', ',
-                                        )}
-                                        {'\n'}
-                                    </Text>
-                                </View>
-                            </ScrollView>
+    <View style={styles.subcontentContainer}>
+        <Text style={styles.subHeader}>
+            What hobbies do you prefer on your downtime?
+        </Text>
+        <Text style={styles.subContentTextIndented}>
+            {CoachProfiles[0].interests?.MusicGenre?.join(', ')}
+        </Text>
+    </View>
+</ScrollView>
+
                         </View>
                         <View key="2">
                             {/* Sports Credentials Tab */}
@@ -574,16 +552,14 @@ const styles = StyleSheet.create({
         left: '5%',
     },
     subcontentContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        left: '15%',
+        flexDirection: 'column', // Stack items vertically
+        paddingHorizontal: 20, // Add some padding to the sides
+        marginBottom: 10, // Add spacing between each section
     },
     subHeader: {
-        paddingTop: '1%',
         fontWeight: '400',
-        fontSize: 15,
-        left: '-35%',
-        justifyContent: 'flex-start',
+        fontSize: 16,
+        color: '#7E3FF0',
     },
     contentText: {
         paddingTop: '1%',
@@ -695,6 +671,13 @@ const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
         marginBottom: 20, // Add margin to the bottom to ensure space for multiple images
+    },
+    subContentTextIndented: {
+        paddingLeft: 20, // Indent the text
+        fontSize: 15,
+        color: '#908D93',
+        fontFamily: 'Roboto',
+        fontWeight: '200',
     },
 });
 export default NewCoachProfile;

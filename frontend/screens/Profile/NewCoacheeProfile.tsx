@@ -97,7 +97,7 @@ const NewCoacheeProfile = () => {
 
     const CoacheeProfiles: CoacheeProfile[] = [
         {
-            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName),
+            coacheeName: (coacheeData?.findCoacheeByID.firstName + " " + coacheeData?.findCoacheeByID.lastName.split(' ')[0]),
             // mainSport: "Basketball",
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
@@ -182,29 +182,42 @@ const NewCoacheeProfile = () => {
                     </View>
                     <PagerView style={styles.pagerView} initialPage={0} ref={pagerRef} onPageSelected={handlePageChange}>
                         <View key="1">
-                           <ScrollView>
-                           <Text style={styles.titleHeader}>Bio</Text>
-                            <Text style={styles.contentText}>{CoacheeProfiles[0].about}</Text>
-                            <Text style={styles.titleHeader}>Address</Text>
-                            <Text style={styles.contentText}>{CoacheeProfiles[0].address}</Text>
-                            
-                            <Text style={styles.titleHeader}>Interests</Text>
+                        <ScrollView>
+    <Text style={styles.titleHeader}>Bio</Text>
+    <Text style={styles.contentText}>{CoacheeProfiles[0].about}</Text>
+    
+    <Text style={styles.titleHeader}>Workplace Address</Text>
+    <Text style={styles.contentText}>{CoacheeProfiles[0].address}</Text>
 
-                            <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>  Movies Genre:</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests?.movieGenres?.join(', ')}{"\n"}</Text>
-                            </View>
+    <Text style={styles.titleHeader}>Interests</Text>
 
-                            <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>  Book Genre:</Text>
-                            <Text style={styles.subontentText}> {CoacheeProfiles[0].interests?.hobbies?.join(', ')}{"\n"}</Text>
-                            </View>
+    <View style={styles.subcontentContainer}>
+        <Text style={styles.subHeader}>
+            What are some of your favorite ways to relax?
+        </Text>
+        <Text style={styles.subContentTextIndented}>
+            {CoacheeProfiles[0].interests?.movieGenres?.join(', ')}
+        </Text>
+    </View>
 
-                            <View style={styles.subcontentContainer}>
-                            <Text style={styles.subHeader}>  Music Genre:</Text>
-                            <Text style={styles.subontentText}>{CoacheeProfiles[0].interests?.videoGames?.join(', ')}{"\n"}</Text>
-                            </View>
-                           </ScrollView>
+    <View style={styles.subcontentContainer}>
+        <Text style={styles.subHeader}>
+            What do you prefer to do on weekends?
+        </Text>
+        <Text style={styles.subContentTextIndented}>
+            {CoacheeProfiles[0].interests?.hobbies?.join(', ')}
+        </Text>
+    </View>
+
+    <View style={styles.subcontentContainer}>
+        <Text style={styles.subHeader}>
+            What hobbies do you prefer on your downtime?
+        </Text>
+        <Text style={styles.subContentTextIndented}>
+            {CoacheeProfiles[0].interests?.videoGames?.join(', ')}
+        </Text>
+    </View>
+</ScrollView>
                         </View>
                       
                     </PagerView>
@@ -304,16 +317,14 @@ const styles = StyleSheet.create({
         left: "5%",
     },
     subcontentContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        left: "15%"
+        flexDirection: 'column', // Stack items vertically
+        paddingHorizontal: 20, // Add some padding to the sides
+        marginBottom: 10, // Add spacing between each section
     },
     subHeader: {
-        paddingTop: "1%",
         fontWeight: '400',
-        fontSize: 15,
-        left: "-35%",
-        justifyContent: "flex-start"
+        fontSize: 16,
+        color: '#7E3FF0',
     },
     contentText: {
         paddingTop: "1%",
@@ -389,8 +400,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 250,
     },
+    scrollView: {
+        flex: 1,
+        marginBottom: 20, // Add margin to the bottom to ensure space for multiple images
+    },
     inputContainer: {
         marginTop: 90, // Adjust as needed to create space between the image and text inputs
+    },
+    subContentTextIndented: {
+        paddingLeft: 20, // Indent the text
+        fontSize: 15,
+        color: '#908D93',
+        fontFamily: 'Roboto',
+        fontWeight: '200',
     },
   
 })

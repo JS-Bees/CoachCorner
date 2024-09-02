@@ -56,7 +56,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
-import { CopilotProvider } from "react-native-copilot";
+import { CopilotProvider } from 'react-native-copilot';
 import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
@@ -78,14 +78,14 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    // url: 'ws://192.168.1.2:5050/graphql',
+    // url: 'ws://192.168.1.7:5050/graphql',
     url: apiUrlWs!,
 });
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    // url: 'http://192.168.1.2:5050/graphql',
+    // url: 'http://192.168.1.7:5050/graphql',
     url: apiUrl!,
     // fetchSubscriptions: true, // added this tog try and fix fetching
     exchanges: [
@@ -174,249 +174,247 @@ export default function App() {
     <StatusBar hidden={true} />
     return (
         <UrqlProvider value={client}>
-
             <NavigationContainer>
-            <CopilotProvider stopOnOutsideClick>
-                <RootStack.Navigator initialRouteName="IntroSplash">
-                    <RootStack.Screen
-                        name="SplashScreen"
-                        component={LoadingSplash}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="IntroSplash"
-                        component={IntroSplash}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="LogIn"
-                        component={LogInPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="RolePicking"
-                        component={RolePicking}
-                        options={{ headerShown: false }}
-                    />
-                     <RootStack.Screen
-                        name="LandingPage"
-                        component={LandingPage}
-                        options={{ headerShown: false }}
-                    />
-                     <RootStack.Screen
-                        name="IntroInterests"
-                        component={IntroInterests}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="SignUpCoachee"
-                        component={SignUpCoachee}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="SignUpCoach"
-                        component={SignUpCoach}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoacheeDashboard"
-                        component={TabNavigator}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="NewCoachDashboard"
-                        component={NewCoachTabNavigator}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoachDashboard"
-                        component={CoachDashboard}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoacheeProfile"
-                        component={CoacheeProfile}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoachProfile"
-                        component={CoachProfile}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="NewCoachProfile"
-                        component={NewCoachProfile}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoachAppointments"
-                        component={CoachAppointments}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ClientAppointments"
-                        component={ClientAppointments}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="NewCoacheeProfile"
-                        component={NewCoacheeProfile}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="MyClients"
-                        component={MyClients}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="MyCoaches"
-                        component={MyCoaches}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="SearchList"
-                        component={SearchList}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoachBookingDrawer"
-                        component={CoachBookingDrawer}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ClientBookingDrawer"
-                        component={ClientBookingDrawer}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="MyCoaches_alt"
-                        component={CoachSearchPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="MyClients_alt"
-                        component={MyClients_alt}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ChatPage"
-                        component={ChatPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ChatList"
-                        component={ChatListPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="SportPicking"
-                        component={ChooseSport}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="InterestPickingGames"
-                        component={ChooseVideoGames}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="InterestPickingHobby"
-                        component={ChooseHobbies}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="InterestPickingMovie"
-                        component={ChooseMovies}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="AllCoachesPage"
-                        component={AllCoaches}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="PreviewPage"
-                        component={PreviewPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoacheePreviewPage"
-                        component={CoacheePreviewPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ReviewsPage"
-                        component={ReviewsPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CredentialsPage"
-                        component={CredentialsPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="NotificationPage"
-                        component={NotificationPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="NewBookingPage"
-                        component={NewBookingPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="EditProfile"
-                        component={EditInterests}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="EditProfileForCoach"
-                        component={EditInterestsForCoach}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="AddTaskPage"
-                        component={AddTaskPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ReschedulePage"
-                        component={ReschedulePage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="AddTaskPageForCoach"
-                        component={AddTaskPageForCoach}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="PreviewTask"
-                        component={PreviewTask}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="PreviewTaskForCoachee"
-                        component={PreviewTaskForCoachee}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoachChatPage"
-                        component={CoachChatPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="CoachChatListsPage"
-                        component={CoachChatListsPage}
-                        options={{ headerShown: false }}
-                    />
-                    <RootStack.Screen
-                        name="ReviewsPageCoach"
-                        component={ReviewsPageCoach}
-                        options={{ headerShown: false }}
-                    />
-                </RootStack.Navigator>
+                <CopilotProvider stopOnOutsideClick>
+                    <RootStack.Navigator initialRouteName="IntroSplash">
+                        <RootStack.Screen
+                            name="SplashScreen"
+                            component={LoadingSplash}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="IntroSplash"
+                            component={IntroSplash}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="LogIn"
+                            component={LogInPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="RolePicking"
+                            component={RolePicking}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="LandingPage"
+                            component={LandingPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="IntroInterests"
+                            component={IntroInterests}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="SignUpCoachee"
+                            component={SignUpCoachee}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="SignUpCoach"
+                            component={SignUpCoach}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoacheeDashboard"
+                            component={TabNavigator}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="NewCoachDashboard"
+                            component={NewCoachTabNavigator}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoachDashboard"
+                            component={CoachDashboard}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoacheeProfile"
+                            component={CoacheeProfile}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoachProfile"
+                            component={CoachProfile}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="NewCoachProfile"
+                            component={NewCoachProfile}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoachAppointments"
+                            component={CoachAppointments}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ClientAppointments"
+                            component={ClientAppointments}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="NewCoacheeProfile"
+                            component={NewCoacheeProfile}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="MyClients"
+                            component={MyClients}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="MyCoaches"
+                            component={MyCoaches}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="SearchList"
+                            component={SearchList}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoachBookingDrawer"
+                            component={CoachBookingDrawer}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ClientBookingDrawer"
+                            component={ClientBookingDrawer}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="MyCoaches_alt"
+                            component={CoachSearchPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="MyClients_alt"
+                            component={MyClients_alt}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ChatPage"
+                            component={ChatPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ChatList"
+                            component={ChatListPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="SportPicking"
+                            component={ChooseSport}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="InterestPickingGames"
+                            component={ChooseVideoGames}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="InterestPickingHobby"
+                            component={ChooseHobbies}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="InterestPickingMovie"
+                            component={ChooseMovies}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="AllCoachesPage"
+                            component={AllCoaches}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="PreviewPage"
+                            component={PreviewPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoacheePreviewPage"
+                            component={CoacheePreviewPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ReviewsPage"
+                            component={ReviewsPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CredentialsPage"
+                            component={CredentialsPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="NotificationPage"
+                            component={NotificationPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="NewBookingPage"
+                            component={NewBookingPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="EditProfile"
+                            component={EditInterests}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="EditProfileForCoach"
+                            component={EditInterestsForCoach}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="AddTaskPage"
+                            component={AddTaskPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ReschedulePage"
+                            component={ReschedulePage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="AddTaskPageForCoach"
+                            component={AddTaskPageForCoach}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="PreviewTask"
+                            component={PreviewTask}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="PreviewTaskForCoachee"
+                            component={PreviewTaskForCoachee}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoachChatPage"
+                            component={CoachChatPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="CoachChatListsPage"
+                            component={CoachChatListsPage}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="ReviewsPageCoach"
+                            component={ReviewsPageCoach}
+                            options={{ headerShown: false }}
+                        />
+                    </RootStack.Navigator>
                 </CopilotProvider>
             </NavigationContainer>
-            
         </UrqlProvider>
     );
 }
