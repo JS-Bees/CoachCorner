@@ -149,8 +149,6 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             }
             return 0;
         });
-
-        console.log('Sorted sessions:', sessionsToShow);
         const filteredSessions = sessionsToShow.filter(booking => {
             const coacheeName = `${booking.coach.firstName} ${booking.coach.lastName}`;
             return coacheeName.toLowerCase().includes(searchText.toLowerCase());

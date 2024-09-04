@@ -214,13 +214,6 @@ const NewCoachDashboard = () => {
         return traineeName.includes(searchText.toLowerCase());
     });
 
-    const handleOpenCalendar = () => {
-        setIsCalendarVisible(true);
-    };
-
-    const handleCloseCalendar = () => {
-        setIsCalendarVisible(false);
-    };
 
     const markedDates = upcomingBookings?.reduce((acc: any, booking: Booking) => {
         booking.bookingSlots.forEach(slot => {
@@ -272,9 +265,15 @@ const NewCoachDashboard = () => {
                         inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}
                     />
                 </View>
+                <View style={CoacheeDashboardStyle.calendarContainer}>
+                    <Calendar
+                        markedDates={markedDates}
+                        onDayPress={handleDayPress}
+                    />
+                </View>
                 <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{ marginTop: "1%", height: 350 }}>
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                        <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
+                        <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Appointments </Text>
                         
             <TouchableOpacity style={CoacheeDashboardStyle.tourButton} onPress={handleTour}>
                 <Animated.View style={iconAnimationStyle}>
@@ -303,21 +302,8 @@ const NewCoachDashboard = () => {
                         </Text>
                     )}
                 </ScrollView>
-                <TouchableOpacity style={CoacheeDashboardStyle.calendarButton} onPress={handleOpenCalendar}>
-                    <Text style={CoacheeDashboardStyle.calendarButtonText}>Open Calendar</Text>
-                </TouchableOpacity>
             </KeyboardAvoidingView>
-            <Modal visible={isCalendarVisible} animationType="fade" transparent={false}>
-    <View style={CoacheeDashboardStyle.modalContainer}>
-        <Calendar
-            markedDates={markedDates}
-            onDayPress={handleDayPress}
-        />
-        <TouchableOpacity style={CoacheeDashboardStyle.closeButton} onPress={handleCloseCalendar}>
-            <Text style={CoacheeDashboardStyle.closeButtonText}>Close Calendar</Text>
-        </TouchableOpacity>
-    </View>
-</Modal>
+            
         </View>
     );
 };
@@ -503,6 +489,10 @@ const CoacheeDashboardStyle = StyleSheet.create({
         fontSize: 12,
         color: '#7E3FF0',
     },
+    calendarContainer: {
+        paddingHorizontal: "5%",
+        paddingVertical: "2%"
+    }
     
    
 });

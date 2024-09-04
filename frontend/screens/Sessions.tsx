@@ -167,8 +167,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             return 0;
         });
 
-        console.log('Sorted sessions:', sessionsToShow);
-        
+       
         const filteredSessions = sessionsToShow.filter(booking => {
             const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
             return coacheeName.toLowerCase().includes(searchText.toLowerCase());
