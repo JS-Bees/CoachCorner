@@ -42,6 +42,8 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [bookings, setBookings] = useState<any[]>([]);
     const pollingInterval = 1000;
+    const [sortOption, setSortOption] = useState<'date' | 'alphabetical'>('date');
+    const [filterMessage, setFilterMessage] = useState('Filtered by name');
 
  
 
@@ -112,6 +114,17 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         return () => clearInterval(intervalId);
     }, []);
 
+    const toggleSortOption = () => {
+        if (sortOption === 'alphabetical') {
+            setSortOption('date');
+            setFilterMessage('Filtered by date');
+        } else {
+            setSortOption('alphabetical');
+            setFilterMessage('Filtered by name');
+        }
+    };
+
+
     
     if (error) {
         return <Text>Error: {error.message}</Text>;
@@ -134,11 +147,34 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const completedBookings = booking.filter(booking => booking.status === 'COMPLETED');
 
         // Modify the sessionsToShow variable to filter based on searchText
-        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
+
+        let sessionsToShow =
+        activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
+
+        // Apply sorting based on the selected filter option
+        sessionsToShow = sessionsToShow.sort((a, b) => {
+            if (sortOption === 'date') {
+                const dateA = new Date(a.bookingSlots[0].date).getTime();
+                const dateB = new Date(b.bookingSlots[0].date).getTime();
+                console.log('Sorting by date:', dateA, dateB);
+                return dateA - dateB;
+            } else if (sortOption === 'alphabetical') {
+                const coacheeA = a.coachee?.firstName || '';
+                const coacheeB = b.coachee?.firstName || '';
+                console.log('Sorting by name:', coacheeA, coacheeB);
+                return coacheeA.localeCompare(coacheeB);
+            }
+            return 0;
+        });
+
+        console.log('Sorted sessions:', sessionsToShow);
+        
         const filteredSessions = sessionsToShow.filter(booking => {
             const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
             return coacheeName.toLowerCase().includes(searchText.toLowerCase());
         });
+
+        
     
     return (
         <View style={MyCoaches.container}>
@@ -209,6 +245,13 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                 <Text style={MyCoaches.badgeText}>{pendingBookings.length}</Text>
             </View>)}
             </TouchableOpacity>
+            </View>
+
+            <View style={MyCoaches.filterIconContainer}>
+                <Text style={{ color: '#7E3FF0', marginTop: 5, marginRight: "5%", fontStyle: "italic"}}>{filterMessage}</Text>
+                    <TouchableOpacity onPress={toggleSortOption}>
+                        <Icon name="filter-outline" size={30} color="#7E3FF0" />
+                    </TouchableOpacity>
             </View>
 
           
@@ -386,6 +429,13 @@ const MyCoaches = StyleSheet.create({
         color: 'white',
         fontSize: 12,
         fontWeight: 'bold',
+    },
+    filterIconContainer: {
+        flexDirection: 'row',
+        justifyContent: "flex-end",
+        paddingTop: "3%",
+        marginRight: "6%",
+        
     },
    
 });
