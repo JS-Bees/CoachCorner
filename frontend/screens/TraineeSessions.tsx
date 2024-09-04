@@ -41,6 +41,9 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     const [userToken, setUserToken] = useState<string | null>(null);
     const [bookings, setBookings] = useState<any[]>([]);
     const pollingInterval = 1000;
+    const [sortOption, setSortOption] = useState<'date' | 'alphabetical'>('date');
+    const [filterMessage, setFilterMessage] = useState('Filtered by name');
+
  
 
 
@@ -84,6 +87,7 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
         requestPolicy: 'network-only',
     });
 
+
     const { data, error, fetching} = result;
 
 
@@ -100,6 +104,18 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
         return () => clearInterval(intervalId);
     }, []);
 
+    const toggleSortOption = () => {
+        if (sortOption === 'alphabetical') {
+            setSortOption('date');
+            setFilterMessage('Filtered by date');
+        } else {
+            setSortOption('alphabetical');
+            setFilterMessage('Filtered by name');
+        }
+    };
+
+
+
     if (error) {
         return <Text>Error: {error.message}</Text>;
     }
@@ -115,7 +131,26 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
     const completedBookings = booking.filter(booking => booking.status === 'COMPLETED');
 
         // Modify the sessionsToShow variable to filter based on searchText
-        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
+        let sessionsToShow =
+        activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
+
+        // Apply sorting based on the selected filter option
+        sessionsToShow = sessionsToShow.sort((a, b) => {
+            if (sortOption === 'date') {
+                const dateA = new Date(a.bookingSlots[0].date).getTime();
+                const dateB = new Date(b.bookingSlots[0].date).getTime();
+                console.log('Sorting by date:', dateA, dateB);
+                return dateA - dateB;
+            } else if (sortOption === 'alphabetical') {
+                const coachA = a.coach?.firstName || '';
+                const coachB = b.coach?.firstName || '';
+                console.log('Sorting by name:', coachA, coachB);
+                return coachA.localeCompare(coachB);
+            }
+            return 0;
+        });
+
+        console.log('Sorted sessions:', sessionsToShow);
         const filteredSessions = sessionsToShow.filter(booking => {
             const coacheeName = `${booking.coach.firstName} ${booking.coach.lastName}`;
             return coacheeName.toLowerCase().includes(searchText.toLowerCase());
@@ -191,6 +226,18 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             </View>)}
             </TouchableOpacity>
             </View>
+
+            <View style={MyCoaches.filterIconContainer}>
+            <Text style={{ color: '#7E3FF0', marginTop: 5, marginRight: "5%",}}>{filterMessage}</Text>
+                    <TouchableOpacity onPress={toggleSortOption}>
+                    
+                        <Icon name="filter-outline" size={30} color="#7E3FF0" />
+                        
+                    </TouchableOpacity>
+                  
+                    
+            </View>
+
 
             <ScrollView
     contentInsetAdjustmentBehavior="scrollableAxes"
@@ -369,6 +416,12 @@ const MyCoaches = StyleSheet.create({
         color: 'white',
         fontSize: 12,
         fontWeight: 'bold',
+    },
+    filterIconContainer: {
+        flexDirection: 'row',
+        justifyContent: "flex-end",
+        paddingTop: "3%",
+        marginRight: "6%",
     },
    
 });
