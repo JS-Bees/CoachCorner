@@ -35,7 +35,7 @@ const ChooseMovies = ({ route }) => {
     const [isLoading, setLoading] = useState(false);
 
     const [, createCoach] = useMutation(CreateCoachDocument);
-    const [, createCoachee] = useMutation(CreateCoacheeDocument);
+    const [coacheeRes, createCoachee] = useMutation(CreateCoacheeDocument);
     const {
         firstName,
         lastName,
@@ -78,6 +78,8 @@ const ChooseMovies = ({ route }) => {
     };
 
     const handleButtonPress = async () => {
+        // Added this
+        setLoading(true);
         if (coachOrCoachee == 'coachee') {
             console.log(coachOrCoachee);
             const selectedMovie = Object.keys(checkedMovies)
@@ -121,10 +123,33 @@ const ChooseMovies = ({ route }) => {
                     ],
                 });
 
+                console.log(createCoachee);
+
+                if (!data || !error) {
+                    console.log('coachee is being fetched');
+                }
+
                 if (error) {
-                    console.error('Error:', error);
-                    setSuccessMessage('Signup Failed.');
-                    setModalVisible(true);
+                    console.log('Did this coachee error run');
+                    // const errorMessage = error.toString().split(']')[1];
+                    // console.error('Error:', error);
+                    // setSuccessMessage(`Signup Failed. \n ${errorMessage}.`);
+                    // setModalVisible(true);
+                    // console.log(error.toString());
+                    if (
+                        error.toString().trim() ===
+                        '[GraphQL] Email rate limit exceeded'
+                    ) {
+                        setSuccessMessage(
+                            `Signup Failed. \nEmail rate limit exceeded.`,
+                        );
+                        setModalVisible(true);
+                    } else {
+                        setSuccessMessage(`Signup Failed.`);
+                        setModalVisible(true);
+                    }
+                    setLoading(false);
+                    return;
                 } else if (data && data.createCoachee) {
                     console.log('Coachee created:', data.createCoachee);
                     // Navigate to the next screen or perform other actions upon successful signup
@@ -145,9 +170,12 @@ const ChooseMovies = ({ route }) => {
                 if (data) {
                     setSuccessMessage('Signup Successful!');
                     setModalVisible(true);
+                    setLoading(false);
                 }
             } catch (error) {
                 console.log(selectedGames, selectedHobbies, selectedMovie);
+                // setSuccessMessage('Signup Failed');
+                // setModalVisible(true);
                 console.error('Error creating coachee:', error);
                 // Handle errors appropriately
             }
@@ -202,9 +230,26 @@ const ChooseMovies = ({ route }) => {
                 });
 
                 if (error) {
-                    console.error('Error:', error);
-                    setSuccessMessage('Signup Failed.');
-                    setModalVisible(true);
+                    console.log('Did this coach error run');
+                    // const errorMessage = error.toString().split(']')[1];
+                    // console.error('Error:', error);
+                    // setSuccessMessage(`Signup Failed. \n ${errorMessage}.`);
+                    // setModalVisible(true);
+                    // console.log(error.toString());
+                    if (
+                        error.toString().trim() ===
+                        '[GraphQL] Email rate limit exceeded'
+                    ) {
+                        setSuccessMessage(
+                            `Signup Failed. \nEmail rate limit exceeded.`,
+                        );
+                        setModalVisible(true);
+                    } else {
+                        setSuccessMessage(`Signup Failed.`);
+                        setModalVisible(true);
+                    }
+                    setLoading(false);
+                    return;
                 } else if (data && data.createCoach) {
                     console.log('Coach created:', data.createCoach);
                     // Navigate to the next screen or perform other actions upon successful signup
@@ -230,6 +275,7 @@ const ChooseMovies = ({ route }) => {
                 if (data) {
                     setSuccessMessage('Signup Successful!');
                     setModalVisible(true);
+                    setLoading(false);
                 }
             } catch (error) {
                 console.log(
@@ -304,7 +350,31 @@ const ChooseMovies = ({ route }) => {
                 />
             </View>
 
-            <TouchableOpacity
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#7E3FF0" />
+            ) : (
+                <TouchableOpacity
+                    style={[
+                        styles.button,
+                        !isMaxChecksReached && styles.disabledButton,
+                    ]}
+                    onPress={handleButtonPress}
+                    disabled={!isMaxChecksReached}
+                >
+                    <Text
+                        style={{
+                            color: 'white',
+                            fontSize: 15,
+                            height: 40,
+                            paddingHorizontal: 10,
+                            paddingVertical: 10,
+                        }}
+                    >
+                        Sign Up
+                    </Text>
+                </TouchableOpacity>
+            )}
+            {/* <TouchableOpacity
                 style={[
                     styles.button,
                     !isMaxChecksReached && styles.disabledButton,
@@ -323,7 +393,7 @@ const ChooseMovies = ({ route }) => {
                 >
                     Sign Up
                 </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <SignupSuccessModal
                 visible={modalVisible}

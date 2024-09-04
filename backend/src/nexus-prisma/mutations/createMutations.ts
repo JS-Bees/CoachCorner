@@ -98,10 +98,13 @@ export const createCoachee = mutationField('createCoachee', {
             });
 
             if (error) {
+                console.log('error 1');
+                console.log(error);
                 throw error;
             }
 
             console.log(data);
+            // End of Email Verification
 
             return coachee;
         } catch (error) {
@@ -111,6 +114,8 @@ export const createCoachee = mutationField('createCoachee', {
                 throw new Error(error.message);
             }
             // Rethrow other errors
+            console.log('error 2');
+            console.log(error);
             throw error;
         }
     },
@@ -180,6 +185,7 @@ export const createCoach = mutationField('createCoach', {
             }
 
             console.log(data);
+            // End of email verification
 
             return coach;
         } catch (error) {
