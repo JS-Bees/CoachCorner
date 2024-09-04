@@ -73,6 +73,22 @@ export const createCoachee = mutationField('createCoachee', {
             interestListSchema.validateSync(interestsInput);
 
             const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
+
+            // Need this for Email Verification
+            const { data, error } = await supabase.auth.signUp({
+                email: lowerCaseEmail,
+                password: input.password,
+            });
+
+            if (error) {
+                console.log('error 1');
+                console.log(error);
+                throw error;
+            }
+
+            console.log(data);
+            // End of Email Verification
+
             const coacheeData = {
                 ...input,
                 password: hashedPassword,
@@ -91,20 +107,20 @@ export const createCoachee = mutationField('createCoachee', {
                 },
             });
 
-            // Need this for Email Verification
-            const { data, error } = await supabase.auth.signUp({
-                email: coachee.email,
-                password: input.password,
-            });
+            // // Need this for Email Verification
+            // const { data, error } = await supabase.auth.signUp({
+            //     email: coachee.email,
+            //     password: input.password,
+            // });
 
-            if (error) {
-                console.log('error 1');
-                console.log(error);
-                throw error;
-            }
+            // if (error) {
+            //     console.log('error 1');
+            //     console.log(error);
+            //     throw error;
+            // }
 
-            console.log(data);
-            // End of Email Verification
+            // console.log(data);
+            // // End of Email Verification
 
             return coachee;
         } catch (error) {
@@ -152,6 +168,22 @@ export const createCoach = mutationField('createCoach', {
             }
 
             const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
+
+            // Need this for Email Verification
+            const { data, error } = await supabase.auth.signUp({
+                email: lowerCaseEmail,
+                password: input.password,
+            });
+
+            if (error) {
+                console.log('error 1');
+                console.log(error);
+                throw error;
+            }
+
+            console.log(data);
+            // End of Email Verification
+
             const coachData = {
                 ...input,
                 password: hashedPassword,
@@ -174,18 +206,18 @@ export const createCoach = mutationField('createCoach', {
                 },
             });
 
-            // Need this for Email Verification
-            const { data, error } = await supabase.auth.signUp({
-                email: coach.email,
-                password: input.password,
-            });
+            // // Need this for Email Verification
+            // const { data, error } = await supabase.auth.signUp({
+            //     email: coach.email,
+            //     password: input.password,
+            // });
 
-            if (error) {
-                throw error;
-            }
+            // if (error) {
+            //     throw error;
+            // }
 
-            console.log(data);
-            // End of email verification
+            // console.log(data);
+            // // End of email verification
 
             return coach;
         } catch (error) {

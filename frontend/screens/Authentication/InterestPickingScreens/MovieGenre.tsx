@@ -168,7 +168,9 @@ const ChooseMovies = ({ route }) => {
                 //     console.error('No  data returned from mutation');
                 // }
                 if (data) {
-                    setSuccessMessage('Signup Successful!');
+                    setSuccessMessage(
+                        'Signup Successful!\nPlease verify your email.',
+                    );
                     setModalVisible(true);
                     setLoading(false);
                 }
@@ -273,7 +275,9 @@ const ChooseMovies = ({ route }) => {
                 //     console.error('No data returned from mutation');
                 // }
                 if (data) {
-                    setSuccessMessage('Signup Successful!');
+                    setSuccessMessage(
+                        'Signup Successful!\nPlease verify your email.',
+                    );
                     setModalVisible(true);
                     setLoading(false);
                 }
