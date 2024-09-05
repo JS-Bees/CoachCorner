@@ -58,6 +58,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import { CopilotProvider } from 'react-native-copilot';
 import IntroSplash from './screens/Authentication/IntroSplash';
+import { StatusBar } from 'react-native';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -77,15 +78,16 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    url: 'ws://192.168.1.6:5050/graphql',
-    // url: apiUrlWs!,
+    // url: 'ws://192.168.1.7:5050/graphql',
+    url: apiUrlWs!,
 });
 
 // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
-    url: 'http://192.168.1.6:5050/graphql',
-    // url: apiUrl!,
+    // url: 'http://192.168.1.7:5050/graphql',
+    url: apiUrl!,
+
 
     // fetchSubscriptions: true, // added this tog try and fix fetching
     exchanges: [
@@ -171,6 +173,7 @@ const Tab = createBottomTabNavigator();
 const CoachTab = createBottomTabNavigator();
 
 export default function App() {
+    <StatusBar hidden={true} />
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>

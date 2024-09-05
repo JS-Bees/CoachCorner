@@ -34,14 +34,14 @@ const UpcomingDashboard: React.FC<UpcomingSessionsProp> = ({ upcoming }) => {
         return null; // Or return a placeholder view
     }
 
-    const firstTwoSessions = upcoming.slice(0, 3);
+    const firstTwoSessions = upcoming.slice(0, 2);
 
     return (
         <View style={style.container}>
             {firstTwoSessions.map((session, index) => (
                 <TouchableOpacity
                     key={index}
-                    onPress={() => navigation.navigate('Sessions')} // Navigate to the Sessions page
+                    onPress={() => navigation.navigate('Appointments')} // Navigate to the Sessions page
                 >
                     <View style={session.isHighlighted ? style.highlightedTile : style.normalTile}>
                         <View style={style.sessionContent}>
