@@ -23,7 +23,7 @@ model User {
   bio                 String
   userRole            String            @map("user_role")
 
-  coach               Coach?
+  coach               Coach
   userInterests       UserInterest[]    
   tasks               Task[]
   reviews             Review[]
