@@ -20,9 +20,6 @@ import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native
 import { StackNavigationProp } from '@react-navigation/stack';
 import SplashScreen from './Authentication/SplashScreen';
 
-
-
-
 const { width, height } = Dimensions.get('window');
 
 interface CoachSessionsProps {
@@ -30,19 +27,12 @@ interface CoachSessionsProps {
     onSessionPress?: (session: CoachSessionsProps) => void;
 }
 
-
-
-
 const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation = useNavigation();
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
-    const [userToken, setUserToken] = useState(null); // State to store the user token
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [userToken, setUserToken] = useState(null); 
     const [bookings, setBookings] = useState([]);
-
- 
 
     useEffect(() => {
         const fetchToken = async () => setUserToken(await AsyncStorage.getItem('userToken'));
@@ -85,7 +75,6 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         `${b.coachee.firstName} ${b.coachee.lastName}`.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    
     useEffect(() => {
         if (data) {
         setBookings(data.findCoachByID.bookings);}
@@ -97,9 +86,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         }, pollingInterval);
       
         return () => clearInterval(intervalId);
-    }, []);
-
-    
+    }, []);  
     
     if (error) return <Text>Error: {error.message}</Text>;
     if (fetching) return <SplashScreen navigation={navigation} />;
