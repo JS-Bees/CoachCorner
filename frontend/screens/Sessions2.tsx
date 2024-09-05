@@ -61,21 +61,17 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     });
 
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const useFetchCoachByUserID = (userID: any) => {
-        const [coachResult] = useQuery({
-            query: FindCoachByIdDocument, // Use the Coachee query document
-            variables: {
-                userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
-            },
-        });
+    useEffect(() => {
+        if (data) setBookings(data.findCoachByID.bookings);
+    }, [data]);
 
-        return coachResult;
-    };
+    useEffect(() => {
+        const interval = setInterval(refetch, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
-    const {
-        data: coachData,
-    } = useFetchCoachByUserID(userToken);
+    if (error) return <Text>Error: {error.message}</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     
 
     const [result, refetch] = useQuery({
