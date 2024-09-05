@@ -100,254 +100,83 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     }, []);
 
     
-    if (error) {
-        return <Text>Error: {error.message}</Text>;
-    }
-      
-   
-
-
-
+    
+    if (error) return <Text>Error: {error.message}</Text>;
     if (fetching) return <SplashScreen navigation={navigation} />;
     
+    const filterBookings = (status) => bookings.filter(b => b.status === status);
+    const sessionsToShow = {
+        'Upcoming': filterBookings('UPCOMING'),
+        'Pending': filterBookings('PENDING'),
+        'Completed': filterBookings('COMPLETED')
+    }[activeButton];
 
+    const filteredSessions = sessionsToShow?.filter(b => 
+        `${b.coachee.firstName} ${b.coachee.lastName}`.toLowerCase().includes(searchText.toLowerCase())
+    );
 
-
-    const booking = data?.findCoachByID.bookings;
-    if (!booking) return <Text>No bookings found.</Text>;
-
-    const upcomingBookings = booking.filter(booking => booking.status === 'UPCOMING');
-    const pendingBookings = booking.filter(booking => booking.status === 'PENDING');
-    const completedBookings = booking.filter(booking => booking.status === 'COMPLETED');
-
-        // Modify the sessionsToShow variable to filter based on searchText
-        const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
-        const filteredSessions = sessionsToShow.filter(booking => {
-            const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
-            return coacheeName.toLowerCase().includes(searchText.toLowerCase());
-        });
-    
     return (
-        <View style={MyCoaches.container}>
-            <View style={MyCoaches.nameAndGreetingsContainer}>
-        
+        <View style={styles.container}>
+            <View style={styles.iconContainer}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("NewCoachProfile")}>
+                    <Image source={{ uri: coachData?.findCoachByID.profilePicture }} style={styles.profileImage} />
+                </TouchableOpacity>
             </View>
-            <View style={MyCoaches.iconContainer}>
-            <TouchableOpacity onPress={handleNavigateBack}>
-            <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
-            </TouchableOpacity>
-            </View>
-            
-            <TouchableOpacity
-                onPress={navigateToCoachProfile}>
-            <Image
-                    source={{uri: coachData?.findCoachByID.profilePicture}} // Add your profile image source here
-                    style={{width: 40, height: 40, marginLeft:'83%', marginTop: '-10%', borderRadius: 30}}/>
-            
-            </TouchableOpacity>
-            
 
-            <KeyboardAvoidingView
-            style={MyCoaches.container}
-            behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            <View style={MyCoaches.searchContainer}>
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "android" ? 'height' : 'padding'}>
                 <SearchBar
-                 placeholder='Search for trainee'
-                 onChangeText={handleSearchChange}
-                 value={searchText}
-                 platform='android'
-                 containerStyle={MyCoaches.searchBarContainer}
-                 inputContainerStyle={MyCoaches.searchBarInputContainer}/>
-            </View>
-
-            <View style={MyCoaches.buttonRow}>
-            <TouchableOpacity 
-            style={[
-                MyCoaches.AllCoachesButton,
-                activeButton === 'Upcoming' ? MyCoaches.activeButton : null, 
-            ]}
-                onPress={() => setActiveButton('Upcoming')}>
-            <Text style={MyCoaches.buttonText}>Upcoming</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-            style={[
-                MyCoaches.AllCoachesButton,
-                activeButton === 'Completed' ? MyCoaches.activeButton : null, 
-            ]}
-                onPress={() => setActiveButton('Completed')}>
-            <Text style={MyCoaches.buttonText}>Completed</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-            style={[
-                MyCoaches.AllCoachesButton,
-                activeButton === 'Pending' ? MyCoaches.activeButton : null, 
-            ]}
-                onPress={() => setActiveButton('Pending')}>
-            <Text style={MyCoaches.buttonText}>Pending</Text>
-            </TouchableOpacity>
-            </View>
-
-          
-            <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
-                {filteredSessions.length > 0 ? (
-                    <View>
-                        <CoacheeSessions sessions={filteredSessions.map(booking => ({
-                            coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
-                            coacheeId: `${booking.coacheeId}`,
-                            bookingId: Number(booking.id),
-                            serviceType: `${booking.serviceType}`,
-                            additionalNotes: `${booking.additionalNotes}`,
-                            status: `${booking.status}`,
-                            imageSource: { uri: booking.coachee.profilePicture },
-                            slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
-                            time: booking.bookingSlots.map(slot => ({
-                                startTime: slot.startTime,
-                                endTime: slot.endTime
-                            })),
-                            date: booking.bookingSlots.map(slot => slot.date)
+                    placeholder='Search for trainee'
+                    onChangeText={setSearchText}
+                    value={searchText}
+                    platform='android'
+                    containerStyle={styles.searchBarContainer}
+                    inputContainerStyle={styles.searchBarInputContainer}
+                />
+                <View style={styles.buttonRow}>
+                    {['Upcoming', 'Completed', 'Pending'].map(btn => (
+                        <TouchableOpacity
+                            key={btn}
+                            style={[styles.button, activeButton === btn && styles.activeButton]}
+                            onPress={() => setActiveButton(btn)}>
+                            <Text style={styles.buttonText}>{btn}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+                <ScrollView style={{ marginTop: "1%", height: 250 }}>
+                    {filteredSessions.length ? (
+                        <CoacheeSessions sessions={filteredSessions.map(b => ({
+                            coacheeName: `${b.coachee.firstName} ${b.coachee.lastName}`,
+                            coacheeId: b.coacheeId,
+                            bookingId: b.id,
+                            serviceType: b.serviceType,
+                            additionalNotes: b.additionalNotes,
+                            status: b.status,
+                            imageSource: { uri: b.coachee.profilePicture },
+                            slotsId: b.bookingSlots[0]?.id,
+                            time: b.bookingSlots.map(s => ({ startTime: s.startTime, endTime: s.endTime })),
+                            date: b.bookingSlots.map(s => s.date)
                         }))} />
-                    </View>
-                ) : (
-                    <Text style={{ color: 'grey', fontSize: 18,textAlign: 'center', marginTop: '25%'}}>No trainee found.</Text>
-                )}
-            </ScrollView>
+                    ) : <Text style={styles.noTraineeText}>No trainee found.</Text>}
+                </ScrollView>
             </KeyboardAvoidingView>
-
-
         </View>
     );
 };
 
-const MyCoaches = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    backgroundContainer: {
-        paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
-        position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
-        width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
-    },
-
-
-    nameAndGreetingsContainer: {
-        paddingTop:"25%",
-        marginLeft: '25%',
-        flexDirection: 'row', 
-    },
-
-    buttonRow:{
-        flexDirection: "row"
-    },
-
-    
-
-    middleContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 2,
-    },
-    row: {
-        flexDirection: 'row',
-    },
-    miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
-        margin: 8,
-    },
-    nestedMiniContainer: {
-        flex: 1,
-        backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
-        margin: 11,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    iconContainer: {
-        marginTop: "-10%",
-        marginLeft: '9%',
-        flexDirection: 'row', 
-    },
-    imageLabel: {
-        fontFamily: 'Roboto',
-        fontWeight: '800',
-        fontSize: 15,
-        color: '#483B5F',
-        top: -2
-    },
-    imageStyle: {
-        width: 65,
-        height: 65,
-    },
-    searchContainer: {
-        borderWidth: 3, // Add a border
-        width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
-        marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
-        paddingHorizontal: '2.6%',
-    },
-    searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
-    },
-
-    searchBarInputContainer: {
-
-        height: '100%', // Match the height of the container
-    },
-
-    frameContainer: {
-        backgroundColor: "#7E3FF0",
-        marginTop: "5%",
-        marginLeft: "7%",
-        width: '85%',
-        height: "15%",
-        overflow: "hidden",
-        borderRadius: 16  
-    },
-  
-    
-    AllCoachesButton: {
-        width: 100, // Adjust the width to make it square
-        height: 49, // Adjust the height to make it square
-        marginTop: '5%',
-        marginLeft: '6%',
-        backgroundColor: '#e1d1fa',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
-    },
-    FavoriteCoachesButton: {
-        width: 110, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
-        marginTop: '-14%',
-        marginLeft: '62%',
-        backgroundColor: '#e1d1f0',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 15,
-        lineHeight: 24,
-    },
-    activeButton: {
-        backgroundColor: '#7E3FF0'
-    }
-   
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: 'white' },
+    iconContainer: { marginTop: "-10%", marginLeft: '9%', flexDirection: 'row' },
+    profileImage: { width: 40, height: 40, marginLeft: '83%', marginTop: '-10%', borderRadius: 30 },
+    searchBarContainer: { width: 300, height: 40 },
+    searchBarInputContainer: { height: '100%' },
+    buttonRow: { flexDirection: "row", marginTop: '5%' },
+    button: { width: 100, height: 49, marginLeft: '6%', backgroundColor: '#e1d1fa', justifyContent: 'center', alignItems: 'center', borderRadius: 10 },
+    buttonText: { color: 'white', fontSize: 15, lineHeight: 24 },
+    activeButton: { backgroundColor: '#7E3FF0' },
+    noTraineeText: { color: 'grey', fontSize: 18, textAlign: 'center', marginTop: '25%' }
 });
 
 export default Booking_Sessions;
