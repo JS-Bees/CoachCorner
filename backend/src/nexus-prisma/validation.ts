@@ -1,12 +1,8 @@
 import * as yup from 'yup';
 
 export const loginSchema = yup.object().shape({
-    email: yup
-        .string()
-        .required('Email is required.'),
-    password: yup
-        .string()
-        .required('Password is required.'),
+    email: yup.string().required('Email is required.'),
+    password: yup.string().required('Password is required.'),
 });
 
 export const idSchema = yup.object().shape({
@@ -60,9 +56,7 @@ export const coachSchema = yup.object().shape({
     email: yup.string().required('Email is required.'),
     firstName: yup.string().required('First name is required.'),
     lastName: yup.string().required('Last name is required.'),
-    password: yup
-        .string()
-        .required('Password is required.'),
+    password: yup.string().required('Password is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
     bio: yup.string().required('Bio is required.'),
 });
@@ -73,9 +67,7 @@ export const coacheeSchema = yup.object().shape({
     email: yup.string().required('Email is required.'),
     firstName: yup.string().required('First name is required.'),
     lastName: yup.string().required('Last name is required.'),
-    password: yup
-        .string()
-        .required('Password is required.'),
+    password: yup.string().required('Password is required.'),
     profilePicture: yup.string().required('Profile picture is required.'),
     bio: yup.string().required('Bio is required.'),
 });
@@ -93,27 +85,27 @@ export const interestListSchema = yup
                 .required('Interest type is required.'),
             name: yup
                 .string()
-                .oneOf(
-                    [
-                        'Romance',
-                        'Horror',
-                        'Action',
-                        'Comedy',
-                        'Thriller',
-                        'Drama',
-                        'Science Fiction',
-                        'Young Adult',
-                        'Fantasy',
-                        'Mystery',
-                        'Rock',
-                        'Jazz',
-                        'Classical',
-                        'Pop',
-                        'K-Pop',
-                        'OPM',
-                    ],
-                    'Interest name value is invalid.',
-                )
+                // .oneOf(
+                //     [
+                //         'Romance',
+                //         'Horror',
+                //         'Action',
+                //         'Comedy',
+                //         'Thriller',
+                //         'Drama',
+                //         'Science Fiction',
+                //         'Young Adult',
+                //         'Fantasy',
+                //         'Mystery',
+                //         'Rock',
+                //         'Jazz',
+                //         'Classical',
+                //         'Pop',
+                //         'K-Pop',
+                //         'OPM',
+                //     ],
+                //     'Interest name value is invalid.',
+                // )
                 .required('Interest name is required.'),
         }),
     )
@@ -190,27 +182,27 @@ export const interestSchema = yup.object().shape({
         .required('Interest type is required.'),
     name: yup
         .string()
-        .oneOf(
-            [
-                'Romance',
-                'Horror',
-                'Action',
-                'Comedy',
-                'Thriller',
-                'Drama',
-                'Science Fiction',
-                'Young Adult',
-                'Fantasy',
-                'Mystery',
-                'Rock',
-                'Jazz',
-                'Classical',
-                'Pop',
-                'K-Pop',
-                'OPM',
-            ],
-            'Interest name value is invalid.',
-        )
+        // .oneOf(
+        //     [
+        //         'Romance',
+        //         'Horror',
+        //         'Action',
+        //         'Comedy',
+        //         'Thriller',
+        //         'Drama',
+        //         'Science Fiction',
+        //         'Young Adult',
+        //         'Fantasy',
+        //         'Mystery',
+        //         'Rock',
+        //         'Jazz',
+        //         'Classical',
+        //         'Pop',
+        //         'K-Pop',
+        //         'OPM',
+        //     ],
+        //     'Interest name value is invalid.',
+        // )
         .required('Interest name is required.'),
 });
 

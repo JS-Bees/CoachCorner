@@ -89,7 +89,7 @@ const LogIn = () => {
 
         const backHandler = BackHandler.addEventListener(
             'hardwareBackPress',
-            backAction
+            backAction,
         );
 
         return () => {
@@ -175,8 +175,9 @@ const LogIn = () => {
                 setEmailPasswordError('Login failed. Please try again.');
             }
         } catch (error) {
-            console.error('Login error:', error);
-            setEmailPasswordError('An error occurred during login.');
+            // console.error('Login error:', error);
+            // setEmailPasswordError('An error occurred during login.');
+            setEmailPasswordError('Invalid Email or Password');
         } finally {
             setLoading(false); // Ensure loading stops
         }
@@ -421,7 +422,7 @@ const Log_In_Style = StyleSheet.create({
         bottom: '70%',
         justifyContent: 'space-between',
         paddingHorizontal: '10%',
-        marginLeft: '2%'
+        marginLeft: '2%',
     },
     buttonsText: {
         fontSize: 18,
@@ -431,9 +432,10 @@ const Log_In_Style = StyleSheet.create({
         borderColor: '#7E3FF0', // Example background color
         borderWidth: 1,
         padding: 10,
+
         borderRadius: 20,
-        alignItems: "center",
-        width: "45%",
+        alignItems: 'center',
+        width: '45%',
     },
     buttonText: {
         color: '#7E3FF0', // Example text color

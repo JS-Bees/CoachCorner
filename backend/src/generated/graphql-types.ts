@@ -771,8 +771,8 @@ export interface NexusGenArgTypes {
       password: string; // String!
     }
     coacheeLogin: { // args
-      email: string; // String!
-      password: string; // String!
+      email?: string | null; // String
+      password?: string | null; // String
     }
     createBooking: { // args
       input: NexusGenInputs['CreateBookingInput']; // CreateBookingInput!
