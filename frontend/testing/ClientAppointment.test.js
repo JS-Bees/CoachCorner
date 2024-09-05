@@ -55,6 +55,22 @@ describe('ClientAppointments', () => {
     });
   });
 
+  it('disables the book button if no pending bookings', async () => {
+    useQuery.mockReturnValueOnce([
+      {
+        data: {
+          findCoacheeByID: {
+            bookings: [
+              { coachId: '2', status: 'Pending' }, // Different coachId to simulate no pending bookings for the current coach
+            ],
+          },
+        },
+        fetching: false,
+        error: null,
+      },
+    ]);
+
+
   it('navigates back when back button is pressed', () => {
     const { getByTestId } = render(<ClientAppointments />);
     fireEvent.press(getByTestId('backButton'));

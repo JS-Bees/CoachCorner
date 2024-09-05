@@ -63,7 +63,7 @@ const Rolepickingstyle = StyleSheet.create({
     CoachIcon: {
         width: width * 0.2,
         height: height * 0.1,
-        padding: 20,
+        padding: 18,
         resizeMode: 'contain',
         maxWidth: 500,
         maxHeight: 500,
@@ -74,7 +74,7 @@ const Rolepickingstyle = StyleSheet.create({
         alignItems: 'center',
     },
     textStyle: {
-        fontSize: 24,
+        fontSize: 26,
         fontWeight: '200',
         fontFamily: 'Roboto',
         color: '#7E3FF0',

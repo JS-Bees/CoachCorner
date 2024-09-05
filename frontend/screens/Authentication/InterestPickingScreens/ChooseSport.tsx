@@ -54,6 +54,7 @@ const ChooseSport = ({ route }) => {
       </Text>
       <Text style={styles.subtitle}>Choose 1 sport</Text>
 
+
       <View style={styles.radioContainer}>
         <RadioButton.Item
           label="Soccer"

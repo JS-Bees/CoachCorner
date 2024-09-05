@@ -61,6 +61,34 @@ describe('CoachProfile', () => {
         });
     });
 
+    it('saves changes correctly', async () => {
+        const { getByPlaceholderText, getByText, getByRole } = render(<CoacheeProfile />);
+
+        const editButton = getByRole('button', { name: /pencil/i });
+        fireEvent.press(editButton);
+
+        const bioInput = getByPlaceholderText('Enter bio');
+        const affiliationInput = getByPlaceholderText('Enter affiliation');
+        const addressInput = getByPlaceholderText('Enter address');
+
+        fireEvent.changeText(bioInput, 'Updated bio');
+        fireEvent.changeText(affiliationInput, 'Updated affiliation');
+        fireEvent.changeText(addressInput, 'Updated address');
+
+        const saveButton = getByText('Save changes');
+        fireEvent.press(saveButton);
+
+        await waitFor(() => {
+            expect(executeMutation).toHaveBeenCalledWith({
+                id: 123,
+                address: 'Updated address',
+                affiliations: 'Updated affiliation',
+                bio: 'Updated bio',
+                profilePicture: 'fixed',
+            });
+        });
+    });
+
     it('toggles edit mode and updates state correctly', async () => {
         const { getByText, getByPlaceholderText, getByRole } = render(<CoachProfile />);
 

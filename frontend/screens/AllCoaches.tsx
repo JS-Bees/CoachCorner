@@ -24,9 +24,6 @@ import SplashScreen from './Authentication/LoadingSplash';
 const { width, height } = Dimensions.get('window');
 
 
-
-
-
 const AllCoaches = ({route}) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
@@ -164,7 +161,7 @@ const MyCoaches = StyleSheet.create({
         backgroundColor: 'white',
     },
     backgroundContainer: {
-        paddingTop: 140,
+        paddingTop: 130,
         borderRadius: 35, // Adjust the value for the desired curve
         position: 'absolute',
         backgroundColor: '#DED2EA', // Color for the background container
@@ -186,7 +183,7 @@ const MyCoaches = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 2,
+        zIndex: 1,
     },
     row: {
         flexDirection: 'row',
@@ -213,7 +210,7 @@ const MyCoaches = StyleSheet.create({
     imageLabel: {
         fontFamily: 'Roboto',
         fontWeight: '800',
-        fontSize: 15,
+        fontSize: 16,
         color: '#483B5F',
         top: -2
     },
@@ -252,7 +249,6 @@ const MyCoaches = StyleSheet.create({
         borderRadius: 16  
     },
   
-    
     AllCoachesButton: {
         width: 110, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
