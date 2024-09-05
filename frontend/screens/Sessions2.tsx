@@ -74,15 +74,17 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     if (fetching) return <SplashScreen navigation={navigation} />;
     
 
-    const [result, refetch] = useQuery({
-        query: FindBookingsOfCoachDocument, 
-        variables: {
-            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
-        },
-        requestPolicy: 'network-only',
-    });
+    const filterBookings = (status) => bookings.filter(b => b.status === status);
+    const sessionsToShow = {
+        'Upcoming': filterBookings('UPCOMING'),
+        'Pending': filterBookings('PENDING'),
+        'Completed': filterBookings('COMPLETED')
+    }[activeButton];
 
-    const { data, error, fetching} = result;
+    const filteredSessions = sessionsToShow?.filter(b => 
+        `${b.coachee.firstName} ${b.coachee.lastName}`.toLowerCase().includes(searchText.toLowerCase())
+    );
+
     
     useEffect(() => {
         if (data) {
