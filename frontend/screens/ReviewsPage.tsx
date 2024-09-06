@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, ScrollView, ImageSourcePropType, Alert} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, ScrollView, ImageSourcePropType, Alert, RefreshControl} from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
@@ -14,6 +14,7 @@ import SplashScreen from './Authentication/LoadingSplash';
 
 
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useCallback } from 'react';
 
 type ReviewsPageRouteProp = RouteProp<RootStackParams, 'ReviewsPage'>;
 type ReviewsPageNavigationProp = NativeStackNavigationProp<RootStackParams, 'ReviewsPage'>;
@@ -25,8 +26,9 @@ interface ReviewsPageProps {
 
 const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
   
-  
+  const [refreshing, setRefreshing] = useState(false);
   const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  const pollingInterval = 1000;
  
   const { profile } = route.params || {};
 
@@ -78,6 +80,8 @@ const useFetchCoacheeByUserID = (userID: any) => {
 
     return coacheeResult;
 };
+
+
 const {
     data: coacheeData,
     loading: coacheeLoading,
@@ -85,14 +89,33 @@ const {
 } = useFetchCoacheeByUserID(userToken);
 
     // Fetch reviews using urql useQuery hook
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
       query: GetCoachReviewsDocument,
       variables: { userId: profile.id }, // Provide your user ID here
+      requestPolicy: 'cache-and-network',
     });
+    
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        refetch(); // Manually trigger the query
+      }, pollingInterval);
+    
+      return () => clearInterval(intervalId);
+  }, []);
   
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (error) {
+      console.error('Error refreshing reviews:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
     const { data, fetching, error } = result;
   
-    if (fetching) return <SplashScreen navigation={navigation} />;
+    if (fetching && !data) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
   
     const reviews = data?.findCoachByID?.reviews || [];
@@ -158,7 +181,15 @@ const {
       </View>
 
 
-      <ScrollView style={styles.reviewsContainer}>
+      <ScrollView style={styles.reviewsContainer}
+      refreshControl={
+        hasCompletedBooking ? (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        ) : null
+      }>
       {totalReviews > 0 ? (
     [...reviews].reverse().map((review, index) => (
       <ReviewTile
