@@ -25,7 +25,7 @@ import {
     FindCoachByIdDocument,
 } from '../generated-gql/graphql';
 import { StackNavigationProp } from '@react-navigation/stack';
-import SplashScreen from './Authentication/SplashScreen';
+import SplashScreen from './Authentication/LoadingSplash';
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,6 +79,7 @@ const MyClients_alt = () => {
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'cache-and-network',
     });
 
     const { fetching, data, error } = result;
@@ -106,7 +107,7 @@ const MyClients_alt = () => {
 
             return {
                 id: contact.coacheeId,
-                name: `${coachee.firstName} ${coachee.lastName}`,
+                name: `${coachee.firstName} ${coachee.lastName.split(' ')[0]}`,
                 imageSource: { uri: coachee.profilePicture },
                 contactId: contact.id,
                 contactedStatus: contact.contactedStatus,

@@ -9,6 +9,7 @@ import {
     ScrollView,
     Alert,
     BackHandler,
+    Animated,
 } from 'react-native';
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
@@ -27,6 +28,7 @@ import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars'; // Import the calendar
 import Modal from 'react-native-modal/dist/modal';
+import TourModal from '../components/TourForCoach';
 const { width, height } = Dimensions.get('window');
 
 interface Booking {
@@ -61,6 +63,48 @@ const NewCoachDashboard = () => {
     const [searchText, setSearchText] = useState('');
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [isTourVisible, setTourVisible] = useState(false);
+    const [animation] = useState(new Animated.Value(0)); // Create animated value
+
+    const handleTour = () => {
+        setTourVisible(true);
+      };
+    
+      const closeTour = () => {
+        setTourVisible(false);
+      };
+
+      useEffect(() => {
+        // Start the animation loop
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(animation, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(animation, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start();
+    }, [animation]);
+
+    const iconAnimationStyle = {
+        transform: [
+            {
+                translateY: animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -10], // Moves the icon up and down
+                }),
+            },
+        ],
+    };
+
+
+
 
 
     useFocusEffect(
@@ -170,13 +214,6 @@ const NewCoachDashboard = () => {
         return traineeName.includes(searchText.toLowerCase());
     });
 
-    const handleOpenCalendar = () => {
-        setIsCalendarVisible(true);
-    };
-
-    const handleCloseCalendar = () => {
-        setIsCalendarVisible(false);
-    };
 
     const markedDates = upcomingBookings?.reduce((acc: any, booking: Booking) => {
         booking.bookingSlots.forEach(slot => {
@@ -228,14 +265,28 @@ const NewCoachDashboard = () => {
                         inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}
                     />
                 </View>
+                <View style={CoacheeDashboardStyle.calendarContainer}>
+                    <Calendar
+                        markedDates={markedDates}
+                        onDayPress={handleDayPress}
+                    />
+                </View>
                 <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{ marginTop: "1%", height: 350 }}>
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
-                        <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Sessions </Text>
+                        <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Appointments </Text>
+                        
+            <TouchableOpacity style={CoacheeDashboardStyle.tourButton} onPress={handleTour}>
+                <Animated.View style={iconAnimationStyle}>
+                    <Icon name="information-circle-outline" size={24} color="#7E3FF0" />
+                </Animated.View>
+                <Text style={CoacheeDashboardStyle.tooltip}>Need help?</Text>
+                <TourModal visible={isTourVisible} onClose={closeTour} />
+            </TouchableOpacity>
                     </View>
                     {filteredBookings && filteredBookings.length > 0 ? (
                         <UpcomingDashboard
                             upcoming={(filteredBookings || []).map((booking: Booking) => ({
-                                traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
+                                traineeName: `${booking.coachee.firstName} ${booking.coachee.lastName.split(' ')[0]}`,
                                 imageSource: { uri: booking.coachee.profilePicture },
                                 time: booking.bookingSlots.map((slot) => ({
                                     startTime: format(new Date(slot.startTime), 'h:mm a'),
@@ -251,21 +302,8 @@ const NewCoachDashboard = () => {
                         </Text>
                     )}
                 </ScrollView>
-                <TouchableOpacity style={CoacheeDashboardStyle.calendarButton} onPress={handleOpenCalendar}>
-                    <Text style={CoacheeDashboardStyle.calendarButtonText}>Open Calendar</Text>
-                </TouchableOpacity>
             </KeyboardAvoidingView>
-            <Modal visible={isCalendarVisible} animationType="fade" transparent={false}>
-    <View style={CoacheeDashboardStyle.modalContainer}>
-        <Calendar
-            markedDates={markedDates}
-            onDayPress={handleDayPress}
-        />
-        <TouchableOpacity style={CoacheeDashboardStyle.closeButton} onPress={handleCloseCalendar}>
-            <Text style={CoacheeDashboardStyle.closeButtonText}>Close Calendar</Text>
-        </TouchableOpacity>
-    </View>
-</Modal>
+            
         </View>
     );
 };
@@ -437,6 +475,24 @@ const CoacheeDashboardStyle = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
     },
+    tourButton: {
+        position: 'absolute',
+        top: '5%',
+        right: '8%',
+        backgroundColor: 'white',
+        borderRadius: 50,
+        padding: 10,
+        alignItems: 'center',
+    },
+      tooltip: {
+        marginTop: 5,
+        fontSize: 12,
+        color: '#7E3FF0',
+    },
+    calendarContainer: {
+        paddingHorizontal: "5%",
+        paddingVertical: "2%"
+    }
     
    
 });

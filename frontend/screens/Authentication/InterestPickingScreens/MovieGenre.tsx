@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomCheckBox from '../../../components/Custom components/CustomCheckBox';
 import {
     View,
@@ -16,26 +16,26 @@ import { CreateCoachDocument } from '../../../generated-gql/graphql';
 import { CreateCoacheeDocument } from '../../../generated-gql/graphql';
 import SignupSuccessModal from '../../../components/PopUpModal';
 
-type Movie = 'Romance' | 'Horror' | 'Action' | 'Comedy' | 'Thriller' | 'Drama';
+type Movie = 'Reading' | 'Watching Movies' | 'Music' | 'Exercising' | 'Cooking' | 'Napping';
 
 const ChooseMovies = ({ route }) => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     const [checkedMovies, setCheckedGames] = useState<Record<Movie, boolean>>({
-        Romance: false,
-        Horror: false,
-        Action: false,
-        Comedy: false,
-        Thriller: false,
-        Drama: false,
+        Reading: false,
+        "Watching Movies": false,
+        Music: false,
+        Exercising: false,
+        Cooking: false,
+        Napping: false,
     });
     const [modalVisible, setModalVisible] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setLoading] = useState(false);
 
     const [, createCoach] = useMutation(CreateCoachDocument);
-    const [, createCoachee] = useMutation(CreateCoacheeDocument);
+    const [coacheeRes, createCoachee] = useMutation(CreateCoacheeDocument);
     const {
         firstName,
         lastName,
@@ -78,7 +78,7 @@ const ChooseMovies = ({ route }) => {
     };
 
     const handleButtonPress = async () => {
-        if (isLoading) return;
+        // Added this
         setLoading(true);
         if (coachOrCoachee == 'coachee') {
             console.log(coachOrCoachee);
@@ -99,15 +99,19 @@ const ChooseMovies = ({ route }) => {
             );
 
             try {
-                const { data, error } = await createCoachee({
+                const sports = selectedSports.map((sportObj) => sportObj.sport);
+                const chosenSport = sports.join(', ');
+              
+                const { data, error, fetching } = await createCoachee({
                     input: {
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
+                        sport: chosenSport,
                         password: password,
                         address: workplaceAddress,
                         bio: 'Enter Bio',
-                        birthday: birthday,
+                        birthday: birthday, // Keep birthday as it is
                         profilePicture:
                             'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
                         // Add other fields as needed
@@ -122,11 +126,33 @@ const ChooseMovies = ({ route }) => {
                     ],
                 });
 
+                console.log(createCoachee);
+
+                if (!data || !error) {
+                    console.log('coachee is being fetched');
+                }
+
                 if (error) {
-                    console.error('Error:', error);
-                    setSuccessMessage('Signup Failed.');
+                    console.log('Did this coachee error run');
+                    // const errorMessage = error.toString().split(']')[1];
+                    // console.error('Error:', error);
+                    // setSuccessMessage(`Signup Failed. \n ${errorMessage}.`);
+                    // setModalVisible(true);
+                    // console.log(error.toString());
+                    if (
+                        error.toString().trim() ===
+                        '[GraphQL] Email rate limit exceeded'
+                    ) {
+                        setSuccessMessage(
+                            `Signup Failed. \nEmail rate limit exceeded.`,
+                        );
+                        setModalVisible(true);
+                    } else {
+                        setSuccessMessage(`Signup Failed.`);
+                        setModalVisible(true);
+                    }
                     setLoading(false);
-                    setModalVisible(true);
+                    return;
                 } else if (data && data.createCoachee) {
                     console.log('Coachee created:', data.createCoachee);
                     // Navigate to the next screen or perform other actions upon successful signup
@@ -145,12 +171,16 @@ const ChooseMovies = ({ route }) => {
                 //     console.error('No  data returned from mutation');
                 // }
                 if (data) {
-                    setSuccessMessage('Signup Successful!');
-                    setLoading(false);
+                    setSuccessMessage(
+                        'Signup Successful!\nPlease verify your email.',
+                    );
                     setModalVisible(true);
+                    setLoading(false);
                 }
             } catch (error) {
                 console.log(selectedGames, selectedHobbies, selectedMovie);
+                // setSuccessMessage('Signup Failed');
+                // setModalVisible(true);
                 console.error('Error creating coachee:', error);
                 // Handle errors appropriately
             }
@@ -205,10 +235,26 @@ const ChooseMovies = ({ route }) => {
                 });
 
                 if (error) {
-                    console.error('Error:', error);
-                    setSuccessMessage('Signup Failed.');
+                    console.log('Did this coach error run');
+                    // const errorMessage = error.toString().split(']')[1];
+                    // console.error('Error:', error);
+                    // setSuccessMessage(`Signup Failed. \n ${errorMessage}.`);
+                    // setModalVisible(true);
+                    // console.log(error.toString());
+                    if (
+                        error.toString().trim() ===
+                        '[GraphQL] Email rate limit exceeded'
+                    ) {
+                        setSuccessMessage(
+                            `Signup Failed. \nEmail rate limit exceeded.`,
+                        );
+                        setModalVisible(true);
+                    } else {
+                        setSuccessMessage(`Signup Failed.`);
+                        setModalVisible(true);
+                    }
                     setLoading(false);
-                    setModalVisible(true);
+                    return;
                 } else if (data && data.createCoach) {
                     console.log('Coach created:', data.createCoach);
                     // Navigate to the next screen or perform other actions upon successful signup
@@ -232,9 +278,11 @@ const ChooseMovies = ({ route }) => {
                 //     console.error('No data returned from mutation');
                 // }
                 if (data) {
-                    setSuccessMessage('Signup Successful!');
-                    setLoading(false);
+                    setSuccessMessage(
+                        'Signup Successful!\nPlease verify your email.',
+                    );
                     setModalVisible(true);
+                    setLoading(false);
                 }
             } catch (error) {
                 console.log(
@@ -272,69 +320,88 @@ const ChooseMovies = ({ route }) => {
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
-                    checked={checkedMovies.Romance}
+                    checked={checkedMovies.Reading}
                     checkedColor="#7E3FF0"
-                    label="Romance"
-                    onPress={() => handleCheckboxChange('Romance')}
+                    label="Reading"
+                    onPress={() => handleCheckboxChange('Reading')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Horror}
+                    checked={checkedMovies['Watching Movies']}
                     checkedColor="#7E3FF0"
-                    label="Horror"
-                    onPress={() => handleCheckboxChange('Horror')}
+                    label="Watching Movies"
+                    onPress={() => handleCheckboxChange('Watching Movies')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Action}
+                    checked={checkedMovies.Music}
                     checkedColor="#7E3FF0"
-                    label="Action"
-                    onPress={() => handleCheckboxChange('Action')}
+                    label="Music"
+                    onPress={() => handleCheckboxChange('Music')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Comedy}
+                    checked={checkedMovies.Exercising}
                     checkedColor="#7E3FF0"
-                    label="Comedy"
-                    onPress={() => handleCheckboxChange('Comedy')}
+                    label="Exercising"
+                    onPress={() => handleCheckboxChange('Exercising')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Thriller}
+                    checked={checkedMovies.Cooking}
                     checkedColor="#7E3FF0"
-                    label="Thriller"
-                    onPress={() => handleCheckboxChange('Thriller')}
+                    label="Cooking"
+                    onPress={() => handleCheckboxChange('Cooking')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Drama}
+                    checked={checkedMovies.Napping}
                     checkedColor="#7E3FF0"
-                    label="Drama"
-                    onPress={() => handleCheckboxChange('Drama')}
+                    label="Napping"
+                    onPress={() => handleCheckboxChange('Napping')}
                 />
             </View>
 
-            <View>
-                {isLoading ? (
-                    <ActivityIndicator size="large" color="#915bc7" />
-                ) : (
-                    <TouchableOpacity
-                        style={[
-                            styles.button,
-                            !isMaxChecksReached && styles.disabledButton,
-                        ]}
-                        onPress={handleButtonPress}
-                        disabled={!isMaxChecksReached}
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#7E3FF0" />
+            ) : (
+                <TouchableOpacity
+                    style={[
+                        styles.button,
+                        !isMaxChecksReached && styles.disabledButton,
+                    ]}
+                    onPress={handleButtonPress}
+                    disabled={!isMaxChecksReached}
+                >
+                    <Text
+                        style={{
+                            color: 'white',
+                            fontSize: 15,
+                            height: 40,
+                            paddingHorizontal: 10,
+                            paddingVertical: 10,
+                        }}
                     >
-                        <Text
-                            style={{
-                                color: 'white',
-                                fontSize: 15,
-                                height: 40,
-                                paddingHorizontal: 10,
-                                paddingVertical: 10,
-                            }}
-                        >
-                            Sign Up
-                        </Text>
-                    </TouchableOpacity>
-                )}
-            </View>
+                        Sign Up
+                    </Text>
+                </TouchableOpacity>
+            )}
+            {/* <TouchableOpacity
+                style={[
+                    styles.button,
+                    !isMaxChecksReached && styles.disabledButton,
+                ]}
+                onPress={handleButtonPress}
+                disabled={!isMaxChecksReached}
+            >
+                <Text
+                    style={{
+                        color: 'white',
+                        fontSize: 15,
+                        height: 40,
+                        paddingHorizontal: 10,
+                        paddingVertical: 10,
+                    }}
+                >
+                    Sign Up
+                </Text>
+            </TouchableOpacity> */}
+
             <SignupSuccessModal
                 visible={modalVisible}
                 message={successMessage}

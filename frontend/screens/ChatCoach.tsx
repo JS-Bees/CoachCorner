@@ -206,7 +206,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                         size={30}
                         color="#7E3FF0"
                     /> */}
-                    <Text style={styles.buttonText}>Add Session</Text>
+                    <Text style={styles.buttonText}>Add Appointment</Text>
                 </TouchableOpacity>
             </View>
             <View
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         marginLeft: 10,
+        width: "50%"
     },
     bookmark: {
         marginLeft: 'auto',

@@ -105,10 +105,6 @@ const ChatListPage: React.FC = () => {
 
 
 
-   
-
-
-
 
     // console.log(
     //     'chat list messages',
@@ -148,7 +144,7 @@ const ChatListPage: React.FC = () => {
         // Map over contacts and set chatMessages
         if (contacts) {
             const chatMessages = contacts.map((contact) => {
-                const sender = `${contact.coachee.firstName} ${contact.coachee.lastName}`;
+                const sender = `${contact.coachee.firstName} ${contact.coachee.lastName.split(' ')[0]}`;
                 let imageUrl;
 
                 // Check if the profilePicture URL starts with 'https:'
