@@ -16,7 +16,7 @@ import { CreateCoachDocument } from '../../../generated-gql/graphql';
 import { CreateCoacheeDocument } from '../../../generated-gql/graphql';
 import SignupSuccessModal from '../../../components/PopUpModal';
 
-type Movie = 'Reading' | 'Watching Movies' | 'Music' | 'Exercising' | 'Cooking' | 'Napping';
+type Movie = 'Writing' | 'Watching Movies' | 'Music' | 'Clubbing' | 'Cooking' | 'Napping';
 
 const ChooseMovies = ({ route }) => {
     const navigation =
@@ -313,17 +313,16 @@ const ChooseMovies = ({ route }) => {
             </TouchableOpacity>
             <Text style={styles.header}>
                 {' '}
-                Which genre of movies do you prefer to enjoy during your
-                downtime?
+                What activities do you like to do in your spare time?
             </Text>
-            <Text style={styles.subtitle}>Choose 3 Genres</Text>
+            <Text style={styles.subtitle}>Choose 3 Activities</Text>
 
             <View style={styles.checkboxContainer}>
                 <CustomCheckBox
-                    checked={checkedMovies.Reading}
+                    checked={checkedMovies.Writing}
                     checkedColor="#7E3FF0"
-                    label="Reading"
-                    onPress={() => handleCheckboxChange('Reading')}
+                    label="Writing"
+                    onPress={() => handleCheckboxChange('Writing')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies['Watching Movies']}
@@ -338,10 +337,10 @@ const ChooseMovies = ({ route }) => {
                     onPress={() => handleCheckboxChange('Music')}
                 />
                 <CustomCheckBox
-                    checked={checkedMovies.Exercising}
+                    checked={checkedMovies.Clubbing}
                     checkedColor="#7E3FF0"
-                    label="Exercising"
-                    onPress={() => handleCheckboxChange('Exercising')}
+                    label="Clubbing"
+                    onPress={() => handleCheckboxChange('Clubbing')}
                 />
                 <CustomCheckBox
                     checked={checkedMovies.Cooking}
