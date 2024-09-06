@@ -8,6 +8,7 @@ interface CustomInputProps {
     value?: string;
     editable?: boolean;
     onChangeText: (text: string) => void;
+    maxLength: number
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({style, textAlignVertical, multiline, value, editable, onChangeText}) => {
@@ -25,7 +26,7 @@ const CustomInput: React.FC<CustomInputProps> = ({style, textAlignVertical, mult
         value={value}
         editable={editable}
         onChangeText={onChangeText}
-        maxLength={editable? 5 : undefined}
+        maxLength={editable ? 40 : undefined}  
       />
     </View>
   );
