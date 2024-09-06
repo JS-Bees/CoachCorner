@@ -2,7 +2,9 @@ name: lint-test
 
 on:
   push:
+    branches: [main_]
   pull_request:
+    branches: [main_]
 
 jobs:
   build:
