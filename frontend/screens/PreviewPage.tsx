@@ -288,11 +288,12 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                         <Text style={styles.modalText}>
                             Coach added to contact list
                         </Text>
-                        <Button
-                            title="Close"
-                            color="#7E3FF0" // Set the color to purple
-                            onPress={() => setIsModalVisible(false)}
-                        />
+                        <TouchableOpacity
+    style={styles.modalButton}
+    onPress={() => setIsModalVisible(false)}
+>
+    <Text style={styles.modalTextButton}>Close</Text>
+</TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -458,6 +459,19 @@ const styles = StyleSheet.create({
     left: '50%',
     zIndex: 9999,
   },
+  modalButton: {
+    borderWidth: 2, // Thickness of the border
+    borderColor: "#7E3FF0", // Border color (purple)
+    borderRadius: 10, // Rounded corners
+    paddingVertical: 10, // Vertical padding
+    paddingHorizontal: 20, // Horizontal padding
+    backgroundColor: "#fff", // Background color
+    alignItems: 'center', // Center the text horizontally
+  },
+  modalTextButton: {
+    color: "#7E3FF0", // Text color (you can change this to your preferred color)
+    fontSize: 16, // Text size
+  }
 });
 
 export default PreviewPage;
