@@ -82,12 +82,11 @@ const wsClient = createWSClient({
     url: apiUrlWs!,
 });
 
-// const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+// // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 
 const client = new Client({
     // url: 'http://192.168.1.7:5050/graphql',
     url: apiUrl!,
-
 
     // fetchSubscriptions: true, // added this tog try and fix fetching
     exchanges: [
@@ -173,7 +172,7 @@ const Tab = createBottomTabNavigator();
 const CoachTab = createBottomTabNavigator();
 
 export default function App() {
-    <StatusBar hidden={true} />
+    <StatusBar hidden={true} />;
     return (
         <UrqlProvider value={client}>
             <NavigationContainer>
