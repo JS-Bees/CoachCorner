@@ -9,7 +9,10 @@ import {
     SafeAreaView,
     FlatList,
     Dimensions,
+    Pressable,
 } from 'react-native';
+
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
@@ -38,6 +41,12 @@ type Props = {
 
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
+
+    const [visible, setVisible] = useState(false);
+
+    const hideMenu = () => setVisible(false);
+  
+    const showMenu = () => setVisible(true);
 
     console.log("--------------------------------------")
     console.log('Contact ID', + chatMessage.id);
@@ -197,17 +206,21 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                 </TouchableOpacity>
                 <Image source={imageSource} style={styles.profileImage} />
                 <Text style={styles.headerText}>{chatMessage.sender}</Text>
-                <TouchableOpacity
-                    style={styles.bookmark}
-                    onPress={handleNavigateToBooking}
-                >
-                    {/* <MaterialIcons
-                        name="more-time"
-                        size={30}
-                        color="#7E3FF0"
-                    /> */}
-                    <Text style={styles.buttonText}>Add Appointment</Text>
-                </TouchableOpacity>
+                <Menu
+                    visible={visible}
+                     anchor={ <Pressable style={styles.iconContainer}>
+                     <MaterialIcons
+                         name="more-vert"
+                         size={24}
+                         color="#7E3FF0"
+                         onPress={showMenu}
+                     />
+                 </Pressable>}
+                    onRequestClose={hideMenu}>
+                <MenuItem onPress={handleNavigateToBooking}>Add Appointment</MenuItem>
+                <MenuDivider />
+                <MenuItem onPress={hideMenu}>Cancel</MenuItem>
+                </Menu>
             </View>
             <View
                 style={{
@@ -362,6 +375,15 @@ const styles = StyleSheet.create({
     buttonText: {
         fontStyle: "italic",
         color: "#7E3FF0"
+    },
+    iconContainer: {
+        width: 30, // Adjust size as needed
+        height: 30, // Adjust size as needed
+        borderRadius: 20, // Half of the width/height for a perfect circle
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2, // Border width of the circle
+        borderColor: '#7E3FF0', // Border color of the circle
     },
 });
 
