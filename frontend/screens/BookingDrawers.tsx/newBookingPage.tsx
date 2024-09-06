@@ -237,8 +237,10 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                          </TouchableOpacity>
                          <AddSlotModal visible={isAddSlotModalVisible} onClose={handleToggleAddSlotModal} onAddSlot={handleAddSlot} />
                         </View>
+                        <View style={styles.slotsContainer}>
                         {selectedSlots.map((slot, index) => (
                          <Slot key={index} startTime={slot.startTime} endTime={slot.endTime} date={slot.date} />))}
+                        </View>
                     </View>
 
                     <Text style={styles.subheaderText}> Service Type </Text>
@@ -248,7 +250,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     
 
                     <Text style={styles.subheaderText}> Additional Notes </Text>
-                    <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)}/>
+                    <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true} maxLength={10}  onChangeText={text => setAdditionalNotes(text)} />
 
                     <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.button} onPress={handleCreateBooking}>
@@ -335,6 +337,11 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         alignItems: 'center',
     },
+    slotsContainer: {
+        padding: "2%",
+        alignContent: "flex-start",
+        right: "7%"
+    }
 })
 
 export default NewBookingPage;
