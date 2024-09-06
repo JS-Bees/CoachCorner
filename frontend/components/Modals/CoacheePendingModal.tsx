@@ -195,13 +195,13 @@ const styles = StyleSheet.create({
   },
   subcontentText: {
     paddingTop: "3%",
-    color:"#908D93",
+    color:"#7E3FF0",
     marginLeft: "12%",
   },
   cancelText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "white"
+    color: "#7E3FF0"
   },
   Text: {
     fontSize: 15,
@@ -223,7 +223,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
  },
  cancelButton: {
-    backgroundColor: '#7E3FF0', // Set the background color for the cancel button
+    borderColor: '#7E3FF0', // Set the background color for the cancel button
+    borderWidth: 1,
     width: (screenWidth * 0.38), // Adjust the percentage as needed
     height: (screenHeight * 0.07), // Adjust the percentage as needed
     borderRadius: 15,

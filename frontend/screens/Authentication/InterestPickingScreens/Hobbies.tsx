@@ -80,8 +80,8 @@ const handleButtonPress = () => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-      <Text style={styles.header}>What hobbies do you prefer on your down time?</Text>
-      <Text style={styles.subtitle}>Choose 3 Hobbies</Text>
+      <Text style={styles.header}>Favorite ways to relax on weekends?</Text>
+      <Text style={styles.subtitle}>Choose 3 Activities</Text>
 
       <View style={styles.checkboxContainer}>
         <CustomCheckBox checked={checkedHobby['Reading a Book']} checkedColor='#7E3FF0' label="Reading a Book" onPress={() => handleCheckboxChange('Reading a Book')} />

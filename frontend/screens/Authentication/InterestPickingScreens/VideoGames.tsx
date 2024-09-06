@@ -86,7 +86,7 @@ const ChooseVideoGames = ({route}) => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-     <Text style={styles.header}>What do you prefer to do on weekends?</Text>
+     <Text style={styles.header}>What do you prefer to do on your down time?</Text>
      <Text style={styles.subtitle}>Choose 3 Activities</Text>
 
       <View style={styles.checkboxContainer}>

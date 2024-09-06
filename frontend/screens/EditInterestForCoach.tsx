@@ -20,6 +20,7 @@ interface ListItem {
  
 interface List {
   title: string;
+  id: string;
   items: ListItem[];
   isExpanded: boolean;
 }
@@ -251,11 +252,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
   const [lists, setLists] = useState([
     {
       title: 'MovieGenre',
+      id:  'Weekend Activities',
       items: [
-        {text: 'Reading', checked: false },
+        {text: 'Writing', checked: false },
         {text: 'Watching movies', checked: false },
         {text: 'Music', checked: false },
-        {text: 'Exercising', checked: false },
+        {text: 'Clubbing', checked: false },
         {text: 'Cooking', checked: false },
         {text: 'Napping', checked: false },
         
@@ -264,6 +266,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     },
     {
       title: 'BookGenre',
+      id:  'Down Time Activities',
       items: [
         {text: 'Relaxing', checked: false },
         {text: 'Socializing', checked: false },
@@ -276,6 +279,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     },
     {
       title: 'MusicGenre',
+      id:  'Spare Time Activities',
       items: [
         {text: 'Reading a Book', checked: false },
         {text: 'Playing Games', checked: false },
@@ -361,7 +365,7 @@ const toggleCheckbox = (listIndex: number, itemIndex: number) => {
     <View key={index} style={styles.container}>
       <TouchableOpacity onPress={() => toggleList(index)}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: "2%",}}>
-          <Text style={{ fontSize: 20, color: "#7E3FF0", fontWeight: "400"}}>{list.title}</Text>
+          <Text style={{ fontSize: 20, color: "#7E3FF0", fontWeight: "400"}}>{list.id}</Text>
           <Animated.View style={{ transform: [{ rotate: spin }], marginRight: "25%" }}>
             <Ionicons name={list.isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color="#7E3FF0" />
           </Animated.View>

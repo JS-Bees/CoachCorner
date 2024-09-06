@@ -107,7 +107,9 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
             <Text style={styles.titleText}>Service Type</Text>
             <Text style={styles.subtitleText}>{session?.serviceType}</Text>
             <Text style={styles.titleText}>Additional Notes</Text>
-            <Text style={styles.subtitleText}>{session?.additionalNotes}</Text>
+            <View style={styles.notesPadding} numberOfLines={5} ellipsizeMode="tail">
+              <Text style={styles.subtitleText}>{session?.additionalNotes}</Text>
+            </View>
 
 
             <View style={styles.contentText}>
@@ -291,6 +293,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 30
+  },
+  notesPadding: {
+    paddingHorizontal: 2, // Add padding for spacing inside the container
+    marginRight: "15%", // Add margin for spacing around the container
+    maxHeight: 150, // Optional max height to limit the size
+    overflow: 'hidden', 
   }
 });
 

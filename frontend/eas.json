@@ -5,8 +5,8 @@
                 "buildType": "apk"
             },
             "env": {
-                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-new-render.onrender.com/graphql",
-                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-new-render.onrender.com/graphql"
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-terw.onrender.com/graphql",
+                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-terw.onrender.com/graphql"
             }
         },
         "preview2": {
@@ -14,21 +14,21 @@
                 "gradleCommand": ":app:assembleRelease"
             },
             "env": {
-                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-new-render.onrender.com/graphql",
-                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-new-render.onrender.com/graphql"
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-terw.onrender.com/graphql",
+                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-terw.onrender.com/graphql"
             }
         },
         "preview3": {
             "developmentClient": true,
             "env": {
-                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-new-render.onrender.com/graphql",
-                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-new-render.onrender.com/graphql"
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-terw.onrender.com/graphql",
+                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-terw.onrender.com/graphql"
             }
         },
         "production": {
             "env": {
-                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-new-render.onrender.com/graphql",
-                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-new-render.onrender.com/graphql"
+                "EXPO_PUBLIC_API_ENDPOINT": "https://coachcorner-terw.onrender.com/graphql",
+                "EXPO_PUBLIC_API_ENDPOINT_WS": "wss://coachcorner-terw.onrender.com/graphql"
             }
         }
     }
