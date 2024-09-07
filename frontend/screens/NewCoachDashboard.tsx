@@ -10,6 +10,7 @@ import {
     Alert,
     BackHandler,
     Animated,
+    Button
 } from 'react-native';
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
@@ -26,9 +27,10 @@ import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Calendar } from 'react-native-calendars'; // Import the calendar
-import Modal from 'react-native-modal/dist/modal';
+import { Calendar } from 'react-native-calendars'; // Import the calendari
+import { Modal } from 'react-native';
 import TourModal from '../components/TourForCoach';
+
 const { width, height } = Dimensions.get('window');
 
 interface Booking {
@@ -63,6 +65,8 @@ const NewCoachDashboard = () => {
     const [searchText, setSearchText] = useState('');
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState(null);  
     const [isTourVisible, setTourVisible] = useState(false);
     const [animation] = useState(new Animated.Value(0)); // Create animated value
 
@@ -101,6 +105,15 @@ const NewCoachDashboard = () => {
                 }),
             },
         ],
+    };
+
+    const formatTime = (timeString) => {
+        const time = new Date(`1970-01-01T${timeString}Z`);
+        return time.toLocaleTimeString([], {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        });
     };
 
 
@@ -227,11 +240,20 @@ const NewCoachDashboard = () => {
         return acc;
     }, {});
 
-    const handleDayPress = (day: { dateString: string }) => {
-        setSelectedDate(day.dateString);
-        setIsCalendarVisible(false); // Close the calendar after selecting a date
+    const handleDayPress = (day) => {
+        const selectedBooking = upcomingBookings?.find(booking =>
+          booking.bookingSlots.some(slot =>
+            format(new Date(slot.date), 'yyyy-MM-dd') === day.dateString
+          )
+        );
+        if (selectedBooking) {
+          setSelectedDate(day.dateString);
+          setSelectedBooking(selectedBooking); // Save the booking details for that day
+          setModalVisible(true); // Show the modal
+        }
     };
 
+  
 
     return (
         <View style={CoacheeDashboardStyle.container}>
@@ -266,11 +288,39 @@ const NewCoachDashboard = () => {
                     />
                 </View>
                 <View style={CoacheeDashboardStyle.calendarContainer}>
-                    <Calendar
-                        markedDates={markedDates}
-                        onDayPress={handleDayPress}
-                    />
-                </View>
+      <Calendar
+        markedDates={markedDates}
+        onDayPress={handleDayPress}
+      />
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={CoacheeDashboardStyle.modalCalendar}>
+          {selectedBooking ? (
+            <>
+              <Text style={CoacheeDashboardStyle.modalText}>
+                Coachee: {selectedBooking.coachee.firstName} {selectedBooking.coachee.lastName}
+              </Text>
+              <Text style={CoacheeDashboardStyle.modalText}>
+                Schedule: {selectedBooking.bookingSlots.map(slot => (
+                  <Text key={slot.id}>
+                    {format(new Date(slot.startTime), 'h:mm a')} - {format(new Date(slot.endTime), 'h:mm a')}
+                  </Text>
+                ))}
+              </Text>
+              <Button title="Close" onPress={() => setModalVisible(false)} />
+            </>
+          ) : (
+            <Text>No bookings for this date</Text>
+          )}
+        </View>
+      </Modal>
+    </View>
+                
                 <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{ marginTop: "1%", height: 350 }}>
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Appointments </Text>
@@ -492,7 +542,18 @@ const CoacheeDashboardStyle = StyleSheet.create({
     calendarContainer: {
         paddingHorizontal: "5%",
         paddingVertical: "2%"
-    }
+    },
+    modalCalendar: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+    },
+      modalText: {
+        color: '#fff',
+        fontSize: 18,
+        padding: 10,
+    },
     
    
 });

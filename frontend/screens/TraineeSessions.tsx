@@ -139,12 +139,12 @@ const Trainee_Sessions: React.FC<CoacheeSessionsProps> = () => {
             if (sortOption === 'date') {
                 const dateA = new Date(a.bookingSlots[0].date).getTime();
                 const dateB = new Date(b.bookingSlots[0].date).getTime();
-                console.log('Sorting by date:', dateA, dateB);
+               
                 return dateA - dateB;
             } else if (sortOption === 'alphabetical') {
                 const coachA = a.coach?.firstName || '';
                 const coachB = b.coach?.firstName || '';
-                console.log('Sorting by name:', coachA, coachB);
+
                 return coachA.localeCompare(coachB);
             }
             return 0;
