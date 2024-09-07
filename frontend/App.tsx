@@ -59,6 +59,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { CopilotProvider } from 'react-native-copilot';
 import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
+import SeeAll from './screens/seeAll';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -165,6 +166,7 @@ export type RootStackParams = {
     IntroSplash: any;
     LandingPage: any;
     IntroInterests: any;
+    seeAll: any;
 };
 
 const RootStack = createNativeStackNavigator();
@@ -411,6 +413,11 @@ export default function App() {
                         <RootStack.Screen
                             name="ReviewsPageCoach"
                             component={ReviewsPageCoach}
+                            options={{ headerShown: false }}
+                        />
+                        <RootStack.Screen
+                            name="SeeAll"
+                            component={SeeAll}
                             options={{ headerShown: false }}
                         />
                     </RootStack.Navigator>

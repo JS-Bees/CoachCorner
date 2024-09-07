@@ -142,12 +142,57 @@ const CoacheeDashboard = () => {
     ];
     
 
-    const handleSeeAllPress = () => {
-        setSeeAllCoaches(!seeAllCoaches);
-        if (!seeAllCoaches) {
-            navigation.navigate('MyCoaches_alt');
-        }
-    };
+    // const handleSeeAllPress = () => {
+    //     // Prepare the recommended coaches data
+    //     const recommendedCoaches = [
+    //         {
+    //             id: matchedCoaches[0]?.coach?.id || 0,
+    //             name: matchedCoachesNames[0],
+    //             imageSource:
+    //                 matchedCoaches[0]?.coach?.profilePicture === "profile picture"
+    //                     ? DEFAULT_PROFILE_PICTURE
+    //                     : { uri: matchedCoaches[0]?.coach?.profilePicture },
+    //             gainedStars:
+    //                 matchedCoaches[0]?.coach?.reviews.reduce(
+    //                     (acc, review) => acc + review.starRating,
+    //                     0
+    //                 ) || 0,
+    //             mainSport:
+    //                 matchedCoaches[0]?.coach?.sports &&
+    //                 matchedCoaches[0].coach.sports.length > 0
+    //                     ? matchedCoaches[0].coach.sports[0].type
+    //                     : "Unknown",
+    //             about: matchedCoaches[0]?.coach?.bio,
+    //             workplaceAddress: matchedCoaches[0]?.coach?.address,
+    //         },
+    //         {
+    //             id: matchedCoaches[1]?.coach?.id || 0,
+    //             name: matchedCoachesNames[1],
+    //             imageSource:
+    //                 matchedCoaches[1]?.coach?.profilePicture === "profile picture"
+    //                     ? DEFAULT_PROFILE_PICTURE
+    //                     : { uri: matchedCoaches[1]?.coach?.profilePicture },
+    //             gainedStars:
+    //                 matchedCoaches[1]?.coach?.reviews.reduce(
+    //                     (acc, review) => acc + review.starRating,
+    //                     0
+    //                 ) || 0,
+    //             mainSport:
+    //                 matchedCoaches[1]?.coach?.sports &&
+    //                 matchedCoaches[1].coach.sports.length > 0
+    //                     ? matchedCoaches[1].coach.sports[0].type
+    //                     : "Unknown",
+    //             about: matchedCoaches[1]?.coach?.bio,
+    //             workplaceAddress: matchedCoaches[1]?.coach?.address,
+    //         },
+            
+    //     ];
+    
+    //     // Navigate to the SeeAll screen with the recommended coaches data
+    //     navigation.navigate('SeeAll', { recommendedCoaches });
+    // };
+    
+    
 
     const scrollViewRef = useRef(null);
 
@@ -340,6 +385,28 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
             about: matchedCoaches[1]?.coach?.bio,
             workplaceAddress: matchedCoaches[1]?.coach?.address,
         },
+        {   
+            id: matchedCoaches[2]?.coach?.id || 0, 
+            name: matchedCoachesNames[2],
+            imageSource: matchedCoaches[2]?.coach?.profilePicture === "profile picture" 
+            ? DEFAULT_PROFILE_PICTURE 
+            : { uri: matchedCoaches[2]?.coach?.profilePicture },
+            gainedStars: matchedCoaches[2]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
+            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
+            about: matchedCoaches[2]?.coach?.bio,
+            workplaceAddress: matchedCoaches[2]?.coach?.address,
+        },
+        {   
+            id: matchedCoaches[3]?.coach?.id || 0, 
+            name: matchedCoachesNames[3],
+            imageSource: matchedCoaches[3]?.coach?.profilePicture === "profile picture" 
+            ? DEFAULT_PROFILE_PICTURE 
+            : { uri: matchedCoaches[3]?.coach?.profilePicture },
+            gainedStars: matchedCoaches[3]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
+            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
+            about: matchedCoaches[3]?.coach?.bio,
+            workplaceAddress: matchedCoaches[3]?.coach?.address,
+        },
     ];
 
     const scrollY = new Animated.Value(0);
@@ -471,11 +538,11 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
                             {' '}
                             Recommend for you{' '}
                         </Text>
-                        <TouchableOpacity onPress={handleSeeAllPress}>
+                        {/* <TouchableOpacity onPress={handleSeeAllPress}>
                             <Text style={CoacheeDashboardStyle.seeAll}>
                                 See All
                             </Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                    <View style={CoacheeDashboardStyle.profileTiles}>
                      <CoachProfiles profiles={RecommendedCoaches} />
