@@ -72,6 +72,16 @@ export const createCoachee = mutationField('createCoachee', {
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
 
+            const exists = await context.db.coach.findUnique({
+                where: {
+                    email: input.email.toLowerCase(),
+                },
+            });
+
+            if (exists) {
+                throw new Error('Email already exists');
+            }
+
             const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
 
             // Need this for Email Verification
@@ -161,6 +171,16 @@ export const createCoach = mutationField('createCoach', {
 
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
+
+            const exists = await context.db.coachee.findUnique({
+                where: {
+                    email: input.email.toLowerCase(),
+                },
+            });
+
+            if (exists) {
+                throw new Error('Email already exists');
+            }
 
             // Validate each sport in the sportsInput array
             for (const sport of sportsInput) {
