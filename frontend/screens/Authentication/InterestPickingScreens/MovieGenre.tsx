@@ -16,7 +16,13 @@ import { CreateCoachDocument } from '../../../generated-gql/graphql';
 import { CreateCoacheeDocument } from '../../../generated-gql/graphql';
 import SignupSuccessModal from '../../../components/PopUpModal';
 
-type Movie = 'Writing' | 'Watching Movies' | 'Music' | 'Clubbing' | 'Cooking' | 'Napping';
+type Movie =
+    | 'Writing'
+    | 'Watching Movies'
+    | 'Music'
+    | 'Clubbing'
+    | 'Cooking'
+    | 'Napping';
 
 const ChooseMovies = ({ route }) => {
     const navigation =
@@ -24,7 +30,7 @@ const ChooseMovies = ({ route }) => {
 
     const [checkedMovies, setCheckedGames] = useState<Record<Movie, boolean>>({
         Reading: false,
-        "Watching Movies": false,
+        'Watching Movies': false,
         Music: false,
         Exercising: false,
         Cooking: false,
@@ -101,7 +107,7 @@ const ChooseMovies = ({ route }) => {
             try {
                 const sports = selectedSports.map((sportObj) => sportObj.sport);
                 const chosenSport = sports.join(', ');
-              
+
                 const { data, error, fetching } = await createCoachee({
                     input: {
                         firstName: firstName,
@@ -145,6 +151,14 @@ const ChooseMovies = ({ route }) => {
                     ) {
                         setSuccessMessage(
                             `Signup Failed. \nEmail rate limit exceeded.`,
+                        );
+                        setModalVisible(true);
+                    } else if (
+                        error.toString().trim() ===
+                        '[GraphQL] Email already exists'
+                    ) {
+                        setSuccessMessage(
+                            `Signup Failed. \nEmail address already in use.`,
                         );
                         setModalVisible(true);
                     } else {
@@ -247,6 +261,14 @@ const ChooseMovies = ({ route }) => {
                     ) {
                         setSuccessMessage(
                             `Signup Failed. \nEmail rate limit exceeded.`,
+                        );
+                        setModalVisible(true);
+                    } else if (
+                        error.toString().trim() ===
+                        '[GraphQL] Email already exists'
+                    ) {
+                        setSuccessMessage(
+                            `Signup Failed. \nEmail address already in use.`,
                         );
                         setModalVisible(true);
                     } else {
