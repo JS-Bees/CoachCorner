@@ -72,13 +72,19 @@ export const createCoachee = mutationField('createCoachee', {
             // Validate the interests input
             interestListSchema.validateSync(interestsInput);
 
-            const exists = await context.db.coach.findUnique({
+            const exists = await context.db.coachee.findUnique({
                 where: {
                     email: lowerCaseEmail,
                 },
             });
 
-            if (exists) {
+            const exists2 = await context.db.coach.findUnique({
+                where: {
+                    email: lowerCaseEmail,
+                },
+            });
+
+            if (exists || exists2) {
                 throw new Error('Email already exists');
             }
 
@@ -178,7 +184,13 @@ export const createCoach = mutationField('createCoach', {
                 },
             });
 
-            if (exists) {
+            const exists2 = await context.db.coach.findUnique({
+                where: {
+                    email: lowerCaseEmail,
+                },
+            });
+
+            if (exists || exists2) {
                 throw new Error('Email already exists');
             }
 
