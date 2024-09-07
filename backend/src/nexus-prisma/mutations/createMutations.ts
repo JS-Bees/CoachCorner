@@ -74,7 +74,7 @@ export const createCoachee = mutationField('createCoachee', {
 
             const exists = await context.db.coach.findUnique({
                 where: {
-                    email: input.email.toLowerCase(),
+                    email: lowerCaseEmail,
                 },
             });
 
@@ -174,7 +174,7 @@ export const createCoach = mutationField('createCoach', {
 
             const exists = await context.db.coachee.findUnique({
                 where: {
-                    email: input.email.toLowerCase(),
+                    email: lowerCaseEmail,
                 },
             });
 
