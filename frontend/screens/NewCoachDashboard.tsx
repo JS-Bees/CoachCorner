@@ -10,6 +10,8 @@ import {
     Alert,
     BackHandler,
     Animated,
+    Button,
+    FlatList
 } from 'react-native';
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
@@ -26,9 +28,11 @@ import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Calendar } from 'react-native-calendars'; // Import the calendar
-import Modal from 'react-native-modal/dist/modal';
+import { Calendar } from 'react-native-calendars'; // Import the calendari
+import { Modal } from 'react-native';
 import TourModal from '../components/TourForCoach';
+import { Divider } from 'react-native-elements';
+
 const { width, height } = Dimensions.get('window');
 
 interface Booking {
@@ -61,9 +65,10 @@ const NewCoachDashboard = () => {
 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [searchText, setSearchText] = useState('');
-    const [isCalendarVisible, setIsCalendarVisible] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [modalVisible, setModalVisible] = useState(false);
     const [isTourVisible, setTourVisible] = useState(false);
+    const [slotsForSelectedDate, setSlotsForSelectedDate] = React.useState([]);
     const [animation] = useState(new Animated.Value(0)); // Create animated value
 
     const handleTour = () => {
@@ -103,9 +108,7 @@ const NewCoachDashboard = () => {
         ],
     };
 
-
-
-
+   
 
     useFocusEffect(
         React.useCallback(() => {
@@ -213,6 +216,7 @@ const NewCoachDashboard = () => {
         const traineeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`.toLowerCase();
         return traineeName.includes(searchText.toLowerCase());
     });
+    
 
 
     const markedDates = upcomingBookings?.reduce((acc: any, booking: Booking) => {
@@ -227,11 +231,39 @@ const NewCoachDashboard = () => {
         return acc;
     }, {});
 
-    const handleDayPress = (day: { dateString: string }) => {
-        setSelectedDate(day.dateString);
-        setIsCalendarVisible(false); // Close the calendar after selecting a date
-    };
+    
 
+    const selectedBooking = filteredBookings?.find(booking =>
+        booking?.bookingSlots?.some(slot => format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate)
+    );
+
+    const handleDayPress = (day) => {
+        const selectedDate = day.dateString;
+        setSelectedDate(selectedDate);
+        
+        // Find all bookings for the selected date
+        const selectedBookings = upcomingBookings?.filter(booking => 
+            booking.bookingSlots.some(slot => 
+                format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
+            )
+        );
+    
+        // Extract slots for the selected date
+        const filteredSlots = selectedBookings?.flatMap(booking =>
+            booking.bookingSlots.filter(slot =>
+                format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
+            ).map(slot => ({
+                ...slot,
+                coachee: booking.coachee// Add coachee to the slot data
+            }))
+        );
+    
+        setSlotsForSelectedDate(filteredSlots);
+        setModalVisible(true);
+    };
+    
+    
+    
 
     return (
         <View style={CoacheeDashboardStyle.container}>
@@ -266,11 +298,49 @@ const NewCoachDashboard = () => {
                     />
                 </View>
                 <View style={CoacheeDashboardStyle.calendarContainer}>
-                    <Calendar
-                        markedDates={markedDates}
-                        onDayPress={handleDayPress}
-                    />
-                </View>
+      <Calendar
+        markedDates={markedDates}
+        onDayPress={handleDayPress}
+      />
+  <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={CoacheeDashboardStyle.modalCalendar}>
+    <View style={CoacheeDashboardStyle.modalContent}>
+        <Text style={CoacheeDashboardStyle.modalHeader}>Your Scheduled Meetings for Today: </Text>
+        <Divider style={{ marginVertical: 10 }} />
+        <ScrollView style={CoacheeDashboardStyle.scrollContainer}>
+                    {slotsForSelectedDate.length > 0 ? (
+                        slotsForSelectedDate.map((slot, index) => (
+                            <View key={index}>
+                                <Text style={CoacheeDashboardStyle.modalText}>
+                                    Coachee: {slot.coachee.firstName} {slot.coachee.lastName}
+                                </Text>
+                                <Text style={CoacheeDashboardStyle.modalText}>
+                                    {format(new Date(slot.startTime), 'h:mm a')} - {format(new Date(slot.endTime), 'h:mm a')}
+                                </Text>
+                            </View>
+                        ))
+                    ) : (
+                        <Text style={CoacheeDashboardStyle.modalText}>No bookings for this date</Text>
+                    )}
+                </ScrollView>
+        <TouchableOpacity
+            style={CoacheeDashboardStyle.closeButton}
+            onPress={() => setModalVisible(false)}
+        >
+            <Text style={CoacheeDashboardStyle.closeButtonText}>Close</Text>
+        </TouchableOpacity>
+    </View>
+</View>
+
+
+            </Modal>
+        </View>
+                
                 <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{ marginTop: "1%", height: 350 }}>
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.upcomingHeader}> Upcoming Appointments </Text>
@@ -446,21 +516,27 @@ const CoacheeDashboardStyle = StyleSheet.create({
         fontSize: 16,
     },
     modalContainer: {
-        flex: 1,
+        borderRadius: 15,
+        height: "75%",
+        width: "85%",
         backgroundColor: '#FFFFFF', // Set background color to white
         justifyContent: 'center',
         alignItems: 'center',
     },
     closeButton: {
-        backgroundColor: '#7E3FF0',
+        backgroundColor: 'white',
         padding: 10,
+        borderColor: '#7E3FF0',
+        borderWidth: 1,
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 20,
+        position: 'absolute', // Absolute positioning within the modalContent
+        bottom: 20, // Adjust as needed
+        right: 20, // Adjust as needed
     },
     closeButtonText: {
-        color: 'white',
+        color: '#7E3FF0',
         fontSize: 16,
     },
         highlightedTile: {
@@ -492,7 +568,40 @@ const CoacheeDashboardStyle = StyleSheet.create({
     calendarContainer: {
         paddingHorizontal: "5%",
         paddingVertical: "2%"
-    }
+    },
+    modalCalendar: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+    },
+    modalText: {
+        color: 'black',
+        fontSize: 16,
+        padding: 10,
+    },
+    modalHeader: {
+        color: '#7E3FF0',
+        fontSize: 16,
+        padding: 10,
+        fontWeight: "500"
+    },
+    modalContent: {
+        height: "75%",
+        width: "85%",
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        elevation: 5, // adds shadow for Android
+        shadowColor: '#000', // adds shadow for iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+    },
+    scrollContainer: {
+        flex: 1, // Allows ScrollView to expand and take available space
+    },
+   
     
    
 });
