@@ -24,21 +24,28 @@ import {
     FindCoacheeByIdDocument,
 } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/LoadingSplash';
 
 const { width, height } = Dimensions.get('window');
 
 const MyCoaches_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('Favorite'); // 'All' or 'Favorite'
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); // State to keep track of last refetch time
+    const pollingInterval = 1000;
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
     };
-
+    
+    const handleNavigateBack = () => {
+        navigation.goBack();
+      };
+      
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -63,16 +70,28 @@ const MyCoaches_alt = () => {
 
     const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
 
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
         query: FindFavoriteCoachesDocument, // Pass the FindCoachesBySportDocument query
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'cache-and-network', // Ensure the data is fetched from the network if needed
     });
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+            setLastRefetchTime(new Date());
+            // console.log('Refetching data at', new Date().toLocaleTimeString());
+            // console.log("this is the refetched data:",data)
+        }, pollingInterval);
+
+        return () => clearInterval(interval);
+    }, [refetch, pollingInterval]);
 
     const { fetching, data, error } = result;
 
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
     // Extract coaches data from the GraphQL response
@@ -133,14 +152,16 @@ const MyCoaches_alt = () => {
     //     },
 
     // ];
+    // Filter the FavoriteCoaches array based on the search text
+const filteredCoaches = FavoriteCoaches.filter(coach =>
+    `${coach.name}`.toLowerCase().includes(searchText.toLowerCase())
+);
 
     return (
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}></View>
             <View style={MyCoaches.iconContainer}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('CoacheeDashboard')}
-                >
+                <TouchableOpacity onPress={handleNavigateBack}>
                     <Icon
                         name="arrow-back-circle-outline"
                         size={30}
@@ -183,13 +204,22 @@ const MyCoaches_alt = () => {
                 <Text style={MyCoaches.buttonText}>Favorite Coaches</Text>
 
                 <ScrollView
-                    contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 250, left: 12 }}
-                >
-                    <View>
-                        <CoachProfiles profiles={FavoriteCoaches} />
-                    </View>
-                </ScrollView>
+ contentInsetAdjustmentBehavior="scrollableAxes"
+ style={{ marginTop: '1%', height: 250, left: 12 }}
+ contentContainerStyle={{
+    flexGrow: 1, // Ensures the container fills available space
+    justifyContent: filteredCoaches.length > 0 ? 'flex-start' : 'center', // Center if no coaches
+    alignItems: filteredCoaches.length > 0 ? 'flex-start' : 'center', // Align horizontally
+ }}
+>
+ {filteredCoaches.length > 0 ? (
+    // Display coaches when they exist
+    <CoachProfiles profiles={filteredCoaches} />
+ ) : (
+    // Center the "No coaches found" text when there are no coaches
+    <Text style={{ color: 'grey', fontSize: 18, marginBottom: '40%', textAlign: 'center',}}>No coaches found.</Text>
+ )}
+</ScrollView>
             </KeyboardAvoidingView>
         </View>
     );

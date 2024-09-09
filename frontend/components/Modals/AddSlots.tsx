@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { format } from 'date-fns';
+import { format,} from 'date-fns';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { FindOneToOneServiceSlotsByCoachIdDocument, FindCoachByIdDocument} from '../../generated-gql/graphql';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery } from 'urql';
+
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 interface AddSlotModalProps {
   visible: boolean;
@@ -9,7 +18,13 @@ interface AddSlotModalProps {
   onAddSlot: (startTime: string, endTime: string, date: string) => void;
 }
 
-const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot }) => {
+interface Slot {
+  startTime: string;
+  endTime: string;
+  date: string;
+}
+
+const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot,}) => {
   const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -19,6 +34,12 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
   const [endTimeError, setEndTimeError] = useState<string>('');
   const [dateError, setDateError] = useState<string>('');
   const [isSaveDisabled, setIsSaveDisabled] = useState<boolean>(false);
+  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  const [upcomingSlots, setUpcomingSlots] = useState<Slot[]>([]);
+
+  
+
+  
 
 
 
@@ -40,28 +61,132 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
   };
 
   const handleStartDateConfirm = (date: Date) => {
+    const formattedDate = format(date, "hh:mm a");
+    console.log("Start Time has been picked: ", formattedDate);
     setStartDate(date);
     hideStartDatePicker();
   };
+  
+  
+  
+  useEffect(() => {
+        const fetchUserToken = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                setUserToken(token);
+            } catch (error) {
+                console.error('Error fetching token:', error);
+            }
+        };
 
-  const handleSave = () => {
-    if (startDate && endDate && selectedDate) {
-      onAddSlot(format(startDate, "hh:mm a"), format(endDate, "hh:mm a"), format(selectedDate, "EEEE, do MMMM"));
-    }
+        fetchUserToken();
+    }, []);
+
+    
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const useFetchCoachByUserID = (userID: any) => {
+      const [coachResult] = useQuery({
+          query: FindCoachByIdDocument, // Use the Coachee query document
+          variables: {
+              userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
+          },
+      });
+
+      return coachResult;
   };
 
-  const handleEndDateConfirm = (date: Date) => {
-    if (startDate && date <= startDate) {
-      setEndTimeError('End time must be after start time');
-      setIsSaveDisabled(true);
-    } else {
-      setEndDate(date);
-      setEndTimeError('');
-      setIsSaveDisabled(false);
-    }
-    hideEndDatePicker();
-  };
+  
 
+  
+
+  const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    data: coachData,
+  } = useFetchCoachByUserID(userToken);
+
+  const [result] = useQuery({
+    query: FindOneToOneServiceSlotsByCoachIdDocument,
+    variables: {
+      coachId: userToken? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+    },
+    requestPolicy: 'network-only',
+  });
+
+    const { data} = result;
+    useEffect(() => {
+      if (data) {
+        const slots = data.findOneToOneServiceSlotsByCoachId.map(slot => ({
+          date: slot.date,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+        }));
+        setUpcomingSlots(slots);
+        console.log("existing slots:", slots)
+      }
+    }, [data]);
+
+    const handleSave = () => {
+      if (startDate && endDate && selectedDate) {
+        // Format the new slot's start and end times
+        const newStartTime = format(startDate, "hh:mm a");
+        const newEndTime = format(endDate, "hh:mm a");
+        const newDate = format(selectedDate, "yyyy-MM-dd");
+    
+        // Check for overlapping slots
+        const isOverlap = upcomingSlots.some(slot => {
+          const slotStartTime = new Date(slot.startTime);
+          const slotEndTime = new Date(slot.endTime);
+          const slotDate = new Date(slot.date);
+    
+          const slotDateFormatted = format(slotDate, "yyyy-MM-dd");
+          const slotStartTimeFormatted = format(slotStartTime, "hh:mm a");
+          const slotEndTimeFormatted = format(slotEndTime, "hh:mm a");
+    
+          // Check if the new slot's start time overlaps with the existing slot's timeframe
+          const dateOverlap = slotDateFormatted === newDate;
+          const timeOverlap =
+            (newStartTime >= slotStartTimeFormatted && newStartTime < slotEndTimeFormatted) ||
+            (newEndTime > slotStartTimeFormatted && newEndTime <= slotEndTimeFormatted) ||
+            (newStartTime <= slotStartTimeFormatted && newEndTime >= slotEndTimeFormatted);
+    
+          return dateOverlap && timeOverlap;
+        });
+    
+        if (!isOverlap) {
+          onAddSlot(
+            format(startDate, "hh:mm a"),
+            format(endDate, "hh:mm a"),
+            format(selectedDate, "EEEE, do MMMM"),
+          );
+          // Reset state values after saving
+          setStartDate(null);
+          setEndDate(null);
+          setSelectedDate(null);
+          setEndTimeError('');
+          setDateError('');
+          setIsSaveDisabled(false);
+        } else {
+          // Set error message if there's an overlap
+          setIsSaveDisabled(true);
+          alert('A one-to-one session has already been reserved for this timeslot');
+        }
+      }
+    };
+    const handleEndDateConfirm = (date: Date) => {
+      if (startDate && date <= startDate) {
+        setEndTimeError('Selected End time must be after start time');
+        setIsSaveDisabled(true);
+      } else {
+        const formattedDate = format(date, "hh:mm a");
+        console.log("End Time has been picked: ", formattedDate);
+        setEndDate(date);
+        setEndTimeError('');
+        setIsSaveDisabled(false);
+      }
+      hideEndDatePicker();
+    };
+   
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -78,7 +203,7 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
   const handleConfirm = (date: Date) => {
     const currentDate = new Date();
     if (date < currentDate) {
-      setDateError('Date must be after or equal to the current date');
+      setSelectedDate(null);
       setIsSaveDisabled(true);
     } else {
       const formattedDate = format(date, "EEEE, do MMMM");
@@ -95,7 +220,23 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
     <Modal visible={visible} animationType="fade" transparent>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Start Time</Text>
+        <Text style={styles.header}>Add a Session Slot</Text>
+        <View style={styles.subContent}>
+        <Text style={styles.title}>Select Date</Text>
+          <TouchableOpacity onPress={showDatePicker}>
+            <Text style={styles.content}>{selectedDate ? format(selectedDate, "EEEE, do MMMM") : 'Choose date'}</Text>
+          </TouchableOpacity>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+          />
+         <View>
+            {dateError ? <Text style={styles.error}>{dateError}</Text> : null}
+         </View>
+          <View style={styles.timeContent}>
+          <Text style={styles.title}>Select Start Time</Text>
           <TouchableOpacity onPress={showStartDatePicker}>
             <Text style={styles.content}>{startDate ? format(startDate, "hh:mm a") : 'Choose Start Time'}</Text>
           </TouchableOpacity>
@@ -106,39 +247,30 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
             onCancel={hideStartDatePicker}
           />
 
-          <Text style={styles.title}>End Time</Text>
+          <Text style={styles.title}> Select End Time</Text>
           <TouchableOpacity onPress={showEndDatePicker}>
             <Text style={styles.content}>{endDate ? format(endDate, "hh:mm a") : 'Choose End Time'}</Text>
           </TouchableOpacity>
+          {endTimeError ? <Text style={styles.error}>{endTimeError}</Text> : null}
           <DateTimePickerModal
             isVisible={isEndDatePickerVisible}
             mode="time"
             onConfirm={handleEndDateConfirm}
             onCancel={hideEndDatePicker}
           />
-          {endTimeError ? <Text style={styles.error}>{endTimeError}</Text> : null}
-           <Text style={styles.title}>Date</Text>
-          <TouchableOpacity onPress={showDatePicker}>
-            <Text style={styles.content}>{selectedDate ? format(selectedDate, "EEEE, do MMMM") : 'Choose date'}</Text>
-          </TouchableOpacity>
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
-          {dateError ? <Text style={styles.error}>{dateError}</Text> : null}
-          
+          </View>
+
         </View>
+        
+
+      </View>
         <TouchableOpacity onPress={handleSave} style={[styles.saveButton, isSaveDisabled && styles.disabledButton]} disabled={isSaveDisabled}>
             <Text style={styles.saveText}>Save</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-          <Text>Close</Text>
+          <Icon name="close-circle-outline" size={30} color="#7E3FF0"  />
         </TouchableOpacity>
-
-
 
       </View>
     </Modal>
@@ -153,44 +285,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
+    top: "2%",
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 30,
-    width: '85%',
-    height: '38%',
+    width: (screenWidth * 0.9), // Adjust the percentage as needed
+    height: (screenHeight * 0.6), // Adjust the percentage as needed
     alignItems: 'flex-start',
   },
+  header:{
+    fontSize: 22,
+    fontWeight: '400',
+  },
   title: {
-    marginLeft: "10%",
-    color: '#7E3FF0',
+    marginLeft: "3%",
     fontSize: 20,
     fontWeight: '400',
     marginBottom: 20,
-    borderBottomColor: "#D4C5ED",
-    borderBottomWidth: 1
   },
   content: {
-    bottom: "30%",
-    marginLeft: "15%",
+    bottom: "25%",
+    marginLeft: "20%",
+    marginBottom: "5%",
+    color: '#7E3FF0',
+  },
+  timeContent: {
+    marginTop: "5%",
+  },
+  subContent:{
+    top: "5%",
+    paddingVertical: "2%"
   },
   saveButton: {
-    bottom: '37%',
+    bottom: "6.5%",
     marginLeft: "60%",
     padding: 10,
   },
   saveText: {
-    color: '#7E3FF0'
+    color: '#7E3FF0',
+    fontSize: 15
   },
   error: {
     color: 'red',
-    marginLeft: '10%',
   },
   disabledButton: {
     opacity: 0.5,
   },
   closeButton: {
-   bottom: "10%",
-   right: "30%",
+   bottom: "62%",
+   left: "39%",
   },
 });
 

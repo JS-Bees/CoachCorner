@@ -30,6 +30,9 @@ interface ChatMessage {
     sender: string;
     imageUrl: ImageSourcePropType;
     contactedStatus: boolean;
+    coacheeId: number; 
+    coacheeName: string;
+
 }
 
 const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
@@ -39,6 +42,7 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     const handleButtonPress = (item: ChatMessage) => {
         const chatMessage = {
             id: profile.contactId,
+            coacheeId: profile.id,
             message: 'placeholder message',
             sender: profile.name,
             imageUrl: profile.imageSource,
@@ -55,6 +59,8 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 
     const { profile } = route.params || {};
 
+
+
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
@@ -68,9 +74,6 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 >
                     <Icon name="arrow-back-circle" size={30} color="#FECB2E" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.heartIconContainer}>
-                    <Icon name="heart-outline" size={30} color="#FECB2E" />
-                </TouchableOpacity>
             </View>
             <View style={styles.header}>
                 <Text style={styles.name}>{profile?.name}</Text>
@@ -81,15 +84,6 @@ const CoacheePreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             </View>
             <View style={styles.aboutContainer}>
                 <Text style={styles.about}>{profile?.about}</Text>
-            </View>
-
-            <View style={styles.affliationsContainer}>
-                <Text style={styles.aboutText}>Affliations</Text>
-            </View>
-            <View style={styles.affliationsContainer}>
-                <Text style={styles.affliationsText}>
-                    {profile?.affliations}
-                </Text>
             </View>
 
             <View style={styles.affliationsContainer}>
@@ -185,20 +179,20 @@ const styles = StyleSheet.create({
         fontSize: 20,
         bottom: '80%',
     },
-    aboutContainer: {
+    aboutContainer:{
         position: 'absolute',
-        bottom: '27%',
-        alignItems: 'center',
-        left: '6%',
-        width: '85%',
-    },
-    about: {
-        textAlign: 'justify',
+        bottom: "38%", // Adjust this value to move the address text up or down
+        left: "6%",
+        width: "85%"
+      },
+      about: {
+        position: "absolute",
+        textAlign: "justify",
         lineHeight: 20, // Adjust line height as needed
-        fontFamily: 'Roboto',
+        fontFamily: "Roboto",
         fontWeight: '200',
         color: '#908D93',
-    },
+      },
     buttonContainer: {
         position: 'absolute',
         bottom: '2%',

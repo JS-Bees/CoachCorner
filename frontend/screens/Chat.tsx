@@ -40,7 +40,6 @@ type Props = {
 
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
-
     // Console logs
     // console.log('Sender Name:', chatMessage.sender);
     // console.log('image url', chatMessage.imageUrl.uri);
@@ -120,39 +119,31 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     };
 
     const handleNavigateToBooking = () => {
-        navigation.navigate('NewBookingPage');
+        navigation.navigate('Appointments');
     };
-
     const handleSendMessage = async (content: string) => {
+        // Check if the message content is not empty
+        if (content.trim() === '') {
+            console.log(chatMessage.id)
+            console.log('Cannot send an empty message.');
+            return; // Exit the function if the message is empty
+        }
+    
         try {
+            console.log('Coach ID:', chatMessage.id);
             setCurrentMessage('');
             const response = await setCreateMessage({
                 input: {
-                    // contactId: 1,
                     contactId: chatMessage.id,
                     content,
                 },
             });
             console.log('Message created:', response.data);
-
-            // Check if contactedStatus is already true
-            if (!chatMessage.contactedStatus) {
-                // Proceed to update contactedStatus to true
-                const updateResponse = await setUpdateContactedStatus({
-                    updateContactedStatusId: chatMessage.id,
-                    input: { contactedStatus: true },
-                });
-                console.log('Contacted status updated:', updateResponse.data);
-            } else {
-                console.log(
-                    'Contacted status is already true. No update needed.',
-                );
-            }
         } catch (error) {
-            // Handle error, e.g., show an error message
             console.log(error);
         }
     };
+    
 
     // if (result.fetching) return <Text>Loading... Why</Text>;
     // if (result.error) return <Text>Error</Text>;
@@ -160,24 +151,18 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     // Render each message item
     const renderMessageItem = ({ item }: { item: string }) => {
-        // Check if the item ends with ',;,'
-        const isLeftAligned = item.endsWith(',;,');
-        // Remove ',;,' from the item if it exists
+        const isLeftAligned = item.endsWith(',;,');  // Determines alignment
         const messageContent = isLeftAligned ? item.slice(0, -3) : item;
-
+    
         return (
             <View
                 style={[
-                    isLeftAligned
-                        ? styles.chatBubbleLeft
-                        : styles.chatBubbleRight,
+                    isLeftAligned ? styles.chatBubbleLeft : styles.chatBubbleRight,
                 ]}
             >
                 <Text
                     style={[
-                        isLeftAligned
-                            ? styles.messageTextLeft
-                            : styles.messageTextRight,
+                        isLeftAligned ? styles.messageTextLeft : styles.messageTextRight,
                     ]}
                 >
                     {messageContent}
@@ -209,7 +194,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     onPress={handleNavigateToBooking}
                 >
                     <MaterialIcons
-                        name="bookmark-outline"
+                        name="pending-actions"
                         size={30}
                         color="#7E3FF0"
                     />
@@ -222,7 +207,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                 }}
             >
                 <FlatList
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, padding: 10, paddingBottom: 20,  }}
                     data={messages.slice().reverse()}
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
@@ -285,6 +270,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
+    
     },
     arrowIcon: {
         marginLeft: '25%',
@@ -302,6 +288,8 @@ const styles = StyleSheet.create({
     headerText: {
         fontSize: 18,
         marginLeft: 10,
+        width: "50%"
+    
     },
     bookmark: {
         marginLeft: 'auto',
@@ -340,22 +328,24 @@ const styles = StyleSheet.create({
     focusedInput: {
         borderColor: '#7E3FF0', // Change the border color to your desired color
     },
-    chatBubbleRight: {
-        backgroundColor: '#7E3FF0',
-        borderRadius: 15,
-        padding: 10,
-        marginBottom: 10,
-        alignSelf: 'flex-end', // Align the chat bubble to the right
-        flexWrap: 'wrap', // Allow the bubble to grow according to the content
-    },
-    chatBubbleLeft: {
-        backgroundColor: 'lightgray',
-        borderRadius: 15,
-        padding: 10,
-        marginBottom: 10,
-        alignSelf: 'flex-start', // Align the chat bubble to the left
-        flexWrap: 'wrap', // Allow the bubble to grow according to the content
-    },
+chatBubbleRight: {
+    backgroundColor: '#7E3FF0',
+    borderRadius: 15,
+    padding: 10,
+    marginBottom: 10,
+    alignSelf: 'flex-end',
+    maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
+    overflow: 'visible', // Ensure text can overflow the container
+},
+chatBubbleLeft: {
+    backgroundColor: 'lightgray',
+    borderRadius: 15,
+    padding: 10,
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+    maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
+    overflow: 'visible', // Ensure text can overflow the container
+},
     messageTextRight: {
         color: 'white',
     },

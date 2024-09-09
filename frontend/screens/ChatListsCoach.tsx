@@ -18,18 +18,19 @@ import {
     FindMessagesForCoacheeListDocument,
 } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
+import { StackNavigationProp } from '@react-navigation/stack';
+import LoadingBar from '../components/LoadingBar';
 
 interface ChatMessage {
     id: number;
     message: string;
     sender: string;
     imageUrl: ImageSourcePropType;
-    contactedStatus: boolean;
+    contactedStatus: boolean;    
 }
 
 const ChatListPage: React.FC = () => {
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
 
     const handleNavigateBack = () => {
         navigation.goBack();
@@ -40,7 +41,12 @@ const ChatListPage: React.FC = () => {
         navigation.navigate('CoachChatPage', { chatMessage: item });
     };
 
+
+    
+   
+
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const pollingInterval = 1000;
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
@@ -57,23 +63,48 @@ const ChatListPage: React.FC = () => {
         fetchUserToken();
     }, []);
 
+    // const useFetchMessagesForCoachlist = (userID: any) => {
+    //     const [chatListMessageResult] = useQuery({
+    //         query: FindMessagesForCoacheeListDocument,
+    //         variables: {
+    //             coachId: parseInt(userID),
+    //         },
+    //         requestPolicy: 'cache-and-network',
+    //     });
+
+    //     return chatListMessageResult;
+    // };
+
     const useFetchMessagesForCoachlist = (userID: any) => {
-        const [chatListMessageResult] = useQuery({
+        const [chatListMessageResult,  refetch] = useQuery({
             query: FindMessagesForCoacheeListDocument,
             variables: {
                 coachId: parseInt(userID),
             },
-            requestPolicy: 'cache-and-network',
+            requestPolicy: 'network-only',
         });
-
-        return chatListMessageResult;
+        return { chatListMessageResult, refetch };
     };
+
+    const { chatListMessageResult, refetch } = useFetchMessagesForCoachlist(userToken);
 
     const {
         data: coachChatListMessageData,
         loading: coachChatListMessageLoading,
         error: coachChatListMessageError,
-    } = useFetchMessagesForCoachlist(userToken);
+    } = chatListMessageResult;
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          refetch(); // Manually trigger the query
+        }, pollingInterval);
+        // console.log('Refetching data at', new Date().toLocaleTimeString());
+        // console.log("this is the refetched data:", coacheeChatListMessageData)
+        return () => clearInterval(intervalId);
+    }, []);
+
+
+
 
     // console.log(
     //     'chat list messages',
@@ -86,6 +117,7 @@ const ChatListPage: React.FC = () => {
             variables: {
                 userId: parseInt(userID),
             },
+            requestPolicy: 'cache-and-network',
         });
 
         return coachResult;
@@ -96,6 +128,8 @@ const ChatListPage: React.FC = () => {
         loading: coachLoading,
         error: coachError,
     } = useFetchCoachByUserID(userToken);
+
+
 
     useEffect(() => {
         // console.log('coachData:', coachData);
@@ -110,7 +144,7 @@ const ChatListPage: React.FC = () => {
         // Map over contacts and set chatMessages
         if (contacts) {
             const chatMessages = contacts.map((contact) => {
-                const sender = `${contact.coachee.firstName} ${contact.coachee.lastName}`;
+                const sender = `${contact.coachee.firstName} ${contact.coachee.lastName.split(' ')[0]}`;
                 let imageUrl;
 
                 // Check if the profilePicture URL starts with 'https:'
@@ -137,6 +171,7 @@ const ChatListPage: React.FC = () => {
                     sender: sender,
                     imageUrl: imageUrl,
                     contactedStatus: contact.contactedStatus,
+                    coacheeId: contact.coachee.id
                 };
             });
 
@@ -178,12 +213,17 @@ const ChatListPage: React.FC = () => {
                 <Text style={styles.header}> Messages </Text>
             </View>
 
-            <FlatList
-                data={filteredChatMessages} // Use the filtered array here
-                keyExtractor={(item) => item.id}
-                renderItem={renderChatMessage}
-                style={styles.chatList}
-            />
+            {coachLoading || coachChatListMessageLoading ? (
+                <LoadingBar navigation={navigation} />
+            ) : (
+                <FlatList
+                    data={filteredChatMessages}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderChatMessage}
+                    style={styles.chatList}
+                    ListEmptyComponent={<Text style={styles.noContactsText}>No contacts yet</Text>}
+                />
+            )}
         </View>
     );
 };
@@ -232,6 +272,11 @@ const styles = StyleSheet.create({
         marginLeft: '-75%',
         flexDirection: 'row',
     },
+    noContactsText: {
+        marginTop: '10%',
+        fontSize: 24,
+        textAlign: 'center'
+    }
 });
 
 export default ChatListPage;

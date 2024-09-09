@@ -15,8 +15,8 @@ import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { CreateContactDocument } from '../generated-gql/graphql';
-import { useMutation } from 'urql';
+import { CreateContactDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import { useMutation, useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 
@@ -45,6 +45,25 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     const [, createContact] = useMutation(CreateContactDocument);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const navigation =  useNavigation<NativeStackNavigationProp<RootStackParams>>();
+
+    // function to fetch coachee data by userID (token)
+        const useFetchCoacheeByUserID = (userID: any) => {
+            const [coacheeResult] = useQuery({
+                query: FindCoacheeByIdDocument, // Use the Coachee query document
+                variables: {
+                    userId: parseInt(userID),
+                },
+            });
+    
+            return coacheeResult;
+        };
+        const {
+            data: coacheeData,
+            loading: coacheeLoading,
+            error: coacheeError,
+        } = useFetchCoacheeByUserID(userToken);
+
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -60,6 +79,31 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         fetchUserToken();
     }, []);
 
+    useEffect(() => {
+        if (coacheeData && coacheeData.findCoacheeByID) {
+          const contacts = coacheeData.findCoacheeByID.contacts;
+    
+          if (contacts && contacts.length > 0) {
+            console.log('Profile ID:', profile.id);
+            console.log('Contacts:', contacts);
+    
+            // Check if any contact.coach.id matches profile.id
+            const isProfileInContacts = contacts.some((contact) => {
+              console.log('Contact Coach ID:', contact.coach.id);
+              return parseInt(profile.id) ===(contact.coach.id);
+            });
+    
+            setIsFavorite(isProfileInContacts);
+            console.log('Is Profile in Contacts:', isProfileInContacts);
+          } else {
+            console.log('No contacts found');
+          }
+        } else {
+          console.log('CoacheeData or findCoacheeByID is not available');
+        }
+      }, [coacheeData]); // Watch for changes in coacheeData and profile.id
+
+    
     const handleAddToFavorites = async () => {
         try {
             // If already marked as favorite, return without adding again
@@ -75,7 +119,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 input: {
                     coachId: profile.id,
                     coacheeId: parseInt(userToken),
-                    contactedStatus: false,
+                    contactedStatus: true,
                 },
             });
 
@@ -93,18 +137,36 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         }
     };
 
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const handleButtonPress = (item: ChatMessage) => {
-        const chatMessage = {
-            id: profile.contactId,
-            message: 'placeholder message',
-            sender: profile.name,
-            imageUrl: profile.imageSource,
-            contactedStatus: profile.contactedStatus,
-        };
-        navigation.navigate('ChatPage', { chatMessage: chatMessage });
+
+    // const handleButtonPress = (item: ChatMessage) => {
+    //     handleAddToFavorites();
+    //     //this is the original to directly lead it to his chatbox
+    //     // const chatMessage = {
+    //     //     id: profile.contactId,
+    //     //     message: 'placeholder message',
+    //     //     sender: profile.name,
+    //     //     imageUrl: profile.imageSource,
+    //     //     contactedStatus: profile.contactedStatus,
+    //     // };
+    //     // navigation.navigate('ChatPage', { chatMessage: chatMessage });
+    //     navigation.navigate('ChatList')
+    // };
+
+    const handleButtonPress = () => {
+        const coachId = profile.id; // Adjust this line based on how the coach's ID is stored in `item`
+    
+        // Check if the coach is already in the favorites
+        const isCoachInFavorites = coacheeData?.findCoacheeByID.contacts.some(contact => contact.id === coachId);
+        console.log(isCoachInFavorites)
+        if (!isCoachInFavorites) {
+            // If the coach is not in the favorites, add to favorites
+            handleAddToFavorites();
+        }
+        // Navigate to the ChatList regardless of whether the coach was added to favorites
+        navigation.navigate('ChatList');
     };
+
+    
 
     const handleNavigateBack = () => {
         navigation.goBack();
@@ -124,8 +186,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 
     const { profile, gainedStars } = route.params || {};
 
-    console.log('Profile object', profile);
-
     const totalStars = 5;
 
     // Render star icons based on the total number of stars
@@ -144,8 +204,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         }
         return stars;
     };
-
-    console.log('ID is ' + profile.id + '' + isFavorite);
 
     return (
         <View style={styles.container}>
@@ -204,7 +262,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                     style={styles.button}
                     onPress={handleButtonPress}
                 >
-                    <Text
+          <Text
                         style={{
                             color: 'white',
                             fontSize: 15,
@@ -213,7 +271,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                             paddingVertical: 15,
                         }}
                     >
-                        Message this Coach
+                        {isFavorite ? 'Proceed to ChatList' : 'Add this coach'}
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -228,7 +286,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>
-                            Coach is already added!
+                            Coach added to contact list
                         </Text>
                         <Button
                             title="Close"
@@ -290,13 +348,14 @@ const styles = StyleSheet.create({
   },
   starsContainer: {
     flexDirection: 'row',
-    bottom: "84%",
-    left: "1.5%"
+    bottom: "79.5%",
+    left: "1.6%"
   },
   reviewsContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end', // Adjust alignment of extra buttons
     alignItems: 'center',
+    bottom: "80%"
   },
   gap: {
     marginLeft: "5%", // Adjust the spacing between the buttons

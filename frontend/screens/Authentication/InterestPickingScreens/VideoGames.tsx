@@ -6,19 +6,19 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../App';
 import Icon from 'react-native-vector-icons/Ionicons'
 
-type Book = 'Science Fiction' | 'Young Adult' | 'Fantasy' | 'Romance' | 'Mystery' | 'Horror';
+type Book = 'Relaxing' | 'Socializing' | 'Traveling' | 'Exercising' | 'Shopping' | 'Hobbies';
 
 const ChooseVideoGames = ({route}) => {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     const [checkedGames, setCheckedGames] = useState<Record<Book, boolean>>({
-        "Science Fiction": false,
-        "Young Adult": false,
-        Fantasy: false,
-        Romance: false,
-        Mystery: false,
-        Horror: false,
+        Relaxing: false,
+        Socializing: false,
+        Traveling: false,
+        Exercising: false,
+        Shopping: false,
+        Hobbies: false,
     });
  
     const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
@@ -75,6 +75,7 @@ const ChooseVideoGames = ({route}) => {
         workplaceAddress: workplaceAddress,
         coachOrCoachee: coachOrCoachee,
       });
+      console.log(selectedSports)
     };
     
 
@@ -85,16 +86,16 @@ const ChooseVideoGames = ({route}) => {
       <TouchableOpacity onPress={handleGoBack} style={styles.iconContainer}>
       <Icon name="arrow-back-circle-outline" size={30} color='#7E3FF0' />
      </TouchableOpacity>
-     <Text style={styles.header}> Which genre of books do you prefer to read during your downtime?</Text>
-     <Text style={styles.subtitle}>Choose 3 Genres</Text>
+     <Text style={styles.header}>What do you prefer to do on weekends?</Text>
+     <Text style={styles.subtitle}>Choose 3 Activities</Text>
 
       <View style={styles.checkboxContainer}>
-        <CustomCheckBox checked={checkedGames['Science Fiction']} checkedColor='#7E3FF0' label="Science Fiction" onPress={() => handleCheckboxChange('Science Fiction')} />
-        <CustomCheckBox checked={checkedGames['Young Adult']} checkedColor='#7E3FF0' label="Young Adult" onPress={() => handleCheckboxChange('Young Adult')} />
-        <CustomCheckBox checked={checkedGames.Fantasy} checkedColor='#7E3FF0' label="Fantasy" onPress={() => handleCheckboxChange('Fantasy')} />
-        <CustomCheckBox checked={checkedGames.Romance} checkedColor='#7E3FF0' label="Romance" onPress={() => handleCheckboxChange('Romance')} />
-        <CustomCheckBox checked={checkedGames.Mystery} checkedColor='#7E3FF0' label="Mystery" onPress={() => handleCheckboxChange('Mystery')} />
-        <CustomCheckBox checked={checkedGames.Horror} checkedColor='#7E3FF0' label="Horror" onPress={() => handleCheckboxChange('Horror')} />
+        <CustomCheckBox checked={checkedGames.Relaxing} checkedColor='#7E3FF0' label="Relaxing" onPress={() => handleCheckboxChange('Relaxing')} />
+        <CustomCheckBox checked={checkedGames.Socializing} checkedColor='#7E3FF0' label="Socializing" onPress={() => handleCheckboxChange('Socializing')} />
+        <CustomCheckBox checked={checkedGames.Traveling} checkedColor='#7E3FF0' label="Traveling" onPress={() => handleCheckboxChange('Traveling')} />
+        <CustomCheckBox checked={checkedGames.Exercising} checkedColor='#7E3FF0' label="Exercising" onPress={() => handleCheckboxChange('Exercising')} />
+        <CustomCheckBox checked={checkedGames.Shopping} checkedColor='#7E3FF0' label="Shopping" onPress={() => handleCheckboxChange('Shopping')} />
+        <CustomCheckBox checked={checkedGames.Hobbies} checkedColor='#7E3FF0' label="Hobbies" onPress={() => handleCheckboxChange('Hobbies')} />
       </View>
 
       <TouchableOpacity

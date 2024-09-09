@@ -18,6 +18,14 @@ query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
     }
 }
 
+query FindCoacheeByEmailAndPassword($email: String!, $password: String!) {
+    findCoacheeByEmailAndPassword(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+    }
+}
+
 query FindCoacheeByID($userId: Int!) {
     findCoacheeByID(userID: $userId) {
         id
@@ -27,7 +35,23 @@ query FindCoacheeByID($userId: Int!) {
         password
         bio
         address
+        sport
         profilePicture
+        bookings {
+            coach {
+                firstName
+                lastName
+            }             
+            id
+            status
+            }  
+        contacts {
+        coach {
+            id
+            }
+            contactedStatus
+            id
+        }  
         interests {
             id
             type
@@ -61,10 +85,12 @@ query FindCoachByID($userId: Int!) {
         address
         profilePicture
         sports {
+            id
             type
         }  
         sports {
             sportsCredentials {
+            id
             credentialPicture
         }
         } 
@@ -197,6 +223,7 @@ query GetCoachReviews($userId: Int!) {
         lastName
         reviews {
             coachee {
+                profilePicture
                 firstName
                 lastName
             }
@@ -292,4 +319,12 @@ query FindMessagesForCoacheeList($coachId: Int!) {
         createdAt
         id
     }
+}
+
+query FindOneToOneServiceSlotsByCoachId($coachId: Int!) {
+  findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
+  startTime
+  endTime
+  date
+  }
 }

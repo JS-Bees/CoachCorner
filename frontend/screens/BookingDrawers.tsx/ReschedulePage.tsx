@@ -4,6 +4,9 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { UpdateBookingDataDocument } from '../../generated-gql/graphql';
+import { UpdateBookingStatusDocument } from '../../generated-gql/graphql';
+import ServiceTypePicker from '../../components/Custom components/ServiceTypePicker';
+import { CreateBookingDocument } from '../../generated-gql/graphql';
 import CustomInput from '../../components/Custom components/CustomBookingInput';
 import Slot from '../../components/SlotsProps';
 import AddSlotModal from '../../components/Modals/AddSlots';
@@ -13,13 +16,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import SuccessModal from '../../components/Modals/SuccessModal';
 import { useMutation, useQuery } from 'urql';
-import { parse, formatISO, format } from 'date-fns';
+import { parse, formatISO} from 'date-fns';
+
 
 
 
 interface Session {
-    selectedSlots: Array<{slotsId:number; startTime: string; endTime: string; date: string }>;
-    coacheeId: number;
+    selectedSlots: [{slotsId:number; startTime: string; endTime: string; date: string, status: string }];
+    coacheeId: string;
     coacheeName: string;
     serviceType: string; // Add this line
     additionalNotes: string; // Add this line if you also need to access additionalNotes
@@ -29,6 +33,7 @@ interface Session {
 interface RouteParams {
     session: Session;
     slotsId: number;
+    coacheeId: number;
 }
 
 interface ReschedulePageProps {
@@ -45,16 +50,17 @@ export interface CoachProfile {
 
 
 const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
-    const { session, slotsId } = route.params;
+    const { session} = route.params;
     const [isAddSlotModalVisible, setAddSlotModalVisible] = useState(false);
     const [selectedSlots, setSelectedSlots] = useState<{
-        status: string; startTime: string; endTime: string; date: string}[]>([]);
-    const [serviceType, setServiceType] = useState(session.serviceType || ''); 
+        status: string; startTime: string; endTime: string; date: string; slotsId: number}[]>([]);
+        const [serviceType, setServiceType] = useState<string | null>(null);
     const [additionalNotes, setAdditionalNotes] = useState(session.additionalNotes || ''); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
-    const [result, updateBookingData] = useMutation(UpdateBookingDataDocument);
+    const [, updateBookingStatus] = useMutation(UpdateBookingStatusDocument);
+    const [, createBookingMutation] = useMutation(CreateBookingDocument);
     
 
   
@@ -69,57 +75,75 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
         setAddSlotModalVisible(!isAddSlotModalVisible);
     };
 
+    
     const handleAddSlot = (startTime: string, endTime: string, date: string) => {
-        const newSlot = { status: 'UPCOMING', startTime, endTime, date };
-        setSelectedSlots(prevSlots => [...prevSlots, newSlot]);
+        // Check if the number of selected slots is less than 3
+        if (selectedSlots.length < 3) {
+            const newSlot = { startTime, endTime, date };
+            setSelectedSlots([...selectedSlots, newSlot]);
+        } else {
+            // Alert the user or provide some feedback that they can't add more slots
+            console.log('You can only select up to 3 slots.');
+        }
         handleToggleAddSlotModal();
     };
-
     
-
-   
-    const handleUpdateBooking = async () => {
+    const handleCreateBooking = async (previousServiceType: string, previousAdditionalNotes: string, previousBookingId: number) => {
         setIsBookingProcessing(true);
-        // Prepare variables for the mutation
-        const variables = {
-          bookingId: session.bookingId,
-          updateSlotsIds: slotsId, // Include the IDs of slots to update
-          deleteSlotsIds: [], // No slots to delete in this case
-          bookingData: {
-            serviceType,
-            additionalNotes,
-          },
-          updateSlots: selectedSlots.map(slot => {
-            const date = parse(slot.date, 'EEEE, do MMMM', new Date());
-            const startTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.startTime.split(':')[0]), parseInt(slot.startTime.split(':')[1])));
-            const endTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.endTime.split(':')[0]), parseInt(slot.endTime.split(':')[1])));
-            return {
-                id: slotsId, // Include the ID of each slot to update
-                date:formatISO(date),
-                startTime: startTime,
-                endTime: endTime,
-                status: slot.status,
+    
+        try {
+            // Cancel the previous booking
+            await updateBookingStatus({ updateBookingStatusId: session.bookingId, input: { status: 'CANCELLED' } });
+    
+            // Create the new booking
+            const input = {
+                coacheeId: parseInt(session.coacheeId), // Use session.coacheeId directly
+                coachId: parseInt(userToken), // Ensure this is the correct field and value
+                serviceType: serviceType, // Use the state directly
+                additionalNotes: additionalNotes, // Use the state directly
+                status: "PENDING"
             };
-        }),
-          addSlots: [], // No new slots to add in this case
-        };
-         
-      
-        // Execute the mutation
-        const response = await updateBookingData(variables);
-      
-        // Handle the response
-        if (response.error) {
-          console.error('Error updating booking:', response.error.message);
-        } else {
-          console.log('Booking updated successfully:', response?.data?.updatePendingBooking);
-          navigation.goBack();
-          // Optionally, you can perform actions based on the result, such as displaying a success message
+    
+            const slotsInput = selectedSlots.map(slot => {
+                const date = parse(slot.date, 'EEEE, do MMMM', new Date());
+                const startTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.startTime.split(':')[0]), parseInt(slot.startTime.split(':')[1])));
+                const endTime = formatISO(new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(slot.endTime.split(':')[0]), parseInt(slot.endTime.split(':')[1])));
+    
+                return {
+                    status: 'UPCOMING',
+                    date: formatISO(date),
+                    startTime,
+                    endTime,
+                };
+            });
+    
+            // Execute the mutation to create the new booking
+            const response = await createBookingMutation({
+                input: input, 
+                slotsInput: slotsInput
+            });
+    
+            if (response.error) {
+                console.error('Error creating new booking:', response.error.message);
+                // Handle error
+            } else {
+                console.log('New booking created successfully:', response?.data?.createBooking);
+                navigation.goBack();
+                // Optionally, you can show a success message or perform other actions
+            }
+        } catch (error) {
+            console.error('Error cancelling previous booking:', error);
+            // Handle error
         }
+    
         setIsBookingProcessing(false);
     };
+
     
+ 
+   
     
+   
 
 
     
@@ -127,7 +151,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
     const [{ data: coachData, fetching, error }] = useQuery({
         query: FindCoachByIdDocument, // Use the Coachee query document
         variables: {
-            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userId: parseInt(userToken) || 0, // Parse the userID (token) to an integer with base 10
         },
         requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
     });
@@ -136,7 +160,11 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
         const fetchUserToken = async () => {
             try {
                 const token = await AsyncStorage.getItem('userToken');
-                setUserToken(token);
+                if (token) {
+                    setUserToken(token);
+                } else {
+                    console.error('User token is null or empty');
+                }
             } catch (error) {
                 console.error('Error fetching token:', error);
             }
@@ -144,6 +172,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
     
         fetchUserToken();
     }, []);
+    
 
     const CoachProfiles: CoachProfile[] = [
         {
@@ -166,6 +195,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
 
             <KeyboardAvoidingView style={styles.contentContainter}>
                 <Text style={styles.headerText}> Schedule Appointment </Text>
+                <Text style={styles.subHeader}>Maximum of 3 slots per session</Text>
 
 
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.subContentContainer}>
@@ -189,14 +219,16 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
                          <Slot key={index} startTime={slot.startTime} endTime={slot.endTime} date={slot.date} />))}
                     </View>
 
+    
 
                     <Text style={styles.subheaderText}> Service Type </Text>
-                    <CustomInput multiline={false} onChangeText={text => setServiceType(text)} value={serviceType}/>
+                    {/* <CustomInput multiline={false} onChangeText={text => setServiceType(text)} value={serviceType}/> */}
+                    <ServiceTypePicker setServiceType={setServiceType} />
                     <Text style={styles.subheaderText}> Additional Notes </Text>
                     <CustomInput style={styles.additionalInput} textAlignVertical="top" multiline={true}  onChangeText={text => setAdditionalNotes(text)} value={additionalNotes}/>
 
                     <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={handleUpdateBooking}>
+                    <TouchableOpacity style={styles.button} onPress={handleCreateBooking}>
                         {isBookingProcessing ? (
                          <ActivityIndicator size="small" color="white" />) : (
                             <Text style={{ color: 'white', fontSize: 16, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Save Session</Text>)}
@@ -205,11 +237,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
                 </View>
                 </ScrollView>
 
-                <TouchableOpacity style={styles.button} onPress={handleUpdateBooking}>
-            {isBookingProcessing ? (
-        <ActivityIndicator size="small" color="white" />
-        ) : (
-         <Text style={{ color: 'white', fontSize: 16, height: 55, paddingHorizontal: 15, paddingVertical: 15 }}>Save Session</Text> )}</TouchableOpacity>
+            
             </KeyboardAvoidingView>
         </View>
     )
@@ -280,6 +308,28 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 15,
         alignItems: 'center',
+    },
+    timeStyle:{
+        flexDirection: "row"
+    },
+    textTime:{
+        paddingVertical: "1%",
+        color:"#908D93",
+        marginLeft: "5%"
+    },
+    textDate:{
+        paddingVertical: "1%",
+        marginLeft: "10%",
+        color:"#908D93"
+    },
+    cancelButton: {
+        padding: 5,
+        borderRadius: 5,
+        alignSelf: 'flex-end',
+        left: "10%"
+    },
+    subHeader: {
+        color: '#908D93',
     },
 })
 

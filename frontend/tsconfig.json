@@ -1,7 +1,10 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "types": ["jest"],
     "jsx": "react",
     "strict": true
   }
 }
+
+

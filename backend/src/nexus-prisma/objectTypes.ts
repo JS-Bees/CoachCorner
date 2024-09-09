@@ -21,6 +21,7 @@ export const Coachee = objectType({
         t.field(gqlTypes.Coachee.password);
         t.field(gqlTypes.Coachee.profilePicture);
         t.field(gqlTypes.Coachee.bio);
+        t.field(gqlTypes.Coachee.sport);
 
         // t.field(gqlTypes.Coachee.interests);
         t.list.field('interests', {
@@ -479,5 +480,24 @@ export const Message = objectType({
         });
 
         t.field(gqlTypes.Message.createdAt);
+    },
+});
+
+export const SlotTime = objectType({
+    name: 'SlotTime',
+    definition(t) {
+        // Using custom (which is DateTime) for date-time fields
+        t.field('startTime', {
+            type: 'DateTime',
+            resolve: (obj: any, args, ctx) => obj.startTime,
+        });
+        t.field('endTime', {
+            type: 'DateTime',
+            resolve: (obj: any, args, ctx) => obj.endTime,
+        });
+        t.field('date', {
+            type: 'DateTime',
+            resolve: (obj: any, args, ctx) => obj.date,
+        });
     },
 });

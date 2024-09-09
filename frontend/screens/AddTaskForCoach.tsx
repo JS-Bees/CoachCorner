@@ -41,9 +41,18 @@ const AddTaskPageForCoach = () => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (selectedDate: React.SetStateAction<Date>) => {
-    setDate(selectedDate);
-    hideDatePicker();
+  const handleConfirm = (selectedDate: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set today to midnight
+  
+    // Check if selectedDate is today or in the past
+    if (selectedDate <= today) {
+      Alert.alert("Invalid Date", "Please select a future date.");
+    } else {
+      setDate(selectedDate); // Set new date
+    }
+  
+    hideDatePicker(); // Hide date picker modal
   };
 
   
@@ -51,32 +60,53 @@ const AddTaskPageForCoach = () => {
     navigation.goBack();
   };
 
-  const handleSave = () => {
-    // Execute mutation to create a new task
-    executeMutation({
-      input: {
-        coachId: parseInt(userToken),
-        completionStatus: "UNCOMPLETED",
-        date: date.toISOString(), // Format date to ISO string
-        description: description,
-        title: title,
+  const handleSave = async () => {
+    // Validate that all required inputs are filled in
+    if (!title || !description || !date) {
+      Alert.alert('Missing Data', 'Please fill in all required inputs: Title, Date, and Description.');
+      return; // Exit the function without executing the mutation
+    }
+
+    try {
+      const result = await executeMutation({
+          input: {
+            coachId: parseInt(userToken), // Ensure proper conversion to integer
+            completionStatus: "UNCOMPLETED",
+            date: date.toISOString(), // Format date to ISO 8601
+            description: description,
+            title: title,
+          },
+        },
+      );
+
+      if (result.error) {
+        console.error("Error creating task:", result.error);
+        Alert.alert("Error", "Failed to create task. Please try again.");
+      } else {
+        Alert.alert(
+          "Success",
+          "Task created successfully!",
+          [
+            {
+              text: "OK",
+              onPress: handleNavigateBack, // Navigate back after success
+            },
+          ]
+        );
       }
-    }).then((result) => {
-      // Handle result if needed
-      console.log('Mutation result:', result);
-      // Show success alert
-      Alert.alert('Success', 'Task successfully added');
-    }).catch((error) => {
-      // Handle error if needed
-      console.error('Mutation error:', error);
-      // Show error alert
-      Alert.alert('Error', 'Failed to add task. Please try again.');
-    });
-    
+    } catch (error) {
+      console.error("Error during mutation:", error);
+      Alert.alert("Error", "An unexpected error occurred. Please try again.");
+    }
+
     // Reset input fields
     setTitle('');
     setDescription('');
-    setDate(new Date());
+    setDate(new Date()); // Reset date to current date
+  };
+
+  const handleDelete = () => {
+    navigation.goBack();
   };
   
 
@@ -119,11 +149,11 @@ const AddTaskPageForCoach = () => {
       />
       
      <View style={styles.buttonsContainer}>
-     <TouchableOpacity onPress={handleSave}>
-        <Text style={styles.addButtonText}>Save</Text>
+     <TouchableOpacity onPress={handleDelete}>
+        <Text style={styles.addButtonText}>Delete</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={styles.deleteButtonText}>Delete</Text>
+      <TouchableOpacity onPress={handleSave}>
+        <Text style={styles.deleteButtonText}>Save</Text>
       </TouchableOpacity>
      </View>
       </View>
@@ -171,13 +201,13 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   addButtonText: {
-    color: '#7E3FF0',
+    color: 'red',
     fontSize: 16,
     fontWeight: '400',
     fontStyle: "italic"
   },
   deleteButtonText: {
-    color: 'red',
+    color: '#7E3FF0',
     marginLeft: "82%",
     fontSize: 16,
     fontWeight: '400',

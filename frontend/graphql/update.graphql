@@ -22,6 +22,7 @@ mutation UpdateCoachProfile(
 
 mutation CreateContact($input: CreateContactInput!) {
     createContact(input: $input) {
+        id
         coachId
         coacheeId
         contactedStatus
@@ -43,9 +44,11 @@ mutation UpdateBookingStatus($updateBookingStatusId: Int!, $input: UpdateBooking
     id
     status
     bookingSlots {
+      id
       endTime
       startTime
       date
+      status
     }
     serviceType
     additionalNotes
@@ -60,6 +63,7 @@ mutation UpdateBookingData($bookingId: Int!, $updateSlotsIds: [Int!]!, $deleteSl
       date
       endTime
       startTime
+      status
     }
     serviceType
     additionalNotes

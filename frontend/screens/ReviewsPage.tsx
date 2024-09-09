@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, ScrollView,} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, TouchableOpacity, View, Text, ScrollView, ImageSourcePropType, Alert} from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
@@ -7,22 +7,26 @@ import ReviewTile from '../components/Profile Tiles/ReviewProfileTiles';
 import { useState } from 'react';
 import AddReviewBottomSheet from '../components/BottomSheet/AddReview';
 import { useQuery } from 'urql';
-import { GetCoachReviewsDocument } from '../generated-gql/graphql';
+import { GetCoachReviewsDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/LoadingSplash';
+
 
 import Icon from 'react-native-vector-icons/Ionicons';
-
-
 
 type ReviewsPageRouteProp = RouteProp<RootStackParams, 'ReviewsPage'>;
 type ReviewsPageNavigationProp = NativeStackNavigationProp<RootStackParams, 'ReviewsPage'>;
 
 interface ReviewsPageProps {
   route: ReviewsPageRouteProp;
-  navigation: ReviewsPageNavigationProp;
+  navigation: StackNavigationProp<RootStackParams, 'ReviewsPage'>; // Use StackNavigationProp here
 }
 
 const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
+  
+  
+  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
  
   const { profile } = route.params || {};
 
@@ -33,12 +37,52 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const handleAddReviewPress = () => {
-    setBottomSheetVisible(true);
-  };
+    if (hasCompletedBooking) {
+        // If there's a completed booking, allow the review addition
+        setBottomSheetVisible(true);
+    } else {
+        // If not, display an alert with a message
+        Alert.alert(
+            'Booking Required', // Title of the alert
+            'You need to have a completed booking with this coach to leave a review.', // Message of the alert
+            [{ text: 'OK', onPress: () => console.log('OK Pressed') }] // Alert button(s)
+        );
+    }
+};
 
   const handleCloseBottomSheet = () => {
     setBottomSheetVisible(false);
   };
+
+  useEffect(() => {
+    const fetchUserToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            setUserToken(token);
+        } catch (error) {
+            console.error('Error fetching token:', error);
+        }
+    };
+
+    fetchUserToken();
+}, []);
+
+// function to fetch coachee data by userID (token)
+const useFetchCoacheeByUserID = (userID: any) => {
+    const [coacheeResult] = useQuery({
+        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        variables: {
+            userId: parseInt(userID),
+        },
+    });
+
+    return coacheeResult;
+};
+const {
+    data: coacheeData,
+    loading: coacheeLoading,
+    error: coacheeError,
+} = useFetchCoacheeByUserID(userToken);
 
     // Fetch reviews using urql useQuery hook
     const [result] = useQuery({
@@ -48,7 +92,7 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
   
     const { data, fetching, error } = result;
   
-    if (fetching) return <Text>Loading...</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
   
     const reviews = data?.findCoachByID?.reviews || [];
@@ -58,13 +102,34 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
     reviews.forEach(review => {
       numReviewsByRating[review.starRating] = (numReviewsByRating[review.starRating] || 0) + 1;
     });
-  
+    
     // Calculate the total number of reviews and the average rating
     const totalReviews = reviews.length;
     const totalStars = reviews.reduce((sum, review) => sum + review.starRating, 0);
     const averageRating = totalReviews !== 0 ? totalStars / totalReviews : 0;
   
     const maxBarWidth = 150; // Adjust as needed
+
+    const coacheeName = coacheeData?.findCoacheeByID
+        ? `${coacheeData.findCoacheeByID.firstName} ${coacheeData.findCoacheeByID.id}`
+        : "Unknown Coachee";
+
+    console.log("Coachee Name and ID:", coacheeName);
+
+    const coachBeingRated = `${profile.name || "Unknown Coach"} (ID: ${profile.id || "N/A"})`;
+
+    console.log("Coach being rated and ID:", coachBeingRated);
+    console.log("")
+
+    //make a logic here, that checks if the coachee has an already completed booking with the profile.id
+
+    //  Check if the coachee has a completed booking with the coach's ID
+     const hasCompletedBooking = coacheeData?.findCoacheeByID?.bookings.some(
+      (booking) => booking.status === "COMPLETED" && (booking.coach.firstName + " " + booking.coach.lastName) === profile.name
+  );
+
+  console.log("Coachee has completed booking with this coach:", hasCompletedBooking);
+  
 
   return (
     <View style={styles.container}>
@@ -94,12 +159,13 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
 
 
       <ScrollView style={styles.reviewsContainer}>
-  {totalReviews > 0 ? (
-    reviews.map((review, index) => (
+      {totalReviews > 0 ? (
+    [...reviews].reverse().map((review, index) => (
       <ReviewTile
+      
         key={index}
         review={{
-          imageSource: require('../assets/John_Doe.png'),
+          imageSource:{ uri: review.coachee.profilePicture },
           name: `${review.coachee.firstName} ${review.coachee.lastName}`,
           stars: review.starRating,
           reviewText: review.comment,
@@ -107,14 +173,25 @@ const ReviewsPage: React.FC<ReviewsPageProps> = ({ route, navigation }) => {
       />
     ))
   ) : (
-    <Text style={{ alignSelf: 'center', marginTop: 20 }}>No reviews yet</Text>
+    <Text style={{ alignSelf: 'center', marginTop: 15 , fontSize: 18}}>No reviews yet</Text>
   )}
 </ScrollView>
 
-      <TouchableOpacity style={styles.addReview} onPress={handleAddReviewPress}>
-        <Icon name="add-circle-outline" size={50} color='#7E3FF0' />
-      </TouchableOpacity>
-
+   
+{hasCompletedBooking ? (
+                <TouchableOpacity
+                    style={styles.addReview}
+                    onPress={handleAddReviewPress}
+                >
+                    <Icon name="add-circle-outline" size={50} color="#7E3FF0" />
+                </TouchableOpacity>
+            ) : (
+              <View style={{ paddingHorizontal: 15, paddingVertical: 12, borderRadius: 5, bottom: "80%"}}>
+              <Text style={{ alignSelf: 'center', color: 'grey' }}>
+                  You need a completed booking to add a review.
+              </Text>
+          </View>
+            )}
       <AddReviewBottomSheet isVisible={bottomSheetVisible} onClose={handleCloseBottomSheet} coachId={profile.id} />
     </View>
   );
@@ -128,7 +205,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: "row",
     top: "7%",
-    left: "6.5%",
+    left: "6%",
     zIndex: 1,
   },
   coachHeader: {
@@ -136,7 +213,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "400",
     left: "15%",
-    color: "#7E3FF0"
+    color: "#7E3FF0",
+    width: "75%"
   },
   reviewsContainer: {
     marginTop: "-10%",
@@ -172,7 +250,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   ratingText: {
-    bottom: "3%",
+    bottom: "5%",
     marginRight: 10,
     fontSize: 20,
   },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     ScrollView,
     View,
@@ -8,6 +8,8 @@ import {
     Pressable,
     Platform,
     ActivityIndicator,
+    Alert,
+    BackHandler,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputSignUpPages from '../../components/Custom components/InputSignUpPages';
@@ -17,8 +19,7 @@ import { CreateCoachDocument } from '../../generated-gql/graphql';
 import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const SignUpForCoach = ({route}) => {
     const navigation =
@@ -47,6 +48,21 @@ const SignUpForCoach = ({route}) => {
     const [errorMessage, setErrorMessage] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
+    
+    useEffect(() => {
+        const backAction = () => {
+            navigation.navigate('LogIn'); // Navigate back to the login page
+            return true; // Return true to prevent the default back button behavior
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
+    }, [navigation]);
+    
 
     
 
@@ -54,24 +70,6 @@ const SignUpForCoach = ({route}) => {
         setShowPicker(!showPicker);
    
     };
-
-    
-    // const navigateToHobbies = () => {
-    //     navigation.navigate('InterestPickingHobby', 
-    //     {  firstName: First_Name,
-    //         lastName: Last_Name,
-    //         birthday: date,
-    //         email: Email,
-    //         password: Password,
-    //         workplaceAddress: StreetAdd,
-    //         profilePic: profilePic,
-    //         mantra: mantra,
-    //         bio: bio,
-    //         coachingRole: coachingRole,
-            
-
-    //     }); 
-    // };
 
     const toggleModal = () => {
         setShowModal(!showModal);
@@ -81,33 +79,36 @@ const SignUpForCoach = ({route}) => {
         setErrorModalVisible(!errorModalVisible);
     };
 
-    const onChange = ({ type }: any, selectedDate: any) => {
+    const onChange = ({ type }, selectedDate) => {
         if (type === 'set') {
-          const currentDate = selectedDate;
-          const minDate = new Date();
-          minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
-          const maxDate = new Date();
-          maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
-      
-          // Check if the selected date is within the allowed range
-          if (currentDate >= minDate && currentDate <= maxDate) {
-            setdate(currentDate);
-            if (Platform.OS === 'android') {
-              toggleDatePicker();
-              setDateofBirth(currentDate.toDateString());
+            const currentDate = selectedDate;
+            const minDate = new Date();
+            minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
+    
+            // Check if the selected date is within the allowed range
+            if (currentDate >= minDate && currentDate <= maxDate) {
+                setdate(currentDate);
+                if (Platform.OS === 'android') {
+                    toggleDatePicker();
+                    setDateofBirth(currentDate.toDateString());
+                }
+            } else {
+                // Close the date picker
+                toggleDatePicker();
+    
+                // Show an alert if the selected date is outside the allowed range
+                Alert.alert(
+                    'Invalid Date',
+                    `Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`,
+                    [{ text: 'OK' }]
+                );
             }
-          } else {
-            // Close the date picker
-            toggleDatePicker();
-      
-            // Show an error message if the selected date is outside the allowed range
-            setErrorMessage(`Please select a valid date be tween ${minDate.getFullYear()} and ${maxDate.getFullYear()}`);
-            setErrorModalVisible(true);
-          }
         } else {
-          toggleDatePicker();
+            toggleDatePicker();
         }
-      };
+    };
 
 
     // Function to toggle checkboxes for games, hobbies, and movie genres
@@ -123,98 +124,59 @@ const SignUpForCoach = ({route}) => {
         const regex = /\d/;
         return regex.test(First_Name) || regex.test(Last_Name);
     }
-
+    
     const onNext = async () => {
-            // Validate the input fields
-            if (
-                First_Name.trim() === '' ||
-                Last_Name.trim() === '' ||
-                Email.trim() === '' ||
-                Password.trim() === '' ||
-                Repeat_Password.trim() === '' ||
-                StreetAdd.trim() === '' ||
-                City.trim() === '' ||
-                Postal.trim() === '' ||
-                Password.trim() !== Repeat_Password.trim() 
-                
-                
-            ) {
-                // Display an error message for incomplete fields
-                setErrorMessage('Please fill in all the required fields.');
-                setErrorModalVisible(true);
-                setIsLoading(false);
-                return; // Return early to prevent further execution
-            }
-
-            
-            // Check for integers in First_Name and Last_Name
-            if (containsInteger(First_Name, Last_Name)) {
-                setErrorMessage('First Name and Last Name cannot contain integers.');
-                setErrorModalVisible(true);
-                setIsLoading(false);
-                return; // Return early if validation fails
-            }
-            // setIsLoading(true); // Set isLoading to true when the signup process starts
-
-      
-
-            // Log the data before making the API call
-            console.log("Signing up with data:", {
-                firstName: First_Name,
-                lastName: Last_Name,
-                birthday: Exact_Date,
-                email: Email,
-                password: Password,
-                workplaceAddress: StreetAdd,
-                CoachorCoachee: CoachorCoachee,
-                
-            });
-
-            // const coachInput = {firstName: First_Name,
-            //     lastName: Last_Name,
-            //     birthday: date,
-            //     email: Email,
-            //     password: Password,
-            //     address: StreetAdd,
-            //     profilePicture: profilePic,
-            //     mantra: mantra,
-            //     bio: bio,
-            //     coachingRole: coachingRole}
-
-            // const interestsInput = selectedHobbies.map(hobby => ({ hobby }));
-            
-            
-        //     const { data, error, fetching } = await SignUpForCoachee({
-        //         input: coachInput,
-        //         interestsInput: interestsInput,
-        //       });
-        //     navigateToHobbies()
-
-        //     if (Error) {
-        //         console.error(Error + "lol");
-
-        //     } else {
-        //         setSuccessMessage('Signed up successfully!');
-        //         toggleModal();
-        //         setFirst_Name('');
-        //         setLast_Name('');
-        //         setEmail('');
-        //         setPassword('');
-        //         setRepeat_Password('');
-        //         setStreetAddress('');
-        //         setCity('');
-        //         setPostal('');
-        //         setDateofBirth('');
-        //     }
-        // } catch (err) {
-        //     console.error(err);
-        //     // Reset loading state to false in case of an error
-        // } finally {
-        //     setIsLoading(false);
-        // }
-        console.log(Exact_Date)
+        // Validate the input fields
+        if (
+            First_Name.trim() === '' ||
+            Last_Name.trim() === '' ||
+            Email.trim() === '' ||
+            Password.trim() === '' ||
+            Repeat_Password.trim() === '' ||
+            StreetAdd.trim() === '' ||
+            City.trim() === '' ||
+            Postal.trim() === '' ||
+            Password.trim() !== Repeat_Password.trim()
+        ) {
+            // Display an error message for incomplete fields
+            setErrorMessage('Please fill in all the required fields.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early to prevent further execution
+        }
+    
+        // Check for integers in First_Name and Last_Name
+        if (containsInteger(First_Name, Last_Name)) {
+            setErrorMessage('First Name and Last Name cannot contain integers.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early if validation fails
+        }
+    
+        // Check if email has at least 5 characters before "@"
+        const emailParts = Email.split('@');
+        if (emailParts.length !== 2 || emailParts[0].length < 5) {
+            setErrorMessage('Email must have at least 5 characters before the "@" symbol.');
+            setErrorModalVisible(true);
+            setIsLoading(false);
+            return; // Return early if email validation fails
+        }
+    
+        // Log the data before making the API call
+        console.log("Signing up with data:", {
+            firstName: First_Name,
+            lastName: Last_Name,
+            birthday: Exact_Date,
+            email: Email,
+            password: Password,
+            workplaceAddress: StreetAdd,
+            CoachorCoachee: CoachorCoachee,
+        });
+    
+        console.log(Exact_Date);
         navigation.navigate('SportPicking', 
-        {  firstName: First_Name,
+        {  
+            firstName: First_Name,
             lastName: Last_Name,
             email: Email,
             birthday: Exact_Date.toISOString(),
@@ -223,12 +185,9 @@ const SignUpForCoach = ({route}) => {
             profilePic: profilePic,
             bio: bio,
             coachOrCoachee: CoachorCoachee
-            
-
-        }); 
-        
-            
+        });
     };
+    
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -245,13 +204,13 @@ const SignUpForCoach = ({route}) => {
                         placeholder="Full Name"
                         value={First_Name}
                         checkForInteger
-                        setValue={value => setFirst_Name(value.substring(0, 10))} // Limit to 9 characters
+                        setValue={value => setFirst_Name(value.substring(0, 15))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="Last Name"
                         value={Last_Name}
                         checkForInteger
-                        setValue={value => setLast_Name(value.substring(0, 10))} // Limit to 9 characters
+                        setValue={value => setLast_Name(value.substring(0, 15))} // Limit to 9 characters
                     />
                     <InputSignUpPages
                         placeholder="johnsmith@gmail.com"
@@ -289,17 +248,23 @@ const SignUpForCoach = ({route}) => {
                         />
                     )}
 
-                    {!showPicker && (
-                        <Pressable onPress={toggleDatePicker}>
-                            <TextInput
-                                style={styles.birthdayBorder}
-                                placeholder="Sat Aug 24 2000"
+                    {
+                        !showPicker && (
+                            <Pressable onPress={toggleDatePicker} >
+                              <InputSignUpPages
                                 value={dateOfBirth}
-                                onChangeText={setDateofBirth}
-                                editable={false}
-                            />
-                        </Pressable>
-                    )}
+                                setValue={setDateofBirth}
+                                placeholder="Sat Aug 24 2000"
+                                onFocus={toggleDatePicker}
+                                onBlur={() => {}} 
+                                editable={false} // Read-only
+                              />
+                            </Pressable>)
+                    }
+
+                    
+
+                    
                 </View>
 
                 <View style={styles.customContainer}>
@@ -427,6 +392,7 @@ const styles = StyleSheet.create({
         elevation: 6,
         shadowOpacity: 5,
         borderColor: '#e8e8e8',
+        marginRight: '-550%'
     },
     birthdayText: {
         color: '#a19e9e',
@@ -507,7 +473,7 @@ const styles = StyleSheet.create({
         fontWeight: '200',
         fontFamily: 'Roboto',
         color: '#656466',
-    }
+    },
   
 });
 

@@ -9,7 +9,6 @@ import {
 import React, { useEffect, useState, } from 'react';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SearchBar } from '@rneui/themed';
 import CoacheeSessions from '../components/Profile Tiles/CoacheeSessionsTiles';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -18,6 +17,8 @@ import { FindCoachByIdDocument } from '../generated-gql/graphql';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView, KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/LoadingSplash';
 
 
 
@@ -34,15 +35,17 @@ interface CoachSessionsProps {
 
 const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [bookings, setBookings] = useState<any[]>([]);
+    const pollingInterval = 1000;
+    const [sortOption, setSortOption] = useState<'date' | 'alphabetical'>('date');
+    const [filterMessage, setFilterMessage] = useState('Filtered by name');
 
  
-
-
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
@@ -70,12 +73,6 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
         fetchUserToken();
     }, []);
 
-    const [result] = useQuery({
-        query: FindBookingsOfCoachDocument, 
-        variables: {
-            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
-        },
-    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const useFetchCoachByUserID = (userID: any) => {
@@ -92,20 +89,91 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const {
         data: coachData,
     } = useFetchCoachByUserID(userToken);
+    
 
-    const { fetching, data, error } = result;
-    if (fetching) return <Text>Loading...</Text>;
-    if (error) return <Text>Error: {error.message}</Text>
+    const [result, refetch] = useQuery({
+        query: FindBookingsOfCoachDocument, 
+        variables: {
+            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+        },
+        requestPolicy: 'network-only',
+    });
+
+    const { data, error, fetching} = result;
+    
+    useEffect(() => {
+        if (data) {
+        setBookings(data.findCoachByID.bookings);}
+    }, [data]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          refetch(); // Manually trigger the query
+        }, pollingInterval);
+      
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const toggleSortOption = () => {
+        if (sortOption === 'alphabetical') {
+            setSortOption('date');
+            setFilterMessage('Filtered by date');
+        } else {
+            setSortOption('alphabetical');
+            setFilterMessage('Filtered by name');
+        }
+    };
+
+
+    
+    if (error) {
+        return <Text>Error: {error.message}</Text>;
+    }
+      
+   
 
 
 
-    const bookings = data?.findCoachByID.bookings;
-    if (!bookings) return <Text>No bookings found.</Text>;
+    if (fetching) return <SplashScreen navigation={navigation} />;
+    
 
-    const upcomingBookings = bookings.filter(booking => booking.status === 'UPCOMING');
-    const pendingBookings = bookings.filter(booking => booking.status === 'PENDING');
 
-    const sessionsToShow = activeButton === 'Upcoming' ? upcomingBookings : pendingBookings;
+
+    const booking = data?.findCoachByID.bookings;
+    if (!booking) return <Text>No bookings found.</Text>;
+
+    const upcomingBookings = booking.filter(booking => booking.status === 'UPCOMING');
+    const pendingBookings = booking.filter(booking => booking.status === 'PENDING');
+    const completedBookings = booking.filter(booking => booking.status === 'COMPLETED');
+
+        // Modify the sessionsToShow variable to filter based on searchText
+
+        let sessionsToShow =
+        activeButton === 'Upcoming' ? upcomingBookings : activeButton === 'Pending' ? pendingBookings : completedBookings;
+
+        // Apply sorting based on the selected filter option
+        sessionsToShow = sessionsToShow.sort((a, b) => {
+            if (sortOption === 'date') {
+                const dateA = new Date(a.bookingSlots[0].date).getTime();
+                const dateB = new Date(b.bookingSlots[0].date).getTime();
+                console.log('Sorting by date:', dateA, dateB);
+                return dateA - dateB;
+            } else if (sortOption === 'alphabetical') {
+                const coacheeA = a.coachee?.firstName || '';
+                const coacheeB = b.coachee?.firstName || '';
+                console.log('Sorting by name:', coacheeA, coacheeB);
+                return coacheeA.localeCompare(coacheeB);
+            }
+            return 0;
+        });
+
+       
+        const filteredSessions = sessionsToShow.filter(booking => {
+            const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
+            return coacheeName.toLowerCase().includes(searchText.toLowerCase());
+        });
+
+        
     
     return (
         <View style={MyCoaches.container}>
@@ -132,7 +200,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
             <View style={MyCoaches.searchContainer}>
                 <SearchBar
-                 placeholder='Search for coach name'
+                 placeholder='Search for trainee'
                  onChangeText={handleSearchChange}
                  value={searchText}
                  platform='android'
@@ -140,6 +208,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
                  inputContainerStyle={MyCoaches.searchBarInputContainer}/>
             </View>
 
+            <View style={MyCoaches.buttonRow}>
             <TouchableOpacity 
             style={[
                 MyCoaches.AllCoachesButton,
@@ -147,33 +216,66 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             ]}
                 onPress={() => setActiveButton('Upcoming')}>
             <Text style={MyCoaches.buttonText}>Upcoming</Text>
+                {upcomingBookings.length > 0 && (
+                <View style={MyCoaches.badgeContainer}>
+                <Text style={MyCoaches.badgeText}>{upcomingBookings.length}</Text>
+                </View>)}
+                
             </TouchableOpacity>
 
-            <TouchableOpacity style={[MyCoaches.FavoriteCoachesButton,
-            activeButton === 'Pending' ? MyCoaches.activeButton : null,
+            <TouchableOpacity 
+            style={[
+                MyCoaches.AllCoachesButton,
+                activeButton === 'Completed' ? MyCoaches.activeButton : null, 
+            ]}
+                onPress={() => setActiveButton('Completed')}>
+            <Text style={MyCoaches.buttonText}>Completed</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+            style={[
+                MyCoaches.AllCoachesButton,
+                activeButton === 'Pending' ? MyCoaches.activeButton : null, 
             ]}
                 onPress={() => setActiveButton('Pending')}>
             <Text style={MyCoaches.buttonText}>Pending</Text>
+                {pendingBookings.length > 0 && (
+                <View style={MyCoaches.badgeContainer}>
+                <Text style={MyCoaches.badgeText}>{pendingBookings.length}</Text>
+            </View>)}
             </TouchableOpacity>
+            </View>
 
+            <View style={MyCoaches.filterIconContainer}>
+                <Text style={{ color: '#7E3FF0', marginTop: 5, marginRight: "5%", fontStyle: "italic"}}>{filterMessage}</Text>
+                    <TouchableOpacity onPress={toggleSortOption}>
+                        <Icon name="filter-outline" size={30} color="#7E3FF0" />
+                    </TouchableOpacity>
+            </View>
 
-
-            <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
-               <View>
-               <CoacheeSessions sessions={sessionsToShow.map(booking => ({
-                    coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName}`,
-                    bookingId: Number(booking.id), // Convert string to number
-                    serviceType: `${booking.serviceType}`,
-                    additionalNotes: `${booking.additionalNotes}`,
-                    status: `${booking.status}`,
-                    imageSource: { uri: booking.coachee.profilePicture },
-                    slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
-                    time: booking.bookingSlots.map(slot => ({
-                     startTime: slot.startTime,
-                    endTime: slot.endTime})),
-                    date: booking.bookingSlots.map(slot => slot.date)}))} />
-                </View>
-
+          
+            <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
+                {filteredSessions.length > 0 ? (
+                    <View>
+                        <CoacheeSessions sessions={filteredSessions.map(booking => ({
+                            coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName.split(' ')[0]}`,
+                            coacheeId: `${booking.coacheeId}`,
+                            bookingId: Number(booking.id),
+                            serviceType: `${booking.serviceType}`,
+                            additionalNotes: `${booking.additionalNotes}`,
+                            status: `${booking.status}`,
+                            imageSource: { uri: booking.coachee.profilePicture },
+                            slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
+                            time: booking.bookingSlots.map(slot => ({
+                                startTime: slot.startTime,
+                                endTime: slot.endTime
+                            })),
+                            date: booking.bookingSlots.map(slot => slot.date)
+                        }))} />
+                    </View>
+                ) : (
+                    <Text style={{ color: 'grey', fontSize: 18,textAlign: 'center', marginTop: '25%'}}>No trainee found.</Text>
+                )}
             </ScrollView>
             </KeyboardAvoidingView>
 
@@ -204,8 +306,14 @@ const MyCoaches = StyleSheet.create({
         flexDirection: 'row', 
     },
 
+    buttonRow:{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: 'center', 
+        paddingHorizontal: 20, 
+        marginTop: "5%"
+    },
     
-
     middleContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -278,20 +386,18 @@ const MyCoaches = StyleSheet.create({
   
     
     AllCoachesButton: {
-        width: 110, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
-        marginTop: '5%',
-        marginLeft: '8%',
+        width: 100, // Adjust the width to make it square
+        height: 49, // Adjust the height to make it square
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10, // Adjust the border radius for rounded corners (optional)
     },
     FavoriteCoachesButton: {
-        width: 100, // Adjust the width to make it square
+        width: 110, // Adjust the width to make it square
         height: 50, // Adjust the height to make it square
-        marginTop: '-13%',
-        marginLeft: '67%',
+        marginTop: '-14%',
+        marginLeft: '62%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',
@@ -304,7 +410,32 @@ const MyCoaches = StyleSheet.create({
     },
     activeButton: {
         backgroundColor: '#7E3FF0'
-    }
+    },
+    badgeContainer: {
+        position: 'absolute',
+        right: -10,
+        top: -10,
+        backgroundColor: '#7E3FF0',
+        borderRadius: 10,
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2, // Outline width
+        borderColor: 'white', // Outline color
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    filterIconContainer: {
+        flexDirection: 'row',
+        justifyContent: "flex-end",
+        paddingTop: "3%",
+        marginRight: "6%",
+        
+    },
    
 });
 

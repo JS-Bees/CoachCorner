@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    marginLeft: "85%",
+    marginLeft: "7%",
     padding: 10,
   },
 

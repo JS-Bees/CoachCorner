@@ -24,16 +24,19 @@ import {
     FindCoacheesOfCoachDocument,
     FindCoachByIdDocument,
 } from '../generated-gql/graphql';
+import { StackNavigationProp } from '@react-navigation/stack';
+import SplashScreen from './Authentication/LoadingSplash';
 
 const { width, height } = Dimensions.get('window');
 
 const MyClients_alt = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const navigation =
-        useNavigation<NativeStackNavigationProp<RootStackParams>>();
+    const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null);
     const [searchText, setSearchText] = useState('');
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); // State to keep track of last refetch time
+    const pollingInterval = 1000;
 
     const handleSearchChange = (text: string) => {
         setSearchText(text);
@@ -71,15 +74,27 @@ const MyClients_alt = () => {
 
     const { data: coachData } = useFetchCoacheeByUserID(userToken || '');
 
-    const [result] = useQuery({
+    const [result, refetch] = useQuery({
         query: FindCoacheesOfCoachDocument,
         variables: {
             userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
         },
+        requestPolicy: 'cache-and-network',
     });
 
     const { fetching, data, error } = result;
-    if (fetching) return <Text>Loading...</Text>;
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+            setLastRefetchTime(new Date());
+            // console.log('Refetching data at', new Date().toLocaleTimeString());
+        }, pollingInterval);
+
+        return () => clearInterval(interval);
+    }, [refetch, pollingInterval]);
+
+    if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
     const contacts = data?.findCoachByID.contacts;
@@ -92,7 +107,7 @@ const MyClients_alt = () => {
 
             return {
                 id: contact.coacheeId,
-                name: `${coachee.firstName} ${coachee.lastName}`,
+                name: `${coachee.firstName} ${coachee.lastName.split(' ')[0]}`,
                 imageSource: { uri: coachee.profilePicture },
                 contactId: contact.id,
                 contactedStatus: contact.contactedStatus,
@@ -101,6 +116,10 @@ const MyClients_alt = () => {
         });
 
     console.log(contacts);
+    // Filter coachees based on search text
+    const filteredCoachees = FavoriteCoachees.filter(coachee =>
+        `${coachee.name}`.toLowerCase().includes(searchText.toLowerCase())
+   );
 
     return (
         <View style={MyCoaches.container}>
@@ -134,7 +153,7 @@ const MyClients_alt = () => {
             >
                 <View style={MyCoaches.searchContainer}>
                     <SearchBar
-                        placeholder="Search for a sport"
+                        placeholder="Search trainee"
                         onChangeText={handleSearchChange}
                         value={searchText}
                         platform="android"
@@ -144,13 +163,22 @@ const MyClients_alt = () => {
                 </View>
 
                 <ScrollView
-                    contentInsetAdjustmentBehavior="scrollableAxes"
-                    style={{ marginTop: '1%', height: 250, left: 12 }}
-                >
-                    <View>
-                        <CoacheeProfile coacheeProfiles={FavoriteCoachees} />
-                    </View>
-                </ScrollView>
+  contentInsetAdjustmentBehavior="scrollableAxes"
+  style={{ marginTop: '1%', height: 250, left: 12 }}
+  contentContainerStyle={{
+    flexGrow: 1, // Ensures the container fills available space
+    justifyContent: filteredCoachees.length > 0 ? 'flex-start' : 'center', // Center if no trainees
+    alignItems: filteredCoachees.length > 0 ? 'flex-start' : 'center', // Align horizontally
+  }}
+>
+  {filteredCoachees.length > 0 ? (
+    // Display coachees when they exist
+    <CoacheeProfile coacheeProfiles={filteredCoachees} />
+  ) : (
+    // Center the "No trainee found" text when there are no coachees
+    <Text style={{ color: 'grey', fontSize: 18, marginBottom: '40%', textAlign: 'center',}}>No trainee found.</Text>
+  )}
+</ScrollView>
             </KeyboardAvoidingView>
         </View>
     );

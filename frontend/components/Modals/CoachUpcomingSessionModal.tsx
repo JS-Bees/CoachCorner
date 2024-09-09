@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Overlay, Icon } from '@rneui/themed';
 import CoacheeSessions from '../Profile Tiles/CoacheeSessionsTiles';
@@ -24,31 +24,52 @@ interface SessionModalProps {
 const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [result, updateBookingStatus] = useMutation<UpdateBookingStatusMutation>(UpdateBookingStatusDocument);
+  const [loading, setLoading] = useState(false);
 
   
 
   const navigateToChat = () => {
-    navigation.navigate('ChatPage');
+    navigation.navigate('CoachChatListsPage');
   };
 
   
-  const navigateToReSched = () => {
-    navigation.navigate("ReschedulePage", { session, slotsId: session?.slotsId });
-  };
-  
+
 
   const handleCancelSchedule = () => {
+    setLoading(true);
     if (session?.bookingId) {
       const variables = {
         updateBookingStatusId: session.bookingId,
         input: { status: 'CANCELLED' }
       };
-      updateBookingStatus(variables);
-      toggleOverlay(null); // Close the modal
+      updateBookingStatus(variables).then(() => {
+        toggleOverlay(null); // Close the modal
+        setLoading(false);
+        alert('Cancelled this Session');
+      });
     } else {
       console.error("Cannot update status ");
     }
   };
+
+  const handleCompleteSession = () => {
+    setLoading(true);
+    if (session?.bookingId) {
+      const variables = {
+        updateBookingStatusId: session.bookingId,
+        input: { status: 'COMPLETED' }
+      };
+      updateBookingStatus(variables).then(() => {
+        toggleOverlay(null); // Close the modal
+        setLoading(false);
+        alert('Marked as Complete');
+      });
+    } else {
+      console.error("Cannot update status ");
+    }
+  };
+
+  
   
   
   useEffect(() => {
@@ -65,7 +86,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
-    overlayStyle={styles.overlay} animationType="fade"  >
+    overlayStyle={styles.overlay} animationType="none"  >
       <View style={styles.container}>
         {session && (
           <>
@@ -126,8 +147,9 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
     <TouchableOpacity style={styles.cancelButton} onPress={handleCancelSchedule}>
       <Text style={styles.cancelText}>Cancel Schedule</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.button} onPress={navigateToReSched}>
-      <Text style={styles.Text} >Re-Schedule</Text>
+
+    <TouchableOpacity style={styles.completeButton} onPress={handleCompleteSession}>
+      <Text style={styles.cancelText}>Mark as Complete</Text>
     </TouchableOpacity>
   </View>
 </View>
@@ -227,7 +249,7 @@ const styles = StyleSheet.create({
     bottom:  '-30%', 
     left:  0,
     right:  0,
-    paddingHorizontal:  10, 
+    paddingHorizontal:  5, 
   },
   button: {
     backgroundColor: '#7E3FF0', // Set the background color for the cancel button
@@ -246,6 +268,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', 
     marginBottom:  10
+  },
+
+  completeButton: {
+    backgroundColor: 'transparent', // Set the background color for the cancel button
+      width: (screenWidth * 0.38), // Adjust the percentage as needed
+      height: (screenHeight * 0.08), // Adjust the percentage as needed
+    borderRadius:  15,
+    alignItems: 'center',
+    justifyContent: 'center', 
   },
   dateText: {
     marginLeft: "15%",
