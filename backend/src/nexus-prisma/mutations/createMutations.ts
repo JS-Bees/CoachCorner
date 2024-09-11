@@ -592,7 +592,12 @@ export const coachLogin = mutationField('coachLogin', {
                     coach.password,
                 );
                 if (passwordMatch) {
-                    return coach;
+                    const token = jwt.sign(
+                        { userId: coach.id, email: coach.email },
+                        process.env.JWT_SECRET,
+                        { expiresIn: "1hr"} // Token expires after 1 hour
+                    );
+                        return { ...coach, token };
                 } else {
                     throw new Error('Incorrect email/password.');
                 }
