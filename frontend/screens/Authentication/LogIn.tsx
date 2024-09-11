@@ -17,15 +17,12 @@ import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation } from 'urql';
 import {
-    // FindCoachByEmailAndPasswordDocument,
-    // FindCoacheeByEmailAndPasswordDocument,
     CoachLoginDocument,
     CoacheeLoginDocument,
 } from '../../generated-gql/graphql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import LoadingSpinner from '../../components/LoadingIndicator';
 const { width, height } = Dimensions.get('window');
 
 const LogIn = () => {
@@ -42,7 +39,6 @@ const LogIn = () => {
 
     const handleEmailChange = (text: string) => {
         setEmail(text);
-        // Clear error message when email is changed
         if (EmailPasswordError) {
             setEmailPasswordError('');
         }
@@ -50,7 +46,6 @@ const LogIn = () => {
 
     const handlePasswordChange = (text: string) => {
         setPassword(text);
-        // Clear error message when password is changed
         if (EmailPasswordError) {
             setEmailPasswordError('');
         }
@@ -61,7 +56,7 @@ const LogIn = () => {
     };
 
     const handleCloseSlideIn = () => {
-        Keyboard.dismiss(); // This will hide the keyboard
+        Keyboard.dismiss(); 
         setIsSlideInVisible(false);
     };
 
@@ -79,12 +74,11 @@ const LogIn = () => {
             setEmail('');
             setPassword('');
             setEmailPasswordError('');
-            setLoading(false); // Reset isLoading to false when navigating back
+            setLoading(false); 
         });
 
-        // Prevent back button from working
         const backAction = () => {
-            return true; // Prevents default back action
+            return true; 
         };
 
         const backHandler = BackHandler.addEventListener(
@@ -93,15 +87,15 @@ const LogIn = () => {
         );
 
         return () => {
-            unsubscribe(); // Cleanup navigation listener
-            backHandler.remove(); // Cleanup back handler
+            unsubscribe(); 
+            backHandler.remove(); 
         };
     }, [navigation]);
 
     const storeToken = async (token: string) => {
         try {
             await AsyncStorage.setItem('userToken', token);
-            console.log('Async token:', token); // Add this line to log the async token
+            console.log('Async token:', token); 
         } catch (error) {
             console.error('Error storing token:', error);
         }
@@ -110,30 +104,19 @@ const LogIn = () => {
     const onLogInPressed = async () => {
         if (isLoading) return;
 
-        setLoading(true); // Start loading
+        setLoading(true); 
 
         console.log('Email value', Email);
         console.log('Password value', Password);
         console.log('Coach or coachee useState value', CoachOrCoachee);
 
-        // setTimeout(async () => {
         try {
             if (!Email || !Password) {
                 setEmailPasswordError('Email and Password cannot be empty.');
-                setLoading(false); // Stop loading before returning
+                setLoading(false); 
                 return;
             }
-            // Check if the email ends with @gmail.com or @example.com
-            // const validDomains = ['@gmail.com', '@example.com'];
-            // const emailDomain = Email.substring(Email.lastIndexOf('@'));
-
-            // if (!validDomains.includes(emailDomain)) {
-            //     setEmailPasswordError('Invalid email domain. Please use a valid email.');
-            //     setLoading(false); // Stop loading before returning
-            //     return;
-            // }
-
-            // Check the results of the query after it's completed
+      
             if (CoachOrCoachee === 'coach') {
                 const coachData = await executeCoachLogin({
                     email: Email,
@@ -145,11 +128,8 @@ const LogIn = () => {
                     navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
                 } else if (coachData.error) {
                     console.log('Coach error message is being ran');
-                    // const errorMessage = coachData.error
-                    //     ? coachData.error.message.replace('[GraphQL] ', '')
-                    //     : 'An error occurred';
                     setEmailPasswordError('Invalid Email or Password');
-                    //handleLoginErrorCoach;
+          
                 }
             } else if (CoachOrCoachee === 'coachee') {
                 const coacheeData = await executeCoacheeLogin({
@@ -164,33 +144,26 @@ const LogIn = () => {
                     navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
                 } else if (coacheeData.error) {
                     console.log('Coach error message is being ran');
-                    // const errorMessage = coacheeData.error
-                    //     ? coacheeData.error.message.replace('[GraphQL] ', '')
-                    //     : 'An error occurred';
                     setEmailPasswordError('Invalid Email or Password');
-                    // handleLoginErrorCoachee;
+              
                 }
             } else {
                 console.log('This is being run before logging in');
                 setEmailPasswordError('Login failed. Please try again.');
             }
         } catch (error) {
-            // console.error('Login error:', error);
-            // setEmailPasswordError('An error occurred during login.');
+
             setEmailPasswordError('Invalid Email or Password');
         } finally {
             setLoading(false); // Ensure loading stops
         }
-        //     500;
-        // }); // 200ms delay to ensure state has updated
+
     };
 
     const onSignUpPressed = () => {
         if (CoachOrCoachee === 'coach') {
-            // Navigate to the landing page and pass a parameter
             navigation.navigate('LandingPage', { userType: 'coach' });
         } else {
-            // Navigate to the landing page and pass a parameter
             navigation.navigate('LandingPage', { userType: 'coachee' });
         }
     };
@@ -281,11 +254,6 @@ const LogIn = () => {
                                 </TouchableOpacity>
                             }
                         />
-                        {/* <LogInButton
-                            onPress={onForgotPressed}
-                            text="Forgot Password?"
-                            type="SECONDARY"
-                        /> */}
                     </View>
 
                     <View style={Log_In_Style.button}>
@@ -336,7 +304,7 @@ const Log_In_Style = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         zIndex: 0,
-        justifyContent: 'space-between', // Vertical alignment adjusted
+        justifyContent: 'space-between',
     },
     keyboardAvoidContainer: {
         flex: 1,
@@ -358,21 +326,21 @@ const Log_In_Style = StyleSheet.create({
     },
 
     noMargin: {
-        marginTop: height * 0.03, // Responsive marginTop
-        marginBottom: height * 0.2, // Responsive marginBottom
+        marginTop: height * 0.03, 
+        marginBottom: height * 0.2, 
         alignItems: 'center',
     },
 
     CoachIcon: {
-        width: width * 0.4, // Responsive width
-        height: height * 0.2, // Responsive height
+        width: width * 0.4, 
+        height: height * 0.2, 
         resizeMode: 'contain',
         maxWidth: 500,
         maxHeight: 500,
     },
 
     imageContainer: {
-        marginTop: height * 0.12, // Responsive marginTop
+        marginTop: height * 0.12, 
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
@@ -429,7 +397,7 @@ const Log_In_Style = StyleSheet.create({
         marginRight: '30%',
     },
     buttons: {
-        borderColor: '#7E3FF0', // Example background color
+        borderColor: '#7E3FF0', 
         borderWidth: 1,
         padding: 10,
 
@@ -438,7 +406,7 @@ const Log_In_Style = StyleSheet.create({
         width: '45%',
     },
     buttonText: {
-        color: '#7E3FF0', // Example text color
+        color: '#7E3FF0', 
         fontSize: 16,
     },
 });

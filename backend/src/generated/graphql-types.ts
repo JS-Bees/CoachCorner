@@ -218,6 +218,7 @@ export interface NexusGenObjects {
     lastName: string; // String!
     password: string; // String!
     profilePicture: string; // String!
+    token?: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoachInterest: { // root type
@@ -253,6 +254,7 @@ export interface NexusGenObjects {
     password: string; // String!
     profilePicture: string; // String!
     sport: string; // String!
+    token?: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoacheeInterest: { // root type
@@ -377,6 +379,7 @@ export interface NexusGenFieldTypes {
     reviews: Array<NexusGenRootTypes['Review'] | null> | null; // [Review]
     sports: Array<NexusGenRootTypes['Sport'] | null> | null; // [Sport]
     tasks: Array<NexusGenRootTypes['CoachTask'] | null> | null; // [CoachTask]
+    token: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoachInterest: { // field return type
@@ -419,6 +422,7 @@ export interface NexusGenFieldTypes {
     reviews: Array<NexusGenRootTypes['Review'] | null> | null; // [Review]
     sport: string; // String!
     tasks: Array<NexusGenRootTypes['CoacheeTask'] | null> | null; // [CoacheeTask]
+    token: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   CoacheeInterest: { // field return type
@@ -505,6 +509,7 @@ export interface NexusGenFieldTypes {
     findMessagesForCoacheeList: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
     findNonContactCoachesBySport: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
     findOneToOneServiceSlotsByCoachId: Array<NexusGenRootTypes['SlotTime'] | null>; // [SlotTime]!
+    findRecommendedCoaches: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
     findfilteredMessagesByContactId: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
   }
   Review: { // field return type
@@ -593,6 +598,7 @@ export interface NexusGenFieldTypeNames {
     reviews: 'Review'
     sports: 'Sport'
     tasks: 'CoachTask'
+    token: 'String'
     updatedAt: 'DateTime'
   }
   CoachInterest: { // field return type name
@@ -635,6 +641,7 @@ export interface NexusGenFieldTypeNames {
     reviews: 'Review'
     sport: 'String'
     tasks: 'CoacheeTask'
+    token: 'String'
     updatedAt: 'DateTime'
   }
   CoacheeInterest: { // field return type name
@@ -721,6 +728,7 @@ export interface NexusGenFieldTypeNames {
     findMessagesForCoacheeList: 'Message'
     findNonContactCoachesBySport: 'Coach'
     findOneToOneServiceSlotsByCoachId: 'SlotTime'
+    findRecommendedCoaches: 'Coach'
     findfilteredMessagesByContactId: 'Message'
   }
   Review: { // field return type name
@@ -904,6 +912,9 @@ export interface NexusGenArgTypes {
     }
     findOneToOneServiceSlotsByCoachId: { // args
       coachId: number; // Int!
+    }
+    findRecommendedCoaches: { // args
+      coacheeId: number; // Int!
     }
     findfilteredMessagesByContactId: { // args
       contactId: number; // Int!
