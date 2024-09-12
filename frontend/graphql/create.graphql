@@ -130,6 +130,7 @@ mutation CoachLogin($email: String!, $password: String!) {
         id
         firstName
         lastName
+        token
     }
 }
 
