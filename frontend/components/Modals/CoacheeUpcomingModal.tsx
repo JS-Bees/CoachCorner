@@ -56,7 +56,7 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
           <View style={styles.imageContainer}>
           <Image source={session.imageSource} style={styles.sessionImage} />
           <TouchableOpacity onPress={navigateToChat}>
-              <View style={styles.imageContainer}>
+              <View style={styles.chatIconContainer}>
                 <Icon name="chat" type="material" color="#7E3FF0" />
               </View>
             </TouchableOpacity>
@@ -119,6 +119,16 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  chatIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    borderWidth: 2, 
+    borderColor: '#7E3FF0', 
+    padding: 1, 
   },
   contentContainer:{
     paddingTop: "10%",

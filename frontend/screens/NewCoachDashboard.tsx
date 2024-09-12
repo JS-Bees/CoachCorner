@@ -254,7 +254,7 @@ const NewCoachDashboard = () => {
                 format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
             ).map(slot => ({
                 ...slot,
-                coachee: booking.coachee// Add coachee to the slot data
+                coachee: booking.coachee
             }))
         );
     
