@@ -101,6 +101,15 @@ const LogIn = () => {
         }
     };
 
+    const storeJwtToken = async (JwtToken: string) => {
+        try {
+            await AsyncStorage.setItem('JwtToken', JwtToken);
+            console.log('THIS IS THE JWT TOKEN:', JwtToken); 
+        } catch (error) {
+            console.error('Error storing token:', error);
+        }
+    };
+
     const onLogInPressed = async () => {
         if (isLoading) return;
 
@@ -125,6 +134,7 @@ const LogIn = () => {
                 console.log(coachData);
                 if (coachData.data) {
                     await storeToken(coachData.data.coachLogin.id.toString()); // Store token
+                    await storeJwtToken(coachData.data.coachLogin?.token.toString()); // Store token
                     navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
                 } else if (coachData.error) {
                     console.log('Coach error message is being ran');
@@ -138,9 +148,8 @@ const LogIn = () => {
                 });
                 console.log(coacheeData);
                 if (coacheeData.data) {
-                    await storeToken(
-                        coacheeData.data.coacheeLogin.id.toString(),
-                    ); // Store token
+                    await storeToken(coacheeData.data.coacheeLogin.id.toString()); // Store token
+                    await storeJwtToken(coacheeData.data.coacheeLogin?.token.toString()); // Store token
                     navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
                 } else if (coacheeData.error) {
                     console.log('Coach error message is being ran');
