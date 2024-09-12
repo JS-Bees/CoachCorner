@@ -295,7 +295,6 @@ type Query {
   findMessagesForCoacheeList(coachId: Int!): [Message]
   findNonContactCoachesBySport(coacheeID: Int!, sportType: String!): [Coach]
   findOneToOneServiceSlotsByCoachId(coachId: Int!): [SlotTime]!
-  findRecommendedCoaches(coacheeId: Int!): [Coach]
   findfilteredMessagesByContactId(contactId: Int!, numberOfMessages: Int!): [Message]
 }
 
