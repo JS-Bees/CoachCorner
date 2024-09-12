@@ -746,68 +746,69 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
     },
 );
 
-export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
-    type: list(Coach),
-    args: {
-        coacheeId: nonNull(intArg()),
-    },
-    resolve: async (_, { coacheeId }, context: Context) => {
-        const coacheeData = await context.db.coachee.findUnique({
-            where: { id: coacheeId, active: true }, // Include the 'active' condition
-            include: {
-                interests: true,
-            },
-        });
-        const sportType = coacheeData?.sport;
-        // const sportType = "Soccer";
-        const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
-        const coaches = await context.db.coach.findMany({
-            where: {
-                active: true,
-            },
-            include: {
-                sports: true,
-                interests: true,
-            },
-        });
-        // Filter coaches based on the specified sport type (Basketball)
-        const filteredCoaches = coaches.filter((coach) =>
-            coach.sports.some((sport) => sport.type === sportType),
-        );
+// export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
+//     type: list(Coach),
+//     args: {
+//         coacheeId: nonNull(intArg()),
+//     },
+//     resolve: async (_, { coacheeId }, context: Context) => {
+//         const coacheeData = await context.db.coachee.findUnique({
+//             where: { id: coacheeId, active: true },
+//             include: {
+//                 interests: true,
+//             },
+//         });
 
-        const findMatchingInterestsCount = (
-            coacheeInterests,
-            coachInterests,
-        ) => {
-            return genreTypes.reduce((count, genreType) => {
-                const coacheeInterest = coacheeInterests.find(
-                    (interest) => interest.type === genreType,
-                );
-                const coachInterest = coachInterests.find(
-                    (interest) => interest.type === genreType,
-                );
-                return (
-                    count +
-                    (coacheeInterest &&
-                    coachInterest &&
-                    coacheeInterest.name === coachInterest.name
-                        ? 1
-                        : 0)
-                );
-            }, 0);
-        };
+//         const sportType = coacheeData?.sport;
 
-        const matchedCoaches = filteredCoaches
-            .map((coach) => {
-                const matchingInterestCount = findMatchingInterestsCount(
-                    coacheeData.interests,
-                    coach.interests,
-                );
-                return { coach, matchingInterestCount };
-            })
-            .filter((coach) => coach !== null)
-            .sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
+//         const coaches = await context.db.coach.findMany({
+//             where: {
+//                 active: true,
+//             },
+//             include: {
+//                 sports: true,
+//                 interests: true,
+//             },
+//         });
 
-        return matchedCoaches;
-    },
-});
+//         const filteredCoaches = coaches.filter((coach) =>
+//             coach.sports.some((sport) => sport.type === sportType),
+//         );
+
+//         const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+
+//         const matchedCoaches = filteredCoaches.map((coach) => {
+//             const matchingInterestCount = genreTypes.reduce(
+//                 (count, genreType) => {
+//                     const coacheeInterest = coacheeData?.interests.find(
+//                         (interest) => interest.type === genreType,
+//                     );
+//                     const coachInterest = coach.interests.find(
+//                         (interest) => interest.type === genreType,
+//                     );
+
+//                     return (
+//                         count +
+//                         (coacheeInterest &&
+//                         coachInterest &&
+//                         coacheeInterest.name === coachInterest.name
+//                             ? 1
+//                             : 0)
+//                     );
+//                 },
+//                 0,
+//             );
+
+//             return {
+//                 ...coach,
+//                 matchingInterestCount,
+//             };
+//         });
+
+//         matchedCoaches.sort(
+//             (a, b) => b.matchingInterestCount - a.matchingInterestCount,
+//         );
+
+//         return matchedCoaches;
+//     },
+// });

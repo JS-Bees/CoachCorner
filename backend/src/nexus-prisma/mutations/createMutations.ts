@@ -595,7 +595,7 @@ export const coachLogin = mutationField('coachLogin', {
                     const token = jwt.sign(
                         { userId: coach.id, email: coach.email },
                         process.env.JWT_SECRET,
-                        { expiresIn: "1hr"} // Token expires after 1 hour
+                        { expiresIn: "5hr"} // Token expires after 1 hour
                     );
                         return { ...coach, token };
                 } else {
@@ -665,7 +665,7 @@ export const coacheeLogin = mutationField('coacheeLogin', {
                     const token = jwt.sign(
                         { userId: coachee.id, email: coachee.email },
                         process.env.JWT_SECRET,
-                        { expiresIn: "1hr"} // Token expires after 1 hour
+                        { expiresIn: "5hr"} // Token expires after 1 hour
                     );
                         return { ...coachee, token };
                         
