@@ -60,6 +60,8 @@ import { CopilotProvider } from 'react-native-copilot';
 import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
 import SeeAll from './screens/seeAll';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -83,13 +85,48 @@ const wsClient = createWSClient({
     // url: apiUrlWs!,
 });
 
-// // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+const useToken = () => {
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+        let intervalId;
+
+        const checkToken = async () => {
+            try {
+                const storedToken = await AsyncStorage.getItem('JwtToken');
+                if (storedToken !== null) {
+                    setToken(storedToken);
+                    // Stop the interval here
+                    clearInterval(intervalId);
+                }
+            } catch (error) {
+                console.error('Error retrieving token:', error);
+            }
+        };
+
+        intervalId = setInterval(checkToken, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    return token;
+};
+
+// const getToken =
+//     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYyMDk1MjgsImV4cCI6MTcyNjIyNzUyOH0.kTIkZU-pwSoQ8Eg7huAIjDkh3cH_rmypd0BRuM6c7Dg';
 
 const client = new Client({
     url: 'http://192.168.1.6:5050/graphql',
     // url: apiUrl!,
 
-    // fetchSubscriptions: true, // added this tog try and fix fetching
+    fetchSubscriptions: true, // added this tog try and fix fetching
+    fetchOptions: () => ({
+        headers: {
+            // authorization: `${token}`,
+            authorization: ` `,
+        },
+    }),
+    // end of token fetch
     exchanges: [
         cacheExchange,
         fetchExchange,

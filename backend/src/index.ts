@@ -72,6 +72,8 @@ const server = new ApolloServer({
             return context;
         }
 
+        console.log('req body', req.body.operationName);
+
         // Add sign up here
         if (
             req.body.operationName === 'CoacheeLogin' ||
@@ -86,7 +88,7 @@ const server = new ApolloServer({
         const token = req.headers.authorization;
         // const token =
         //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYxMzQzNTAsImV4cCI6MTcyNjEzNzk1MH0.7EQEbVqiAWz9woMCpBiwl_IgPLn4OWLzIrPLC8vOLC0';
-        console.log(token);
+        console.log('token', token);
         // try hard coding it
         if (!token) {
             throw new Error('No token provided');
@@ -95,18 +97,19 @@ const server = new ApolloServer({
         try {
             const decoded = jwt.verify(token, SECRET_KEY);
             console.log('decoded', decoded);
-            // Have to check if decoded user actually exists
-            // Verify the user exists in the database
-            const coachee = await db.coachee.findUnique({
-                where: { id: decoded.userId, email: decoded.email },
-            });
-            const coach = await db.coach.findUnique({
-                where: { id: decoded.userId, email: decoded.email },
-            });
+            // // Have to check if decoded user actually exists
+            // // Verify the user exists in the database
+            // const coachee = await db.coachee.findUnique({
+            //     where: { id: decoded.userId, email: decoded.email },
+            // });
+            // const coach = await db.coach.findUnique({
+            //     where: { id: decoded.userId, email: decoded.email },
+            // });
 
-            if (coachee || coach) {
-                return context;
-            }
+            // if (coachee || coach) {
+            //     return context;
+            // }
+            return context;
         } catch (err) {
             console.error('Error:', err);
             throw err;
