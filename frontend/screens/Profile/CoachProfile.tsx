@@ -65,18 +65,16 @@ const CoachProfile = () => {
         try {
             // Clear the user token from AsyncStorage
             await AsyncStorage.removeItem('userToken');
+            await AsyncStorage.removeItem('JwtToken');
             // Clear all cache data from AsyncStorage
             await AsyncStorage.clear();
             // Navigate to the login page
-            console.log("Bye Token:"+userToken)
+            console.log('Bye Token:' + userToken);
             navigation.navigate('LogIn');
         } catch (error) {
             console.error('Error logging out:', error);
         }
     };
-    
-    
-    
 
     const [mantra, setMantra] = React.useState(coachData?.findCoachByID.mantra);
     const [age, setAge] = React.useState('');
@@ -232,7 +230,7 @@ const CoachProfile = () => {
                 onConfirm={onLogOutPressed} // This function logs out the user
                 onCancel={hideLogoutModal} // This function hides the modal
             />
-            
+
             <View style={styles.profileInfo}>
                 <Text
                     style={styles.normalText}

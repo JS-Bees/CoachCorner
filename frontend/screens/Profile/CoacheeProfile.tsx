@@ -65,18 +65,17 @@ const CoacheeProfile = () => {
         try {
             // Clear the user token from AsyncStorage
             await AsyncStorage.removeItem('userToken');
+            await AsyncStorage.removeItem('JwtToken');
             // Clear all cache data from AsyncStorage
             await AsyncStorage.clear();
             // Navigate to the login page
-            console.log("Bye Token:"+userToken)
+            console.log('Bye Token:' + userToken);
             navigation.navigate('LogIn');
         } catch (error) {
             console.error('Error logging out:', error);
         }
     };
-    
 
-    
     const [age, setAge] = React.useState('18');
     const [bio, setBio] = React.useState(coacheeData?.findCoacheeByID.bio);
     const [affliation, setAffiliate] = React.useState(
@@ -127,7 +126,6 @@ const CoacheeProfile = () => {
 
     useEffect(() => {
         if (coacheeData) {
-          
             setBio(coacheeData.findCoacheeByID.bio);
             setAffiliate(coacheeData.findCoacheeByID.affiliations);
             setAddres(coacheeData.findCoacheeByID.address);
@@ -185,7 +183,6 @@ const CoacheeProfile = () => {
         })
             .then((res) => {
                 if (res) {
-                    
                     console.log(
                         'affiliations',
                         res.data?.updateCoacheeProfile.affiliations,
@@ -200,14 +197,12 @@ const CoacheeProfile = () => {
                         res.data?.updateCoacheeProfile.address,
                     );
                     setIsEditing(false);
-
                 }
             })
             .catch((e) => {
                 console.log('sheeesh error', e);
             });
     };
-    
 
     return (
         <View style={styles.container}>
@@ -226,10 +221,11 @@ const CoacheeProfile = () => {
                 />
             </View>
 
-             <View style={styles.profileInfo}>
-                <Text
-                    style={styles.normalText}
-                >{`${coacheeData?.findCoacheeByID?.firstName} ${coacheeData?.findCoacheeByID?.lastName.split(' ')[0]}`}</Text>
+            <View style={styles.profileInfo}>
+                <Text style={styles.normalText}>{`${coacheeData?.findCoacheeByID
+                    ?.firstName} ${coacheeData?.findCoacheeByID?.lastName.split(
+                    ' ',
+                )[0]}`}</Text>
             </View>
             <View style={styles.mantraContainer}>
                 <TextInput
@@ -379,7 +375,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         textAlignVertical: 'center',
     },
-
 
     logOut: {
         alignItems: 'center',

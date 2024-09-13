@@ -81,52 +81,93 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    url: 'ws://192.168.1.6:5050/graphql',
+    url: 'ws://192.168.1.4:5050/graphql',
     // url: apiUrlWs!,
 });
 
-const useToken = () => {
-    const [token, setToken] = useState<string | null>(null);
+let token = '';
+let tokenUpdateIntervalId;
 
-    useEffect(() => {
-        let intervalId;
+async function updateToken() {
+    const newToken = await AsyncStorage.getItem('JwtToken');
+    token = newToken || '';
 
-        const checkToken = async () => {
-            try {
-                const storedToken = await AsyncStorage.getItem('JwtToken');
-                if (storedToken !== null) {
-                    setToken(storedToken);
-                    // Stop the interval here
-                    clearInterval(intervalId);
-                }
-            } catch (error) {
-                console.error('Error retrieving token:', error);
-            }
-        };
+    // console.log('new token value', newToken);
+    // console.log('token value', token);
 
-        intervalId = setInterval(checkToken, 1000);
+    // Check if the token is no longer empty and clear the interval if so
+    if (token && token !== '') {
+        clearInterval(tokenUpdateIntervalId);
 
-        return () => clearInterval(intervalId);
-    }, []);
+        // Set up a new interval with 2 seconds delay
+        tokenUpdateIntervalId = setInterval(async () => {
+            await updateToken();
+        }, 5000);
+    }
+}
 
-    return token;
-};
+// Start updating the token every .5 second
+tokenUpdateIntervalId = setInterval(updateToken, 500);
 
 // const getToken =
 //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYyMDk1MjgsImV4cCI6MTcyNjIyNzUyOH0.kTIkZU-pwSoQ8Eg7huAIjDkh3cH_rmypd0BRuM6c7Dg';
 
 const client = new Client({
-    url: 'http://192.168.1.6:5050/graphql',
+    url: 'http://192.168.1.4:5050/graphql',
     // url: apiUrl!,
 
-    fetchSubscriptions: true, // added this tog try and fix fetching
+    // fetchOptions: () => ({
+    //     headers: {
+    //         // authorization: `${token}`,
+    //         authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYyMzMzOTAsImV4cCI6MTcyNjI1MTM5MH0.xlz60i11K-lbQqSZdAAIgQzA4Doeyj6vkHyjUhcqUpU`,
+    //     },
+    // }),
     fetchOptions: () => ({
         headers: {
-            // authorization: `${token}`,
-            authorization: ` `,
+            authorization: token ? `${token}` : '  ',
         },
     }),
-    // end of token fetch
+
+    // Fails coz it returns a promise
+    // fetchOptions: async () => {
+    //     const token = await AsyncStorage.getItem('JwtToken');
+    //     const tokenString = token?.toString();
+    //     console.log('fetch token', typeof token, token);
+    //     return {
+    //         headers: { authorization: token ? `${tokenString}` : '  ' },
+    //     };
+    // },
+
+    // Fails coz it returns a promise
+    // fetchOptions: async () => {
+    //     const token = await AsyncStorage.getItem('JwtToken');
+    //     if (!token) {
+    //         console.warn('No token found in AsyncStorage');
+    //         return {};
+    //     }
+    //     return {
+    //         headers: { authorization: `${token}` },
+    //     };
+    // },
+
+    // Fails due to no getItemSync
+    // fetchOptions: ()=> {
+    //     const token = AsyncStorage.getItemSync('JwtToken'); // Note: This is not recommended for security reasons
+    //     const tokenString = token.toString();
+    //     console.log('fetch token', typeof token, token);
+    //     return {
+    //       headers: { authorization: token ? `${tokenString}` : '  ' },
+    //     };
+    //   }
+
+    // // This works
+    // fetchOptions: () => {
+    //     const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYyMzQ1NDYsImV4cCI6MTcyNjI1MjU0Nn0.muBSd6SMHmEVBYCbxwTKCZB8nNOI03c4jfgfWc57Qag`;
+    //     return {
+    //         headers: { authorization: token ? `${token}` : ' ' },
+    //     };
+    // },
+
     exchanges: [
         cacheExchange,
         fetchExchange,
