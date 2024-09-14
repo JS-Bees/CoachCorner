@@ -599,8 +599,7 @@ export const coachLogin = mutationField('coachLogin', {
                         },
                         process.env.JWT_SECRET,
 
-                        { expiresIn: "5hr"} // Token expires after 1 hour
-
+                        { expiresIn: '5hr' },
                     );
                     return { ...coach, token };
                 } else {
@@ -674,8 +673,7 @@ export const coacheeLogin = mutationField('coacheeLogin', {
                         },
                         process.env.JWT_SECRET,
 
-                        { expiresIn: "5hr"} // Token expires after 1 hour
-
+                        { expiresIn: '5hr' },
                     );
                     return { ...coachee, token };
                 } else {
