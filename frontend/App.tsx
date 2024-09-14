@@ -81,7 +81,7 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    url: 'ws://192.168.1.4:5050/graphql',
+    url: 'ws://192.168.1.3:5050/graphql',
     // url: apiUrlWs!,
 });
 
@@ -113,7 +113,7 @@ tokenUpdateIntervalId = setInterval(updateToken, 500);
 //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYyMDk1MjgsImV4cCI6MTcyNjIyNzUyOH0.kTIkZU-pwSoQ8Eg7huAIjDkh3cH_rmypd0BRuM6c7Dg';
 
 const client = new Client({
-    url: 'http://192.168.1.4:5050/graphql',
+    url: 'http://192.168.1.3:5050/graphql',
     // url: apiUrl!,
 
     // fetchOptions: () => ({
