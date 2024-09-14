@@ -17,7 +17,6 @@ import * as subscriptions from './nexus-prisma/subscriptions/subscriptions';
 
 import './generated/graphql-types'; // import types as side-effect
 // .d.ts files can only be "auto-imported" if they have no exports
-// this is for the authorize
 
 // Import PrismaClient
 import { PrismaClient } from '@prisma/client';
@@ -64,17 +63,14 @@ const server = new ApolloServer({
     //     db,
     // },
     context: async ({ req }) => {
-        // First, provide the db context
         const context = { db };
 
-        // Then, add the authentication logic
         if (req.body.operationName === 'IntrospectionQuery') {
             return context;
         }
 
         console.log('req body', req.body.operationName);
 
-        // Add sign up here
         if (
             req.body.operationName === 'CoacheeLogin' ||
             req.body.operationName === 'CoachLogin' ||
@@ -84,99 +80,26 @@ const server = new ApolloServer({
             return context;
         }
 
-        // Get the user token from the headers
         const token = req.headers.authorization;
-        // const token =
-        //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3MCwiZW1haWwiOiJtazd4bnRnMTBiQHp2dnp1di5jb20iLCJpYXQiOjE3MjYxMzQzNTAsImV4cCI6MTcyNjEzNzk1MH0.7EQEbVqiAWz9woMCpBiwl_IgPLn4OWLzIrPLC8vOLC0';
-        console.log('token', token);
-        // try hard coding it
+
         if (!token) {
             throw new Error('No token provided');
         }
 
         try {
             const decoded = jwt.verify(token, SECRET_KEY);
-            console.log('decoded', decoded);
-            // // Have to check if decoded user actually exists
-            // // Verify the user exists in the database
-            // const coachee = await db.coachee.findUnique({
-            //     where: { id: decoded.userId, email: decoded.email },
-            // });
-            // const coach = await db.coach.findUnique({
-            //     where: { id: decoded.userId, email: decoded.email },
-            // });
-
-            // if (coachee || coach) {
-            //     return context;
-            // }
             return context;
         } catch (err) {
             console.error('Error:', err);
             throw err;
         }
     },
-    // context: async ({ req }) => {
-    //     //   console.log(req.body.operationName);
-    //     if (req.body.operationName === 'IntrospectionQuery') {
-    //         // console.log('blocking introspection query..');
-    //         return {};
-    //     }
-    //     // allowing the 'CreateUser' and 'Login' queries to pass without giving the token
-    //     if (
-    //         req.body.operationName === 'CoacheeLogin' ||
-    //         req.body.operationName === 'CoachLogin'
-    //     ) {
-    //         return {};
-    //     }
-
-    //     // get the user token from the headers
-    //     const token = req.headers.authorization;
-    //     // const token = req.headers.authorization?.split(' ')[1];
-    //     console.log('header.authorization', req.headers.authorization);
-
-    //     if (!token) {
-    //         throw new Error('No token provided');
-    //     }
-    //     try {
-    //         console.log('token', token);
-    //         const decoded = jwt.verify(token, SECRET_KEY);
-    //         console.log('decoded', decoded);
-    //         // // Check if the decoded token has the necessary claims
-    //         // if (!decoded || !decoded.userId || !decoded.email) {
-    //         //     throw new Error('Invalid token');
-    //         // }
-
-    //         // // Verify the user exists in the database
-    //         // const user = await db.user.findUnique({
-    //         //     where: { id: decoded.userId },
-    //         //     select: { email: true },
-    //         // });
-
-    //         // if (!user) {
-    //         //     throw new Error('User not found');
-    //         // }
-
-    //         // // Store the decoded token in the request for later use
-    //         // return { user: decoded };
-    //         return;
-    //     } catch (err) {
-    //         console.error('error', err);
-    //         throw err;
-    //     }
-    // },
 });
 
 server
     .start() // start Apollo Server first
     .then(() => {
         server.applyMiddleware({ app });
-
-        // app.listen(PORT, () => {
-        //     // then start Express
-        //     console.log(
-        //         `Apollo server has started at http://localhost:${PORT}`,
-        //     );
-        // });
 
         // Start the Express server and capture the HTTP server instance
         const httpServer = app.listen(PORT, () => {
@@ -185,11 +108,10 @@ server
             );
         });
 
-        // Create a WebSocket server for subscriptions using the HTTP server instance
+        // WebSocket server
         const wsServer = new WebSocketServer({
             server: httpServer, // Use the HTTP server instance
             path: '/graphql',
-            // path: '/graphql', // This should match the path you use for Apollo Server
         });
 
         // Integrate the WebSocket server with Apollo Server
