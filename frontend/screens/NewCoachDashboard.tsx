@@ -297,7 +297,9 @@ const NewCoachDashboard = () => {
                         inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}
                     />
                 </View>
-                <View style={CoacheeDashboardStyle.calendarContainer}>
+                <ScrollView>
+                    <View>
+                    <View style={CoacheeDashboardStyle.calendarContainer}>
       <Calendar
         markedDates={markedDates}
         onDayPress={handleDayPress}
@@ -372,6 +374,9 @@ const NewCoachDashboard = () => {
                         </Text>
                     )}
                 </ScrollView>
+                    </View>
+                </ScrollView>
+                
             </KeyboardAvoidingView>
             
         </View>
