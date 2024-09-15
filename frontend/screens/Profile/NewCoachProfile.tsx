@@ -219,6 +219,7 @@ const NewCoachProfile = () => {
     };
 
     const handleNavigateLogOut = async () => {
+        await AsyncStorage.clear();
         navigation.navigate('LogIn');
     };
     //Get the latest sports credential picture from the coach data

@@ -66,18 +66,6 @@ const CoachDashboard = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
-    // const useFetchCoachByUserID = (userID: any) => {
-    //     const [coachResult] = useQuery({
-    //         query: FindCoachByIdDocument, // Use the Coachee query document
-    //         variables: {
-    //             userID: parseInt(userID), // Parse the userID (token) to an integer with base 10
-    //         },
-    //     });
-
-    //     return coachResult;
-    // };
-
     // // Example usage of the query function
     // // Replace 'yourToken' with the actual token or userID you want to fetch
     // const {
@@ -96,16 +84,19 @@ const CoachDashboard = () => {
             <View style={CoachDashboardStyle.topContainer}>
                 <View style={[CoachDashboardStyle.topMiniContainer]}>
                     <View style={CoachDashboardStyle.profileImageContainer}>
-                    <Image
-                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
-                    style={{
-                        width: 40,
-                        height: 40,
-                        marginLeft: '10%',
-                        marginTop: '-10%',
-                        borderRadius: 20,
-                    }}
-                />
+                        <Image
+                            source={{
+                                uri: coacheeData?.findCoacheeByID
+                                    .profilePicture,
+                            }} // Add your profile image source here
+                            style={{
+                                width: 40,
+                                height: 40,
+                                marginLeft: '10%',
+                                marginTop: '-10%',
+                                borderRadius: 20,
+                            }}
+                        />
                     </View>
                     <View style={CoachDashboardStyle.nameAndGreetingsContainer}>
                         <Text style={CoachDashboardStyle.greetings}>
