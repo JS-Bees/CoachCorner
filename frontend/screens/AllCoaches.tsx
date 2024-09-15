@@ -30,6 +30,7 @@ const AllCoaches = ({route}) => {
     const [searchText, setSearchText] = useState(''); 
     const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
     const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
+    const [displayCount, setDisplayCount] = useState(4);
     
     const { selectedSport } = route.params;
 
@@ -108,6 +109,8 @@ const AllCoaches = ({route}) => {
             };
         });
 
+    const displayedCoaches = AllCoaches.slice(0, displayCount);
+
     return (
         <View style={MyCoaches.container}>
             <View style={MyCoaches.nameAndGreetingsContainer}>
@@ -131,20 +134,18 @@ const AllCoaches = ({route}) => {
             <KeyboardAvoidingView
             style={MyCoaches.container}
             behavior={Platform.OS === "android" ? 'height' : 'padding'}>
-            {/* <View style={MyCoaches.searchContainer}>
-                <SearchBar
-                 placeholder='Search Coach'
-                 onChangeText={handleSearchChange}
-                 value={searchText}
-                 platform='android'
-                 containerStyle={MyCoaches.searchBarContainer}
-                 inputContainerStyle={MyCoaches.searchBarInputContainer}/>
-            </View> */}
+        
 
             <ScrollView  contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "3%", height: 250, marginLeft: '4%'}}>
-               <View>
-               <CoachProfiles profiles={activeButton === 'All' ? AllCoaches : FavoriteCoaches}/>
-               </View>
+            <CoachProfiles profiles={activeButton === 'All' ? displayedCoaches : FavoriteCoaches} />
+                    {displayCount < AllCoaches.length && (
+                        <TouchableOpacity
+                            style={MyCoaches.seeMoreButton}
+                            onPress={() => setDisplayCount(displayCount + 4)} // Increment by 4 each time
+                        >
+                            <Text style={MyCoaches.seeMoreText}>See More</Text>
+                        </TouchableOpacity>
+                    )}
 
             </ScrollView>
 
@@ -266,7 +267,23 @@ const MyCoaches = StyleSheet.create({
     },
     activeButton: {
         backgroundColor: '#7E3FF0'
-    }
+    },
+    seeMoreButton: {
+        backgroundColor: 'transparent', 
+        borderRadius: 15,            
+        paddingVertical: 5,        
+        paddingHorizontal: 20,      
+        marginVertical: 1,         
+        alignSelf: 'center',      
+        borderColor: "#7E3FF0" ,
+        borderWidth: 1
+
+    },
+    seeMoreText: {
+        color: '#7E3FF0',           
+        fontSize: 16,                   
+        textAlign: 'center',        
+    },
    
 });
 

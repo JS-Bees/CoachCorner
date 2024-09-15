@@ -93,7 +93,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
           <View style={styles.imageContainer}>
           <Image source={session.imageSource} style={styles.sessionImage} />
           <TouchableOpacity onPress={navigateToChat}>
-              <View style={styles.imageContainer}>
+              <View style={styles.chatIconContainer}>
                 <Icon name="chat" type="material" color="#7E3FF0" />
               </View>
             </TouchableOpacity>
@@ -151,7 +151,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
     </TouchableOpacity>
 
     <TouchableOpacity style={styles.completeButton} onPress={handleCompleteSession}>
-      <Text style={styles.cancelText}>Mark as Complete</Text>
+      <Text style={styles.completeText}>Mark as Complete</Text>
     </TouchableOpacity>
   </View>
 </View>
@@ -175,6 +175,16 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  chatIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    borderWidth: 2, 
+    borderColor: '#7E3FF0', 
+    padding: 1, 
   },
   contentContainer:{
     paddingTop: "10%",
@@ -228,6 +238,11 @@ const styles = StyleSheet.create({
     color:"#908D93",
     marginLeft: "12%",
   },
+  completeText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "white"
+  },
   cancelText: {
     fontSize: 15,
     fontWeight: "600",
@@ -254,29 +269,31 @@ const styles = StyleSheet.create({
     paddingHorizontal:  5, 
   },
   button: {
-    backgroundColor: '#7E3FF0', // Set the background color for the cancel button
-      width: (screenWidth * 0.36), // Adjust the percentage as needed
-      height: (screenHeight * 0.07), // Adjust the percentage as needed
+    backgroundColor: '#7E3FF0', 
+      width: (screenWidth * 0.36), 
+      height: (screenHeight * 0.07), 
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
     marginBottom:  10
   },
-  cancelButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
-      width: (screenWidth * 0.38), // Adjust the percentage as needed
-      height: (screenHeight * 0.08), // Adjust the percentage as needed
-    borderRadius:  15,
+  completeButton: {
+    backgroundColor: '#7E3FF0', 
+      width: (screenWidth * 0.36), 
+      height: (screenHeight * 0.07), 
+    borderRadius:  20,
     alignItems: 'center',
     justifyContent: 'center', 
     marginBottom:  10
   },
 
-  completeButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
-      width: (screenWidth * 0.38), // Adjust the percentage as needed
-      height: (screenHeight * 0.08), // Adjust the percentage as needed
-    borderRadius:  15,
+  cancelButton: {
+    backgroundColor: 'transparent', 
+      width: (screenWidth * 0.36), 
+      height: (screenHeight * 0.07), 
+    borderRadius:  20,
+    borderWidth: 1,
+    borderColor: "#7E3FF0",
     alignItems: 'center',
     justifyContent: 'center', 
   },
@@ -295,9 +312,9 @@ const styles = StyleSheet.create({
     marginLeft: 30
   },
   notesPadding: {
-    paddingHorizontal: 2, // Add padding for spacing inside the container
-    marginRight: "15%", // Add margin for spacing around the container
-    maxHeight: 150, // Optional max height to limit the size
+    paddingHorizontal: 2, 
+    marginRight: "15%", 
+    maxHeight: 150, 
     overflow: 'hidden', 
   }
 });
