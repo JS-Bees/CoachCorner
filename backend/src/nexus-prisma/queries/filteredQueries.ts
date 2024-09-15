@@ -285,8 +285,6 @@ export const findBookingsByStatusAndCoacheeID = queryField(
     },
 );
 
-// findCoachesBySport or findUnaddedCoachesBySport (make both)
-
 export const findCoachesBySport = queryField('findCoachesBySport', {
     type: list(Coach),
     args: {
@@ -338,7 +336,6 @@ export const findNonContactCoachesBySport = queryField(
                     type: sportType,
                 });
 
-                // Search for coaches by sport who are not in contact with the current user
                 const coaches = await context.db.coach.findMany({
                     where: {
                         sports: {
