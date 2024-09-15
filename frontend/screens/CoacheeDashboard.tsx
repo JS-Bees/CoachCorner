@@ -134,7 +134,6 @@ const CoacheeDashboard = () => {
     const sports = [
         { label: 'Basketball', value: 'Basketball' },
         { label: 'Soccer', value: 'Soccer' },
-        { label: 'Tennis', value: 'Tennis' },
         { label: 'Swimming', value: 'Swimming' },               
         { label: 'Volleyball', value: 'Volleyball' },                                                         
 
@@ -308,54 +307,24 @@ const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
 });
 
 
-    const RecommendedCoaches: Profile[] = [
-        // max 2
-        {   
-            id: matchedCoaches[0]?.coach?.id || 0, 
-            name: matchedCoachesNames[0],
-              // Conditional check: if profilePicture is "profile picture", use the default image
-            imageSource: matchedCoaches[0]?.coach?.profilePicture === "profile picture" 
-            ? DEFAULT_PROFILE_PICTURE 
-            : { uri: matchedCoaches[0]?.coach?.profilePicture },
-            gainedStars: matchedCoaches[0]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown", //debugged this line since it was giving undefined value error
-            about: matchedCoaches[0]?.coach?.bio,
-            workplaceAddress: matchedCoaches[0]?.coach?.address,
-        },
-        {   
-            id: matchedCoaches[1]?.coach?.id || 0, 
-            name: matchedCoachesNames[1],
-            imageSource: matchedCoaches[1]?.coach?.profilePicture === "profile picture" 
-            ? DEFAULT_PROFILE_PICTURE 
-            : { uri: matchedCoaches[1]?.coach?.profilePicture },
-            gainedStars: matchedCoaches[1]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
-            about: matchedCoaches[1]?.coach?.bio,
-            workplaceAddress: matchedCoaches[1]?.coach?.address,
-        },
-        {   
-            id: matchedCoaches[2]?.coach?.id || 0, 
-            name: matchedCoachesNames[2],
-            imageSource: matchedCoaches[2]?.coach?.profilePicture === "profile picture" 
-            ? DEFAULT_PROFILE_PICTURE 
-            : { uri: matchedCoaches[2]?.coach?.profilePicture },
-            gainedStars: matchedCoaches[2]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
-            about: matchedCoaches[2]?.coach?.bio,
-            workplaceAddress: matchedCoaches[2]?.coach?.address,
-        },
-        {   
-            id: matchedCoaches[3]?.coach?.id || 0, 
-            name: matchedCoachesNames[3],
-            imageSource: matchedCoaches[3]?.coach?.profilePicture === "profile picture" 
-            ? DEFAULT_PROFILE_PICTURE 
-            : { uri: matchedCoaches[3]?.coach?.profilePicture },
-            gainedStars: matchedCoaches[3]?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-            mainSport: matchedCoaches[0]?.coach?.sports && matchedCoaches[0].coach.sports.length > 0 ? matchedCoaches[0].coach.sports[0].type : "Unknown",
-            about: matchedCoaches[3]?.coach?.bio,
-            workplaceAddress: matchedCoaches[3]?.coach?.address,
-        },
-    ];
+const RecommendedCoaches: Profile[] = matchedCoaches.slice(0, 4).map((coach, index) => ({
+    id: coach?.coach?.id || 0,
+    name: matchedCoachesNames[index],
+    // Conditional check: if profilePicture is "profile picture", use the default image
+    imageSource: coach?.coach?.profilePicture === "profile picture" 
+        ? DEFAULT_PROFILE_PICTURE
+        : { uri: coach?.coach?.profilePicture },
+    gainedStars: coach?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
+    mainSport: coach?.coach?.sports && coach.coach.sports.length > 0 ? coach.coach.sports[0].type : "Unknown",
+    about: coach?.coach?.bio,
+    workplaceAddress: coach?.coach?.address,
+}));
+
+// If no coaches are found, you can handle it by displaying a message or showing a placeholder
+if (RecommendedCoaches.length === 0) {
+    // Add a placeholder or handle the absence of coaches here
+    console.log("No recommended coaches available.");
+}
 
     const scrollY = new Animated.Value(0);
 
