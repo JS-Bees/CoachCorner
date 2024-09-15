@@ -130,6 +130,7 @@ mutation CoachLogin($email: String!, $password: String!) {
         id
         firstName
         lastName
+        token
     }
 }
 
@@ -138,5 +139,6 @@ mutation CoacheeLogin($email: String!, $password: String!) {
         id
         firstName
         lastName
+        token
     }
 }

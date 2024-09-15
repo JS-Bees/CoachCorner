@@ -70,7 +70,7 @@ const CoacheePendingModal: React.FC<SessionModalProps> = ({ visible, session, to
           <View style={styles.imageContainer}>
           <Image source={session.imageSource} style={styles.sessionImage} />
           <TouchableOpacity onPress={navigateToChat}>
-              <View style={styles.imageContainer}>
+              <View style={styles.chatIconContainer}>
                 <Icon name="chat" type="material" color="#7E3FF0" />
               </View>
             </TouchableOpacity>
@@ -146,6 +146,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  chatIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    borderWidth: 2, 
+    borderColor: '#7E3FF0', 
+    padding: 1, 
+  },
   contentContainer:{
     paddingTop: "10%",
     left: "10%"
@@ -216,17 +226,17 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    top: "135%", // Adjust the bottom value as needed
-    left: 15, // Adjust the right value as needed
+    top: "135%", 
+    left: 15, 
     alignItems: 'center',
     paddingVertical: "5%",
     justifyContent: 'center',
  },
  cancelButton: {
-    borderColor: '#7E3FF0', // Set the background color for the cancel button
+    borderColor: '#7E3FF0', 
     borderWidth: 1,
-    width: (screenWidth * 0.38), // Adjust the percentage as needed
-    height: (screenHeight * 0.07), // Adjust the percentage as needed
+    width: (screenWidth * 0.38), 
+    height: (screenHeight * 0.07), 
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',

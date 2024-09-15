@@ -38,12 +38,13 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
     const [activeButton, setActiveButton] = useState('Upcoming'); 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [bookings, setBookings] = useState<any[]>([]);
     const pollingInterval = 1000;
     const [sortOption, setSortOption] = useState<'date' | 'alphabetical'>('date');
     const [filterMessage, setFilterMessage] = useState('Filtered by name');
+    const [visibleSessionsCount, setVisibleSessionsCount] = useState(4);
 
  
 
@@ -74,12 +75,11 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     }, []);
 
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const useFetchCoachByUserID = (userID: any) => {
         const [coachResult] = useQuery({
-            query: FindCoachByIdDocument, // Use the Coachee query document
+            query: FindCoachByIdDocument, 
             variables: {
-                userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
+                userId: parseInt(userID), 
             },
         });
 
@@ -94,7 +94,7 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
     const [result, refetch] = useQuery({
         query: FindBookingsOfCoachDocument, 
         variables: {
-            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+            userId: userToken ? parseInt(userToken) : 0, 
         },
         requestPolicy: 'network-only',
     });
@@ -172,6 +172,13 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
             const coacheeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`;
             return coacheeName.toLowerCase().includes(searchText.toLowerCase());
         });
+
+        const visibleSessions = filteredSessions.slice(0, visibleSessionsCount);
+
+        
+        const handleSeeMore = () => {
+            setVisibleSessionsCount(prevCount => prevCount + 4); 
+        };
 
         
     
@@ -255,23 +262,31 @@ const Booking_Sessions: React.FC<CoachSessionsProps> = () => {
 
           
             <ScrollView contentInsetAdjustmentBehavior="scrollableAxes" style={{marginTop: "1%", height: 250,}}>
-                {filteredSessions.length > 0 ? (
-                    <View>
-                        <CoacheeSessions sessions={filteredSessions.map(booking => ({
-                            coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName.split(' ')[0]}`,
-                            coacheeId: `${booking.coacheeId}`,
-                            bookingId: Number(booking.id),
-                            serviceType: `${booking.serviceType}`,
-                            additionalNotes: `${booking.additionalNotes}`,
-                            status: `${booking.status}`,
-                            imageSource: { uri: booking.coachee.profilePicture },
-                            slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
-                            time: booking.bookingSlots.map(slot => ({
-                                startTime: slot.startTime,
-                                endTime: slot.endTime
-                            })),
-                            date: booking.bookingSlots.map(slot => slot.date)
-                        }))} />
+            {visibleSessions.length > 0 ? (
+                        <View>
+                            <CoacheeSessions
+                                sessions={visibleSessions.map(booking => ({
+                                    coacheeName: `${booking.coachee.firstName} ${booking.coachee.lastName.split(' ')[0]}`,
+                                    coacheeId: `${booking.coacheeId}`,
+                                    bookingId: Number(booking.id),
+                                    serviceType: `${booking.serviceType}`,
+                                    additionalNotes: `${booking.additionalNotes}`,
+                                    status: `${booking.status}`,
+                                    imageSource: { uri: booking.coachee.profilePicture },
+                                    slotsId: Number(booking.bookingSlots.length > 0 ? booking.bookingSlots[0].id : null),
+                                    time: booking.bookingSlots.map(slot => ({
+                                        startTime: slot.startTime,
+                                        endTime: slot.endTime
+                                    })),
+                                    date: booking.bookingSlots.map(slot => slot.date)
+                                }))}
+                            />
+                        {visibleSessionsCount < filteredSessions.length && (
+                                <TouchableOpacity onPress={handleSeeMore} style={MyCoaches.seeMoreButton}>
+                                    <Text style={MyCoaches.seeMoreText}>See More</Text>
+                                </TouchableOpacity>
+                        )}
+
                     </View>
                 ) : (
                     <Text style={{ color: 'grey', fontSize: 18,textAlign: 'center', marginTop: '25%'}}>No trainee found.</Text>
@@ -291,12 +306,12 @@ const MyCoaches = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
 
 
@@ -324,15 +339,15 @@ const MyCoaches = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -354,24 +369,24 @@ const MyCoaches = StyleSheet.create({
         height: 65,
     },
     searchContainer: {
-        borderWidth: 3, // Add a border
+        borderWidth: 3, 
         width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
+        borderColor: '#7E3FF0', 
+        borderRadius: 15, 
         marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
+        marginLeft: 'auto', 
+        marginRight: 'auto', 
         paddingHorizontal: '2.6%',
     },
     searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
+        
+        width: 300, 
+        height: 40, 
     },
 
     searchBarInputContainer: {
 
-        height: '100%', // Match the height of the container
+        height: '100%', 
     },
 
     frameContainer: {
@@ -386,22 +401,22 @@ const MyCoaches = StyleSheet.create({
   
     
     AllCoachesButton: {
-        width: 100, // Adjust the width to make it square
-        height: 49, // Adjust the height to make it square
+        width: 100, 
+        height: 49, 
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     FavoriteCoachesButton: {
-        width: 110, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: 110,
+        height: 50, 
         marginTop: '-14%',
         marginLeft: '62%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     buttonText: {
         color: 'white',
@@ -421,8 +436,8 @@ const MyCoaches = StyleSheet.create({
         height: 20,
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 2, // Outline width
-        borderColor: 'white', // Outline color
+        borderWidth: 2, 
+        borderColor: 'white', 
     },
     badgeText: {
         color: 'white',
@@ -435,6 +450,22 @@ const MyCoaches = StyleSheet.create({
         paddingTop: "3%",
         marginRight: "6%",
         
+    },
+    seeMoreButton: {
+        backgroundColor: 'transparent', 
+        borderRadius: 15,            
+        paddingVertical: 5,        
+        paddingHorizontal: 20,      
+        marginVertical: 10,         
+        alignSelf: 'center',      
+        borderColor: "#7E3FF0" ,
+        borderWidth: 1
+
+    },
+    seeMoreText: {
+        color: '#7E3FF0',           
+        fontSize: 16,                   
+        textAlign: 'center',        
     },
    
 });

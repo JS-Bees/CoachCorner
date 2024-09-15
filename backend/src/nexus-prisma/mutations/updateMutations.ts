@@ -42,18 +42,15 @@ import {
 export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
     type: Coachee,
     args: {
-        id: nonNull(arg({ type: 'Int' })), // ID of the coachee to update
-        input: nonNull(arg({ type: UpdateCoacheeProfileInput })), // Input with fields to update
+        id: nonNull(arg({ type: 'Int' })),
+        input: nonNull(arg({ type: UpdateCoacheeProfileInput })),
     },
     resolve: async (_, { id, input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
             idSchema.validateSync({ id });
 
-            // Validate the input using the updateCoacheeSchema
             updateProfileSchema.validateSync(input);
 
-            // Check if the coachee with the given ID exists
             const existingCoachee = await context.db.coachee.findUnique({
                 where: { id },
             });
@@ -62,7 +59,6 @@ export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
                 throw new Error(`Coachee with ID ${id} not found.`);
             }
 
-            // Perform the update using Prisma
             const updatedCoachee = await context.db.coachee.update({
                 where: { id },
                 data: input,
@@ -70,12 +66,10 @@ export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
 
             return updatedCoachee;
         } catch (error) {
-            // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+
             throw error;
         }
     },
@@ -84,18 +78,15 @@ export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
 export const updateCoachProfile = mutationField('updateCoachProfile', {
     type: Coach,
     args: {
-        id: nonNull(arg({ type: 'Int' })), // ID of the coach to update
-        input: nonNull(arg({ type: UpdateCoachProfileInput })), // Input with fields to update
+        id: nonNull(arg({ type: 'Int' })),
+        input: nonNull(arg({ type: UpdateCoachProfileInput })),
     },
     resolve: async (_, { id, input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
             idSchema.validateSync({ id });
 
-            // Validate the input using the updateCoachSchema
             updateProfileSchema.validateSync(input);
 
-            // Check if the coach with the given ID exists
             const existingCoach = await context.db.coach.findUnique({
                 where: { id },
             });
@@ -104,7 +95,6 @@ export const updateCoachProfile = mutationField('updateCoachProfile', {
                 throw new Error(`Coach with ID ${id} not found.`);
             }
 
-            // Perform the update using Prisma
             const updatedCoach = await context.db.coach.update({
                 where: { id },
                 data: input,
@@ -112,12 +102,10 @@ export const updateCoachProfile = mutationField('updateCoachProfile', {
 
             return updatedCoach;
         } catch (error) {
-            // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+
             throw error;
         }
     },
@@ -131,13 +119,10 @@ export const updateBookingStatus = mutationField('updateBookingStatus', {
     },
     resolve: async (_, { id, input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
             idSchema.validateSync({ id });
 
-            // Validate the input using the updateBookingStatusSchema
             updateBookingStatusSchema.validateSync(input);
 
-            // Check if the booking with the given ID exists
             const existingBooking = await context.db.booking.findUnique({
                 where: { id },
             });
@@ -146,7 +131,6 @@ export const updateBookingStatus = mutationField('updateBookingStatus', {
                 throw new Error(`Booking with ID ${id} not found.`);
             }
 
-            // Update the booking status
             const updatedBooking = await context.db.booking.update({
                 where: { id },
                 data: { status: input.status },
@@ -154,12 +138,10 @@ export const updateBookingStatus = mutationField('updateBookingStatus', {
 
             return updatedBooking;
         } catch (error) {
-            // Handle validation errors or other exceptions
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+
             throw error;
         }
     },
@@ -175,13 +157,10 @@ export const updateBookingSlotStatus = mutationField(
         },
         resolve: async (_, { id, input }, context: Context) => {
             try {
-                // Validate the ID using the idSchema
                 idSchema.validateSync({ id });
 
-                // Validate the input using the updateBookingSlotStatusSchema
                 updateBookingSlotStatusSchema.validateSync(input);
 
-                // Check if the booking slot with the given ID exists
                 const existingBookingSlot =
                     await context.db.bookingSlot.findUnique({
                         where: { id },
@@ -191,7 +170,6 @@ export const updateBookingSlotStatus = mutationField(
                     throw new Error(`Booking slot with ID ${id} not found.`);
                 }
 
-                // Update the booking slot status
                 const updatedBookingSlot = await context.db.bookingSlot.update({
                     where: { id },
                     data: { status: input.status },
@@ -199,12 +177,10 @@ export const updateBookingSlotStatus = mutationField(
 
                 return updatedBookingSlot;
             } catch (error) {
-                // Handle validation errors or other exceptions
                 if (error instanceof yup.ValidationError) {
-                    // You can customize the error message based on the validation error
                     throw new Error(error.message);
                 }
-                // Rethrow other errors
+
                 throw error;
             }
         },
@@ -222,10 +198,8 @@ export const updateContactedStatus = mutationField('updateContactedStatus', {
             // Validate the ID using the idSchema
             idSchema.validateSync({ id });
 
-            // Validate the input using the updateContactedStatusSchema
             updateContactedStatusSchema.validateSync(input);
 
-            // Check if the contact with the given ID exists
             const existingContact = await context.db.contact.findUnique({
                 where: { id },
             });

@@ -285,8 +285,6 @@ export const findBookingsByStatusAndCoacheeID = queryField(
     },
 );
 
-// findCoachesBySport or findUnaddedCoachesBySport (make both)
-
 export const findCoachesBySport = queryField('findCoachesBySport', {
     type: list(Coach),
     args: {
@@ -338,7 +336,6 @@ export const findNonContactCoachesBySport = queryField(
                     type: sportType,
                 });
 
-                // Search for coaches by sport who are not in contact with the current user
                 const coaches = await context.db.coach.findMany({
                     where: {
                         sports: {
@@ -712,7 +709,7 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
                         coachId: coachId,
                         serviceType: 'one-to-one',
                         status: 'UPCOMING',
-                        active: true, // Assuming you want only active bookings
+                        active: true,
                     },
                     select: {
                         bookingSlots: {
@@ -759,7 +756,7 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
             },
         });
         const sportType = coacheeData?.sport;
-        // const sportType = "Soccer";
+
         const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
         const coaches = await context.db.coach.findMany({
             where: {
@@ -770,7 +767,7 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
                 interests: true,
             },
         });
-        // Filter coaches based on the specified sport type (Basketball)
+
         const filteredCoaches = coaches.filter((coach) =>
             coach.sports.some((sport) => sport.type === sportType),
         );

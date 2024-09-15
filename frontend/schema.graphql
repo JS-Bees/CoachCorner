@@ -48,6 +48,7 @@ type Coach {
   reviews: [Review]
   sports: [Sport]
   tasks: [CoachTask]
+  token: String
   updatedAt: DateTime!
 }
 
@@ -93,6 +94,7 @@ type Coachee {
   reviews: [Review]
   sport: String!
   tasks: [CoacheeTask]
+  token: String
   updatedAt: DateTime!
 }
 

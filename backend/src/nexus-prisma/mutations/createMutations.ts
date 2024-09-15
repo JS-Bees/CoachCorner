@@ -32,6 +32,8 @@ import {
     CoachInterest,
     CoacheeInterest,
     Message,
+    CoacheeJwt,
+    CoachJwt,
 } from '../objectTypes';
 import {
     bookingSchema,
@@ -49,6 +51,7 @@ import {
     sportsCredentialsSchema,
 } from '../validation';
 import { publishNewMessage } from '../subscriptions/subscriptions';
+import jwt from 'jsonwebtoken';
 
 // Make this accept coachee interest input
 export const createCoachee = mutationField('createCoachee', {
@@ -589,7 +592,16 @@ export const coachLogin = mutationField('coachLogin', {
                     coach.password,
                 );
                 if (passwordMatch) {
-                    return coach;
+                    const token = jwt.sign(
+                        {
+                            userId: coach.id,
+                            email: coach.email,
+                        },
+                        process.env.JWT_SECRET,
+
+                        { expiresIn: '5hr' },
+                    );
+                    return { ...coach, token };
                 } else {
                     throw new Error('Incorrect email/password.');
                 }
@@ -654,7 +666,16 @@ export const coacheeLogin = mutationField('coacheeLogin', {
                     coachee.password,
                 );
                 if (passwordMatch) {
-                    return coachee;
+                    const token = jwt.sign(
+                        {
+                            userId: coachee.id,
+                            email: coachee.email,
+                        },
+                        process.env.JWT_SECRET,
+
+                        { expiresIn: '5hr' },
+                    );
+                    return { ...coachee, token };
                 } else {
                     throw new Error('Incorrect email/password.');
                 }

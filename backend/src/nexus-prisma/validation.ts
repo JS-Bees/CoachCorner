@@ -83,30 +83,7 @@ export const interestListSchema = yup
                     'Interest type value is invalid.',
                 )
                 .required('Interest type is required.'),
-            name: yup
-                .string()
-                // .oneOf(
-                //     [
-                //         'Romance',
-                //         'Horror',
-                //         'Action',
-                //         'Comedy',
-                //         'Thriller',
-                //         'Drama',
-                //         'Science Fiction',
-                //         'Young Adult',
-                //         'Fantasy',
-                //         'Mystery',
-                //         'Rock',
-                //         'Jazz',
-                //         'Classical',
-                //         'Pop',
-                //         'K-Pop',
-                //         'OPM',
-                //     ],
-                //     'Interest name value is invalid.',
-                // )
-                .required('Interest name is required.'),
+            name: yup.string().required('Interest name is required.'),
         }),
     )
     .required('Interests are required.');
@@ -180,30 +157,7 @@ export const interestSchema = yup.object().shape({
             'Interest type value is invalid.',
         )
         .required('Interest type is required.'),
-    name: yup
-        .string()
-        // .oneOf(
-        //     [
-        //         'Romance',
-        //         'Horror',
-        //         'Action',
-        //         'Comedy',
-        //         'Thriller',
-        //         'Drama',
-        //         'Science Fiction',
-        //         'Young Adult',
-        //         'Fantasy',
-        //         'Mystery',
-        //         'Rock',
-        //         'Jazz',
-        //         'Classical',
-        //         'Pop',
-        //         'K-Pop',
-        //         'OPM',
-        //     ],
-        //     'Interest name value is invalid.',
-        // )
-        .required('Interest name is required.'),
+    name: yup.string().required('Interest name is required.'),
 });
 
 export const sportsCredentialsSchema = yup.object().shape({
@@ -214,7 +168,7 @@ export const sportsCredentialsSchema = yup.object().shape({
 export const contactSchema = yup.object().shape({
     coachId: yup.number().integer().required('Coach ID is required.'),
     coacheeId: yup.number().integer().required('Coachee ID is required.'),
-    contactedStatus: yup.boolean().required('Contacted status is required.'), // remove this
+    contactedStatus: yup.boolean().required('Contacted status is required.'),
 });
 
 export const updateProfileSchema = yup.object().shape({

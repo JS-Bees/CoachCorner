@@ -60,6 +60,8 @@ import { CopilotProvider } from 'react-native-copilot';
 import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
 import SeeAll from './screens/seeAll';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -79,17 +81,38 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    // url: 'ws://192.168.1.7:5050/graphql',
+    // url: 'ws://192.168.1.8:5050/graphql',
     url: apiUrlWs!,
 });
 
-// // const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
+let token = '';
+let tokenUpdateIntervalId;
+
+async function updateToken() {
+    const newToken = await AsyncStorage.getItem('JwtToken');
+    token = newToken || '';
+
+    if (token && token !== '') {
+        clearInterval(tokenUpdateIntervalId);
+
+        tokenUpdateIntervalId = setInterval(async () => {
+            await updateToken();
+        }, 5000);
+    }
+}
+
+tokenUpdateIntervalId = setInterval(updateToken, 500);
 
 const client = new Client({
-    // url: 'http://192.168.1.7:5050/graphql',
+    // url: 'http://192.168.1.8:5050/graphql',
     url: apiUrl!,
 
-    // fetchSubscriptions: true, // added this tog try and fix fetching
+    fetchOptions: () => ({
+        headers: {
+            authorization: token ? `${token}` : '  ',
+        },
+    }),
+
     exchanges: [
         cacheExchange,
         fetchExchange,

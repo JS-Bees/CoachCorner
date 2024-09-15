@@ -1,4 +1,4 @@
-import { objectType } from 'nexus';
+import { extendType, objectType } from 'nexus';
 import * as gqlTypes from 'nexus-prisma';
 import { DateTime } from 'nexus-prisma/scalars';
 import { Context } from './context';
@@ -501,3 +501,18 @@ export const SlotTime = objectType({
         });
     },
 });
+
+export const CoacheeJwt = extendType({
+    type: 'Coachee',
+    definition(t) {
+      t.string('token'); // New field for dance string
+    },
+  });
+
+  export const CoachJwt = extendType({
+    type: 'Coach',
+    definition(t) {
+      t.string('token'); // New field for dance string
+    },
+  });
+

@@ -254,7 +254,7 @@ const NewCoachDashboard = () => {
                 format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
             ).map(slot => ({
                 ...slot,
-                coachee: booking.coachee// Add coachee to the slot data
+                coachee: booking.coachee
             }))
         );
     
@@ -297,7 +297,9 @@ const NewCoachDashboard = () => {
                         inputContainerStyle={CoacheeDashboardStyle.searchBarInputContainer}
                     />
                 </View>
-                <View style={CoacheeDashboardStyle.calendarContainer}>
+                <ScrollView>
+                    <View>
+                    <View style={CoacheeDashboardStyle.calendarContainer}>
       <Calendar
         markedDates={markedDates}
         onDayPress={handleDayPress}
@@ -372,6 +374,9 @@ const NewCoachDashboard = () => {
                         </Text>
                     )}
                 </ScrollView>
+                    </View>
+                </ScrollView>
+                
             </KeyboardAvoidingView>
             
         </View>

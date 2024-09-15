@@ -218,7 +218,8 @@ const NewCoachProfile = () => {
         navigation.navigate('EditProfileForCoach');
     };
 
-    const handleNavigateLogOut = () => {
+    const handleNavigateLogOut = async () => {
+        await AsyncStorage.clear();
         navigation.navigate('LogIn');
     };
     //Get the latest sports credential picture from the coach data
@@ -283,7 +284,7 @@ const NewCoachProfile = () => {
                 <Text style={styles.buttonText}>Account Settings</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.drawerButton}>
-                <Icon name="pulse-outline" size={30} color="#7E3FF0"/>
+                <Icon name="pulse-outline" size={30} color="#7E3FF0" />
                 <Text
                     style={styles.buttonText3}
                     onPress={handleNavigatetoReviewsPageCoach}
@@ -380,43 +381,58 @@ const NewCoachProfile = () => {
                         onPageSelected={handlePageChange}
                     >
                         <View key="1">
-                        <ScrollView>
-    <Text style={styles.titleHeader}>Bio</Text>
-    <Text style={styles.contentText}>{CoachProfiles[0].about}</Text>
-    
-    <Text style={styles.titleHeader}>Workplace Address</Text>
-    <Text style={styles.contentText}>{CoachProfiles[0].workplaceAddress}</Text>
+                            <ScrollView>
+                                <Text style={styles.titleHeader}>Bio</Text>
+                                <Text style={styles.contentText}>
+                                    {CoachProfiles[0].about}
+                                </Text>
 
-    <Text style={styles.titleHeader}>Interests</Text>
+                                <Text style={styles.titleHeader}>
+                                    Workplace Address
+                                </Text>
+                                <Text style={styles.contentText}>
+                                    {CoachProfiles[0].workplaceAddress}
+                                </Text>
 
-    <View style={styles.subcontentContainer}>
-        <Text style={styles.subHeader}>
-            What are some of your favorite ways to relax?
-        </Text>
-        <Text style={styles.subContentTextIndented}>
-            {CoachProfiles[0].interests?.MovieGenre?.join(', ')}
-        </Text>
-    </View>
+                                <Text style={styles.titleHeader}>
+                                    Interests
+                                </Text>
 
-    <View style={styles.subcontentContainer}>
-        <Text style={styles.subHeader}>
-            What do you prefer to do on weekends?
-        </Text>
-        <Text style={styles.subContentTextIndented}>
-            {CoachProfiles[0].interests?.BookGenre?.join(', ')}
-        </Text>
-    </View>
+                                <View style={styles.subcontentContainer}>
+                                    <Text style={styles.subHeader}>
+                                        What are some of your favorite ways to
+                                        relax?
+                                    </Text>
+                                    <Text style={styles.subContentTextIndented}>
+                                        {CoachProfiles[0].interests?.MovieGenre?.join(
+                                            ', ',
+                                        )}
+                                    </Text>
+                                </View>
 
-    <View style={styles.subcontentContainer}>
-        <Text style={styles.subHeader}>
-            What hobbies do you prefer on your downtime?
-        </Text>
-        <Text style={styles.subContentTextIndented}>
-            {CoachProfiles[0].interests?.MusicGenre?.join(', ')}
-        </Text>
-    </View>
-</ScrollView>
+                                <View style={styles.subcontentContainer}>
+                                    <Text style={styles.subHeader}>
+                                        What do you prefer to do on weekends?
+                                    </Text>
+                                    <Text style={styles.subContentTextIndented}>
+                                        {CoachProfiles[0].interests?.BookGenre?.join(
+                                            ', ',
+                                        )}
+                                    </Text>
+                                </View>
 
+                                <View style={styles.subcontentContainer}>
+                                    <Text style={styles.subHeader}>
+                                        What hobbies do you prefer on your
+                                        downtime?
+                                    </Text>
+                                    <Text style={styles.subContentTextIndented}>
+                                        {CoachProfiles[0].interests?.MusicGenre?.join(
+                                            ', ',
+                                        )}
+                                    </Text>
+                                </View>
+                            </ScrollView>
                         </View>
                         <View key="2">
                             {/* Sports Credentials Tab */}

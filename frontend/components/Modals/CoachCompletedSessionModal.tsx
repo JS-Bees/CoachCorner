@@ -39,7 +39,7 @@ const CompletedModal: React.FC<SessionModalProps> = ({ visible, session, toggleO
           <View style={styles.imageContainer}>
           <Image source={session.imageSource} style={styles.sessionImage} />
           <TouchableOpacity onPress={navigateToChat}>
-              <View style={styles.imageContainer}>
+              <View style={styles.chatIconContainer}>
                 <Icon name="chat" type="material" color="#7E3FF0" />
               </View>
             </TouchableOpacity>
@@ -52,8 +52,10 @@ const CompletedModal: React.FC<SessionModalProps> = ({ visible, session, toggleO
         <View style={styles.contentContainer}>
             <Text style={styles.titleText}>Service Type</Text>
             <Text style={styles.subtitleText}>{session?.serviceType}</Text>
-            <Text style={styles.titleText}>Additional Notes</Text>
-            <Text style={styles.subtitleText}>{session?.additionalNotes}</Text>
+            <Text style={styles.titleText }>Additional Notes</Text>
+            <View style={styles.notesPadding} numberOfLines={5} ellipsizeMode="tail">
+              <Text style={styles.subtitleText}>{session?.additionalNotes}</Text>
+            </View>
 
 
             <View style={styles.contentText}>
@@ -115,6 +117,16 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  chatIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    borderWidth: 2, 
+    borderColor: '#7E3FF0', 
+    padding: 1, 
   },
   contentContainer:{
     paddingTop: "10%",
@@ -194,18 +206,18 @@ const styles = StyleSheet.create({
     paddingHorizontal:  10, 
   },
   button: {
-    backgroundColor: '#7E3FF0', // Set the background color for the cancel button
-      width: (screenWidth * 0.36), // Adjust the percentage as needed
-      height: (screenHeight * 0.07), // Adjust the percentage as needed
+    backgroundColor: '#7E3FF0',
+      width: (screenWidth * 0.36), 
+      height: (screenHeight * 0.07), 
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
     marginBottom:  10
   },
   cancelButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
-      width: (screenWidth * 0.38), // Adjust the percentage as needed
-      height: (screenHeight * 0.08), // Adjust the percentage as needed
+    backgroundColor: 'transparent',
+      width: (screenWidth * 0.38), 
+      height: (screenHeight * 0.08),
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
@@ -213,9 +225,9 @@ const styles = StyleSheet.create({
   },
 
   completeButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
-      width: (screenWidth * 0.38), // Adjust the percentage as needed
-      height: (screenHeight * 0.08), // Adjust the percentage as needed
+    backgroundColor: 'transparent', 
+      width: (screenWidth * 0.38),
+      height: (screenHeight * 0.08),
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
@@ -235,6 +247,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 30
+  },
+  notesPadding: {
+    paddingHorizontal: 2,
+    marginRight: "15%",
+    maxHeight: 150,
+    overflow: 'hidden', 
   }
 });
 

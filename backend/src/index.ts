@@ -4,6 +4,7 @@ import express from 'express';
 import path from 'path';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { WebSocketServer } from 'ws';
+import jwt from 'jsonwebtoken';
 
 import * as objectTypes from './nexus-prisma/objectTypes';
 import * as inputTypes from './nexus-prisma/inputTypes';
@@ -16,7 +17,6 @@ import * as subscriptions from './nexus-prisma/subscriptions/subscriptions';
 
 import './generated/graphql-types'; // import types as side-effect
 // .d.ts files can only be "auto-imported" if they have no exports
-// this is for the authorize
 
 // Import PrismaClient
 import { PrismaClient } from '@prisma/client';
@@ -26,6 +26,8 @@ const PORT = 5050;
 
 // Initialize Prisma Client
 const db = new PrismaClient();
+
+const SECRET_KEY = process.env.JWT_SECRET;
 
 const schema = makeSchema({
     // nonNullDefaults: {
@@ -57,9 +59,40 @@ const schema = makeSchema({
 // this server inside a server handles the GraphQL part
 const server = new ApolloServer({
     schema,
-    // Provide context with Prisma Client
-    context: {
-        db,
+    // context: {
+    //     db,
+    // },
+    context: async ({ req }) => {
+        const context = { db };
+
+        if (req.body.operationName === 'IntrospectionQuery') {
+            return context;
+        }
+
+        console.log('req body', req.body.operationName);
+
+        if (
+            req.body.operationName === 'CoacheeLogin' ||
+            req.body.operationName === 'CoachLogin' ||
+            req.body.operationName === 'CreateCoachee' ||
+            req.body.operationName === 'CreateCoach'
+        ) {
+            return context;
+        }
+
+        const token = req.headers.authorization;
+
+        if (!token) {
+            throw new Error('No token provided');
+        }
+
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            return context;
+        } catch (err) {
+            console.error('Error:', err);
+            throw err;
+        }
     },
 });
 
@@ -68,13 +101,6 @@ server
     .then(() => {
         server.applyMiddleware({ app });
 
-        // app.listen(PORT, () => {
-        //     // then start Express
-        //     console.log(
-        //         `Apollo server has started at http://localhost:${PORT}`,
-        //     );
-        // });
-
         // Start the Express server and capture the HTTP server instance
         const httpServer = app.listen(PORT, () => {
             console.log(
@@ -82,11 +108,10 @@ server
             );
         });
 
-        // Create a WebSocket server for subscriptions using the HTTP server instance
+        // WebSocket server
         const wsServer = new WebSocketServer({
             server: httpServer, // Use the HTTP server instance
             path: '/graphql',
-            // path: '/graphql', // This should match the path you use for Apollo Server
         });
 
         // Integrate the WebSocket server with Apollo Server

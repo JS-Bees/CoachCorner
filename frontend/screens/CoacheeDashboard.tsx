@@ -15,7 +15,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Context, useQuery } from 'urql';
-// import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import Profile from '../components/Profile Tiles/CoachProfileTile';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -49,14 +48,14 @@ const CoacheeDashboard = () => {
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [seeAllCoaches, setSeeAllCoaches] = useState(false);
     const [sportsVisible, setSportsVisible] = useState(false);
     const [selectedSport, setSelectedSport] = useState('');
     const [checked, setChecked] = React.useState('second');
     const [states, setStates] = useState(initialStates());
     const [isTourVisible, setTourVisible] = useState(false);
-    const [animation] = useState(new Animated.Value(0)); // Create animated value
+    const [animation] = useState(new Animated.Value(0)); 
 
     const handleTour = () => {
         setTourVisible(true);
@@ -98,10 +97,10 @@ const CoacheeDashboard = () => {
 
     useFocusEffect(
         React.useCallback(() => {
-            setStates(initialStates()); // Reset the states when the screen is focused
-          // When the screen is focused, add a back button event listener
+            setStates(initialStates()); 
+         
           const onBackPress = () => {
-            // Optionally, you can show a confirmation dialog
+    
             Alert.alert(
               'Exit App',
               'Are you sure you want to exit the app?',
@@ -119,7 +118,7 @@ const CoacheeDashboard = () => {
               { cancelable: true }
             );
     
-            // Return true to indicate that we've handled the back button press
+            
             return true;
           };
     
@@ -139,57 +138,6 @@ const CoacheeDashboard = () => {
         { label: 'Volleyball', value: 'Volleyball' },                                                         
 
     ];
-    
-
-    // const handleSeeAllPress = () => {
-    //     // Prepare the recommended coaches data
-    //     const recommendedCoaches = [
-    //         {
-    //             id: matchedCoaches[0]?.coach?.id || 0,
-    //             name: matchedCoachesNames[0],
-    //             imageSource:
-    //                 matchedCoaches[0]?.coach?.profilePicture === "profile picture"
-    //                     ? DEFAULT_PROFILE_PICTURE
-    //                     : { uri: matchedCoaches[0]?.coach?.profilePicture },
-    //             gainedStars:
-    //                 matchedCoaches[0]?.coach?.reviews.reduce(
-    //                     (acc, review) => acc + review.starRating,
-    //                     0
-    //                 ) || 0,
-    //             mainSport:
-    //                 matchedCoaches[0]?.coach?.sports &&
-    //                 matchedCoaches[0].coach.sports.length > 0
-    //                     ? matchedCoaches[0].coach.sports[0].type
-    //                     : "Unknown",
-    //             about: matchedCoaches[0]?.coach?.bio,
-    //             workplaceAddress: matchedCoaches[0]?.coach?.address,
-    //         },
-    //         {
-    //             id: matchedCoaches[1]?.coach?.id || 0,
-    //             name: matchedCoachesNames[1],
-    //             imageSource:
-    //                 matchedCoaches[1]?.coach?.profilePicture === "profile picture"
-    //                     ? DEFAULT_PROFILE_PICTURE
-    //                     : { uri: matchedCoaches[1]?.coach?.profilePicture },
-    //             gainedStars:
-    //                 matchedCoaches[1]?.coach?.reviews.reduce(
-    //                     (acc, review) => acc + review.starRating,
-    //                     0
-    //                 ) || 0,
-    //             mainSport:
-    //                 matchedCoaches[1]?.coach?.sports &&
-    //                 matchedCoaches[1].coach.sports.length > 0
-    //                     ? matchedCoaches[1].coach.sports[0].type
-    //                     : "Unknown",
-    //             about: matchedCoaches[1]?.coach?.bio,
-    //             workplaceAddress: matchedCoaches[1]?.coach?.address,
-    //         },
-            
-    //     ];
-    
-    //     // Navigate to the SeeAll screen with the recommended coaches data
-    //     navigation.navigate('SeeAll', { recommendedCoaches });
-    // };
     
     
 
