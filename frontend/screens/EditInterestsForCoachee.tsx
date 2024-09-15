@@ -33,11 +33,11 @@ const EditInterests = () => {
   const [editedBio, setEditedBio] = useState<string>('');
   const [editedAddress, setEditedAddress] = useState<string>('');
   const [editedProfilePicture, setEditedProfilePicture] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false); // Loading state for image upload
+  const [loading, setLoading] = useState<boolean>(false); 
+  const [spinnerLoading, setSpinnerLoading] = useState(false); 
 
   
-  //reminder to add a separate modal asking the if they wish to continue after making changes
-  //-------------------------------------------------------------------------------------------------------------------------------
+  
   useEffect(() => {
     const fetchUserToken = async () => {
         try {
@@ -133,6 +133,8 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       Alert.alert('No changes made.');
       return;
     }
+
+    setSpinnerLoading(true)
   
     try {
       const profileResult = await executeMutation({
@@ -222,6 +224,8 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     } catch (error) {
       Alert.alert('Choose 3 interest when changing a genre');
     }
+
+    setSpinnerLoading(false)
   };
 
   
@@ -397,8 +401,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       <Icon name="arrow-back-circle-outline" size={30} color="#7E3FF0" />
     </TouchableOpacity>
   
-    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-      <Text style={styles.saveText}>Save</Text>
+    <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={spinnerLoading}>
+      {spinnerLoading ? (
+        <ActivityIndicator color="#fff" /> // Spinner while loading
+      ) : (
+        <Text style={styles.saveText}>Save</Text>
+      )}
     </TouchableOpacity>
   
     <Text style={styles.headerText}>Edit Profile</Text>
