@@ -81,6 +81,10 @@ export const findCoacheeByEmailAndPassword = queryField(
             try {
                 // Validate arguments using the yup schema
                 loginSchema.validateSync({ email, password });
+                // // @ts-ignore
+                // console.log('ctx', context.decoded);
+
+                // console.log(context.db);
 
                 // Convert email to lowercase
                 const lowerCaseEmail = email.toLowerCase();
@@ -126,6 +130,8 @@ export const findCoachByID = queryField('findCoachByID', {
         try {
             // Validate userID using the idSchema
             idSchema.validateSync({ id: userID });
+            // @ts-ignore
+            console.log('ctx', context.decoded);
 
             // Search for a Coach by ID
             const coach = await context.db.coach.findUnique({
@@ -745,4 +751,3 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
         },
     },
 );
-

@@ -99,7 +99,6 @@ const NewCoacheeProfile = () => {
     };
 
     const handleNavigateLogOut = async () => {
-        await AsyncStorage.clear();
         navigation.navigate('LogIn');
     };
 

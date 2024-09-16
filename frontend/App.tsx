@@ -86,11 +86,14 @@ const wsClient = createWSClient({
 });
 
 let token = '';
+let clientId = '';
 let tokenUpdateIntervalId;
 
 async function updateToken() {
     const newToken = await AsyncStorage.getItem('JwtToken');
+    const newUserToken = await AsyncStorage.getItem('userToken');
     token = newToken || '';
+    clientId = newUserToken || '';
 
     if (token && token !== '') {
         clearInterval(tokenUpdateIntervalId);
