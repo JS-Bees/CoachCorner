@@ -9,6 +9,7 @@ import {
     Button,
     ActivityIndicator,
     ImageSourcePropType,
+    ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { RouteProp } from '@react-navigation/native';
@@ -16,9 +17,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CreateContactDocument, FindCoacheeByIdDocument } from '../generated-gql/graphql';
+import { FindBookingsOfCoachDocument } from '../generated-gql/graphql';
+import { Calendar } from 'react-native-calendars'; 
 import { useMutation, useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import { Divider } from 'react-native-elements';
 
 type PreviewPageRouteProp = RouteProp<RootStackParams, 'PreviewPage'>;
 type PreviewPageNavigationProp = NativeStackNavigationProp<
@@ -45,6 +50,12 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
     const [, createContact] = useMutation(CreateContactDocument);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isCalendarModalVisible, setIsCalendarModalVisible] = useState(false);
+    const [showAvailability, setShowAvailability] = useState(false);
+    const [slotsForSelectedDate, setSlotsForSelectedDate] = React.useState([]);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+
     const navigation =  useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     // function to fetch coachee data by userID (token)
@@ -64,6 +75,8 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             error: coacheeError,
         } = useFetchCoacheeByUserID(userToken);
 
+        
+
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -78,6 +91,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 
         fetchUserToken();
     }, []);
+
 
     useEffect(() => {
         if (coacheeData && coacheeData.findCoacheeByID) {
@@ -101,20 +115,17 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         } else {
           console.log('CoacheeData or findCoacheeByID is not available');
         }
-      }, [coacheeData]); // Watch for changes in coacheeData and profile.id
+      }, [coacheeData]); 
 
     
     const handleAddToFavorites = async () => {
         try {
-            // If already marked as favorite, return without adding again
+            
             if (isFavorite || isLoading) {
                 return;
             }
-
-            // Set loading state to true
             setIsLoading(true);
 
-            // Execute the mutation
             const result = await createContact({
                 input: {
                     coachId: profile.id,
@@ -123,46 +134,28 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 },
             });
 
-            // Check if the mutation was successful
+           
             if (result) {
-                // Update the state to indicate that the coach is added to favorites
+                
                 setIsFavorite(true);
-                setIsModalVisible(true); // Show the modal
+                setIsModalVisible(true); 
             }
         } catch (error) {
             console.error('Error adding coach to favorites:', error);
         } finally {
-            // Set loading state back to false
             setIsLoading(false);
         }
     };
 
-
-    // const handleButtonPress = (item: ChatMessage) => {
-    //     handleAddToFavorites();
-    //     //this is the original to directly lead it to his chatbox
-    //     // const chatMessage = {
-    //     //     id: profile.contactId,
-    //     //     message: 'placeholder message',
-    //     //     sender: profile.name,
-    //     //     imageUrl: profile.imageSource,
-    //     //     contactedStatus: profile.contactedStatus,
-    //     // };
-    //     // navigation.navigate('ChatPage', { chatMessage: chatMessage });
-    //     navigation.navigate('ChatList')
-    // };
-
     const handleButtonPress = () => {
-        const coachId = profile.id; // Adjust this line based on how the coach's ID is stored in `item`
+        const coachId = profile.id; 
     
-        // Check if the coach is already in the favorites
+        
         const isCoachInFavorites = coacheeData?.findCoacheeByID.contacts.some(contact => contact.id === coachId);
         console.log(isCoachInFavorites)
         if (!isCoachInFavorites) {
-            // If the coach is not in the favorites, add to favorites
             handleAddToFavorites();
         }
-        // Navigate to the ChatList regardless of whether the coach was added to favorites
         navigation.navigate('ChatList');
     };
 
@@ -177,18 +170,24 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             profile: profile,
         });
     };
+
+   
     const handleSeeCredentialsPress = () => {
-        // Pass the coach ID to the CredentialsPage
+        
         navigation.navigate('CredentialsPage', {
-          coachId: profile.id, // Passing the coach ID
+          coachId: profile.id, 
+          
         });
       };
+      
 
     const { profile, gainedStars } = route.params || {};
 
     const totalStars = 5;
 
-    // Render star icons based on the total number of stars
+
+
+   
     const renderStars = () => {
         const stars = [];
         for (let i = 0; i < totalStars; i++) {
@@ -205,13 +204,65 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
         return stars;
     };
 
+    const [{ data: bookingsData, fetching: bookingsFetching, error: bookingsError }] = useQuery({
+      query: FindBookingsOfCoachDocument,
+      variables: {
+          userId: profile.id
+      },
+    });
+    const upcomingData = bookingsData?.findCoachByID?.bookings.filter((booking: Booking) => booking.status === 'UPCOMING');
+
+    const markedDates = upcomingData?.reduce((acc: any, booking: Booking) => {
+      booking.bookingSlots.forEach(slot => {
+          const formattedDate = format(new Date(slot.date), 'yyyy-MM-dd');
+          acc[formattedDate] = {
+              selected: true,
+              marked: true,
+              selectedColor: '#7E3FF0',
+          };
+      });
+      return acc;
+  }, {});
+
+  const handleToggleAvailability = () => {
+    setIsCalendarModalVisible(true);
+  };
+
+  const handleDayPress = (day) => {
+    const selectedDate = day.dateString;
+    setSelectedDate(selectedDate);
+    
+    
+    const selectedBookings = upcomingData?.filter(booking => 
+        booking?.bookingSlots?.some(slot => 
+            format(new Date(slot?.date), 'yyyy-MM-dd') === selectedDate
+        )
+    );
+
+    const filteredSlots = selectedBookings?.flatMap(booking =>
+        booking?.bookingSlots?.filter(slot =>
+            format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
+        ).map(slot => ({
+            ...slot,
+            coachee: booking.coachee
+        }))
+    );
+
+    setSlotsForSelectedDate(filteredSlots);
+  };
+
+
+
+
+  
+
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
                 <Image
                     source={profile?.imageSource}
                     style={styles.profileImage}
-                />
+                /> 
                 <TouchableOpacity
                     onPress={handleNavigateBack}
                     style={styles.iconContainer}
@@ -227,8 +278,17 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             </View>
             <View style={styles.header}>
                 <Text style={styles.name}>{profile?.name}</Text>
+                <TouchableOpacity onPress={handleToggleAvailability}>
+                 <Text style={styles.availaibilityText}>{showAvailability ? "Hide Availability" : "See Availability"}</Text>
+              </TouchableOpacity>
+              <View>
+              </View>
             </View>
-
+            <View>
+            {showAvailability && (
+               <Calendar
+                markedDates={markedDates}/>)}
+            </View>
             <View style={styles.starsContainer}>
                 {renderStars()}
                 <View style={styles.reviewsContainer}>
@@ -262,7 +322,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                     style={styles.button}
                     onPress={handleButtonPress}
                 >
-          <Text
+                <Text
                         style={{
                             color: 'white',
                             fontSize: 15,
@@ -276,30 +336,59 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
                 </TouchableOpacity>
             </View>
             <Modal
-                animationType="slide"
+                visible={isCalendarModalVisible}
                 transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => {
-                    setIsModalVisible(false);
-                }}
+                animationType="slide"
+                onRequestClose={() => setIsCalendarModalVisible(false)}
             >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>
-                            Coach added to contact list
-                        </Text>
+                <View style={styles.modalBackground}>
+                    <View style={styles.modalContainer}>
                         <TouchableOpacity
-    style={styles.modalButton}
-    onPress={() => setIsModalVisible(false)}
->
-    <Text style={styles.modalTextButton}>Close</Text>
-</TouchableOpacity>
+                            style={styles.closeButton}
+                            onPress={() => setIsCalendarModalVisible(false)}
+                        >
+                            <Icon name="close" size={30} color="#7E3FF0" />
+                        </TouchableOpacity>
+                       <View>
+                         <Icon name="information-circle-outline" size={24} color="#7E3FF0"/>
+                          <Text style={styles.modalMessage}>
+                              Some dates are already booked, but other time slots might be still available.
+                          </Text>
+                       </View>
+                       <View style={styles.timeSlotContainer}>
+                        <Text>Taken Timeslots for this date:</Text>
+                       <Divider style={{ marginVertical: 10 }} />
+                       <View>
+                       {slotsForSelectedDate.length > 0 ? (
+                        slotsForSelectedDate.map((slot, index) => (
+                            <View key={index}>
+                                <Text>
+                                    {format(new Date(slot.startTime), 'h:mm a')} - {format(new Date(slot.endTime), 'h:mm a')}
+                                </Text>
+                            </View>
+                        ))
+                      ) : (
+                          <Text>No timeslots taken</Text>
+                       )}
+                    </View>
+                       </View>
+                       <View style={styles.calendarContainer}>
+                       <Calendar
+                            markedDates={markedDates}
+                            onDayPress={handleDayPress}
+                            theme={{
+                                todayTextColor: '#7E3FF0',
+                                selectedDayBackgroundColor: '#7E3FF0',
+                                arrowColor: '#7E3FF0',
+                            }}
+                        />
+                       </View>
                     </View>
                 </View>
             </Modal>
             {isLoading && (
                 <View style={styles.loader}>
-                    <ActivityIndicator size="large" color="#7E3FF0" />
+                    <ActivityIndicator size="large" color="#7E3FF0" /> 
                 </View>
             )}
         </View>
@@ -339,8 +428,8 @@ const styles = StyleSheet.create({
   header: {
     position: 'absolute',
     bottom: "45%", 
-    alignItems: 'center',
-    left: "5%"
+    alignItems: 'flex-start',
+    left: "5%",
   },
   name: {
     fontFamily: "Roboto",
@@ -354,21 +443,26 @@ const styles = StyleSheet.create({
   },
   reviewsContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Adjust alignment of extra buttons
+    justifyContent: 'flex-end', 
     alignItems: 'center',
     bottom: "80%"
   },
   gap: {
-    marginLeft: "5%", // Adjust the spacing between the buttons
+    marginLeft: "5%", 
   },
   reviewText: {
     fontWeight: "500",
     fontSize: 15,
     color: "#7E3FF0"
   },
+  availaibilityText: {
+    fontWeight: "500",
+    fontSize: 15,
+    color: "#7E3FF0",
+  },
   content: {
     position: 'absolute',
-    bottom: "36%", // Adjust this value to move the name up or down
+    bottom: "36%", 
     alignItems: 'center',
     left: "5%"
   },
@@ -379,14 +473,14 @@ const styles = StyleSheet.create({
   },
   aboutContainer:{
     position: 'absolute',
-    bottom: "35%", // Adjust this value to move the address text up or down
+    bottom: "35%",
     left: "6%",
     width: "85%"
   },
   about: {
     position: "absolute",
     textAlign: "justify",
-    lineHeight: 20, // Adjust line height as needed
+    lineHeight: 20, 
     fontFamily: "Roboto",
     fontWeight: '200',
     color: '#908D93',
@@ -409,20 +503,20 @@ const styles = StyleSheet.create({
   },
   addressContainer: {
     position: 'absolute',
-    bottom: "20%", // Adjust this value to move the title up or down
+    bottom: "20%", 
     alignItems: 'center',
     left: "5%"
   },
   worplaceAddressContainer: {
     position: 'absolute',
-    bottom: "19%", // Adjust this value to move the address text up or down
+    bottom: "19%", 
     left: "6%",
     width: "85%"
   },
   workplaceAddressText: {
     position: "absolute",
     textAlign: "justify",
-    lineHeight: 20, // Adjust line height as needed
+    lineHeight: 20, 
     fontFamily: "Roboto",
     fontWeight: '200',
     color: '#908D93',
@@ -459,18 +553,49 @@ const styles = StyleSheet.create({
     left: '50%',
     zIndex: 9999,
   },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer: {
+    width: '90%',
+    height: "95%",
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+  },
   modalButton: {
-    borderWidth: 2, // Thickness of the border
-    borderColor: "#7E3FF0", // Border color (purple)
-    borderRadius: 10, // Rounded corners
-    paddingVertical: 10, // Vertical padding
-    paddingHorizontal: 20, // Horizontal padding
-    backgroundColor: "#fff", // Background color
-    alignItems: 'center', // Center the text horizontally
+    borderWidth: 2,
+    borderColor: "#7E3FF0", 
+    borderRadius: 10, 
+    paddingVertical: 10, 
+    paddingHorizontal: 20, 
+    backgroundColor: "#fff", 
+    alignItems: 'center', 
   },
   modalTextButton: {
-    color: "#7E3FF0", // Text color (you can change this to your preferred color)
-    fontSize: 16, // Text size
+    color: "#7E3FF0", 
+    fontSize: 16, 
+  },
+  modalMessage: {
+    fontSize: 15,
+    marginBottom: 20,
+    color: '#7E3FF0',
+  },
+  timeSlotContainer: {
+    top: "50%",
+    alignContent: "flex-start",
+    marginRight: "50%"
+  },
+  calendarContainer: {
+    marginTop: "45%",
+    position: 'absolute',
   }
 });
 

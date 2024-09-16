@@ -5,15 +5,13 @@ import {
     StyleSheet,
     Image,
     ImageSourcePropType,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
-import { Dimensions } from 'react-native';
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+
 
 interface CoacheeProfile {
   name: string;
@@ -52,20 +50,22 @@ const CoacheeProfile: React.FC<CoacheeProfilesProp> = ({ coacheeProfiles }) => {
         <TouchableOpacity
           key={index}
           style={[
-            CoacheeProfileStyle.coacheeBoxes,
-            index % 2 === 1 ? { marginLeft: '9%' } : null, // Add marginLeft for every second tile
-            index >= 2 ? { marginTop: '5%' } : null // Add marginTop for tiles starting from the third one
+            CoacheeProfileStyle.coacheeList,
           ]}
             onPress={() => handleProfileClick(coacheeProfiles)}
         >
+          <View style={CoacheeProfileStyle.listContainer}>
           <Image
             source={coacheeProfiles.imageSource}
             style={CoacheeProfileStyle.profileImage}
           />
           <Text style={CoacheeProfileStyle.coacheeNameText}>{coacheeProfiles.name}</Text>
           <Text style={CoacheeProfileStyle.sport}>{coacheeProfiles.mainSport}</Text>
+          </View>
+          <View style={CoacheeProfileStyle.divider}></View>
         </TouchableOpacity>
       ))}
+
     </View>
     );
 };
@@ -73,15 +73,11 @@ const CoacheeProfile: React.FC<CoacheeProfilesProp> = ({ coacheeProfiles }) => {
 const CoacheeProfileStyle = StyleSheet.create({
     coacheeProfiles: {
         paddingBottom: '5%',
-        flexDirection: 'row',
         flexWrap: "wrap",
+        marginTop: "5%",
     },
     frameContainer: {
         backgroundColor: "#7E3FF0",
-        marginTop: "5%",
-        marginLeft: "7%",
-        width: '85%',
-        height: "15%",
         overflow: "hidden",
         borderRadius: 16  
     },
@@ -91,21 +87,15 @@ const CoacheeProfileStyle = StyleSheet.create({
         marginTop: '1%',
         borderRadius: 20
     },
-    coacheeBoxes: {
-      backgroundColor: 'white',
-      marginTop: '5%',
-      marginLeft: '5%', // Adjust the margin for better alignment
-      width: (screenWidth * 0.38), // Adjust the percentage as needed
-      height: (screenHeight * 0.19), // Adjust the percentage as needed
-      borderRadius: 16,
-      borderColor: '#7E3FF0',
-      borderWidth: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
+    coacheeList:{
+      alignContent: "center",
+      marginLeft: "5%"
     },
+
     coacheeNameText: {
       textAlign: 'center',
-        textAlignVertical: 'center',
+      textAlignVertical: 'center',
+      marginLeft: "15%"
     },
     seeAll: {
       color: "#7E3FF0",
@@ -115,7 +105,19 @@ const CoacheeProfileStyle = StyleSheet.create({
     },
     sport:{
       color: "#7E3FF0",
+    },
+    listContainer: {
+
+      flexDirection: "row",
+      paddingVertical: "3%"
+    },
+    divider: {
+      height: 1,
+        backgroundColor: '#e0e0e0',
+        width: '175%',
+        marginVertical: 4,
     }
+    
   
 
 

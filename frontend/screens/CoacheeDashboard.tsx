@@ -15,7 +15,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Context, useQuery } from 'urql';
-// import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import CoachProfiles from '../components/Profile Tiles/CoachProfileTile';
 import Profile from '../components/Profile Tiles/CoachProfileTile';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -53,14 +52,14 @@ const CoacheeDashboard = () => {
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [seeAllCoaches, setSeeAllCoaches] = useState(false);
     const [sportsVisible, setSportsVisible] = useState(false);
     const [selectedSport, setSelectedSport] = useState('');
     const [checked, setChecked] = React.useState('second');
     const [states, setStates] = useState(initialStates());
     const [isTourVisible, setTourVisible] = useState(false);
-    const [animation] = useState(new Animated.Value(0)); // Create animated value
+    const [animation] = useState(new Animated.Value(0)); 
 
     const handleTour = () => {
         setTourVisible(true);
@@ -101,42 +100,40 @@ const CoacheeDashboard = () => {
 
     useFocusEffect(
         React.useCallback(() => {
-            setStates(initialStates()); // Reset the states when the screen is focused
-            // When the screen is focused, add a back button event listener
-            const onBackPress = () => {
-                // Optionally, you can show a confirmation dialog
-                Alert.alert(
-                    'Exit App',
-                    'Are you sure you want to exit the app?',
-                    [
-                        {
-                            text: 'Cancel',
-                            style: 'cancel',
-                            onPress: () => {},
-                        },
-                        {
-                            text: 'Exit',
-                            onPress: () => BackHandler.exitApp(),
-                        },
-                    ],
-                    { cancelable: true },
-                );
-
-                // Return true to indicate that we've handled the back button press
-                return true;
-            };
-
-            const backHandler = BackHandler.addEventListener(
-                'hardwareBackPress',
-                onBackPress,
+            setStates(initialStates()); 
+         
+          const onBackPress = () => {
+    
+            Alert.alert(
+              'Exit App',
+              'Are you sure you want to exit the app?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                  onPress: () => {},
+                },
+                {
+                  text: 'Exit',
+                  onPress: () => BackHandler.exitApp(),
+                },
+              ],
+              { cancelable: true }
             );
+    
+            
+            return true;
+          };
+    
+          const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    
+          // Cleanup function
+          return () => {
+            backHandler.remove();
+          };
+        }, [])
+      );
 
-            // Cleanup function
-            return () => {
-                backHandler.remove();
-            };
-        }, []),
-    );
 
     const sports = [
         { label: 'Basketball', value: 'Basketball' },

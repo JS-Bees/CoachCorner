@@ -291,8 +291,6 @@ export const findBookingsByStatusAndCoacheeID = queryField(
     },
 );
 
-// findCoachesBySport or findUnaddedCoachesBySport (make both)
-
 export const findCoachesBySport = queryField('findCoachesBySport', {
     type: list(Coach),
     args: {
@@ -344,7 +342,6 @@ export const findNonContactCoachesBySport = queryField(
                     type: sportType,
                 });
 
-                // Search for coaches by sport who are not in contact with the current user
                 const coaches = await context.db.coach.findMany({
                     where: {
                         sports: {
@@ -718,7 +715,7 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
                         coachId: coachId,
                         serviceType: 'one-to-one',
                         status: 'UPCOMING',
-                        active: true, // Assuming you want only active bookings
+                        active: true,
                     },
                     select: {
                         bookingSlots: {
@@ -752,6 +749,7 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
     },
 );
 
+Keith Benedict Bretana
 export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
     type: list(Coach),
     args: {
@@ -759,13 +757,14 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
     },
     resolve: async (_, { coacheeId }, context: Context) => {
         const coacheeData = await context.db.coachee.findUnique({
-            where: { id: coacheeId, active: true },
+            where: { id: coacheeId, active: true }, // Include the 'active' condition
             include: {
                 interests: true,
             },
         });
         const sportType = coacheeData?.sport;
 
+        // const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
         const coachesSameSport = await context.db.coach.findMany({
             where: {
                 active: true,
@@ -779,6 +778,8 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
                 interests: true,
             },
         });
+
+        // console.log(coachesSameSport);
 
         const sortedCoaches = coachesSameSport.sort((a, b) => {
             const aMatches = a.interests.filter((interest) =>
