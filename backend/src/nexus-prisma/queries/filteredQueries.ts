@@ -781,7 +781,7 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
             },
         });
 
-        console.log(coachesSameSport);
+        // console.log(coachesSameSport);
 
         const sortedCoaches = coachesSameSport.sort((a, b) => {
             const aMatches = a.interests.filter((interest) =>
@@ -793,7 +793,8 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
             return bMatches - aMatches;
         });
 
-        console.log(sortedCoaches.slice(0, 4));
-        return sortedCoaches.slice(0, 4);
+        // console.log(sortedCoaches.slice(0, 4));
+        const coaches = sortedCoaches.slice(0, 4);
+        return coaches;
     },
 });
