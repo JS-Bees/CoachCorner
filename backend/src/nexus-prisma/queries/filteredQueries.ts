@@ -749,7 +749,7 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
     },
 );
 
-Keith Benedict Bretana
+
 export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
     type: list(Coach),
     args: {
@@ -757,14 +757,14 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
     },
     resolve: async (_, { coacheeId }, context: Context) => {
         const coacheeData = await context.db.coachee.findUnique({
-            where: { id: coacheeId, active: true }, // Include the 'active' condition
+            where: { id: coacheeId, active: true }, 
             include: {
                 interests: true,
             },
         });
         const sportType = coacheeData?.sport;
 
-        // const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+
         const coachesSameSport = await context.db.coach.findMany({
             where: {
                 active: true,
@@ -779,7 +779,7 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
             },
         });
 
-        // console.log(coachesSameSport);
+
 
         const sortedCoaches = coachesSameSport.sort((a, b) => {
             const aMatches = a.interests.filter((interest) =>
