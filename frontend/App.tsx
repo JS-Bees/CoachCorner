@@ -61,7 +61,6 @@ import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
 import SeeAll from './screens/seeAll';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
 // for urql
@@ -81,8 +80,8 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    // url: 'ws://192.168.1.8:5050/graphql',
-    url: apiUrlWs!,
+    // url: apiUrlWs!,
+    url: 'ws://192.168.1.3:5050/graphql',
 });
 
 let token = '';
@@ -104,8 +103,8 @@ async function updateToken() {
 tokenUpdateIntervalId = setInterval(updateToken, 500);
 
 const client = new Client({
-    // url: 'http://192.168.1.8:5050/graphql',
-    url: apiUrl!,
+    // url: apiUrl!,
+    url: 'http://192.168.1.3:5050/graphql',
 
     fetchOptions: () => ({
         headers: {

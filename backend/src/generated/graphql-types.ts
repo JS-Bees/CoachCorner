@@ -509,6 +509,7 @@ export interface NexusGenFieldTypes {
     findMessagesForCoacheeList: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
     findNonContactCoachesBySport: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
     findOneToOneServiceSlotsByCoachId: Array<NexusGenRootTypes['SlotTime'] | null>; // [SlotTime]!
+    findRecommendedCoaches: Array<NexusGenRootTypes['Coach'] | null> | null; // [Coach]
     findfilteredMessagesByContactId: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
   }
   Review: { // field return type
@@ -727,6 +728,7 @@ export interface NexusGenFieldTypeNames {
     findMessagesForCoacheeList: 'Message'
     findNonContactCoachesBySport: 'Coach'
     findOneToOneServiceSlotsByCoachId: 'SlotTime'
+    findRecommendedCoaches: 'Coach'
     findfilteredMessagesByContactId: 'Message'
   }
   Review: { // field return type name
@@ -910,6 +912,9 @@ export interface NexusGenArgTypes {
     }
     findOneToOneServiceSlotsByCoachId: { // args
       coachId: number; // Int!
+    }
+    findRecommendedCoaches: { // args
+      coacheeId: number; // Int!
     }
     findfilteredMessagesByContactId: { // args
       contactId: number; // Int!

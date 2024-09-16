@@ -81,6 +81,10 @@ export const findCoacheeByEmailAndPassword = queryField(
             try {
                 // Validate arguments using the yup schema
                 loginSchema.validateSync({ email, password });
+                // // @ts-ignore
+                // console.log('ctx', context.decoded);
+
+                // console.log(context.db);
 
                 // Convert email to lowercase
                 const lowerCaseEmail = email.toLowerCase();
@@ -126,6 +130,8 @@ export const findCoachByID = queryField('findCoachByID', {
         try {
             // Validate userID using the idSchema
             idSchema.validateSync({ id: userID });
+            // @ts-ignore
+            console.log('ctx', context.decoded);
 
             // Search for a Coach by ID
             const coach = await context.db.coach.findUnique({
@@ -743,6 +749,7 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
     },
 );
 
+Keith Benedict Bretana
 export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
     type: list(Coach),
     args: {
@@ -757,54 +764,34 @@ export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
         });
         const sportType = coacheeData?.sport;
 
-        const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
-        const coaches = await context.db.coach.findMany({
+        // const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+        const coachesSameSport = await context.db.coach.findMany({
             where: {
                 active: true,
+                sports: {
+                    some: {
+                        type: sportType,
+                    },
+                },
             },
             include: {
-                sports: true,
                 interests: true,
             },
         });
 
-        const filteredCoaches = coaches.filter((coach) =>
-            coach.sports.some((sport) => sport.type === sportType),
-        );
+        // console.log(coachesSameSport);
 
-        const findMatchingInterestsCount = (
-            coacheeInterests,
-            coachInterests,
-        ) => {
-            return genreTypes.reduce((count, genreType) => {
-                const coacheeInterest = coacheeInterests.find(
-                    (interest) => interest.type === genreType,
-                );
-                const coachInterest = coachInterests.find(
-                    (interest) => interest.type === genreType,
-                );
-                return (
-                    count +
-                    (coacheeInterest &&
-                    coachInterest &&
-                    coacheeInterest.name === coachInterest.name
-                        ? 1
-                        : 0)
-                );
-            }, 0);
-        };
+        const sortedCoaches = coachesSameSport.sort((a, b) => {
+            const aMatches = a.interests.filter((interest) =>
+                coacheeData.interests.some((i) => i.name === interest.name),
+            ).length;
+            const bMatches = b.interests.filter((interest) =>
+                coacheeData.interests.some((i) => i.name === interest.name),
+            ).length;
+            return bMatches - aMatches;
+        });
 
-        const matchedCoaches = filteredCoaches
-            .map((coach) => {
-                const matchingInterestCount = findMatchingInterestsCount(
-                    coacheeData.interests,
-                    coach.interests,
-                );
-                return { coach, matchingInterestCount };
-            })
-            .filter((coach) => coach !== null)
-            .sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
-
-        return matchedCoaches;
+        const coaches = sortedCoaches.slice(0, 4);
+        return coaches;
     },
 });

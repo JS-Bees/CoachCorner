@@ -6,7 +6,7 @@ import {
     Image,
     Platform,
     Alert,
-    Animated
+    Animated,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { RootStackParams } from '../App';
@@ -23,7 +23,11 @@ import {
     KeyboardAvoidingView,
     TouchableOpacity,
 } from 'react-native';
-import { FindCoacheeByIdDocument, GetSortedCoachesDocument} from '../generated-gql/graphql';
+import {
+    FindCoacheeByIdDocument,
+    GetSortedCoachesDocument,
+    FindRecommendedCoachesDocument,
+} from '../generated-gql/graphql';
 import { RadioButton } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
@@ -59,13 +63,13 @@ const CoacheeDashboard = () => {
 
     const handleTour = () => {
         setTourVisible(true);
-      };
-    
-      const closeTour = () => {
-        setTourVisible(false);
-      };
+    };
 
-      useEffect(() => {
+    const closeTour = () => {
+        setTourVisible(false);
+    };
+
+    useEffect(() => {
         // Start the animation loop
         Animated.loop(
             Animated.sequence([
@@ -79,7 +83,7 @@ const CoacheeDashboard = () => {
                     duration: 500,
                     useNativeDriver: true,
                 }),
-            ])
+            ]),
         ).start();
     }, [animation]);
 
@@ -93,7 +97,6 @@ const CoacheeDashboard = () => {
             },
         ],
     };
-
 
     useFocusEffect(
         React.useCallback(() => {
@@ -131,15 +134,13 @@ const CoacheeDashboard = () => {
         }, [])
       );
 
+
     const sports = [
         { label: 'Basketball', value: 'Basketball' },
         { label: 'Soccer', value: 'Soccer' },
-        { label: 'Swimming', value: 'Swimming' },               
-        { label: 'Volleyball', value: 'Volleyball' },                                                         
-
+        { label: 'Swimming', value: 'Swimming' },
+        { label: 'Volleyball', value: 'Volleyball' },
     ];
-    
-    
 
     const scrollViewRef = useRef(null);
 
@@ -147,16 +148,13 @@ const CoacheeDashboard = () => {
         if (scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ x: width, animated: true });
         }
-    }; 
+    };
 
-   
     const handleSportSelection = (sport: string) => {
         setSelectedSport(sport);
         setSportsVisible(false); // Hide the sports selection
         navigation.navigate('AllCoachesPage', { selectedSport: sport });
     };
-
-    
 
     useEffect(() => {
         const fetchUserToken = async () => {
@@ -171,9 +169,6 @@ const CoacheeDashboard = () => {
         fetchUserToken();
     }, []);
 
-    
-
-
     // function to fetch coachee data by userID (token)
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
@@ -185,13 +180,12 @@ const CoacheeDashboard = () => {
 
         return coacheeResult;
     };
-    
+
     const {
         data: coacheeData,
         loading: coacheeLoading,
         error: coacheeError,
     } = useFetchCoacheeByUserID(userToken);
-
 
     // function to fetch coach data by userID (token)
     const useFetchCoach = (userID: any) => {
@@ -207,135 +201,158 @@ const CoacheeDashboard = () => {
         error: coachError,
     } = useFetchCoach(userToken);
 
-
     if (!fontsloaded) {
         return null;
     }
 
+    //     const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
+    //     const coaches = coachData?.coaches || [];
+    // /
 
-    const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
-    const coaches = coachData?.coaches || [];
+    // const sportType = coacheeData?.findCoacheeByID?.sport
+    // // const sportType = "Soccer";
+    // const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
 
+    // // Filter coaches based on the specified sport type (Basketball)
+    // const filteredCoaches = coaches.filter(coach =>
+    //     coach.sports?.some(sport => sport.type === sportType)
+    // );
 
-    
+    // const findMatchingInterestsCount = (coacheeInterests, coachInterests) => {
+    //   return genreTypes.reduce((count, genreType) => {
+    //     const coacheeInterest = coacheeInterests.find(interest => interest.type === genreType);
+    //     const coachInterest = coachInterests.find(interest => interest.type === genreType);
+    //     return count + (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name ? 1 : 0);
+    //   }, 0);
+    // };
 
-const sportType = coacheeData?.findCoacheeByID?.sport
-// const sportType = "Soccer";
-const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+    // const matchedCoaches = filteredCoaches
+    //   .map(coach => {
+    //     const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
+    //     return { coach, matchingInterestCount };
+    //   })
+    //   .filter(coach => coach !== null)
+    //   .sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
 
-// Filter coaches based on the specified sport type (Basketball)
-const filteredCoaches = coaches.filter(coach =>
-    coach.sports?.some(sport => sport.type === sportType)
-);
+    // if (matchedCoaches.length === 0) {
+    //   const randomIndex = Math.floor(Math.random() * filteredCoaches.length);
+    //   const randomCoach = filteredCoaches[randomIndex];
+    //   matchedCoaches.push({ coach: randomCoach, matchingInterestCount: 0 });
+    // }
 
-const findMatchingInterestsCount = (coacheeInterests, coachInterests) => {
-  return genreTypes.reduce((count, genreType) => {
-    const coacheeInterest = coacheeInterests.find(interest => interest.type === genreType);
-    const coachInterest = coachInterests.find(interest => interest.type === genreType);
-    return count + (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name ? 1 : 0);
-  }, 0);
-};
+    // // Log matched coaches
+    // console.log('Matched Coaches:', matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`));
+    // const matchedCoachesNames = matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`);
 
-const matchedCoaches = filteredCoaches
-  .map(coach => {
-    const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
-    return { coach, matchingInterestCount };
-  })
-  .filter(coach => coach !== null)
-  .sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
+    // const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
 
-if (matchedCoaches.length === 0) {
-  const randomIndex = Math.floor(Math.random() * filteredCoaches.length);
-  const randomCoach = filteredCoaches[randomIndex];
-  matchedCoaches.push({ coach: randomCoach, matchingInterestCount: 0 });
-}
+    // Compute the total star rating for each coach and then select the top two with the highest star ratings
+    const topCoachesByStarRating = (coaches) => {
+        if (!coaches || coaches.length === 0) {
+            return [];
+        }
 
-// Log matched coaches
-console.log('Matched Coaches:', matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`));
-const matchedCoachesNames = matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`);
+        // Compute total star rating for each coach
+        const coachesWithTotalStarRatings = coaches.map((coach) => {
+            const totalStarRating = coach.reviews.reduce(
+                (acc, review) => acc + (review.starRating ?? 0),
+                0,
+            );
 
-const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
+            return {
+                ...coach,
+                totalStarRating,
+            };
+        });
 
-// Compute the total star rating for each coach and then select the top two with the highest star ratings
-const topCoachesByStarRating = (coaches) => {
-    if (!coaches || coaches.length === 0) {
-        return [];
-    }
-
-    // Compute total star rating for each coach
-    const coachesWithTotalStarRatings = coaches.map((coach) => {
-        const totalStarRating = coach.reviews.reduce(
-            (acc, review) => acc + (review.starRating ?? 0),
-            0
+        // Sort coaches by total star rating in descending order
+        const sortedCoachesByStarRating = coachesWithTotalStarRatings.sort(
+            (a, b) => b.totalStarRating - a.totalStarRating,
         );
 
+        // Return the top 2 coaches with the highest star ratings
+        return sortedCoachesByStarRating.slice(0, 2);
+    };
+
+    // Get the top two coaches with the highest star ratings
+    const topCoaches = topCoachesByStarRating(coachData?.coaches);
+
+    // Create Profile objects for top coaches to maintain consistent structure
+    const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
+        const isProfilePictureDefault =
+            !coach.profilePicture ||
+            !coach.profilePicture.startsWith('https://res');
+        const profileImage = isProfilePictureDefault
+            ? DEFAULT_PROFILE_PICTURE
+            : { uri: coach.profilePicture };
+
         return {
-            ...coach,
-            totalStarRating,
+            id: coach.id,
+            name: `${coach.firstName} ${coach.lastName}`,
+            imageSource: profileImage,
+            gainedStars: coach.totalStarRating, // Use computed total star rating
+            mainSport: coach.sports?.[0]?.type ?? 'Unknown',
+            about: coach.bio,
+            workplaceAddress: coach.address,
         };
     });
 
-    // Sort coaches by total star rating in descending order
-    const sortedCoachesByStarRating = coachesWithTotalStarRatings.sort(
-        (a, b) => b.totalStarRating - a.totalStarRating
+    const recommendedCoaches = (userID: any) => {
+        const [coacheeResult] = useQuery({
+            query: FindRecommendedCoachesDocument, // Use the Coachee query document
+            variables: {
+                coacheeId: userID,
+            },
+        });
+
+        return coacheeResult;
+    };
+
+    // Example names array if needed
+    const matchedCoaches = data?.findRecommendedCoaches || [];
+
+    // Generate names for matched coaches
+    const matchedCoachesNames = matchedCoaches.map(
+        (coach) => `${coach.firstName} ${coach.lastName}`,
     );
 
-    // Return the top 2 coaches with the highest star ratings
-    return sortedCoachesByStarRating.slice(0, 2);
-};
+    // Map the data to the required format
+    const RecommendedCoaches = matchedCoaches
+        .slice(0, 4)
+        .map((coach, index) => ({
+            id: coach.id || 0,
+            name: matchedCoachesNames[index] || '',
+            imageSource:
+                coach.profilePicture &&
+                coach.profilePicture !== 'profile picture'
+                    ? { uri: coach.profilePicture }
+                    : { uri: DEFAULT_PROFILE_PICTURE },
+            gainedStars: (coach.reviews || []).reduce(
+                (acc, review) => acc + (review.starRating || 0),
+                0,
+            ),
+            mainSport:
+                coach.sports && coach.sports.length > 0
+                    ? coach.sports[0].type
+                    : 'Unknown',
+            about: coach.bio || '',
+            workplaceAddress: coach.address || '',
+        }));
 
-// Get the top two coaches with the highest star ratings
-const topCoaches = topCoachesByStarRating(coachData?.coaches);
-
-// Create Profile objects for top coaches to maintain consistent structure
-const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
-    const isProfilePictureDefault =
-        !coach.profilePicture || !coach.profilePicture.startsWith('https://res');
-    const profileImage = isProfilePictureDefault
-        ? DEFAULT_PROFILE_PICTURE
-        : { uri: coach.profilePicture };
-
-    return {
-        id: coach.id,
-        name: `${coach.firstName} ${coach.lastName}`,
-        imageSource: profileImage,
-        gainedStars: coach.totalStarRating, // Use computed total star rating
-        mainSport: coach.sports?.[0]?.type ?? 'Unknown',
-        about: coach.bio,
-        workplaceAddress: coach.address,
-    };
-});
-
-
-const RecommendedCoaches: Profile[] = matchedCoaches.slice(0, 4).map((coach, index) => ({
-    id: coach?.coach?.id || 0,
-    name: matchedCoachesNames[index],
-    // Conditional check: if profilePicture is "profile picture", use the default image
-    imageSource: coach?.coach?.profilePicture === "profile picture" 
-        ? DEFAULT_PROFILE_PICTURE
-        : { uri: coach?.coach?.profilePicture },
-    gainedStars: coach?.coach?.reviews.reduce((acc, review) => acc + review.starRating, 0) || 0,
-    mainSport: coach?.coach?.sports && coach.coach.sports.length > 0 ? coach.coach.sports[0].type : "Unknown",
-    about: coach?.coach?.bio,
-    workplaceAddress: coach?.coach?.address,
-}));
-
-// If no coaches are found, you can handle it by displaying a message or showing a placeholder
-if (RecommendedCoaches.length === 0) {
-    // Add a placeholder or handle the absence of coaches here
-    console.log("No recommended coaches available.");
-}
+    // If no coaches are found, you can handle it by displaying a message or showing a placeholder
+    if (RecommendedCoaches.length === 0) {
+        // Add a placeholder or handle the absence of coaches here
+        console.log('No recommended coaches available.');
+    }
 
     const scrollY = new Animated.Value(0);
 
     const opacity = scrollY.interpolate({
-      inputRange: [0, 200], // Adjust this range based on your needs
-      outputRange: [1, -1.2], // Opacity goes from 1 to 0
-      extrapolate: 'clamp',
+        inputRange: [0, 200], // Adjust this range based on your needs
+        outputRange: [1, -1.2], // Opacity goes from 1 to 0
+        extrapolate: 'clamp',
     });
 
-    
-    
     return (
         <View style={CoacheeDashboardStyle.container}>
             <View style={CoacheeDashboardStyle.nameAndGreetingsContainer}>
@@ -345,110 +362,162 @@ if (RecommendedCoaches.length === 0) {
                 </Text>
             </View>
             <View style={CoacheeDashboardStyle.imageContainer}>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('NewCoacheeProfile')}
-            >
-                <Image
-                    source={{uri: coacheeData?.findCoacheeByID.profilePicture}} // Add your profile image source here
-                    style={{
-                        width: 40,
-                        height: 40,
-                        marginLeft: '10%',
-                        marginTop: '-10%',
-                        borderRadius: 20,
-                    }}
-                />
-            </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('NewCoacheeProfile')}
+                >
+                    <Image
+                        source={{
+                            uri: coacheeData?.findCoacheeByID.profilePicture,
+                        }} // Add your profile image source here
+                        style={{
+                            width: 40,
+                            height: 40,
+                            marginLeft: '10%',
+                            marginTop: '-10%',
+                            borderRadius: 20,
+                        }}
+                    />
+                </TouchableOpacity>
             </View>
             <KeyboardAvoidingView
                 style={CoacheeDashboardStyle.container}
                 behavior={Platform.OS === 'android' ? 'height' : 'padding'}
             >
-        
                 <ScrollView
                     contentInsetAdjustmentBehavior="scrollableAxes"
                     style={{ marginTop: '10%', height: 360 }}
                     onScroll={Animated.event(
                         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                        { useNativeDriver: false }
-                      )}
-                      scrollEventThrottle={16}
+                        { useNativeDriver: false },
+                    )}
+                    scrollEventThrottle={16}
                 >
-                    <Animated.View style={[CoacheeDashboardStyle.frameContainer, { opacity: opacity }]}>
-            <Text style={CoacheeDashboardStyle.frameText}>
-              Find the right coach for you!
-            </Text>
-            <Text style={CoacheeDashboardStyle.frameDescription}>
-              Get trained by expert coaches in different sport fields
-            </Text>
-            <Image
-              source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')}
-              style={{
-                width: 120,
-                height: 120,
-                marginLeft: '65%',
-                marginTop: '-15%',
-              }}
-            />
-          </Animated.View>
+                    <Animated.View
+                        style={[
+                            CoacheeDashboardStyle.frameContainer,
+                            { opacity: opacity },
+                        ]}
+                    >
+                        <Text style={CoacheeDashboardStyle.frameText}>
+                            Find the right coach for you!
+                        </Text>
+                        <Text style={CoacheeDashboardStyle.frameDescription}>
+                            Get trained by expert coaches in different sport
+                            fields
+                        </Text>
+                        <Image
+                            source={require('../assets/19_Football_Academy-01_generated-removebg-preview.png')}
+                            style={{
+                                width: 120,
+                                height: 120,
+                                marginLeft: '65%',
+                                marginTop: '-15%',
+                            }}
+                        />
+                    </Animated.View>
 
                     <View style={{ flex: 1 }}>
-            <Text style={CoacheeDashboardStyle.header}>Choose a Sport!</Text>
+                        <Text style={CoacheeDashboardStyle.header}>
+                            Choose a Sport!
+                        </Text>
 
-            <TouchableOpacity style={CoacheeDashboardStyle.tourButton} onPress={handleTour}>
-                <Animated.View style={iconAnimationStyle}>
-                    <Icon name="information-circle-outline" size={24} color="#7E3FF0" />
-                </Animated.View>
-                <Text style={CoacheeDashboardStyle.tooltip}>Need help?</Text>
-                <TourModal visible={isTourVisible} onClose={closeTour} />
-            </TouchableOpacity>
-            <View style={{ flex: 1, justifyContent: 'center', padding: 30, bottom: '15%' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    
-                    <ScrollView
-                        ref={scrollViewRef}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={CoacheeDashboardStyle.sportsContainer}
-                    >
-                        <View style={CoacheeDashboardStyle.rows}>
-                            {sports.map((sport, index) => (
-                                <RadioButton.Item
-                                    key={index}
-                                    label={sport.label}
-                                    value={sport.value}
-                                    status={selectedSport === sport.value ? 'checked' : 'unchecked'}
-                                    labelStyle={CoacheeDashboardStyle.radioButtonLabel}
-                                    style={CoacheeDashboardStyle.radioButton}
-                                    onPress={() => handleSportSelection(sport.value)}
-                                    theme={{ colors: { accent: '#7E3FF0' } }}
+                        <TouchableOpacity
+                            style={CoacheeDashboardStyle.tourButton}
+                            onPress={handleTour}
+                        >
+                            <Animated.View style={iconAnimationStyle}>
+                                <Icon
+                                    name="information-circle-outline"
+                                    size={24}
+                                    color="#7E3FF0"
                                 />
-                            ))}
+                            </Animated.View>
+                            <Text style={CoacheeDashboardStyle.tooltip}>
+                                Need help?
+                            </Text>
+                            <TourModal
+                                visible={isTourVisible}
+                                onClose={closeTour}
+                            />
+                        </TouchableOpacity>
+                        <View
+                            style={{
+                                flex: 1,
+                                justifyContent: 'center',
+                                padding: 30,
+                                bottom: '15%',
+                            }}
+                        >
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <ScrollView
+                                    ref={scrollViewRef}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={
+                                        CoacheeDashboardStyle.sportsContainer
+                                    }
+                                >
+                                    <View style={CoacheeDashboardStyle.rows}>
+                                        {sports.map((sport, index) => (
+                                            <RadioButton.Item
+                                                key={index}
+                                                label={sport.label}
+                                                value={sport.value}
+                                                status={
+                                                    selectedSport ===
+                                                    sport.value
+                                                        ? 'checked'
+                                                        : 'unchecked'
+                                                }
+                                                labelStyle={
+                                                    CoacheeDashboardStyle.radioButtonLabel
+                                                }
+                                                style={
+                                                    CoacheeDashboardStyle.radioButton
+                                                }
+                                                onPress={() =>
+                                                    handleSportSelection(
+                                                        sport.value,
+                                                    )
+                                                }
+                                                theme={{
+                                                    colors: {
+                                                        accent: '#7E3FF0',
+                                                    },
+                                                }}
+                                            />
+                                        ))}
+                                    </View>
+                                </ScrollView>
+                                <Icon
+                                    name="chevron-forward"
+                                    size={23}
+                                    color="#7E3FF0"
+                                    onPress={handleIconPress}
+                                />
+                            </View>
                         </View>
-                    </ScrollView>
-                    <Icon
-                        name="chevron-forward"
-                        size={23}
-                        color="#7E3FF0"
-                        onPress={handleIconPress}
-                    />
-                </View>
-            </View>
-        </View>
-                    
+                    </View>
 
                     <View style={CoacheeDashboardStyle.topCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.greetings}>
                             Top Coaches
                         </Text>
                     </View>
-                   <View style={CoacheeDashboardStyle.profileTiles}>
-                    <CoachProfiles
-                        profiles={
-                            seeAllCoaches ? displayTopCoaches : displayTopCoaches.slice(0, 2)
-                        }
-                    />
-                   </View>
+                    <View style={CoacheeDashboardStyle.profileTiles}>
+                        <CoachProfiles
+                            profiles={
+                                seeAllCoaches
+                                    ? displayTopCoaches
+                                    : displayTopCoaches.slice(0, 2)
+                            }
+                        />
+                    </View>
 
                     <View style={CoacheeDashboardStyle.recCoachesContainer}>
                         <Text style={CoacheeDashboardStyle.greetings}>
@@ -461,9 +530,9 @@ if (RecommendedCoaches.length === 0) {
                             </Text>
                         </TouchableOpacity> */}
                     </View>
-                   <View style={CoacheeDashboardStyle.profileTiles}>
-                     <CoachProfiles profiles={RecommendedCoaches} />
-                   </View>
+                    <View style={CoacheeDashboardStyle.profileTiles}>
+                        <CoachProfiles profiles={RecommendedCoaches} />
+                    </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>
@@ -496,12 +565,11 @@ const CoacheeDashboardStyle = StyleSheet.create({
 
     topCoachesContainer: {
         paddingTop: '1%',
-        marginTop: "-15%",
+        marginTop: '-15%',
         marginLeft: '7%',
         flexDirection: 'row',
     },
     recCoachesContainer: {
-
         marginLeft: '7%',
         flexDirection: 'row',
     },
@@ -516,9 +584,9 @@ const CoacheeDashboardStyle = StyleSheet.create({
         fontFamily: 'Roboto',
         fontSize: 20,
         color: '#7E3FF0',
-        fontWeight: "400",
-        marginTop: "5%",
-        left: "9%",
+        fontWeight: '400',
+        marginTop: '5%',
+        left: '9%',
     },
     name: {
         fontFamily: 'Roboto',
@@ -582,7 +650,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
         marginRight: 'auto', // Set right margin to auto
         paddingHorizontal: '2.6%',
     },
-    
+
     searchBarContainer: {
         // Set the dimensions of the SearchBar container
         width: 300, // Adjust the width as needed
@@ -677,10 +745,10 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
     radioButtonLabel: {
         fontSize: 12, // Adjust the font size of the label
-        color: '#7E3FF0'
+        color: '#7E3FF0',
     },
     profileTiles: {
-        marginLeft: "3%"
+        marginLeft: '3%',
     },
     tourButton: {
         position: 'absolute',
@@ -691,12 +759,11 @@ const CoacheeDashboardStyle = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
     },
-      tooltip: {
+    tooltip: {
         marginTop: 5,
         fontSize: 12,
         color: '#7E3FF0',
     },
-
 });
 
 export default CoacheeDashboard;

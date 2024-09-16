@@ -14,7 +14,7 @@ import * as createMutation from './nexus-prisma/mutations/createMutations';
 import * as updateMutation from './nexus-prisma/mutations/updateMutations';
 // import * as fauxDeleteMutations from './nexus-prisma/mutations/fauxDeleteMutations';
 import * as subscriptions from './nexus-prisma/subscriptions/subscriptions';
-
+import { Context } from './nexus-prisma/context';
 import './generated/graphql-types'; // import types as side-effect
 // .d.ts files can only be "auto-imported" if they have no exports
 
@@ -81,6 +81,7 @@ const server = new ApolloServer({
         }
 
         const token = req.headers.authorization;
+        // const clientName = req.headers['apollographql-client-name'];
 
         if (!token) {
             throw new Error('No token provided');
@@ -88,7 +89,9 @@ const server = new ApolloServer({
 
         try {
             const decoded = jwt.verify(token, SECRET_KEY);
-            return context;
+
+            const contextWithUser = { ...context, decoded };
+            return contextWithUser;
         } catch (err) {
             console.error('Error:', err);
             throw err;

@@ -245,6 +245,13 @@ export const createBooking = mutationField('createBooking', {
         try {
             // Validate the booking input
             bookingSchema.validateSync(input);
+            // @ts-ignore
+            // console.log('ctx', context.decoded.userId);
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coachId) {
+                throw new Error("ID doesn't match");
+            }
 
             // Validate each slot in the slotsInput array
             for (const slot of slotsInput) {
@@ -286,6 +293,12 @@ export const createReview = mutationField('createReview', {
         try {
             // Validate the review input
             reviewSchema.validateSync(input);
+
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coacheeId) {
+                throw new Error("ID doesn't match");
+            }
 
             // Find a booking that matches both the coach ID and the coachee ID
             const booking = await context.db.booking.findFirst({
@@ -339,6 +352,12 @@ export const createCoachTask = mutationField('createCoachTask', {
             // Validate the task input
             coachTaskSchema.validateSync(input);
 
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coachId) {
+                throw new Error("ID doesn't match");
+            }
+
             // Create the coach task in the database
             const coachTask = await context.db.coachTask.create({
                 data: input,
@@ -367,6 +386,13 @@ export const createCoacheeTask = mutationField('createCoacheeTask', {
         try {
             // Validate the task input
             coacheeTaskSchema.validateSync(input);
+
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coacheeId) {
+                throw new Error("ID doesn't match");
+            }
+
             // Create the coachee task in the database
             const coacheeTask = await context.db.coacheeTask.create({
                 data: input,
@@ -486,6 +512,11 @@ export const createContact = mutationField('createContact', {
         try {
             // Validate the contact input
             contactSchema.validateSync(input);
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coacheeId) {
+                throw new Error("ID doesn't match");
+            }
 
             const existingContact = await context.db.contact.findFirst({
                 where: {
@@ -630,6 +661,8 @@ export const coacheeLogin = mutationField('coacheeLogin', {
         try {
             // Validate arguments using the yup schema
             loginSchema.validateSync({ email, password });
+
+            console.log(context);
 
             // Convert email to lowercase
             const lowerCaseEmail = email.toLowerCase();

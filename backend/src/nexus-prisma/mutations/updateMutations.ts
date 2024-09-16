@@ -51,6 +51,15 @@ export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
 
             updateProfileSchema.validateSync(input);
 
+
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== id) {
+                throw new Error("ID doesn't match");
+            }
+
+            // Check if the coachee with the given ID exists
+
             const existingCoachee = await context.db.coachee.findUnique({
                 where: { id },
             });
@@ -86,6 +95,14 @@ export const updateCoachProfile = mutationField('updateCoachProfile', {
             idSchema.validateSync({ id });
 
             updateProfileSchema.validateSync(input);
+
+
+            // @ts-ignore
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== id) {
+                throw new Error("ID doesn't match");
+            }
+
 
             const existingCoach = await context.db.coach.findUnique({
                 where: { id },
