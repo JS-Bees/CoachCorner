@@ -50,7 +50,6 @@ export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
             // Validate the ID using the idSchema
             idSchema.validateSync({ id });
 
-            // Validate the input using the updateCoacheeSchema
             updateProfileSchema.validateSync(input);
 
             // @ts-ignore
