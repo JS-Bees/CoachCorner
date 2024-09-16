@@ -751,3 +751,49 @@ export const findOneToOneServiceSlotsByCoachId = queryField(
         },
     },
 );
+
+export const findRecommendedCoaches = queryField('findRecommendedCoaches', {
+    type: list(Coach),
+    args: {
+        coacheeId: nonNull(intArg()),
+    },
+    resolve: async (_, { coacheeId }, context: Context) => {
+        const coacheeData = await context.db.coachee.findUnique({
+            where: { id: coacheeId, active: true }, // Include the 'active' condition
+            include: {
+                interests: true,
+            },
+        });
+        const sportType = coacheeData?.sport;
+
+        // const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
+        const coachesSameSport = await context.db.coach.findMany({
+            where: {
+                active: true,
+                sports: {
+                    some: {
+                        type: sportType,
+                    },
+                },
+            },
+            include: {
+                interests: true,
+            },
+        });
+
+        console.log(coachesSameSport);
+
+        const sortedCoaches = coachesSameSport.sort((a, b) => {
+            const aMatches = a.interests.filter((interest) =>
+                coacheeData.interests.some((i) => i.name === interest.name),
+            ).length;
+            const bMatches = b.interests.filter((interest) =>
+                coacheeData.interests.some((i) => i.name === interest.name),
+            ).length;
+            return bMatches - aMatches;
+        });
+
+        console.log(sortedCoaches.slice(0, 4));
+        return sortedCoaches.slice(0, 4);
+    },
+});
