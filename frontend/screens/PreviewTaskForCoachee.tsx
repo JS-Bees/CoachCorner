@@ -14,35 +14,35 @@ const PreviewTaskForCoachee = ({ route }: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
   const [newDescription, setNewDescription] = useState(description);
-  const [date, setDate] = useState(new Date(originalDate)); // Convert to JS Date
+  const [date, setDate] = useState(new Date(originalDate)); 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [, executeMutation] = useMutation(UpdateCoacheeTaskDocument);
 
   const handleEditTask = () => {
-    setIsEditing(true); // Enable editing when pressing the edit button
+    setIsEditing(true); 
   };
 
   const showDatePicker = () => {
-    setDatePickerVisibility(true); // Show date picker
+    setDatePickerVisibility(true); 
   };
 
   const hideDatePicker = () => {
-    setDatePickerVisibility(false); // Hide date picker
+    setDatePickerVisibility(false); 
   };
 
 
   const handleConfirm = (selectedDate: Date) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set today to midnight
+    today.setHours(0, 0, 0, 0); 
   
-    // Check if selectedDate is today or in the past
+ 
     if (selectedDate <= today) {
       Alert.alert("Invalid Date", "Please select a future date.");
     } else {
-      setDate(selectedDate); // Set new date
+      setDate(selectedDate); 
     }
   
-    hideDatePicker(); // Hide date picker modal
+    hideDatePicker(); 
   };
   
 
@@ -51,8 +51,8 @@ const PreviewTaskForCoachee = ({ route }: any) => {
       const result = await executeMutation({
           updateCoachTaskId: id,
           input: {
-            completionStatus: "UNCOMPLETED", // Default completion status
-            date: date.toISOString(), // Send as ISO 8601 formatted string
+            completionStatus: "UNCOMPLETED", 
+            date: date.toISOString(), 
             description: newDescription,
             title: newTitle,
           },
@@ -62,7 +62,7 @@ const PreviewTaskForCoachee = ({ route }: any) => {
         console.error("Error updating task:", result.error);
         Alert.alert("Error", "Failed to update task. Please try again.");
       } else {
-        setIsEditing(false); // Disable editing after successful mutation
+        setIsEditing(false); 
         Alert.alert(
           "Success",
           "Task updated successfully!",
@@ -70,7 +70,7 @@ const PreviewTaskForCoachee = ({ route }: any) => {
             {
               text: "OK",
               onPress: () => {
-                navigation.goBack(); // Navigate back on success
+                navigation.goBack(); 
               },
             },
           ]
@@ -83,7 +83,7 @@ const PreviewTaskForCoachee = ({ route }: any) => {
   };
 
   const convertToDate = (dateObj: Date) => {
-    return dateObj.toLocaleDateString(); // Format to a readable date
+    return dateObj.toLocaleDateString(); 
   };
 
   const handleNavigateBack = () => {
@@ -117,7 +117,7 @@ const PreviewTaskForCoachee = ({ route }: any) => {
           <TextInput
             style={[styles.input, isEditing && styles.inputEditable]} 
             value={convertToDate(date)}
-            editable={false} // Text field not editable, but clickable when editing
+            editable={false} 
           />
         </TouchableOpacity>
         
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     color: '#838086',
   },
   inputEditable: {
-    borderColor: '#7E3FF0', // Change border color when editable
+    borderColor: '#7E3FF0', 
     borderWidth: 1
     
   },
@@ -200,9 +200,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     left: "3%",
-    borderRadius: 50, // Ensures a circular shape
-    borderWidth: 1, // Adjust as needed
-    borderColor: '#7E3FF0', // Choose your border color
+    borderRadius: 50, 
+    borderWidth: 1, 
+    borderColor: '#7E3FF0', 
     width: "25%",
   },
   saveButtonText: {
@@ -216,9 +216,9 @@ const styles = StyleSheet.create({
   },
   editButtonBorder: {
     paddingVertical: 10,
-    borderRadius: 50, // Ensures a circular shape
-    borderWidth: 1, // Adjust as needed
-    borderColor: '#7E3FF0', // Choose your border color
+    borderRadius: 50, 
+    borderWidth: 1, 
+    borderColor: '#7E3FF0', 
     width: "25%",
     alignItems: "center"
   },

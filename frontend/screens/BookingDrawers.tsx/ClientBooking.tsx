@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Modal, Button} from 'react-native'
 import { Divider, Text} from 'react-native-paper';
@@ -34,7 +34,7 @@ const ClientBookingDrawer= () => {
     };
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [isModalVisible, setIsModalVisible] = useState(false);    
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const route = useRoute()
@@ -61,54 +61,53 @@ const ClientBookingDrawer= () => {
     }, []);
 
     const [{ data: coacheeData, fetching, error }]  = useQuery({
-        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        query: FindCoacheeByIdDocument, 
         variables: {
-            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userID: parseInt(userToken), 
         },
-        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network',
     });
 
   
     useEffect(() => {
     if (coachId) {
-        // Extract relevant booking data for the coach
+ 
         const coachBookings = coacheeData?.findCoacheeByID?.bookings || [];
 
-        // Check if there is a pending booking status for the coach with the coachee
+
         const hasPendingBooking = coachBookings.some(
             (booking) => booking.coachId === coachId && BookingStatus.Pending
         );
 
-        setIsButtonDisabled(!hasPendingBooking ); // Disable the button if there are no pending bookings
+        setIsButtonDisabled(!hasPendingBooking ); 
     }
     }, [coacheeData, coachId]);
 
-    // Keith
+ 
     const handleBookingAction = () => {
-        // Function to be called when booking is confirmed or canceled
+
         setIsButtonDisabled(true);
       };
-    // End Keith
 
     const handleOpenBottomSheet = () => {
-        if (coachId && coach && !isButtonDisabled) { // Add a condition to check if the button is not disabled
+        if (coachId && coach && !isButtonDisabled) { 
           const coachBookings = coacheeData?.findCoacheeByID?.bookings || [];
           const hasPendingBooking = coachBookings.some(
             (booking) => booking.coachId === coachId && booking.status === BookingStatus.Pending
           );
       
           if (hasPendingBooking) {
-            setIsDrawerVisible(true); // Show the bottom sheet if there is a pending booking
+            setIsDrawerVisible(true); 
           } else {
-            setIsButtonDisabled(true);  // Automatically disable the button if there are no pending bookings
+            setIsButtonDisabled(true);  
           }
         } else {
-          console.log('Invalid coach, coachId, or button is disabled'); // Log an error if coach, coachId is missing, or the button is disabled
+          console.log('Invalid coach, coachId, or button is disabled'); 
         }
     };
     
     const handleClose = () => {
-        setIsDrawerVisible(false); // Close the bottom sheet
+        setIsDrawerVisible(false); 
       };
 
   
@@ -137,14 +136,14 @@ const ClientBookingDrawer= () => {
             onPress={handleOpenBottomSheet}
             style={[
              styles.button,
-             isButtonDisabled && styles.disabledButton, // Apply disabled styles if isButtonDisabled is true
+             isButtonDisabled && styles.disabledButton, 
             ]}
-            disabled={isButtonDisabled} // Disable the button based on isButtonDisabled
+            disabled={isButtonDisabled} 
             >
             <MaterialCommunityIcons
              name="book-account-outline"
             size={40}
-            color={isButtonDisabled ? 'grey' : '#6E5DB0'} // Change color if button is disabled
+            color={isButtonDisabled ? 'grey' : '#6E5DB0'}
             />
             </TouchableOpacity>
 
@@ -154,7 +153,6 @@ const ClientBookingDrawer= () => {
                 transparent={true}
                 visible={isDrawerVisible}
                 onRequestClose={handleOpenBottomSheet}>  
-                {/* Keith handleBookingAction*/}
                 {isDrawerVisible && <ConfirmBookingDrawer onClose={handleClose} onBookingAction={handleBookingAction}/>}
             </Modal>
             
@@ -220,7 +218,7 @@ const styles = StyleSheet.create ({
     },
 
     iconContainer: {
-        alignItems: 'center', // Center the icon horizontally
+        alignItems: 'center', 
         marginLeft: '70%',
         marginTop: '-3%'
       },

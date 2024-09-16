@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import CoacheeProfile from '../path-to-your-component/CoacheeProfile'; // Adjust the import according to your project structure
+import CoacheeProfile from '../path-to-your-component/CoacheeProfile'; 
 import { useNavigation } from '@react-navigation/native';
 import { useQuery, useMutation } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Mock the dependencies
+
 jest.mock('@react-navigation/native', () => ({
     useNavigation: jest.fn(),
 }));
@@ -113,7 +113,7 @@ describe('CoacheeProfile', () => {
         const logoutButton = getByRole('button', { name: /sign-out/i });
         fireEvent.press(logoutButton);
 
-        const confirmButton = getByText('Confirm'); // Adjust this according to your modal's confirm button text
+        const confirmButton = getByText('Confirm'); 
         fireEvent.press(confirmButton);
 
         await waitFor(() => {

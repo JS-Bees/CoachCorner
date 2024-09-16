@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { useMutation } from 'urql';
 
-// Mock dependencies
+
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
 }));
@@ -60,7 +60,7 @@ describe('AddTaskPageForCoach', () => {
     });
 
     const invalidDate = new Date();
-    invalidDate.setDate(invalidDate.getDate() - 1); // Yesterday
+    invalidDate.setDate(invalidDate.getDate() - 1); 
 
     act(() => {
       fireEvent(getByText('Confirm'), 'onPress', invalidDate);

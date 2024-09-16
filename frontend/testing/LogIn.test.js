@@ -1,15 +1,15 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import LogIn from '../path/to/LogIn'; // Adjust the import path as necessary
+import LogIn from '../path/to/LogIn'; 
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from 'urql';
 
-// Mocking useNavigation
+
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
 }));
 
-// Mocking urql useQuery hook
+
 jest.mock('urql', () => ({
   useQuery: jest.fn(),
 }));
@@ -24,7 +24,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   setItem: jest.fn(),
 }));
 
-// Mocking AsyncStorage
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 describe('LogIn Component', () => {

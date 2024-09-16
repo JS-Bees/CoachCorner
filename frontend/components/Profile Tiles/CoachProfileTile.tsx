@@ -38,7 +38,7 @@ const CoachProfiles: React.FC<CoachProfilesProp> = ({ profiles }) => {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
  
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
   const [showAll, setShowAll] = useState(false);
   const visibleProfiles = showAll ? profiles : profiles.slice();
 
@@ -59,8 +59,8 @@ const CoachProfiles: React.FC<CoachProfilesProp> = ({ profiles }) => {
           key={index}
           style={[
             CoachProfileStyle.coachBoxes,
-            index % 2 === 1 ? { marginLeft: '9%' } : null, // Add marginLeft for every second tile
-            index >= 2 ? { marginTop: '5%' } : null // Add marginTop for tiles starting from the third one
+            index % 2 === 1 ? { marginLeft: '9%' } : null, 
+            index >= 2 ? { marginTop: '5%' } : null 
           ]}
           onPress={() => handleProfileClick(profile)}
         >
@@ -102,9 +102,9 @@ const CoachProfileStyle = StyleSheet.create({
     coachBoxes: {
       backgroundColor: 'white',
       marginTop: '5%',
-      marginLeft: '5%', // Adjust the margin for better alignment
-      width: (screenWidth * 0.38), // Adjust the percentage as needed
-      height: (screenHeight * 0.19), // Adjust the percentage as needed
+      marginLeft: '5%', 
+      width: (screenWidth * 0.38), 
+      height: (screenHeight * 0.19), 
       borderRadius: 16,
       borderColor: '#7E3FF0',
       borderWidth: 1,

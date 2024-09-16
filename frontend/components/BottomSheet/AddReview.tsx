@@ -9,7 +9,7 @@ import { CreateReviewDocument } from '../../generated-gql/graphql';
 interface AddReviewProps {
   isVisible: boolean;
   onClose: () => void;
-  coachId: number; // You should ensure that coachId is passed to this component
+  coachId: number; 
 }
 
 const AddReviewBottomSheet: React.FC<AddReviewProps> = ({ isVisible, onClose, coachId }) => {
@@ -43,11 +43,10 @@ const AddReviewBottomSheet: React.FC<AddReviewProps> = ({ isVisible, onClose, co
   };
 
   const onChangeText = (text: string) => {
-    // Split the text into words and count the number of words
     const words = text.trim().split(/\s+/);
     setWordCount(words.length);
   
-    // Update the text if the word count is less than or equal to the limit
+
     if (words.length <= maxWords) {
       setText(text);
     }
@@ -90,7 +89,7 @@ const AddReviewBottomSheet: React.FC<AddReviewProps> = ({ isVisible, onClose, co
     try {
       const reviewData = {
         coachId: coachId,
-        coacheeId: parseInt(userToken, 10), // Ensure userToken is correctly converted to a number
+        coacheeId: parseInt(userToken, 10), 
         comment: text,
         starRating: rating,
       };
@@ -101,7 +100,7 @@ const AddReviewBottomSheet: React.FC<AddReviewProps> = ({ isVisible, onClose, co
 
       Alert.alert('Success', 'Review submitted successfully!');
 
-      onClose(); // Close the bottom sheet after successful submission
+      onClose(); 
     } catch (error) {
       Alert.alert('Error', 'An error occurred while submitting the review.');
       console.error('Error submitting review:', error);

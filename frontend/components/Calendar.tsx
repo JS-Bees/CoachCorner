@@ -3,7 +3,7 @@ const formatSessionsForCalendar = (sessions) => {
   
     sessions.forEach((session) => {
       session.date.forEach((date) => {
-        const formattedDate = new Date(date).toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
+        const formattedDate = new Date(date).toISOString().split('T')[0]; 
         if (!calendarData[formattedDate]) {
           calendarData[formattedDate] = [];
         }

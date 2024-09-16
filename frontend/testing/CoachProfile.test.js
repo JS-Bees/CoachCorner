@@ -6,20 +6,20 @@ import { useQuery, useMutation } from 'urql';
 import { useNavigation } from '@react-navigation/native';
 import '@testing-library/jest-native/extend-expect';
 
-// Mock AsyncStorage
+
 jest.mock('@react-native-async-storage/async-storage', () => ({
     getItem: jest.fn(),
     removeItem: jest.fn(),
     clear: jest.fn(),
 }));
 
-// Mock urql hooks
+
 jest.mock('urql', () => ({
     useQuery: jest.fn(),
     useMutation: jest.fn(),
 }));
 
-// Mock navigation
+
 jest.mock('@react-navigation/native', () => ({
     useNavigation: jest.fn(),
 }));
@@ -104,7 +104,7 @@ describe('CoachProfile', () => {
 
         fireEvent.press(getByRole('button', { name: 'Save changes' }));
         
-        // Check if the mutation is called
+ 
         await waitFor(() => {
             expect(useMutation).toHaveBeenCalled();
         });

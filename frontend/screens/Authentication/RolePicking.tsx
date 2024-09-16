@@ -81,7 +81,7 @@ const Rolepickingstyle = StyleSheet.create({
         textAlign: 'left',
     },
     svgContainer: {
-        justifyContent: 'flex-start', // Align to the top
+        justifyContent: 'flex-start', 
         alignItems: 'center',
         position: 'absolute',
         width: width,
@@ -96,7 +96,6 @@ const Rolepickingstyle = StyleSheet.create({
         zIndex: 0,
     },
    
-  
 
     icons: {
         paddingTop: '15%',

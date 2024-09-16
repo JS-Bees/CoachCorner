@@ -30,12 +30,12 @@ import SplashScreen from './Authentication/LoadingSplash';
 const { width, height } = Dimensions.get('window');
 
 const MyClients_alt = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [userToken, setUserToken] = useState<string | null>(null);
     const [searchText, setSearchText] = useState('');
-    const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
-    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); // State to keep track of last refetch time
+    const [activeButton, setActiveButton] = useState('All'); 
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); 
     const pollingInterval = 1000;
 
     const handleSearchChange = (text: string) => {
@@ -77,7 +77,7 @@ const MyClients_alt = () => {
     const [result, refetch] = useQuery({
         query: FindCoacheesOfCoachDocument,
         variables: {
-            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+            userId: userToken ? parseInt(userToken) : 0,
         },
         requestPolicy: 'cache-and-network',
     });
@@ -88,7 +88,6 @@ const MyClients_alt = () => {
         const interval = setInterval(() => {
             refetch();
             setLastRefetchTime(new Date());
-            // console.log('Refetching data at', new Date().toLocaleTimeString());
         }, pollingInterval);
 
         return () => clearInterval(interval);
@@ -116,7 +115,6 @@ const MyClients_alt = () => {
         });
 
     console.log(contacts);
-    // Filter coachees based on search text
     const filteredCoachees = FavoriteCoachees.filter(coachee =>
         `${coachee.name}`.toLowerCase().includes(searchText.toLowerCase())
    );
@@ -136,7 +134,7 @@ const MyClients_alt = () => {
 
             <TouchableOpacity onPress={navigateToCoacheeProfile}>
                 <Image
-                    source={{ uri: coachData?.findCoachByID.profilePicture }} // Add your profile image source here
+                    source={{ uri: coachData?.findCoachByID.profilePicture }} 
                     style={{
                         width: 40,
                         height: 40,
@@ -166,16 +164,16 @@ const MyClients_alt = () => {
   contentInsetAdjustmentBehavior="scrollableAxes"
   style={{ marginTop: '1%', height: 250, left: 12 }}
   contentContainerStyle={{
-    flexGrow: 1, // Ensures the container fills available space
-    justifyContent: filteredCoachees.length > 0 ? 'flex-start' : 'center', // Center if no trainees
-    alignItems: filteredCoachees.length > 0 ? 'flex-start' : 'center', // Align horizontally
+    flexGrow: 1, 
+    justifyContent: filteredCoachees.length > 0 ? 'flex-start' : 'center', 
+    alignItems: filteredCoachees.length > 0 ? 'flex-start' : 'center', 
   }}
 >
   {filteredCoachees.length > 0 ? (
-    // Display coachees when they exist
+
     <CoacheeProfile coacheeProfiles={filteredCoachees} />
   ) : (
-    // Center the "No trainee found" text when there are no coachees
+
     <Text style={{ color: 'grey', fontSize: 18, marginBottom: '40%', textAlign: 'center',}}>No trainee found.</Text>
   )}
 </ScrollView>
@@ -191,12 +189,12 @@ const MyCoaches = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
 
     nameAndGreetingsContainer: {
@@ -215,15 +213,15 @@ const MyCoaches = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -245,23 +243,22 @@ const MyCoaches = StyleSheet.create({
         height: 65,
     },
     searchContainer: {
-        borderWidth: 3, // Add a border
+        borderWidth: 3, 
         width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
+        borderColor: '#7E3FF0', 
+        borderRadius: 15, 
         marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
+        marginLeft: 'auto', 
+        marginRight: 'auto', 
         paddingHorizontal: '2.6%',
     },
     searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
+        width: 300, 
+        height: 40, 
     },
 
     searchBarInputContainer: {
-        height: '100%', // Match the height of the container
+        height: '100%', 
     },
 
     frameContainer: {
@@ -274,24 +271,24 @@ const MyCoaches = StyleSheet.create({
         borderRadius: 16,
     },
     AllCoachesButton: {
-        width: 110, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: 110,
+        height: 50,
         marginTop: '5%',
         marginLeft: '8%',
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     FavoriteCoachesButton: {
-        width: 140, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: 140, 
+        height: 50, 
         marginTop: '-13%',
         marginLeft: '55%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     buttonText: {
         color: 'white',

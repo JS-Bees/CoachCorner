@@ -16,7 +16,7 @@ const AddTaskPage = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  const [userToken, setUserToken] = useState<string | null>(null); 
   const [, executeMutation] = useMutation(CreateCoacheeTaskDocument);
 
   useEffect(() => {
@@ -42,16 +42,15 @@ const AddTaskPage = () => {
 
   const handleConfirm = (selectedDate: Date) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set today to midnight
-  
-    // Check if selectedDate is today or in the past
+    today.setHours(0, 0, 0, 0); 
+
     if (selectedDate <= today) {
       Alert.alert("Invalid Date", "Please select a future date.");
     } else {
-      setDate(selectedDate); // Set new date
+      setDate(selectedDate); 
     }
   
-    hideDatePicker(); // Hide date picker modal
+    hideDatePicker(); 
   };
 
   
@@ -60,18 +59,18 @@ const AddTaskPage = () => {
   };
 
   const handleSave = async () => {
-    // Validate that all required inputs are filled in
+   
     if (!title || !description || !date) {
       Alert.alert('Missing Data', 'Please fill in all required inputs: Title, Date, and Description.');
-      return; // Exit the function without executing the mutation
+      return; 
     }
 
     try {
       const result = await executeMutation({
           input: {
-            coacheeId: parseInt(userToken), // Ensure proper conversion to integer
+            coacheeId: parseInt(userToken), 
             completionStatus: "UNCOMPLETED",
-            date: date.toISOString(), // Format date to ISO 8601
+            date: date.toISOString(),
             description: description,
             title: title,
           },
@@ -88,7 +87,7 @@ const AddTaskPage = () => {
           [
             {
               text: "OK",
-              onPress: handleNavigateBack, // Navigate back after success
+              onPress: handleNavigateBack, 
             },
           ]
         );
@@ -98,10 +97,10 @@ const AddTaskPage = () => {
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
     }
 
-    // Reset input fields
+ 
     setTitle('');
     setDescription('');
-    setDate(new Date()); // Reset date to current date
+    setDate(new Date()); 
   };
 
   const handleDelete = () => {

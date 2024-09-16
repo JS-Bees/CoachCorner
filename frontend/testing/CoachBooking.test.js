@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import CoachBookingDrawer from '../path/to/CoachBookingDrawer'; // Adjust the import path as necessary
+import CoachBookingDrawer from '../path/to/CoachBookingDrawer'; 
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useQuery } from 'urql';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Mocking dependencies
+
 jest.mock('@react-navigation/native', () => ({
   useRoute: jest.fn(),
   useNavigation: jest.fn(),

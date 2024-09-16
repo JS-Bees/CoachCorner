@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React from 'react';
 import { StyleSheet, View, Image, TouchableOpacity, Modal} from 'react-native'
 import BookingDrawer from '../../components/BottomSheet/BookingDrawer';
@@ -48,7 +48,7 @@ const CoachBookingDrawer = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
   
 
     useEffect(() => {
@@ -66,11 +66,11 @@ const CoachBookingDrawer = () => {
     }, []);
 
     const [{ data: coachData, fetching, error }]  = useQuery({
-        query: FindCoachByIdDocument, // Use the Coachee query document
+        query: FindCoachByIdDocument, 
         variables: {
-            userID: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userID: parseInt(userToken), 
         },
-        requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network',
     });
     
 
@@ -177,7 +177,7 @@ const styles = StyleSheet.create ({
     },
 
     iconContainer: {
-        alignItems: 'center', // Center the icon horizontally
+        alignItems: 'center', 
         marginLeft: '70%',
         marginTop: '-3%'
       },

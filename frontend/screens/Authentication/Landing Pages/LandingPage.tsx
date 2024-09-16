@@ -44,7 +44,7 @@ const slides = [
 
 const LandingPage: React.FC<LandingPageProps> = ({ navigation, route }) => {
     const [showRealApp, setShowRealApp] = useState(false);
-    const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // Track the current slide index
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0); 
     const userType = route.params?.userType;
 
     const _renderItem = ({ item, index }: { item: SlideItem; index: number }) => {
@@ -80,14 +80,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ navigation, route }) => {
 
     const _renderNextButton = () => {
         // Set color based on the current slide index
-        const buttonColor = currentSlideIndex === 0 ? 'white' : '#7E3FF0'; // White for the first slide, purple for others
+        const buttonColor = currentSlideIndex === 0 ? 'white' : '#7E3FF0'; 
         return (
             <Text style={[styles.nextButtonText, { color: buttonColor }]}>NEXT</Text>
         );
     };
 
     const onSlideChange = (index: number) => {
-        setCurrentSlideIndex(index); // Update the slide index on slide change
+        setCurrentSlideIndex(index); 
     };
 
     return (
@@ -96,7 +96,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ navigation, route }) => {
             data={slides}
             renderDoneButton={_renderDoneButton}
             renderNextButton={_renderNextButton}
-            onSlideChange={onSlideChange} // Track slide changes
+            onSlideChange={onSlideChange} 
             bottomButton={false}
         />
     );

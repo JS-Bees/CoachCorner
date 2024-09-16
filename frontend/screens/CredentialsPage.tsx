@@ -8,24 +8,24 @@ import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// Get screen dimensions
+
 const { width, height } = Dimensions.get('window');
 
 const CredentialsPage = () => {
-  const route = useRoute(); // Get the route parameters
+  const route = useRoute(); 
   const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
-  const { coachId } = route.params; // Retrieve the coachId from the parameters
-  const [refreshing, setRefreshing] = useState(false); // State for refreshing
+  const { coachId } = route.params; 
+  const [refreshing, setRefreshing] = useState(false); 
 
   const handleNavigateBack = () => {
     navigation.goBack();
   };
 
-  // Fetch the coach data using the coachId
+
   const [{ data, fetching, error }, reexecuteQuery] = useQuery({
     query: FindCoachByIdDocument,
     variables: {
-      userId: coachId, // The ID passed from PreviewPage
+      userId: coachId, 
     },
   });
 
@@ -53,7 +53,7 @@ const CredentialsPage = () => {
     );
   }
 
-  // Get the sportsCredentials array from the data
+
   const sportsCredentials = data?.findCoachByID?.sports?.[0]?.sportsCredentials;
 
   return (
@@ -96,10 +96,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   credentialImage: {
-    width: width * 0.8, // 80% of the screen width
-    height: height * 0.5, // 50% of the screen height
+    width: width * 0.8, 
+    height: height * 0.5, 
     borderRadius: 10,
-    marginVertical: 10, // Reduced vertical margin between images
+    marginVertical: 10, 
   },
   noCredentialsText: {
     fontSize: 18,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     color: "#7E3FF0",
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10, // Add some space between the title and the images
+    marginBottom: 10, 
   },
   icon: {
     bottom: "5%",

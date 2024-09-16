@@ -21,7 +21,7 @@ const ChooseVideoGames = ({route}) => {
         Hobbies: false,
     });
  
-    const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
+    const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee  } = route.params;
     const { selectedHobbies } = route.params;
     const { selectedSports } = route.params;
 
@@ -32,10 +32,10 @@ const ChooseVideoGames = ({route}) => {
         const checkedCount = Object.values(newCheckedGames).filter((value) => value).length;
   
         if (checkedCount === 4 && !newCheckedGames[BookGenre]) {
-          // If trying to check more than 4, uncheck the current checkbox
+
           newCheckedGames[BookGenre] = false;
         } else {
-          // Toggle the state of the clicked checkbox
+       
           newCheckedGames[BookGenre] = !newCheckedGames[BookGenre];
         }
   
@@ -52,17 +52,17 @@ const ChooseVideoGames = ({route}) => {
 
 
     const handleButtonPress = () => {
-      // Filter out the selected hobbies
+  
       const selectedGames = Object.keys(checkedGames)
           .filter(BookGenre => checkedGames[BookGenre])
           .map(BookGenre => ({
             BookGenre
           }));
       
-      // Log the selected hobbies data
+
       console.log(selectedGames);
       console.log(firstName)
-      // Navigate to the next screen
+ 
       navigation.navigate("InterestPickingMovie", 
       { selectedSports,
         selectedHobbies, 

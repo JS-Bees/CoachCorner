@@ -45,7 +45,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     const [createBookingResult, createBookingMutation] = useMutation(CreateBookingDocument);
     const [serviceType, setServiceType] = useState<string | null>(null);
     const [additionalNotes, setAdditionalNotes] = useState(' ');
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
     const [open, setOpen] = useState(false);
@@ -60,8 +60,8 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
 
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const handleNavigateBack = () => {
-        setSuccessModalVisible(false); // Close the SuccessModal
-        navigation.goBack(); // Navigate back to the previous screen
+        setSuccessModalVisible(false); 
+        navigation.goBack(); 
     };
     
 
@@ -70,9 +70,8 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     };
 
     const handleAddSlot = (startTime: string, endTime: string, date: string) => {
-        // Check if the number of selected slots is less than 3
+
         if (selectedSlots.length < 3) {
-            // Check if the new slot overlaps with any existing slot
             const isOverlapping = selectedSlots.some(slot => {
                 return slot.date === date && (
                     (startTime >= slot.startTime && startTime < slot.endTime) ||
@@ -83,19 +82,19 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     
             if (isOverlapping) {
                 alert("You cannot select overlapping slots.");
-                return; // Exit function if slots overlap
+                return; 
             }
     
-            // If no overlapping slots, add the new slot
+   
             const newSlot = { startTime, endTime, date };
             setSelectedSlots([...selectedSlots, newSlot]);
         } else {
-            // Alert the user or provide some feedback that they can't add more slots
+     
             console.log('You can only select up to 3 slots.');
             alert("You can only select up to 3 slots");
         }
     
-        handleToggleAddSlotModal(); // Close the modal after adding or alerting
+        handleToggleAddSlotModal(); 
     };
     
 
@@ -105,10 +104,10 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
     const handleCreateBooking = async () => {
         setIsBookingProcessing(true);
     
-        // Ensure selectedSlots is defined and populated
+
         if (!selectedSlots || selectedSlots.length === 0) {
             alert("No slots selected. Please select a slot and try again.");
-            setIsBookingProcessing(false); // Reset the processing state
+            setIsBookingProcessing(false); 
             return;
         }
 
@@ -118,20 +117,20 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
             return;
         }
     
-        // Define slotsInput based on selectedSlots
+
         const slotsInput = selectedSlots.map(slot => {
             const date = parse(slot.date, 'EEEE, do MMMM', new Date());
     
-            // Format startTime and endTime to ISO 8601 format
+
             const startTime = parse(slot.startTime, "hh:mm a", new Date())
             const endTime = parse(slot.endTime, "hh:mm a", new Date())
 
             console.log(date, startTime, endTime)
     
-            // Include the date in the slotsInput array
+
             return {
                 status: 'UPCOMING',
-                date: formatISO(date), // Format the date as an ISO 8601 string
+                date: formatISO(date), 
                 startTime,
                 endTime,
             };
@@ -150,7 +149,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
         try {
             const { data, error } = await createBookingMutation({
                 input,
-                slotsInput // Use slotsInput in your mutation
+                slotsInput 
             });
     
             if (error) {
@@ -244,7 +243,7 @@ const NewBookingPage: React.FC<NewBookingPageProps> = ({ route }) => {
                     </View>
 
                     <Text style={styles.subheaderText}> Service Type </Text>
-                    {/* <CustomInput multiline={false} onChangeText={text => setServiceType(text)}/> */}
+
 
                     <ServiceTypePicker setServiceType={setServiceType} />
                     
@@ -305,7 +304,7 @@ const styles = StyleSheet.create({
     },
     subContentContainer: {
         padding: "2%",
-        paddingBottom: 50, // Ensure there is enough padding at the bottom for the button
+        paddingBottom: 50, 
     },
     slotHeader: {
         flexDirection: "row"

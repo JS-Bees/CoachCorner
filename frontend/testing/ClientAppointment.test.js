@@ -61,7 +61,7 @@ describe('ClientAppointments', () => {
         data: {
           findCoacheeByID: {
             bookings: [
-              { coachId: '2', status: 'Pending' }, // Different coachId to simulate no pending bookings for the current coach
+              { coachId: '2', status: 'Pending' }, 
             ],
           },
         },
@@ -77,5 +77,5 @@ describe('ClientAppointments', () => {
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
 
-  // Add more tests for other interactions and states
+  
 });

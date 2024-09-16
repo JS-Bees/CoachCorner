@@ -8,7 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+import * as ImagePicker from 'expo-image-picker'; 
 import { ActivityIndicator } from 'react-native-paper';
 
 
@@ -64,7 +64,7 @@ const handleNavigateBack = () => {
 
 const uploadImageToCloudinary = async (imageObject: any) => {
   try {
-    setLoading(true); // Start loading
+    setLoading(true); 
     const uploadPreset = 'coachcorner';
     const formData = new FormData();
     formData.append('file', imageObject);
@@ -79,10 +79,10 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     );
 
     const cloudinaryData = await cloudinaryResponse.json();
-    setLoading(false); // Stop loading after upload
+    setLoading(false); 
     return cloudinaryData.secure_url;
   } catch (error) {
-    setLoading(false); // Stop loading if error
+    setLoading(false); 
     console.error('Error uploading image to Cloudinary:', error);
     throw error;
   }
@@ -100,7 +100,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
        if (pickerResult.canceled) {
          return;
        }
-       // Ensure you're accessing the first asset's uri
+  
        const imageUri = pickerResult.assets[0].uri;
        
        const imageObject = {
@@ -109,12 +109,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         name: `test.${imageUri.split('.')[1]}`
        }
 
-       // Upload the selected image to Cloudinary
+   
        const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
        setEditedProfilePicture(uploadedImageUrl)
        console.log('Uploaded image URL:', uploadedImageUrl);
    
-       // Here you can use the uploadedImageUrl as needed, e.g., updating your state or database
+
    
     } catch (error) {
        console.error('Error picking an image:', error);
@@ -122,7 +122,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
    };
 
    const handleSaveChanges = async () => {
-    // Check if profile information has changed
+
     const noProfileChanges =
       (!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) ||
       (editedBio.trim() === coacheeData?.findCoacheeByID.bio &&
@@ -150,7 +150,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         throw new Error(profileResult.error.message);
       }
   
-      // Update profile information locally
+
       if (editedBio.trim()) {
         setEditedBio(editedBio);
       }
@@ -163,10 +163,10 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       Alert.alert('Error saving profile changes. Please try again.');
     }
   
-    // Step 1: Retrieve the current interests and selected genres
+
     const existingInterests = coacheeData?.findCoacheeByID?.interests || [];
   
-    // Step 2: Flatten the selected genres
+
     const selectedGenres = lists.flatMap((list) => {
       return list.items
         .filter((item) => item.checked)
@@ -178,13 +178,13 @@ const uploadImageToCloudinary = async (imageObject: any) => {
   
     const interestsInput = [];
   
-    // Step 3: Create a function to add or replace interests
+
     const ensureInterests = (existing, selected, type) => {
       const requiredGenres = 3 - selected.length;
       const existingOfType = existing.filter((e) => e.type === type);
   
       if (requiredGenres > 0) {
-        // Fill with existing interests if needed
+  
         const toAdd = existingOfType.slice(0, requiredGenres);
         interestsInput.push(
           ...selected,
@@ -195,7 +195,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
           }))
         );
       } else {
-        // Use existing IDs for the selected genres
+
         interestsInput.push(
           ...selected.map((s, i) => ({
             id: existingOfType[i].id,
@@ -206,7 +206,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       }
     };
   
-    // Step 4: Add or replace genres with existing interests if needed
+
     ensureInterests(existingInterests, selectedGenres.filter((g) => g.type === 'MovieGenre'), 'MovieGenre');
     ensureInterests(existingInterests, selectedGenres.filter((g) => g.type === 'BookGenre'), 'BookGenre');
     ensureInterests(existingInterests, selectedGenres.filter((g) => g.type === 'MusicGenre'), 'MusicGenre');
@@ -232,16 +232,15 @@ const uploadImageToCloudinary = async (imageObject: any) => {
   
 
     const [{ data: coacheeData, fetching, error }] = useQuery({
-        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        query: FindCoacheeByIdDocument, 
         variables: {
-            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userId: parseInt(userToken), 
         },
-        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network', 
     });
     
     useEffect(() => {
       if (coacheeData && coacheeData.findCoacheeByID) {
-        // Set editedProfilePicture to the existing profile picture if it exists
         if (!editedProfilePicture && coacheeData.findCoacheeByID.profilePicture) {
           setEditedProfilePicture(coacheeData.findCoacheeByID.profilePicture);
         }
@@ -305,7 +304,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       let bookGenreCount = 0;
       let musicGenreCount = 0;
   
-      // Count the number of checked items in each category
+
       updatedLists.forEach(list => {
         list.items.forEach(item => {
           if (item.checked) {
@@ -326,28 +325,28 @@ const uploadImageToCloudinary = async (imageObject: any) => {
         });
       });
   
-      // Check if the maximum limit (3) is reached for the respective category
+
       switch (updatedLists[listIndex].title) {
         case 'MovieGenre':
           if (movieGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
-            return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
+            return updatedLists; 
           }
           break;
         case 'BookGenre':
           if (bookGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
-            return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
+            return updatedLists; 
           }
           break;
         case 'MusicGenre':
           if (musicGenreCount >= 3 && !updatedLists[listIndex].items[itemIndex].checked) {
-            return updatedLists; // If the limit is reached and the current checkbox is unchecked, do nothing
+            return updatedLists; 
           }
           break;
         default:
           break;
       }
   
-      // Toggle the checkbox
+ 
       updatedLists[listIndex].items[itemIndex].checked = !updatedLists[listIndex].items[itemIndex].checked;
       
       return updatedLists;
@@ -403,7 +402,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
   
     <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges} disabled={spinnerLoading}>
       {spinnerLoading ? (
-        <ActivityIndicator color="#fff" /> // Spinner while loading
+        <ActivityIndicator color="#fff" /> 
       ) : (
         <Text style={styles.saveText}>Save</Text>
       )}
@@ -414,7 +413,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     <Text style={styles.subHeaderText}>Profile Picture</Text>
     <TouchableOpacity onPress={selectImage} style={styles.imageContainer}>
         {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={styles.activityIndicator} /> // Loading inside circle
+          <ActivityIndicator size="large" color="#fff" style={styles.activityIndicator} /> 
         ) : (
           <Image
             source={editedProfilePicture ? { uri: editedProfilePicture } : require('../assets/add-image.png')}
@@ -435,7 +434,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
   }}
   placeholder="Edit Bio"
   multiline={true}
-  maxLength={50} // Limiting to 50 characters
+  maxLength={50} 
 />
 <TextInput
   style={styles.input}
@@ -446,7 +445,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     }
   }}
   placeholder="Edit Address"
-  maxLength={50} // Limiting to 50 characters
+  maxLength={50} 
 />
     </View>
     
@@ -515,13 +514,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       color: '#666',
       marginBottom: 10,
     },
-    // circleImage: {
-    //   width: 120,
-    //   height: 120,
-    //   borderRadius: 60,
-    //   alignSelf: 'center',
-    //   marginTop: 10,
-    // },
+
     inputContainer: {
       marginBottom: 20,
     },
@@ -535,12 +528,12 @@ const uploadImageToCloudinary = async (imageObject: any) => {
     imageContainer: {
       alignSelf: 'center',
       alignItems: 'center',
-      justifyContent: 'center', // Center the loading indicator
+      justifyContent: 'center', 
       height: 120,
       width: 120,
       borderRadius: 60,
       overflow: 'hidden',
-      backgroundColor: '#ccc', // Default background color for the circle
+      backgroundColor: '#ccc', 
     },
     circleImage: {
       alignSelf: 'center',
@@ -549,7 +542,7 @@ const uploadImageToCloudinary = async (imageObject: any) => {
       borderRadius: 60,
     },
     activityIndicator: {
-      position: 'absolute', // Position in the center
+      position: 'absolute', 
       alignSelf: 'center',
     },
   });

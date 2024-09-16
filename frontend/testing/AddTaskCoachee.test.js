@@ -2,10 +2,10 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
-import AddTaskPage from '../path/to/AddTaskPage'; // Adjust the path accordingly
+import AddTaskPage from '../path/to/AddTaskPage'; 
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(() => Promise.resolve('123')), // Mock token for testing
+  getItem: jest.fn(() => Promise.resolve('123')), 
 }));
 
 jest.mock('urql', () => ({
@@ -31,7 +31,7 @@ describe('AddTaskPage', () => {
 
   it('shows date picker when date button is pressed', () => {
     const { getByText } = render(<AddTaskPage />);
-    fireEvent.press(getByText(/\d{1,2}\/\d{1,2}\/\d{4}/)); // Date button
+    fireEvent.press(getByText(/\d{1,2}\/\d{1,2}\/\d{4}/)); 
 
     expect(getByText('Confirm')).toBeTruthy();
     expect(getByText('Cancel')).toBeTruthy();
@@ -40,7 +40,7 @@ describe('AddTaskPage', () => {
   it('handles date confirmation', () => {
     const { getByText } = render(<AddTaskPage />);
     const today = new Date();
-    fireEvent.press(getByText(/\d{1,2}\/\d{1,2}\/\d{4}/)); // Date button
+    fireEvent.press(getByText(/\d{1,2}\/\d{1,2}\/\d{4}/)); 
     fireEvent(getByText('Confirm'), 'press', today);
 
     expect(Alert.alert).toHaveBeenCalledWith('Invalid Date', 'Please select a future date.');

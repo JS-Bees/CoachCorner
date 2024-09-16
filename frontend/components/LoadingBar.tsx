@@ -14,7 +14,7 @@ const LoadingBar: React.FC<SplashScreenProps> = ({ navigation }) => {
     const [loadingProgress, setLoadingProgress] = useState(new Animated.Value(0))
 
     useEffect(() => {
-        // Simulate a delay or perform any necessary asynchronous tasks
+        
         const splashTimeout = setTimeout(() => {
           
 
@@ -26,10 +26,10 @@ const LoadingBar: React.FC<SplashScreenProps> = ({ navigation }) => {
             useNativeDriver: false,
         }).start();
     
-        // Cleanup the timeout when the component unmounts
+       
         return () => {
             clearTimeout(splashTimeout);
-            loadingProgress.setValue(0); // Reset the loading progress value
+            loadingProgress.setValue(0); 
         };
     }, [navigation, loadingProgress]);
 
@@ -69,7 +69,7 @@ const SplashStyle =  StyleSheet.create({
     loader: {
         marginLeft: '40%',
         height: 6, 
-        backgroundColor: '#7E3FF0', // Color of the loading bar
+        backgroundColor: '#7E3FF0', 
         borderRadius: 2
     },
 })

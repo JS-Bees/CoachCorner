@@ -49,7 +49,7 @@ const ChooseMovies = ({ route }) => {
         password,
         birthday,
         coachOrCoachee,
-        workplaceAddress /* Add other data */,
+        workplaceAddress,
     } = route.params;
     const { selectedHobbies } = route.params;
     const { selectedGames } = route.params;
@@ -63,10 +63,9 @@ const ChooseMovies = ({ route }) => {
             ).length;
 
             if (checkedCount === 4 && !newCheckedHobby[MovieGenre]) {
-                // If trying to check more than 4, uncheck the current checkbox
+            
                 newCheckedHobby[MovieGenre] = false;
             } else {
-                // Toggle the state of the clicked checkbox
                 newCheckedHobby[MovieGenre] = !newCheckedHobby[MovieGenre];
             }
 
@@ -84,7 +83,6 @@ const ChooseMovies = ({ route }) => {
     };
 
     const handleButtonPress = async () => {
-        // Added this
         setLoading(true);
         if (coachOrCoachee == 'coachee') {
             console.log(coachOrCoachee);
@@ -117,10 +115,9 @@ const ChooseMovies = ({ route }) => {
                         password: password,
                         address: workplaceAddress,
                         bio: 'Enter Bio',
-                        birthday: birthday, // Keep birthday as it is
+                        birthday: birthday, 
                         profilePicture:
                             'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
-                        // Add other fields as needed
                     },
                     interestsInput: [
                         ...selectedMovie.map((MovieGenre) => ({
@@ -140,11 +137,6 @@ const ChooseMovies = ({ route }) => {
 
                 if (error) {
                     console.log('Did this coachee error run');
-                    // const errorMessage = error.toString().split(']')[1];
-                    // console.error('Error:', error);
-                    // setSuccessMessage(`Signup Failed. \n ${errorMessage}.`);
-                    // setModalVisible(true);
-                    // console.log(error.toString());
                     if (
                         error.toString().trim() ===
                         '[GraphQL] Email rate limit exceeded'
@@ -169,21 +161,9 @@ const ChooseMovies = ({ route }) => {
                     return;
                 } else if (data && data.createCoachee) {
                     console.log('Coachee created:', data.createCoachee);
-                    // Navigate to the next screen or perform other actions upon successful signup
+       
                 }
-                // else {
-                //     console.log('This is a coachee');
-                //     console.log(selectedGames, selectedHobbies, selectedMovie);
-                //     console.log(
-                //         firstName,
-                //         lastName,
-                //         email,
-                //         password,
-                //         workplaceAddress,
-                //         birthday,
-                //     );
-                //     console.error('No  data returned from mutation');
-                // }
+ 
                 if (data) {
                     setSuccessMessage(
                         'Signup Successful!\nPlease verify your email.',
@@ -193,10 +173,9 @@ const ChooseMovies = ({ route }) => {
                 }
             } catch (error) {
                 console.log(selectedGames, selectedHobbies, selectedMovie);
-                // setSuccessMessage('Signup Failed');
-                // setModalVisible(true);
+
                 console.error('Error creating coachee:', error);
-                // Handle errors appropriately
+
             }
         }
         if (coachOrCoachee == 'coach') {
@@ -209,7 +188,7 @@ const ChooseMovies = ({ route }) => {
                 type: sport.sport,
             }));
 
-            // const selectedSport = sport.sport
+ 
 
             const selectedGamesInterests = selectedGames.map((BookGenre) => ({
                 type: 'BookGenre',
@@ -235,7 +214,6 @@ const ChooseMovies = ({ route }) => {
                         birthday: birthday,
                         profilePicture:
                             'https://res.cloudinary.com/dkwht3l4g/image/upload/v1714580142/ozgrqvlagkbusmlhjgca.png',
-                        // Add other fields as needed
                     },
                     sportsInput: [selectedSport[0]],
                     interestsInput: [
@@ -249,12 +227,6 @@ const ChooseMovies = ({ route }) => {
                 });
 
                 if (error) {
-                    console.log('Did this coach error run');
-                    // const errorMessage = error.toString().split(']')[1];
-                    // console.error('Error:', error);
-                    // setSuccessMessage(`Signup Failed. \n ${errorMessage}.`);
-                    // setModalVisible(true);
-                    // console.log(error.toString());
                     if (
                         error.toString().trim() ===
                         '[GraphQL] Email rate limit exceeded'
@@ -279,26 +251,9 @@ const ChooseMovies = ({ route }) => {
                     return;
                 } else if (data && data.createCoach) {
                     console.log('Coach created:', data.createCoach);
-                    // Navigate to the next screen or perform other actions upon successful signup
+                  
                 }
-                // else {
-                //     console.log('This is a coach');
-                //     console.log(
-                //         selectedSport,
-                //         selectedGames,
-                //         selectedHobbies,
-                //         selectedMovie,
-                //     );
-                //     console.log(
-                //         firstName,
-                //         lastName,
-                //         email,
-                //         password,
-                //         workplaceAddress,
-                //         birthday,
-                //     );
-                //     console.error('No data returned from mutation');
-                // }
+
                 if (data) {
                     setSuccessMessage(
                         'Signup Successful!\nPlease verify your email.',
@@ -314,11 +269,10 @@ const ChooseMovies = ({ route }) => {
                     selectedSport,
                 );
                 console.error('Error creating coachee:', error);
-                // Handle errors appropriately
+
             }
         }
-        // setSuccessMessage('Signup Successful!');
-        // setModalVisible(true);
+
     };
 
     return (
@@ -402,27 +356,7 @@ const ChooseMovies = ({ route }) => {
                     </Text>
                 </TouchableOpacity>
             )}
-            {/* <TouchableOpacity
-                style={[
-                    styles.button,
-                    !isMaxChecksReached && styles.disabledButton,
-                ]}
-                onPress={handleButtonPress}
-                disabled={!isMaxChecksReached}
-            >
-                <Text
-                    style={{
-                        color: 'white',
-                        fontSize: 15,
-                        height: 40,
-                        paddingHorizontal: 10,
-                        paddingVertical: 10,
-                    }}
-                >
-                    Sign Up
-                </Text>
-            </TouchableOpacity> */}
-
+        
             <SignupSuccessModal
                 visible={modalVisible}
                 message={successMessage}

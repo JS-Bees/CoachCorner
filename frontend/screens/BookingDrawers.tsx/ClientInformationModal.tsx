@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   scrollView: {
-    maxHeight: 300, // Adjust the height as needed
+    maxHeight: 300, 
   },
   confirmText: {
     fontSize: 18,

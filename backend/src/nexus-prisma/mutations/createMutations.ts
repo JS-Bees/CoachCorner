@@ -53,7 +53,7 @@ import {
 import { publishNewMessage } from '../subscriptions/subscriptions';
 import jwt from 'jsonwebtoken';
 
-// Make this accept coachee interest input
+
 export const createCoachee = mutationField('createCoachee', {
     type: Coachee,
     args: {
@@ -61,43 +61,41 @@ export const createCoachee = mutationField('createCoachee', {
         interestsInput: nonNull(
             list(nonNull(arg({ type: CreateCoacheeInterestInput }))),
         ),
-        // ^ not sure if this needs to be revised to not include arg
-        // if there's an issue with the args in the resolve portion start backend to generate interface
+
     },
     resolve: async (_, { input, interestsInput }, context: Context) => {
         try {
-            // Validate the coachee input
+ 
             coacheeSchema.validateSync(input);
 
-            // Convert email to lowercase
+
             const lowerCaseEmail = input.email.toLowerCase();
 
-            // Validate the interests input
+
             interestListSchema.validateSync(interestsInput);
 
-            const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
+            const hashedPassword = await bcrypt.hash(input.password, 2); 
 
-            // Need this for Email Verification
+
             const { data, error } = await supabase.auth.signUp({
                 email: lowerCaseEmail,
                 password: input.password,
             });
 
             if (error) {
-                console.log('error 1');
-                console.log(error);
+
                 throw error;
             }
 
-            console.log(data);
-            // End of Email Verification
+  
+
 
             const coacheeData = {
                 ...input,
                 password: hashedPassword,
                 email: lowerCaseEmail,
             };
-            // Create the coachee and its interests in a single transaction
+
             const coachee = await context.db.coachee.create({
                 data: {
                     ...coacheeData,
@@ -110,37 +108,22 @@ export const createCoachee = mutationField('createCoachee', {
                 },
             });
 
-            // // Need this for Email Verification
-            // const { data, error } = await supabase.auth.signUp({
-            //     email: coachee.email,
-            //     password: input.password,
-            // });
-
-            // if (error) {
-            //     console.log('error 1');
-            //     console.log(error);
-            //     throw error;
-            // }
-
-            // console.log(data);
-            // // End of Email Verification
-
+     
             return coachee;
         } catch (error) {
-            // Handle validation errors or other exceptions
+   
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+
                 throw new Error(error.message);
             }
-            // Rethrow other errors
-            console.log('error 2');
-            console.log(error);
+     
+
             throw error;
         }
     },
 });
 
-// Make this accept coach interest and sports input
+
 export const createCoach = mutationField('createCoach', {
     type: Coach,
     args: {
@@ -148,7 +131,7 @@ export const createCoach = mutationField('createCoach', {
         interestsInput: nonNull(
             list(nonNull(arg({ type: CreateCoachInterestInput }))),
         ),
-        sportsInput: nonNull(list(nonNull(arg({ type: CreateSportInput })))), // Add this line
+        sportsInput: nonNull(list(nonNull(arg({ type: CreateSportInput })))), 
     },
     resolve: async (
         _,
@@ -156,43 +139,40 @@ export const createCoach = mutationField('createCoach', {
         context: Context,
     ) => {
         try {
-            // Validate the coach input
+          
             coachSchema.validateSync(input);
 
-            // Convert email to lowercase
+         
             const lowerCaseEmail = input.email.toLowerCase();
 
-            // Validate the interests input
+        
             interestListSchema.validateSync(interestsInput);
 
-            // Validate each sport in the sportsInput array
+           
             for (const sport of sportsInput) {
                 sportSchema.validateSync(sport);
             }
 
-            const hashedPassword = await bcrypt.hash(input.password, 2); // Hash the password with  10 salt rounds
+            const hashedPassword = await bcrypt.hash(input.password, 2); 
 
-            // Need this for Email Verification
+          
             const { data, error } = await supabase.auth.signUp({
                 email: lowerCaseEmail,
                 password: input.password,
             });
 
             if (error) {
-                console.log('error 1');
-                console.log(error);
                 throw error;
             }
 
-            console.log(data);
-            // End of Email Verification
+
 
             const coachData = {
                 ...input,
                 password: hashedPassword,
                 email: lowerCaseEmail,
             };
-            // Create the coach, its interests, and its sports in a single transaction
+
             const coach = await context.db.coach.create({
                 data: {
                     ...coachData,
@@ -209,27 +189,16 @@ export const createCoach = mutationField('createCoach', {
                 },
             });
 
-            // // Need this for Email Verification
-            // const { data, error } = await supabase.auth.signUp({
-            //     email: coach.email,
-            //     password: input.password,
-            // });
-
-            // if (error) {
-            //     throw error;
-            // }
-
-            // console.log(data);
-            // // End of email verification
+     
 
             return coach;
         } catch (error) {
-            // Handle validation errors or other exceptions
+ 
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+       
             throw error;
         }
     },
@@ -243,15 +212,20 @@ export const createBooking = mutationField('createBooking', {
     },
     resolve: async (_, { input, slotsInput }, context: Context) => {
         try {
-            // Validate the booking input
+       
             bookingSchema.validateSync(input);
+         
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coachId) {
+                throw new Error("ID doesn't match");
+            }
 
-            // Validate each slot in the slotsInput array
+
             for (const slot of slotsInput) {
                 bookingSlotSchema.validateSync(slot);
             }
 
-            // Create the booking and its slots in a single transaction
+
             const booking = await context.db.booking.create({
                 data: {
                     ...input,
@@ -266,12 +240,12 @@ export const createBooking = mutationField('createBooking', {
 
             return booking;
         } catch (error) {
-            // Handle validation errors or other exceptions
+        
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+    
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+   
             throw error;
         }
     },
@@ -284,51 +258,51 @@ export const createReview = mutationField('createReview', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the review input
+    
             reviewSchema.validateSync(input);
 
-            // Find a booking that matches both the coach ID and the coachee ID
+ 
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coacheeId) {
+                throw new Error("ID doesn't match");
+            }
+
+
             const booking = await context.db.booking.findFirst({
                 where: {
                     coachId: input.coachId,
                     coacheeId: input.coacheeId,
                     status: 'COMPLETED',
                 },
-                // include: {
-                //     bookingSlots: {
-                //         where: {
-                //             status: 'COMPLETED',
-                //         },
-                //     },
-                // },
+         
             });
 
-            // Check if the booking exists and has a completed booking slot
+
             if (!booking) {
                 throw new Error(
                     'A completed booking slot is required to create a review.',
                 );
             }
 
-            // Create the review in the database
+   
             const review = await context.db.review.create({
                 data: input,
             });
 
             return review;
         } catch (error) {
-            // Handle validation errors or other exceptions
+   
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+        
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+   
             throw error;
         }
     },
 });
 
-// createCoachTask
+
 export const createCoachTask = mutationField('createCoachTask', {
     type: CoachTask,
     args: {
@@ -336,28 +310,34 @@ export const createCoachTask = mutationField('createCoachTask', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the task input
+   
             coachTaskSchema.validateSync(input);
 
-            // Create the coach task in the database
+        
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coachId) {
+                throw new Error("ID doesn't match");
+            }
+
+       
             const coachTask = await context.db.coachTask.create({
                 data: input,
             });
 
             return coachTask;
         } catch (error) {
-            // Handle validation errors or other exceptions
+       
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+             
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+          
             throw error;
         }
     },
 });
 
-// createCoacheeTask
+
 export const createCoacheeTask = mutationField('createCoacheeTask', {
     type: CoacheeTask,
     args: {
@@ -365,27 +345,34 @@ export const createCoacheeTask = mutationField('createCoacheeTask', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the task input
+            
             coacheeTaskSchema.validateSync(input);
-            // Create the coachee task in the database
+
+        
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coacheeId) {
+                throw new Error("ID doesn't match");
+            }
+
+          
             const coacheeTask = await context.db.coacheeTask.create({
                 data: input,
             });
 
             return coacheeTask;
         } catch (error) {
-            // Handle validation errors or other exceptions
+          
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+       
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+          
             throw error;
         }
     },
 });
 
-// createCoachInterest
+
 export const createCoachInterest = mutationField('createCoachInterest', {
     type: CoachInterest,
     args: {
@@ -393,28 +380,28 @@ export const createCoachInterest = mutationField('createCoachInterest', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the interest input
+       
             interestSchema.validateSync(input);
 
-            // Create the coach interest in the database
+        
             const coachInterest = await context.db.coachInterest.create({
                 data: input,
             });
 
             return coachInterest;
         } catch (error) {
-            // Handle validation errors or other exceptions
+
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+    
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+      
             throw error;
         }
     },
 });
 
-// createCoacheeInterest
+
 export const createCoacheeInterest = mutationField('createCoacheeInterest', {
     type: CoacheeInterest,
     args: {
@@ -422,28 +409,28 @@ export const createCoacheeInterest = mutationField('createCoacheeInterest', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the interest input
+         
             interestSchema.validateSync(input);
 
-            // Create the coachee interest in the database
+         
             const coacheeInterest = await context.db.coacheeInterest.create({
                 data: input,
             });
 
             return coacheeInterest;
         } catch (error) {
-            // Handle validation errors or other exceptions
+  
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+      
             throw error;
         }
     },
 });
 
-// createSportCredentials
+
 export const createSportsCredentials = mutationField(
     'createSportsCredentials',
     {
@@ -453,10 +440,10 @@ export const createSportsCredentials = mutationField(
         },
         resolve: async (_, { input }, context: Context) => {
             try {
-                // Validate the sports credentials input
+
                 sportsCredentialsSchema.validateSync(input);
 
-                // Create the sports credentials in the database
+     
                 const sportsCredentials =
                     await context.db.sportsCredential.create({
                         data: input,
@@ -464,19 +451,19 @@ export const createSportsCredentials = mutationField(
 
                 return sportsCredentials;
             } catch (error) {
-                // Handle validation errors or other exceptions
+    
                 if (error instanceof yup.ValidationError) {
-                    // You can customize the error message based on the validation error
+              
                     throw new Error(error.message);
                 }
-                // Rethrow other errors
+          
                 throw error;
             }
         },
     },
 );
 
-// createContact
+
 export const createContact = mutationField('createContact', {
     type: Contact,
     args: {
@@ -484,8 +471,13 @@ export const createContact = mutationField('createContact', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the contact input
+           
             contactSchema.validateSync(input);
+   
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== input.coacheeId) {
+                throw new Error("ID doesn't match");
+            }
 
             const existingContact = await context.db.contact.findFirst({
                 where: {
@@ -499,25 +491,25 @@ export const createContact = mutationField('createContact', {
                 throw new Error('Already added this coach to contacts!');
             }
 
-            // Create the contact in the database
+   
             const contact = await context.db.contact.create({
                 data: input,
             });
 
             return contact;
         } catch (error) {
-            // Handle validation errors or other exceptions
+      
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+       
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+        
             throw error;
         }
     },
 });
 
-// createMessage
+
 export const createMessage = mutationField('createMessage', {
     type: Message,
     args: {
@@ -525,24 +517,23 @@ export const createMessage = mutationField('createMessage', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Create the message in the database
+
             const message = await context.db.message.create({
                 data: input,
             });
 
-            // Publish the new message to all subscribed clients
-            // have to specify this to only work with specific coach and coachee
+
             publishNewMessage(message);
-            console.log('Publishing message:', message);
+      
 
             return message;
         } catch (error) {
-            // Handle validation errors or other exceptions
+
             if (error instanceof yup.ValidationError) {
                 // You can customize the error message based on the validation error
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+            
             throw error;
         }
     },
@@ -556,29 +547,29 @@ export const coachLogin = mutationField('coachLogin', {
     },
     resolve: async (_, { email, password }, context: Context) => {
         try {
-            // Validate arguments using the yup schema
+   
             loginSchema.validateSync({ email, password });
 
-            // Convert email to lowercase
+         
             const lowerCaseEmail = email.toLowerCase();
 
-            // Use Supabase to find the user by email
+        
             const { data: user, error } = await supabase
-                .from('profiles') // Adjust the table name according to your Supabase setup
+                .from('profiles') 
                 .select('*')
                 .eq('email', lowerCaseEmail);
-            // .single(); // Assuming you want to find a single user
+      
 
             if (user) {
-                console.log('sp user', user);
+      
                 if (user[0].email_confirmed_at == null) {
-                    console.log('user email not confirmed');
+            
                     throw new Error('User email not confirmed.');
                 }
             }
 
             if (error) {
-                console.log('sp error: ', error);
+  
                 throw new Error('User not found or an error occurred.');
             }
 
@@ -609,12 +600,12 @@ export const coachLogin = mutationField('coachLogin', {
                 throw new Error('Incorrect email/password.');
             }
         } catch (error) {
-            // Handle validation errors
+  
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+
             throw error;
         }
     },
@@ -628,39 +619,41 @@ export const coacheeLogin = mutationField('coacheeLogin', {
     },
     resolve: async (_, { email, password }, context: Context) => {
         try {
-            // Validate arguments using the yup schema
+      
             loginSchema.validateSync({ email, password });
 
-            // Convert email to lowercase
+    
+
+
             const lowerCaseEmail = email.toLowerCase();
 
-            // Use Supabase to find the user by email
+         
             const { data: user, error } = await supabase
-                .from('profiles') // Adjust the table name according to your Supabase setup
+                .from('profiles') 
                 .select('*')
                 .eq('email', lowerCaseEmail);
-            // .single(); // Assuming you want to find a single user
+     
 
             if (user) {
-                console.log('sp user', user);
+         
                 if (user[0].email_confirmed_at == null) {
-                    console.log('user email not confirmed');
+           
                     throw new Error('User email not confirmed.');
                 }
             }
 
             if (error) {
-                console.log('sp error: ', error);
+         
                 throw new Error('User not found or an error occurred.');
             }
 
-            // Search for a Coachee with the provided email
+        
             const coachee = await context.db.coachee.findUnique({
-                where: { email: lowerCaseEmail, active: true }, // Include the 'active' condition
+                where: { email: lowerCaseEmail, active: true }, 
             });
 
             if (coachee) {
-                // If a Coachee is found, compare the password
+        
                 const passwordMatch = await bcrypt.compare(
                     password,
                     coachee.password,
@@ -683,12 +676,12 @@ export const coacheeLogin = mutationField('coacheeLogin', {
                 throw new Error('Incorrect email/password.');
             }
         } catch (error) {
-            // Handle validation errors
+     
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+              
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+          
             throw error;
         }
     },

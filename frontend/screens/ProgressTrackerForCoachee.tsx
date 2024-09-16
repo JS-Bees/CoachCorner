@@ -12,9 +12,9 @@ import { useQuery, useMutation } from 'urql';
 
 const ProgressTrackerForCoachee = () => {
 
-    //reminders: add task can also be edit tasks, thats why I made the tiles touchable and navigate there
+
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [, executeMutation] = useMutation(UpdateCoacheeTaskDocument);
 
     useEffect(() => {
@@ -30,10 +30,10 @@ const ProgressTrackerForCoachee = () => {
       fetchUserToken();
   }, []);
 
-  // function to fetch coachee data by userID (token)
+
   const useFetchCoacheeByUserID = (userID: any) => {
       const [coacheeResult] = useQuery({
-          query: FindCoacheeByIdDocument, // Use the Coachee query document
+          query: FindCoacheeByIdDocument, 
           variables: {
               userId: parseInt(userID),
           },
@@ -81,7 +81,6 @@ const ProgressTrackerForCoachee = () => {
               const updatedCompleted = !task.completed;
               const updatedTask = coacheeData?.findCoacheeByID.tasks.find(task => task.id === taskId);
               if (updatedTask) {
-                  // Get today's date and format it
                   const today = new Date();
                   const formattedDate = today.toISOString().slice(0, 10) + "T00:00:00.000Z";
                   executeMutation({
@@ -160,7 +159,7 @@ const ProgressTrackerForCoachee = () => {
                     },
                   ]}
                 >
-                  {formatDate(task.date)} {/* Use the formatted date */}
+                  {formatDate(task.date)} 
                 </Text>
               </View>
               <TouchableOpacity
@@ -245,9 +244,9 @@ const ProgressTrackerForCoachee = () => {
       addTaskBorder: {
         paddingHorizontal: 20,
         paddingVertical: 10,
-        borderRadius: 50, // Ensures a circular shape
-        borderWidth: 1, // Adjust as needed
-        borderColor: '#7E3FF0', // Choose your border color
+        borderRadius: 50, 
+        borderWidth: 1, 
+        borderColor: '#7E3FF0', 
         width: "30%",
         alignItems: "center"
       },

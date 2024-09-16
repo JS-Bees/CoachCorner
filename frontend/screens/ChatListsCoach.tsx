@@ -45,7 +45,7 @@ const ChatListPage: React.FC = () => {
     
    
 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const pollingInterval = 1000;
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -63,18 +63,7 @@ const ChatListPage: React.FC = () => {
         fetchUserToken();
     }, []);
 
-    // const useFetchMessagesForCoachlist = (userID: any) => {
-    //     const [chatListMessageResult] = useQuery({
-    //         query: FindMessagesForCoacheeListDocument,
-    //         variables: {
-    //             coachId: parseInt(userID),
-    //         },
-    //         requestPolicy: 'cache-and-network',
-    //     });
-
-    //     return chatListMessageResult;
-    // };
-
+ 
     const useFetchMessagesForCoachlist = (userID: any) => {
         const [chatListMessageResult,  refetch] = useQuery({
             query: FindMessagesForCoacheeListDocument,
@@ -96,20 +85,16 @@ const ChatListPage: React.FC = () => {
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-          refetch(); // Manually trigger the query
+          refetch(); 
         }, pollingInterval);
-        // console.log('Refetching data at', new Date().toLocaleTimeString());
-        // console.log("this is the refetched data:", coacheeChatListMessageData)
+    
         return () => clearInterval(intervalId);
     }, []);
 
 
 
 
-    // console.log(
-    //     'chat list messages',
-    //     coachChatListMessageData?.findMessagesForCoachList,
-    // );
+
 
     const useFetchCoachByUserID = (userID: any) => {
         const [coachResult] = useQuery({
@@ -132,26 +117,23 @@ const ChatListPage: React.FC = () => {
 
 
     useEffect(() => {
-        // console.log('coachData:', coachData);
+ 
         const contacts = coachData?.findCoachByID.contacts;
 
-        // Log all contacts
-        // console.log(JSON.stringify(contacts, null, 2));
-        // console.log('contacts');
 
         const messages = coachChatListMessageData?.findMessagesForCoacheeList;
 
-        // Map over contacts and set chatMessages
+
         if (contacts) {
             const chatMessages = contacts.map((contact) => {
                 const sender = `${contact.coachee.firstName} ${contact.coachee.lastName.split(' ')[0]}`;
                 let imageUrl;
 
-                // Check if the profilePicture URL starts with 'https:'
+
                 if (contact.coachee.profilePicture.startsWith('https:')) {
                     imageUrl = { uri: contact.coachee.profilePicture };
                 } else {
-                    // Use the fallback image if the URL does not start with 'https:'
+         
                     imageUrl = require('../assets/User.png');
                 }
 
@@ -165,7 +147,6 @@ const ChatListPage: React.FC = () => {
                     : 'No messages yet';
 
                 return {
-                    // make it pass coachId here
                     id: contact.id,
                     message: messageContent,
                     sender: sender,

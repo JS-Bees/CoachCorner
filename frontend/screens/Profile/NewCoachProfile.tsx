@@ -33,7 +33,7 @@ interface CoachProfile {
     imageSource: string;
     about: string;
     workplaceAddress: string;
-    sportsCredentials: string[]; // Array to store image URLs for sports credentials
+    sportsCredentials: string[]; 
     interests: {
         MovieGenre: string[];
         BookGenre: string[];
@@ -52,17 +52,17 @@ const NewCoachProfile = () => {
         'right',
     );
     const [activeTab, setActiveTab] = useState(0);
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const [selectedImage, setSelectedImage] = useState<string | null>(null); // State for selected image
-    const [uploading, setUploading] = useState<boolean>(false); // New state to track if an image is uploading
-    const [, executeMutation] = useMutation(CreateSportsCredentialsDocument); // Mutation to update sports credentials
+    const [userToken, setUserToken] = useState<string | null>(null); 
+    const [selectedImage, setSelectedImage] = useState<string | null>(null); 
+    const [uploading, setUploading] = useState<boolean>(false); 
+    const [, executeMutation] = useMutation(CreateSportsCredentialsDocument); 
 
     const [{ data: coachData, fetching, error }] = useQuery({
-        query: FindCoachByIdDocument, // Use the Coachee query document
+        query: FindCoachByIdDocument, 
         variables: {
-            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userId: parseInt(userToken),
         },
-        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network', 
     });
 
     const handleNavigatetoReviewsPageCoach = () => {
@@ -86,7 +86,7 @@ const NewCoachProfile = () => {
     if (fetching) return <SplashScreen navigation={navigation} />;
 
     const uploadImageToCloudinary = async (imageObject: any) => {
-        setUploading(true); // Set loading to true when starting the upload
+        setUploading(true); 
         try {
             const formData = new FormData();
             formData.append('file', imageObject);
@@ -106,13 +106,13 @@ const NewCoachProfile = () => {
             console.error('Error uploading image to Cloudinary:', error);
             throw error;
         } finally {
-            setUploading(false); // Reset loading state after upload
+            setUploading(false); 
         }
     };
 
-    // Function to select and upload the image, only limits to 5
+
     const selectImage = async () => {
-        // Check if the user has already uploaded 5 images
+
         if (CoachProfiles[0].sportsCredentials.length >= 5) {
             alert(
                 'You can only upload a maximum of 5 images for sports credentials.',
@@ -121,7 +121,7 @@ const NewCoachProfile = () => {
         }
 
         try {
-            // Proceed with image selection if the limit has not been reached
+ 
             const permissionResult =
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -144,7 +144,7 @@ const NewCoachProfile = () => {
                 name: `image.${imageUri.split('.').pop()}`,
             };
 
-            // Ask for confirmation before uploading
+  
             Alert.alert(
                 'Confirmation',
                 'Are you sure you want to upload this image? Credential pictures cannot be changed once uploaded for security reasons.',
@@ -158,7 +158,7 @@ const NewCoachProfile = () => {
                         onPress: async () => {
                             const uploadedImageUrl =
                                 await uploadImageToCloudinary(imageObject);
-                            setSelectedImage(uploadedImageUrl); // Store the uploaded image URL
+                            setSelectedImage(uploadedImageUrl); 
                             createSportsCredentials(uploadedImageUrl);
                         },
                     },
@@ -170,7 +170,7 @@ const NewCoachProfile = () => {
         }
     };
 
-    // Function to create sports credentials with the uploaded image URL
+
     const createSportsCredentials = async (imageUrl: string) => {
         try {
             const result = await executeMutation({
@@ -186,7 +186,7 @@ const NewCoachProfile = () => {
                     result.error.message,
                 );
             } else {
-                // If successful, update the latest image and refetch data
+                // 
             }
         } catch (error) {
             console.error('Error creating sports credentials:', error);
@@ -222,13 +222,11 @@ const NewCoachProfile = () => {
         await AsyncStorage.clear();
         navigation.navigate('LogIn');
     };
-    //Get the latest sports credential picture from the coach data
 
-    // Get the sports credentials array
     const sportsCredentials =
         coachData?.findCoachByID?.sports?.[0]?.sportsCredentials;
 
-    // Get the last credential picture from the sports credentials array
+
     const latestCredentialPicture = sportsCredentials
         ? sportsCredentials[sportsCredentials.length - 1]?.credentialPicture
         : null;
@@ -242,8 +240,8 @@ const NewCoachProfile = () => {
             mainSport:
                 coachData?.findCoachByID.sports &&
                 coachData.findCoachByID.sports.length > 0
-                    ? [coachData.findCoachByID.sports[0].type] // Wrap the result in an array
-                    : ['No sports listed'], // Also wrap the fallback value in an array
+                    ? [coachData.findCoachByID.sports[0].type] 
+                    : ['No sports listed'], 
             imageSource:
                 coachData?.findCoachByID.profilePicture || 'default_image_url',
             about: coachData?.findCoachByID.bio || '',
@@ -502,7 +500,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 3,
         borderRadius: 10,
-        overflow: 'hidden', // Clip the shadow to the borderRadius
+        overflow: 'hidden',
     },
     profileImage: {
         width: '140%',
@@ -554,7 +552,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     achievementsText: {
-        //for no achievements or affliates at the moment
         color: '#838086',
         justifyContent: 'center',
         left: '30%',
@@ -568,9 +565,9 @@ const styles = StyleSheet.create({
         left: '5%',
     },
     subcontentContainer: {
-        flexDirection: 'column', // Stack items vertically
-        paddingHorizontal: 20, // Add some padding to the sides
-        marginBottom: 10, // Add spacing between each section
+        flexDirection: 'column', 
+        paddingHorizontal: 20, 
+        marginBottom: 10, 
     },
     subHeader: {
         fontWeight: '400',
@@ -580,7 +577,7 @@ const styles = StyleSheet.create({
     contentText: {
         paddingTop: '1%',
         textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
+        lineHeight: 20, 
         fontFamily: 'Roboto',
         fontWeight: '200',
         color: '#908D93',
@@ -590,7 +587,7 @@ const styles = StyleSheet.create({
     subontentText: {
         paddingTop: '1%',
         textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
+        lineHeight: 20, 
         fontFamily: 'Roboto',
         fontWeight: '200',
         color: '#908D93',
@@ -598,13 +595,13 @@ const styles = StyleSheet.create({
         marginLeft: '10%',
     },
     circleImage: {
-        width: 80, // Adjust width as needed
-        height: 80, // Adjust height as needed
+        width: 80, 
+        height: 80, 
         position: 'absolute',
-        bottom: '100%', // Adjusted to center vertically
-        left: '50%', // Adjusted to center horizontally
-        marginLeft: -50, // Half of the width
-        marginBottom: -80, // Half of the height
+        bottom: '100%', 
+        left: '50%', 
+        marginLeft: -50, 
+        marginBottom: -80, 
         borderRadius: 10,
     },
     drawerButton: {
@@ -652,7 +649,7 @@ const styles = StyleSheet.create({
         width: 250,
     },
     inputContainer: {
-        marginTop: 90, // Adjust as needed to create space between the image and text inputs
+        marginTop: 90, 
     },
     imageUploadContainer: {
         flexDirection: 'row',
@@ -662,8 +659,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        backgroundColor: '#f0f0f0', // Background color to make it more visible
-        position: 'relative', // Important for relative positioning
+        backgroundColor: '#f0f0f0', 
+        position: 'relative', 
     },
     uploadText: {
         fontSize: 16,
@@ -671,10 +668,10 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     activityIndicator: {
-        position: 'absolute', // Absolute positioning to allow centering
-        top: '100%', // Position at the middle of the container vertically
-        left: '50%', // Position at the middle of the container horizontally
-        transform: [{ translateX: -15 }, { translateY: -15 }], // Adjust for the size of the indicator to center it
+        position: 'absolute', 
+        top: '100%', 
+        left: '50%', 
+        transform: [{ translateX: -15 }, { translateY: -15 }], 
     },
 
     uploadedImage: {
@@ -686,10 +683,10 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        marginBottom: 20, // Add margin to the bottom to ensure space for multiple images
+        marginBottom: 20,
     },
     subContentTextIndented: {
-        paddingLeft: 20, // Indent the text
+        paddingLeft: 20, 
         fontSize: 15,
         color: '#908D93',
         fontFamily: 'Roboto',

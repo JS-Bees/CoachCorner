@@ -12,15 +12,15 @@ const IntroSplash: React.FC<IntroSplashProps> = ({ navigation }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Initialize app and simulate async tasks
+  
     const initializeApp = async () => {
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Replace with actual initialization tasks
+      await new Promise(resolve => setTimeout(resolve, 3000)); 
       setIsInitialized(true);
     };
 
     initializeApp();
 
-    // Loop animation
+
     Animated.loop(
       Animated.sequence([
         Animated.timing(loadingProgress, {
@@ -36,7 +36,7 @@ const IntroSplash: React.FC<IntroSplashProps> = ({ navigation }) => {
       ])
     ).start();
 
-    // Navigate to LogIn screen after initialization
+
     const splashTimeout = setTimeout(() => {
       if (isInitialized) {
         navigation.replace("LogIn");
@@ -45,7 +45,7 @@ const IntroSplash: React.FC<IntroSplashProps> = ({ navigation }) => {
 
     return () => {
       clearTimeout(splashTimeout);
-      loadingProgress.setValue(0); // Reset loading progress
+      loadingProgress.setValue(0); 
     };
   }, [navigation, loadingProgress, isInitialized]);
 
@@ -62,7 +62,7 @@ const IntroSplash: React.FC<IntroSplashProps> = ({ navigation }) => {
           {
             left: loadingProgress.interpolate({
               inputRange: [0, 1],
-              outputRange: ['10%', '65%'], // Move back and forth
+              outputRange: ['10%', '65%'], 
             }),
           },
         ]}

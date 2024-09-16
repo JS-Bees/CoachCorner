@@ -17,8 +17,8 @@ interface Session {
   status: string; 
   serviceType: string;
   imageSource: ImageSourcePropType;
-  time: { startTime: string; endTime: string }[]; // Array of objects with startTime and endTime
-  date: string[]; // Array of strings for multiple dates
+  time: { startTime: string; endTime: string }[]; 
+  date: string[]; 
 }
 
 
@@ -53,7 +53,7 @@ const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
   
 
  
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  
   const [showAll, setShowAll] = useState(false);
   const visibleProfiles = showAll ? sessions : sessions.slice();
 
@@ -65,8 +65,8 @@ const CoachSessions: React.FC<CoachSessionsProp> = ({ sessions }) => {
           key={index}
           style={[
             CoachProfileStyle.coachBoxes,
-            index % 2 === 1 ? { marginLeft: '8%' } : null, // Add marginLeft for every second tile
-            index >= 2 ? { marginTop: '5%' } : null // Add marginTop for tiles starting from the third one
+            index % 2 === 1 ? { marginLeft: '8%' } : null, 
+            index >= 2 ? { marginTop: '5%' } : null
           ]}
           onPress={() => toggleOverlay(session)}
         >

@@ -51,6 +51,15 @@ export const updateCoacheeProfile = mutationField('updateCoacheeProfile', {
 
             updateProfileSchema.validateSync(input);
 
+
+ 
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== id) {
+                throw new Error("ID doesn't match");
+            }
+
+    
+
             const existingCoachee = await context.db.coachee.findUnique({
                 where: { id },
             });
@@ -86,6 +95,14 @@ export const updateCoachProfile = mutationField('updateCoachProfile', {
             idSchema.validateSync({ id });
 
             updateProfileSchema.validateSync(input);
+
+
+    
+            const tokenUserId = context.decoded.userId;
+            if (tokenUserId !== id) {
+                throw new Error("ID doesn't match");
+            }
+
 
             const existingCoach = await context.db.coach.findUnique({
                 where: { id },
@@ -190,12 +207,12 @@ export const updateBookingSlotStatus = mutationField(
 export const updateContactedStatus = mutationField('updateContactedStatus', {
     type: Contact,
     args: {
-        id: nonNull(arg({ type: 'Int' })), // ID of the contact to update
-        input: nonNull(arg({ type: UpdateContactedStatusInput })), // Input with fields to update
+        id: nonNull(arg({ type: 'Int' })),
+        input: nonNull(arg({ type: UpdateContactedStatusInput })), 
     },
     resolve: async (_, { id, input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
+          
             idSchema.validateSync({ id });
 
             updateContactedStatusSchema.validateSync(input);
@@ -208,7 +225,7 @@ export const updateContactedStatus = mutationField('updateContactedStatus', {
                 throw new Error(`Contact with ID ${id} not found.`);
             }
 
-            // Perform the update using Prisma
+
             const updatedContact = await context.db.contact.update({
                 where: { id },
                 data: { contactedStatus: input.contactedStatus },
@@ -216,12 +233,12 @@ export const updateContactedStatus = mutationField('updateContactedStatus', {
 
             return updatedContact;
         } catch (error) {
-            // Handle validation errors or other exceptions
+      
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+           
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+       
             throw error;
         }
     },
@@ -234,9 +251,9 @@ export const updateCoacheeInterest = mutationField('updateCoacheeInterests', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the input using the interestSchema
+
             input.forEach((interest) => interestSchema.validateSync(interest));
-            // Perform the updates using Prisma
+ 
             const updatedCoacheeInterests = await Promise.all(
                 input.map(async ({ id, ...data }) => {
                     const existingCoacheeInterest =
@@ -256,12 +273,12 @@ export const updateCoacheeInterest = mutationField('updateCoacheeInterests', {
             );
             return updatedCoacheeInterests;
         } catch (error) {
-            // Handle validation errors or other exceptions
+        
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+           
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+        
             throw error;
         }
     },
@@ -274,9 +291,9 @@ export const updateCoachInterest = mutationField('updateCoachInterests', {
     },
     resolve: async (_, { input }, context: Context) => {
         try {
-            // Validate the input using the interestSchema
+       
             input.forEach((interest) => interestSchema.validateSync(interest));
-            // Perform the updates using Prisma
+ 
             const updatedCoachInterests = await Promise.all(
                 input.map(async ({ id, ...data }) => {
                     const existingCoachInterest =
@@ -299,12 +316,12 @@ export const updateCoachInterest = mutationField('updateCoachInterests', {
 
             return updatedCoachInterests;
         } catch (error) {
-            // Handle validation errors or other exceptions
+      
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+     
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+        
             throw error;
         }
     },
@@ -318,30 +335,30 @@ export const updateCoachTask = mutationField('updateCoachTask', {
     },
     resolve: async (_, { id, input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
+   
             idSchema.validateSync({ id });
-            // Validate the input using the updateTaskSchema
+        
             updateTaskSchema.validateSync(input);
-            // Check if the coach task with the given ID exists
+
             const existingCoachTask = await context.db.coachTask.findUnique({
                 where: { id },
             });
             if (!existingCoachTask) {
                 throw new Error(`Coach task with ID ${id} not found.`);
             }
-            // Perform the update using Prisma
+
             const updatedCoachTask = await context.db.coachTask.update({
                 where: { id },
                 data: input,
             });
             return updatedCoachTask;
         } catch (error) {
-            // Handle validation errors or other exceptions
+
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+    
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+        
             throw error;
         }
     },
@@ -355,13 +372,13 @@ export const updateCoacheeTask = mutationField('updateCoacheeTask', {
     },
     resolve: async (_, { id, input }, context: Context) => {
         try {
-            // Validate the ID using the idSchema
+   
             idSchema.validateSync({ id });
 
-            // Validate the input using the updateTaskSchema
+       
             updateTaskSchema.validateSync(input);
 
-            // Check if the coachee task with the given ID exists
+
             const existingCoacheeTask = await context.db.coacheeTask.findUnique(
                 {
                     where: { id },
@@ -372,7 +389,6 @@ export const updateCoacheeTask = mutationField('updateCoacheeTask', {
                 throw new Error(`Coachee task with ID ${id} not found.`);
             }
 
-            // Perform the update using Prisma
             const updatedCoacheeTask = await context.db.coacheeTask.update({
                 where: { id },
                 data: input,
@@ -380,12 +396,12 @@ export const updateCoacheeTask = mutationField('updateCoacheeTask', {
 
             return updatedCoacheeTask;
         } catch (error) {
-            // Handle validation errors or other exceptions
+     
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+            
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+        
             throw error;
         }
     },
@@ -414,7 +430,7 @@ export const updatePendingBooking = mutationField('updatePendingBooking', {
         context: Context,
     ) => {
         try {
-            // Validate the booking ID using the idSchema
+         
             idSchema.validateSync({ id: bookingId });
 
             if (updateSlotsIds) {
@@ -432,21 +448,20 @@ export const updatePendingBooking = mutationField('updatePendingBooking', {
             updateBookingSchema.validateSync(bookingData);
 
             if (updateSlots) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
                 updateSlots.forEach((slot: any) => {
                     updateBookingSlotSchema.validateSync(slot);
                 });
             }
 
             if (addSlots) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      
                 addSlots.forEach((slot: any) => {
                     bookingSlotSchema.validateSync(slot);
                 });
             }
 
-            // should have conditionals incase an arg is empty
-            // Start a transaction to ensure all operations are atomic
+
             const transaction = await context.db.$transaction([
                 context.db.booking.update({
                     where: { id: bookingId },
@@ -459,7 +474,7 @@ export const updatePendingBooking = mutationField('updatePendingBooking', {
                               where: { id: slotId },
                               data:
                                   updateSlots.find(
-                                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                 
                                       (slot: any) => slot.id === slotId,
                                   ) ?? {},
                           }),
@@ -467,7 +482,7 @@ export const updatePendingBooking = mutationField('updatePendingBooking', {
                     : []),
 
                 ...(addSlots && addSlots.length > 0
-                    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    ? 
                       addSlots.map((slot: any) =>
                           context.db.bookingSlot.create({
                               data: {
@@ -487,16 +502,16 @@ export const updatePendingBooking = mutationField('updatePendingBooking', {
                     : []),
             ]);
 
-            // Assuming the first operation in the transaction is the booking update
-            // and you want to return the updated booking
+
+
             return transaction[0];
         } catch (error) {
-            // Handle validation errors or other exceptions
+      
             if (error instanceof yup.ValidationError) {
-                // You can customize the error message based on the validation error
+              
                 throw new Error(error.message);
             }
-            // Rethrow other errors
+         
             throw error;
         }
     },

@@ -6,7 +6,7 @@ interface CustomCheckBoxProps {
   label: string;
   checkedColor: string;
   onPress: () => void;
-  checked: boolean; // Make this prop required to control the checked state from the parent component
+  checked: boolean; 
 }
 
 const CustomCheckBox: React.FC<CustomCheckBoxProps> = ({ label, checkedColor, onPress, checked }) => {

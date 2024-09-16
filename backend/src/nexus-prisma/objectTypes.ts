@@ -3,10 +3,10 @@ import * as gqlTypes from 'nexus-prisma';
 import { DateTime } from 'nexus-prisma/scalars';
 import { Context } from './context';
 
-export const custom = DateTime; // this is for the dateTime fields in all files
+export const custom = DateTime; 
 
 interface Args {
-    take?: number; // The '?' makes the property optional
+    take?: number; 
 }
 
 export const Coachee = objectType({
@@ -23,18 +23,18 @@ export const Coachee = objectType({
         t.field(gqlTypes.Coachee.bio);
         t.field(gqlTypes.Coachee.sport);
 
-        // t.field(gqlTypes.Coachee.interests);
+  
         t.list.field('interests', {
             type: 'CoacheeInterest',
             resolve: (coachee, _args, ctx) => {
-                // should be coacheeInterest (singular)
+        
                 return ctx.db.coacheeInterest.findMany({
                     where: { coacheeId: coachee.id, active: true },
                 });
             },
         });
 
-        // t.field(gqlTypes.Coachee.tasks);
+
         t.list.field('tasks', {
             type: 'CoacheeTask',
             resolve: (coachee, _args, ctx) => {
@@ -44,7 +44,7 @@ export const Coachee = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coachee.bookings);
+
         t.list.field('bookings', {
             type: 'Booking',
             resolve: (coachee, _args, ctx) => {
@@ -54,7 +54,6 @@ export const Coachee = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coachee.reviews);
         t.list.field('reviews', {
             type: 'Review',
             resolve: (coachee, _args, ctx) => {
@@ -64,7 +63,7 @@ export const Coachee = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coachee.contacts);
+
         t.list.field('contacts', {
             type: 'Contact',
             resolve: (coachee, _args, ctx) => {
@@ -93,7 +92,7 @@ export const Coach = objectType({
         t.field(gqlTypes.Coach.profilePicture);
         t.field(gqlTypes.Coach.bio);
 
-        // t.field(gqlTypes.Coach.interests);
+
         t.list.field('interests', {
             type: 'CoachInterest',
             resolve: (coach, _args, ctx) => {
@@ -103,7 +102,7 @@ export const Coach = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coach.tasks);
+
         t.list.field('tasks', {
             type: 'CoachTask',
             resolve: (coach, _args, ctx) => {
@@ -113,7 +112,7 @@ export const Coach = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coach.bookings);
+
         t.list.field('bookings', {
             type: 'Booking',
             resolve: (coach, _args, ctx) => {
@@ -123,7 +122,7 @@ export const Coach = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coach.reviews);
+      
         t.list.field('reviews', {
             type: 'Review',
             resolve: (coach, _args, ctx) => {
@@ -133,7 +132,7 @@ export const Coach = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coach.contacts);
+
         t.list.field('contacts', {
             type: 'Contact',
             resolve: (coach, _args, ctx) => {
@@ -143,7 +142,7 @@ export const Coach = objectType({
             },
         });
 
-        // t.field(gqlTypes.Coach.sports);
+
         t.list.field('sports', {
             type: 'Sport',
             resolve: (coach, _args, ctx) => {
@@ -165,7 +164,7 @@ export const BookingSlot = objectType({
         t.field(gqlTypes.BookingSlot.id);
         t.field(gqlTypes.BookingSlot.bookingId);
 
-        // t.field(gqlTypes.BookingSlot.booking);
+
         t.field('booking', {
             type: 'Booking',
             resolve: (bookingSlot, _args, ctx) => {
@@ -193,7 +192,7 @@ export const Booking = objectType({
         t.field(gqlTypes.Booking.coacheeId);
         t.field(gqlTypes.Booking.coachId);
 
-        // t.field(gqlTypes.Booking.bookingSlots);
+
         t.list.field('bookingSlots', {
             type: 'BookingSlot',
             resolve: (booking, _args, ctx: Context) => {
@@ -202,7 +201,7 @@ export const Booking = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Booking.coach);
+
         t.field('coach', {
             type: 'Coach',
             resolve: (booking, _args, ctx) => {
@@ -211,7 +210,7 @@ export const Booking = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Booking.coachee);
+
         t.field('coachee', {
             type: 'Coachee',
             resolve: (booking, _args, ctx) => {
@@ -240,7 +239,7 @@ export const Review = objectType({
         t.field(gqlTypes.Review.coacheeId);
         t.field(gqlTypes.Review.coachId);
 
-        // t.field(gqlTypes.Review.coach);
+
         t.field('coach', {
             type: 'Coach',
             resolve: (review, _args, ctx) => {
@@ -249,7 +248,7 @@ export const Review = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Review.coachee);
+
         t.field('coachee', {
             type: 'Coachee',
             resolve: (review, _args, ctx) => {
@@ -272,7 +271,7 @@ export const Sport = objectType({
         t.field(gqlTypes.Sport.type);
         t.field(gqlTypes.Sport.coachId);
 
-        // t.field(gqlTypes.Sport.coach);
+
         t.field('coach', {
             type: 'Coach',
             resolve: (sport, _args, ctx) => {
@@ -281,7 +280,7 @@ export const Sport = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Sport.sportsCredentials);
+     
         t.list.field('sportsCredentials', {
             type: 'SportsCredential',
             resolve: (sport, _args, ctx: Context) => {
@@ -304,7 +303,7 @@ export const SportsCredential = objectType({
         t.field(gqlTypes.SportsCredential.credentialPicture);
         t.field(gqlTypes.SportsCredential.sportId);
 
-        // t.field(gqlTypes.SportsCredential.sports);
+
         t.field('sport', {
             type: 'Sport',
             resolve: (sportsCredential, _args, ctx) => {
@@ -328,7 +327,7 @@ export const CoachInterest = objectType({
         t.field(gqlTypes.CoachInterest.name);
         t.field(gqlTypes.CoachInterest.coachId);
 
-        // t.field(gqlTypes.CoachInterest.coach);
+ 
         t.field('coach', {
             type: 'Coach',
             resolve: (coachInterest, _args, ctx) => {
@@ -352,7 +351,7 @@ export const CoacheeInterest = objectType({
         t.field(gqlTypes.CoacheeInterest.name);
         t.field(gqlTypes.CoacheeInterest.coacheeId);
 
-        // t.field(gqlTypes.CoacheeInterest.coachee);
+
         t.field('coachee', {
             type: 'Coachee',
             resolve: (coacheeInterest, _args, ctx) => {
@@ -378,7 +377,7 @@ export const CoachTask = objectType({
         t.field(gqlTypes.CoachTask.date);
         t.field(gqlTypes.CoachTask.coachId);
 
-        // t.field(gqlTypes.CoachTask.coach);
+     
         t.field('coach', {
             type: 'Coach',
             resolve: (coachTask, _args, ctx) => {
@@ -404,7 +403,7 @@ export const CoacheeTask = objectType({
         t.field(gqlTypes.CoacheeTask.date);
         t.field(gqlTypes.CoacheeTask.coacheeId);
 
-        // t.field(gqlTypes.CoacheeTask.coachee);
+
         t.field('coachee', {
             type: 'Coachee',
             resolve: (coacheeTask, _args, ctx) => {
@@ -428,7 +427,7 @@ export const Contact = objectType({
         t.field(gqlTypes.Contact.coachId);
         t.field(gqlTypes.Contact.contactedStatus);
 
-        // t.field(gqlTypes.Contact.coach);
+   
         t.field('coach', {
             type: 'Coach',
             resolve: (contact, _args, ctx) => {
@@ -437,7 +436,7 @@ export const Contact = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Contact.coachee);
+
         t.field('coachee', {
             type: 'Coachee',
             resolve: (contact, _args, ctx) => {
@@ -446,7 +445,7 @@ export const Contact = objectType({
                 });
             },
         });
-        // t.field(gqlTypes.Contact.messages);
+
         t.list.field('messages', {
             type: 'Message',
             resolve: (contact, _args: Args, ctx) => {
@@ -469,7 +468,6 @@ export const Message = objectType({
         t.field(gqlTypes.Message.content);
         t.field(gqlTypes.Message.contactId);
 
-        // t.field(gqlTypes.Message.contact);
         t.field('contact', {
             type: 'Contact',
             resolve: (message, _args, ctx) => {
@@ -486,7 +484,7 @@ export const Message = objectType({
 export const SlotTime = objectType({
     name: 'SlotTime',
     definition(t) {
-        // Using custom (which is DateTime) for date-time fields
+
         t.field('startTime', {
             type: 'DateTime',
             resolve: (obj: any, args, ctx) => obj.startTime,
@@ -505,14 +503,14 @@ export const SlotTime = objectType({
 export const CoacheeJwt = extendType({
     type: 'Coachee',
     definition(t) {
-      t.string('token'); // New field for dance string
+      t.string('token'); 
     },
   });
 
   export const CoachJwt = extendType({
     type: 'Coach',
     definition(t) {
-      t.string('token'); // New field for dance string
+      t.string('token'); 
     },
   });
 

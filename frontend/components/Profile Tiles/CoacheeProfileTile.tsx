@@ -31,10 +31,9 @@ interface CoacheeProfilesProp {
 
 const CoacheeProfile: React.FC<CoacheeProfilesProp> = ({ coacheeProfiles }) => {
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
  
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showAll, setShowAll] = useState(false);
   const visibleProfiles = showAll ? coacheeProfiles : coacheeProfiles.slice();
 

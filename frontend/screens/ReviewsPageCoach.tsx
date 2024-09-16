@@ -25,52 +25,22 @@ import SplashScreen from './Authentication/LoadingSplash';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// type ReviewsPageRouteProp = RouteProp<RootStackParams, 'ReviewsPage'>;
-// type ReviewsPageNavigationProp = NativeStackNavigationProp<
-//     RootStackParams,
-//     'ReviewsPage'
-// >;
 
-// interface ReviewsPageProps {
-//     route: ReviewsPageRouteProp;
-//     navigation: StackNavigationProp<RootStackParams, 'ReviewsPage'>; // Use StackNavigationProp here
-// }
 
 const ReviewsPage = () => {
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
     const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null);
     const pollingInterval = 1000;
-    // const { profile } = route.params || {};
+
 
     const handleNavigateBack = () => {
-        // navigation.navigate('NewCoachProfile');
         navigation.reset({
             routes: [{ name: 'NewCoachProfile' }],
         });
     };
 
-    // const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
 
-    // const handleAddReviewPress = () => {
-    //     if (hasCompletedBooking) {
-    //         // If there's a completed booking, allow the review addition
-    //         setBottomSheetVisible(true);
-    //     } else {
-    //         // If not, display an alert with a message
-    //         Alert.alert(
-    //             'Booking Required', // Title of the alert
-    //             'You need to have a completed booking with this coach to leave a review.', // Message of the alert
-    //             [{ text: 'OK', onPress: () => console.log('OK Pressed') }], // Alert button(s)
-    //         );
-    //     }
-    // };
-
-    // const handleCloseBottomSheet = () => {
-    //     setBottomSheetVisible(false);
-    // };
-
-    // Might need to uncomment this out
     useEffect(() => {
         const fetchUserToken = async () => {
             try {
@@ -84,24 +54,7 @@ const ReviewsPage = () => {
         fetchUserToken();
     }, []);
 
-    // // function to fetch coachee data by userID (token)
-    // const useFetchCoacheeByUserID = (userID: any) => {
-    //     const [coacheeResult] = useQuery({
-    //         query: FindCoacheeByIdDocument, // Use the Coachee query document
-    //         variables: {
-    //             userId: parseInt(userID),
-    //         },
-    //     });
 
-    //     return coacheeResult;
-    // };
-    // const {
-    //     data: coacheeData,
-    //     loading: coacheeLoading,
-    //     error: coacheeError,
-    // } = useFetchCoacheeByUserID(userToken);
-
-    // Fetch reviews using urql useQuery hook
     const [result, refetch] = useQuery({
         query: GetCoachReviewsDocument,
         variables: { userId: userToken ? parseInt(userToken) : 0 },
@@ -125,14 +78,14 @@ const ReviewsPage = () => {
 
     const reviews = data?.findCoachByID?.reviews || [];
 
-    // Calculate the number of reviews for each star rating
+
     const numReviewsByRating: { [key: number]: number } = {};
     reviews.forEach((review) => {
         numReviewsByRating[review.starRating] =
             (numReviewsByRating[review.starRating] || 0) + 1;
     });
 
-    // Calculate the total number of reviews and the average rating
+
     const totalReviews = reviews.length;
     const totalStars = reviews.reduce(
         (sum, review) => sum + review.starRating,
@@ -140,35 +93,7 @@ const ReviewsPage = () => {
     );
     const averageRating = totalReviews !== 0 ? totalStars / totalReviews : 0;
 
-    const maxBarWidth = 150; // Adjust as needed
-
-    // const coacheeName = coacheeData?.findCoacheeByID
-    //     ? `${coacheeData.findCoacheeByID.firstName} ${coacheeData.findCoacheeByID.id}`
-    //     : 'Unknown Coachee';
-
-    // console.log('Coachee Name and ID:', coacheeName);
-
-    // const coachBeingRated = `${profile.name || 'Unknown Coach'} (ID: ${
-    //     profile.id || 'N/A'
-    // })`;
-
-    // console.log('Coach being rated and ID:', coachBeingRated);
-    // console.log('');
-
-    //make a logic here, that checks if the coachee has an already completed booking with the profile.id
-
-    // //  Check if the coachee has a completed booking with the coach's ID
-    // const hasCompletedBooking = coacheeData?.findCoacheeByID?.bookings.some(
-    //     (booking) =>
-    //         booking.status === 'COMPLETED' &&
-    //         booking.coach.firstName + ' ' + booking.coach.lastName ===
-    //             profile.name,
-    // );
-
-    // console.log(
-    //     'Coachee has completed booking with this coach:',
-    //     hasCompletedBooking,
-    // );
+    const maxBarWidth = 150; 
 
     return (
         <View style={styles.container}>
@@ -200,7 +125,6 @@ const ReviewsPage = () => {
                         {totalReviews} Reviews
                     </Text>
                 </View>
-                {/* Render number of reviews for each star rating */}
                 {[5, 4, 3, 2, 1].map((starRating) => (
                     <View key={starRating} style={styles.ratingContainer}>
                         <Text style={styles.ratingText}>{starRating}</Text>
@@ -241,34 +165,6 @@ const ReviewsPage = () => {
                     </Text>
                 )}
             </ScrollView>
-            {/* 
-            {hasCompletedBooking ? (
-                <TouchableOpacity
-                    style={styles.addReview}
-                    onPress={handleAddReviewPress}
-                >
-                    <Icon name="add-circle-outline" size={50} color="#7E3FF0" />
-                </TouchableOpacity>
-            ) : (
-                <View
-                    style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                        paddingHorizontal: 15,
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                    }}
-                >
-                    <Text style={{ alignSelf: 'center', color: 'white' }}>
-                        You need a completed booking to add a review.
-                    </Text>
-                </View>
-            )} */}
-
-            {/* <AddReviewBottomSheet
-                isVisible={bottomSheetVisible}
-                onClose={handleCloseBottomSheet}
-                coachId={data?.findCoachByID?.id} // fixed id
-            /> */}
         </View>
     );
 };

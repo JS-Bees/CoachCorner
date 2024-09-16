@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import Modal from 'react-native-modal'; // Import the modal component
+import Modal from 'react-native-modal'; 
 
 const LogoutConfirmationModal = ({ visible, onConfirm, onCancel }) => {
   return (

@@ -10,7 +10,6 @@ interface CustomInputProps extends TextInputProps {
     validate?: boolean;
     validateEmail?: (email: string) => boolean;
     clearError: () => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     iconSource1?: any; 
     iconSource2?: any;
 }
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
         elevation: 6,
         shadowOpacity: 5,
         borderColor: '#e8e8e8',
-        flexDirection: 'row', // Add flexDirection to align icon and input horizontally
+        flexDirection: 'row', 
     },
 
     icon1: {

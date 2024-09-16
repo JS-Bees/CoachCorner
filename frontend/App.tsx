@@ -61,16 +61,12 @@ import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
 import SeeAll from './screens/seeAll';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
-// for urql
 import {
     Client,
     Provider as UrqlProvider,
     cacheExchange,
     fetchExchange,
-    // dedupExchange,
     subscriptionExchange,
 } from 'urql';
 
@@ -81,7 +77,6 @@ const apiUrl = process.env.EXPO_PUBLIC_API_ENDPOINT;
 const apiUrlWs = process.env.EXPO_PUBLIC_API_ENDPOINT_WS;
 
 const wsClient = createWSClient({
-    // url: 'ws://192.168.1.8:5050/graphql',
     url: apiUrlWs!,
 });
 
@@ -104,8 +99,8 @@ async function updateToken() {
 tokenUpdateIntervalId = setInterval(updateToken, 500);
 
 const client = new Client({
-    // url: 'http://192.168.1.8:5050/graphql',
     url: apiUrl!,
+
 
     fetchOptions: () => ({
         headers: {
@@ -481,8 +476,8 @@ function TabNavigator() {
                         />
                     ) : null;
                 },
-                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
-                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+                tabBarActiveTintColor: '#7E3FF0', 
+                tabBarInactiveTintColor: '#CEC2DA', 
             })}
         >
             <Tab.Screen
@@ -545,8 +540,8 @@ function NewCoachTabNavigator() {
                         />
                     ) : null;
                 },
-                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
-                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+                tabBarActiveTintColor: '#7E3FF0', 
+                tabBarInactiveTintColor: '#CEC2DA', 
             })}
         >
             <CoachTab.Screen

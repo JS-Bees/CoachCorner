@@ -30,12 +30,12 @@ import SplashScreen from './Authentication/LoadingSplash';
 const { width, height } = Dimensions.get('window');
 
 const MyCoaches_alt = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [searchText, setSearchText] = useState('');
-    const [activeButton, setActiveButton] = useState('Favorite'); // 'All' or 'Favorite'
-    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); // State to keep track of last refetch time
+    const [activeButton, setActiveButton] = useState('Favorite'); 
+    const [lastRefetchTime, setLastRefetchTime] = useState<Date | null>(null); 
     const pollingInterval = 1000;
 
     const handleSearchChange = (text: string) => {
@@ -71,19 +71,17 @@ const MyCoaches_alt = () => {
     const { data: coacheeData } = useFetchCoacheeByUserID(userToken || '');
 
     const [result, refetch] = useQuery({
-        query: FindFavoriteCoachesDocument, // Pass the FindCoachesBySportDocument query
+        query: FindFavoriteCoachesDocument, 
         variables: {
-            userId: userToken ? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+            userId: userToken ? parseInt(userToken) : 0, 
         },
-        requestPolicy: 'cache-and-network', // Ensure the data is fetched from the network if needed
+        requestPolicy: 'cache-and-network', 
     });
 
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
             setLastRefetchTime(new Date());
-            // console.log('Refetching data at', new Date().toLocaleTimeString());
-            // console.log("this is the refetched data:",data)
         }, pollingInterval);
 
         return () => clearInterval(interval);
@@ -94,13 +92,13 @@ const MyCoaches_alt = () => {
     if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
-    // Extract coaches data from the GraphQL response
+
     const contacts = data?.findCoacheeByID.contacts;
 
-    // Check if contacts is not null or undefined before proceeding
+
     if (!contacts) return <Text>No contacts found.</Text>;
 
-    // Map over the contacts array to create a new array of Profile objects
+
     const FavoriteCoaches: Profile[] = contacts.map((contact) => {
         const coach = contact.coach;
         const totalStars = coach.reviews.reduce(
@@ -111,11 +109,11 @@ const MyCoaches_alt = () => {
             coach.reviews.length > 0 ? totalStars / coach.reviews.length : 0;
         let imageUrl;
 
-        // Check if the profilePicture URL starts with 'https:'
+
         if (contact.coach.profilePicture.startsWith('https:')) {
             imageUrl = { uri: coach.profilePicture };
         } else {
-            // Use the fallback image if the URL does not start with 'https:'
+
             imageUrl = require('../assets/User.png');
         }
 
@@ -123,8 +121,8 @@ const MyCoaches_alt = () => {
             id: contact.coachId,
             name: `${coach.firstName} ${coach.lastName}`,
             imageSource: imageUrl,
-            gainedStars: averageStars, // Use the calculated average stars
-            mainSport: coach.sports.length > 0 ? coach.sports[0].type : '', // Assuming mainSport is the first sport in the array
+            gainedStars: averageStars, 
+            mainSport: coach.sports.length > 0 ? coach.sports[0].type : '', 
             about: coach.bio,
             workplaceAddress: coach.address,
             contactId: contact.id,
@@ -133,26 +131,7 @@ const MyCoaches_alt = () => {
     });
     console.log(contacts);
 
-    // const FavoriteCoaches: Profile[] = [ // max 2
-    //     {
-    //         name: 'John Doe',
-    //         imageSource: require('../assets/John_Doe.png'),
-    //         gainedStars: 4,
-    //         mainSport: "Basketball",
-    //         about: "John Doe, a seasoned basketball coach, brings a wealth of expertise to the court, guiding players to reach their full potential with strategic finesse and unwavering dedication.",
-    //         workplaceAddress: "123 Main Street, Basketball Court City, Hoopsland, 56789"
-    //     },
-    //     {
-    //         name: 'Jane Smith',
-    //         imageSource: require('../assets/Jane_Smith.png'),
-    //         gainedStars: 3,
-    //         mainSport: "Basketball",
-    //         about: "Jane Smith, a dynamic basketball coach, inspires athletes with her passion for the game, fostering a culture of teamwork and excellence.",
-    //         workplaceAddress: "Smith's Hoops Academy 456 Court Street Basketballville, Slam Dunk County Hoopsland, 98765"
-    //     },
-
-    // ];
-    // Filter the FavoriteCoaches array based on the search text
+   
 const filteredCoaches = FavoriteCoaches.filter(coach =>
     `${coach.name}`.toLowerCase().includes(searchText.toLowerCase())
 );
@@ -176,7 +155,7 @@ const filteredCoaches = FavoriteCoaches.filter(coach =>
                 <Image
                     source={{
                         uri: coacheeData?.findCoacheeByID.profilePicture,
-                    }} // Add your profile image source here
+                    }} 
                     style={{
                         width: 40,
                         height: 40,
@@ -207,16 +186,16 @@ const filteredCoaches = FavoriteCoaches.filter(coach =>
  contentInsetAdjustmentBehavior="scrollableAxes"
  style={{ marginTop: '1%', height: 250, left: 12 }}
  contentContainerStyle={{
-    flexGrow: 1, // Ensures the container fills available space
-    justifyContent: filteredCoaches.length > 0 ? 'flex-start' : 'center', // Center if no coaches
-    alignItems: filteredCoaches.length > 0 ? 'flex-start' : 'center', // Align horizontally
+    flexGrow: 1, 
+    justifyContent: filteredCoaches.length > 0 ? 'flex-start' : 'center', 
+    alignItems: filteredCoaches.length > 0 ? 'flex-start' : 'center', 
  }}
 >
  {filteredCoaches.length > 0 ? (
-    // Display coaches when they exist
+   
     <CoachProfiles profiles={filteredCoaches} />
  ) : (
-    // Center the "No coaches found" text when there are no coaches
+
     <Text style={{ color: 'grey', fontSize: 18, marginBottom: '40%', textAlign: 'center',}}>No coaches found.</Text>
  )}
 </ScrollView>
@@ -232,12 +211,12 @@ const MyCoaches = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
 
     nameAndGreetingsContainer: {
@@ -256,15 +235,15 @@ const MyCoaches = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -286,23 +265,22 @@ const MyCoaches = StyleSheet.create({
         height: 65,
     },
     searchContainer: {
-        borderWidth: 3, // Add a border
+        borderWidth: 3, 
         width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
+        borderColor: '#7E3FF0', 
+        borderRadius: 15, 
         marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
+        marginLeft: 'auto', 
+        marginRight: 'auto', 
         paddingHorizontal: '2.6%',
     },
     searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
+        width: 300, 
+        height: 40, 
     },
 
     searchBarInputContainer: {
-        height: '100%', // Match the height of the container
+        height: '100%', 
     },
 
     frameContainer: {
@@ -316,24 +294,24 @@ const MyCoaches = StyleSheet.create({
     },
 
     AllCoachesButton: {
-        width: '80%', // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: '80%', 
+        height: 50, 
         marginTop: '5%',
         marginLeft: '10%',
         backgroundColor: '#461a96',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     FavoriteCoachesButton: {
-        width: 140, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: 140, 
+        height: 50, 
         marginTop: '-13%',
         marginLeft: '55%',
         backgroundColor: '#e1d1f0',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     buttonText: {
         color: 'white',

@@ -8,7 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../App';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Import expo-image-picker
+import * as ImagePicker from 'expo-image-picker'; 
 
 
 
@@ -31,8 +31,6 @@ const EditInterests = () => {
   const [editedAddress, setEditedAddress] = useState<string>('');
   const [editedProfilePicture, setEditedProfilePicture] = useState<string>('');
 
-  //reminder to add a separate modal asking the if they wish to continue after making changes
-  //-------------------------------------------------------------------------------------------------------------------------------
  
   const handleNavigateBack = () => {
     navigation.goBack();
@@ -42,7 +40,7 @@ const EditInterests = () => {
     try {
       const uploadPreset = 'coachcorner';
       const formData = new FormData();
-      formData.append('file', imageObject); // Append the Blob directly
+      formData.append('file', imageObject); 
       formData.append('upload_preset', uploadPreset);
 
 
@@ -72,7 +70,7 @@ const EditInterests = () => {
        if (pickerResult.canceled) {
          return;
        }
-       // Ensure you're accessing the first asset's uri
+
        const imageUri = pickerResult.assets[0].uri;
        
        const imageObject = {
@@ -81,12 +79,12 @@ const EditInterests = () => {
         name: `test.${imageUri.split('.')[1]}`
        }
 
-       // Upload the selected image to Cloudinary
+
        const uploadedImageUrl = await uploadImageToCloudinary(imageObject);
        setEditedProfilePicture(uploadedImageUrl)
        console.log('Uploaded image URL:', uploadedImageUrl);
    
-       // Here you can use the uploadedImageUrl as needed, e.g., updating your state or database
+
    
     } catch (error) {
        console.error('Error picking an image:', error);
@@ -94,7 +92,7 @@ const EditInterests = () => {
    };
 
    const handleSaveChanges = async () => {
-    // Check if either bio or address or profile picture is empty
+
     if ((!editedBio.trim() && !editedAddress.trim() && !editedProfilePicture.trim()) || 
         (editedBio.trim() === coacheeData?.findCoacheeByID.bio && 
          editedAddress.trim() === coacheeData?.findCoacheeByID.address &&
@@ -114,7 +112,7 @@ const EditInterests = () => {
             }
         });
 
-        // Update the original bio and address if they were changed
+
         if (editedBio.trim()) {
             setEditedBio(editedBio);
         }
@@ -130,11 +128,11 @@ const EditInterests = () => {
 };
 
     const [{ data: coacheeData, fetching, error }] = useQuery({
-        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        query: FindCoacheeByIdDocument, 
         variables: {
-            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userId: parseInt(userToken), 
         },
-        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network', 
     });
 
     useEffect(() => {
@@ -345,13 +343,13 @@ const styles = StyleSheet.create({
     color: "#908D93"
   },
   circleImage: {
-    width: 80, // Adjust width as needed
-    height: 80, // Adjust height as needed
+    width: 80, 
+    height: 80, 
     position: 'absolute',
-    bottom: '100%', // Adjusted to center vertically
-    left: '30%', // Adjusted to center horizontally
-    marginLeft: -50, // Half of the width
-    marginBottom: -80, // Half of the height
+    bottom: '100%', 
+    left: '30%', 
+    marginLeft: -50, 
+    marginBottom: -80, 
     borderRadius: 10,
   },
   input: {
