@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import {
   Animated,
@@ -75,8 +74,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  
-
   const toggleModal = () => {
     setShowModal(!showModal);
   };
@@ -84,7 +81,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   const toggleErrorModal = () => {
     setErrorModalVisible(!errorModalVisible);
   };
-
 
   const onSubmitPressed = async () => {
     setIsLoading(true);
@@ -102,9 +98,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     
         return;
       }
-
-   
-      
 
       const variables = {
         input: {
@@ -166,8 +159,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     }
   }, [setOpen, setDate, currentDate]);
  
-
-
   const showTimePicker = (selectingStartTime: boolean) => {
     setIsSelectingStartTime(selectingStartTime);
     setTimePickerVisibility(true);
@@ -243,7 +234,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     setSelectedClient(route.params?.coachee || null)
   }, [route.params])
 
-
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
   const panResponder = useRef(
@@ -277,7 +267,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     })
   ).current;
 
-
   const bottomSheetAnimation = {
     transform: [
       {
@@ -289,11 +278,9 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
         }),
       },
     ],
-    zIndex: 0
-    
+    zIndex: 0   
   };
   
-
   const overlayAnimation = {
     opacity: animatedValue.interpolate({
       inputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
@@ -302,8 +289,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     }),
     zIndex: -1
   };
-
-  
+ 
   const [fontsLoaded] = useFonts({
     'Cairo-Regular': require('./Fonts/Cairo-Regular.ttf'),
     'Inter-Semibold': require('./Fonts/Inter-SemiBold.otf')
@@ -323,8 +309,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
           <Text style={styles.headerText}> Book </Text>
           <Text style={styles.headerText}> Appointment </Text>
         </View> 
-
-        
 
         <KeyboardAwareScrollView enableOnAndroid={true}>
           <ScrollView keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="always"
@@ -483,7 +467,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
       </Animated.View>
     </View>
   );
-
  
 };
 
@@ -521,8 +504,6 @@ const styles = StyleSheet.create({
     zIndex: 3
     
   },
-
-
 
   title: {
     top: '5%',
@@ -655,9 +636,6 @@ modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
 },
-
-
-
 });
 
 export default BookingDrawer;
