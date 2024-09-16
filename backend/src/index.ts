@@ -89,13 +89,8 @@ const server = new ApolloServer({
 
         try {
             const decoded = jwt.verify(token, SECRET_KEY);
-            // console.log(decoded.userId);
-            // console.log(clientName);
-            // if (decoded.userId === clientName) {
 
-            // }
             const contextWithUser = { ...context, decoded };
-            // console.log(contextWithUser);
             return contextWithUser;
         } catch (err) {
             console.error('Error:', err);
