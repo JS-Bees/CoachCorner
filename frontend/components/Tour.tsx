@@ -1,4 +1,4 @@
-// TourModal.js
+
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity, Image, Dimensions, Animated } from 'react-native';
 
@@ -15,29 +15,29 @@ const images = [
 
 const TourModal = ({ visible, onClose }) => {
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity is 0
+  const fadeAnim = useRef(new Animated.Value(0)).current; 
 
   useEffect(() => {
     if (visible) {
-      // Fade in the modal
+
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 300, // Duration for fade-in
+        duration: 300, 
         useNativeDriver: true,
       }).start();
     } else {
-      // Fade out the modal
+   
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 300, // Duration for fade-out
+        duration: 300, 
         useNativeDriver: true,
       }).start(() => onClose());
     }
   }, [visible]);
 
   const handleClose = () => {
-    setCurrentIndex(0); // Reset the index
-    onClose(); // Call the onClose function to close the modal
+    setCurrentIndex(0); 
+    onClose(); 
   };
 
   const goToNextImage = () => {
@@ -60,7 +60,7 @@ const TourModal = ({ visible, onClose }) => {
           </View>
           <Text style={styles.imageDescription}>{images[currentIndex].description}</Text>
           <View style={styles.buttonContainer}>
-            {currentIndex === 4 ? ( // If it's the 5th image (index 4)
+            {currentIndex === 4 ? ( 
               <TouchableOpacity onPress={handleClose} style={styles.finishedButton}>
                 <Text style={styles.finishedText}>Get Started</Text>
               </TouchableOpacity>
@@ -93,39 +93,39 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Increase alpha value for more blur effect
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', 
   },
   modalContent: {
-    width: '85%', // Increased width for better spacing
+    width: '85%', 
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
-    elevation: 5, // Add elevation for better shadow on Android
+    elevation: 5, 
   },
   imageContainer: {
     width: '100%',  
-    height: width * 0.5, // Fixed height for image container
+    height: width * 0.5, 
     justifyContent: 'center',
     alignItems: 'center',
   },
   image: {
     width: '115%',
     height: '115%',
-    resizeMode: 'contain', // Changed to contain to maintain aspect ratio
+    resizeMode: 'contain', 
     borderRadius: 10,
   },
   imageDescription: {
     marginTop: 20,
     fontSize: 16,
     textAlign: 'center',
-    paddingHorizontal: 10, // Added horizontal padding for better spacing
-    color: '#7E3FF0', // Set font color to the theme color
+    paddingHorizontal: 10, 
+    color: '#7E3FF0', 
   },
   buttonContainer: {
     flexDirection: 'row',
     marginTop: 20,
-    justifyContent: 'center', // Center the buttons
+    justifyContent: 'center', 
     width: '100%',
   },
   nextButton: {
@@ -159,12 +159,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '80%', // Set a width for the button
+    width: '80%',
   },
   finishedText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'white', // Change the text color to white for better visibility
+    color: 'white', 
     textAlign: 'center',
   },
 });
