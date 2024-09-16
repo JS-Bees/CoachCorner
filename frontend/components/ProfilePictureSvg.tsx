@@ -3,7 +3,6 @@ import Svg, { Path } from "react-native-svg"
 import { G, Rect, ClipPath, Defs} from 'react-native-svg';
 import {Filter} from 'react-native-svg';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ProfilePicture(props: any) {
     return(
         <Svg 
