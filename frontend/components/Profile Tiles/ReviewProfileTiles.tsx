@@ -57,15 +57,15 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        marginRight: 10, // Add spacing between the image and the name
+        marginRight: 10, 
     },
     name: {
         fontSize: 16,
         fontWeight: 'bold',
     },
     content: {
-        flex: 1, // Allows the content to expand as needed
-        flexDirection: 'column', // Arrange elements vertically
+        flex: 1, 
+        flexDirection: 'column', 
     },
     reviewText: {
         fontSize: 14,
