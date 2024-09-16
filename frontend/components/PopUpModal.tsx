@@ -1,4 +1,4 @@
-// SignupSuccessModal.js
+
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
@@ -13,7 +13,7 @@ const SignupSuccessModal = ({ visible, message }) => {
       transparent={true}
       visible={visible}
       onRequestClose={() => {
-        // Handle modal close
+       
       }}
     >
       <View style={styles.centeredView}>
@@ -22,7 +22,7 @@ const SignupSuccessModal = ({ visible, message }) => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              // Close modal and navigate to login screen
+             
               navigation.navigate('LogIn');
             }}
           >
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // semi-transparent black background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
   modalView: {
     backgroundColor: 'white',
