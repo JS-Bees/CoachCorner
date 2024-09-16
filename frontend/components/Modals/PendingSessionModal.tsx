@@ -12,9 +12,6 @@ interface PendingSessionModalProps {
   toggleOverlay: (session: Session | null) => void;
 }
 
-//have to refine the added data
-//have to refine this to fit criteria
-
 const PendingSessionModal: React.FC<PendingSessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
@@ -197,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
+    backgroundColor: 'transparent', 
     width:  140,
     height:  45,
     borderRadius:  15,

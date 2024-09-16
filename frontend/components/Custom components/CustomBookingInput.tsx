@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   focusedInput: {
-    borderColor: '#7E3FF0', // Change the border color to your desired color
+    borderColor: '#7E3FF0', 
   },
   
 });

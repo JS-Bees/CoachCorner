@@ -32,9 +32,6 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
     navigation.navigate('CoachChatListsPage');
   };
 
-  
-
-
   const handleCancelSchedule = () => {
     setLoading(true);
     if (session?.bookingId) {
@@ -43,7 +40,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
         input: { status: 'CANCELLED' }
       };
       updateBookingStatus(variables).then(() => {
-        toggleOverlay(null); // Close the modal
+        toggleOverlay(null); 
         setLoading(false);
         alert('Cancelled this Session');
       });
@@ -60,7 +57,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
         input: { status: 'COMPLETED' }
       };
       updateBookingStatus(variables).then(() => {
-        toggleOverlay(null); // Close the modal
+        toggleOverlay(null); 
         setLoading(false);
         alert('Marked as Complete');
       });
@@ -68,16 +65,12 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
       console.error("Cannot update status ");
     }
   };
-
-  
-  
   
   useEffect(() => {
     if (result.error) {
       console.error('Error updating booking status:', result.error.message);
     } else if (result.data) {
       console.log('Booking status updated successfully:', result.data.updateBookingStatus);
-      // Optionally, you can perform actions based on the result, such as updating local state or displaying a success message
     }
   }, [result]);
 
@@ -144,7 +137,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 </View>
 
 
-{/* <View style={styles.buttons}> */}
+{}
   <View style={styles.buttonContainer}>
     <TouchableOpacity style={styles.cancelButton} onPress={handleCancelSchedule}>
       <Text style={styles.cancelText}>Cancel Schedule</Text>
@@ -157,7 +150,7 @@ const UpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOv
 </View>
 
 
-      {/* </View> */}
+      {}
     </Overlay>
   );
 };

@@ -44,10 +44,9 @@ const MAX_UPWARD_TRANSLATE_Y = BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = 50;
 
-// Keith Props Booking Action
 const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, onBookingAction }) => {
-  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false); // State for success modal
-  const [isCancelledModalVisible, setIsCancelledModalVisible] = useState(false); // State for cancelled
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false); 
+  const [isCancelledModalVisible, setIsCancelledModalVisible] = useState(false); 
   const route = useRoute();
   const [selectedCoach, setSelectedCoach] = useState(route.params?.coach || null);
   const [updateBookingStatusResult, updateBookingStatus] = useMutation(
@@ -163,9 +162,9 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, on
         console.log('Booking status updated successfully:', result.data);
         setIsBookingConfirmed(true);
         setIsSuccessModalVisible(true);
-        // Keith onBookingAction
+
         if (onBookingAction) {
-          onBookingAction(); // Notify the parent component
+          onBookingAction(); 
         }
       }
     });
@@ -181,9 +180,9 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, on
       } else {
         console.log('Booking status updated successfully:', result.data);
         setIsCancelledModalVisible(true);
-        // Keith onBookingAction
+
         if (onBookingAction) {
-          onBookingAction(); // Notify the parent component
+          onBookingAction();
         }
       }
     });
@@ -200,7 +199,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, on
   };
 
   const formatTime = (timeString) => {
-    // Assuming the timeString is in HH:mm format
+
     const formattedTime = dayjs(timeString, 'HH:mm').format('h:mm A');
     return formattedTime;
   };
@@ -311,7 +310,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, on
          
           </ScrollView>
 
-          {/* Success Modal */}
+          {}
       <Modal
         transparent={true}
         visible={isSuccessModalVisible}
@@ -322,7 +321,7 @@ const ConfirmBookingDrawer: React.FC<ConfirmBookingDrawerProps> = ({ onClose, on
             <Text style={styles.successText}>Booking Confirmed!</Text>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => setIsSuccessModalVisible(false)} // Close the modal
+              onPress={() => setIsSuccessModalVisible(false)} 
             >
               <Text style={styles.modalButtonText}>OK</Text>
             </TouchableOpacity>
@@ -485,7 +484,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: '#915bc7', // Change the font color to light green
+    color: '#915bc7', 
   },
   errorText: {
     fontFamily: 'Roboto',
@@ -493,10 +492,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: 'red', // Change the font color to red
+    color: 'red', 
   },
   modalButton: {
-    backgroundColor: '#A378F2', // Change the background color to purple
+    backgroundColor: '#A378F2', 
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',

@@ -20,9 +20,6 @@ interface SessionModalProps {
   toggleOverlay: (session: Session | null) => void;
 }
 
-//make a component for custom start and end time 
-//make another component for multiple dates 
-
 const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [result, updateBookingStatus] = useMutation<UpdateBookingStatusMutation>(UpdateBookingStatusDocument);
@@ -39,11 +36,8 @@ const CoacheeUpcomingModal: React.FC<SessionModalProps> = ({ visible, session, t
       console.error('Error updating booking status:', result.error.message);
     } else if (result.data) {
       console.log('Booking status updated successfully:', result.data.updateBookingStatus);
-      // Optionally, you can perform actions based on the result, such as updating local state or displaying a success message
-    }
+      
   }, [result]);
-
-  // console.log("Session in modal:", session)
 
   
 
@@ -210,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: 'transparent', // Set the background color for the cancel button
+    backgroundColor: 'transparent', 
     width:  140,
     height:  45,
     borderRadius:  15,

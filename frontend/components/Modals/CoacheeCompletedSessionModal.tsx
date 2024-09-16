@@ -17,21 +17,13 @@ interface SessionModalProps {
   toggleOverlay: (session: Session | null) => void;
 }
 
-//make a component for custom start and end time 
-//make another component for multiple dates 
 
 const CoacheeCompletedModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  
-
-  
 
   const navigateToChat = () => {
     navigation.navigate('ChatList');
   };
-  
-
-  // console.log("Session in modal:", session)
 
   
 

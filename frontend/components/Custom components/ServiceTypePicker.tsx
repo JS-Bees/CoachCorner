@@ -10,16 +10,16 @@ const ServiceTypePicker: React.FC<ServiceTypePickerProps> = ({ setServiceType })
   const [serviceType, setLocalServiceType] = useState<string | null>(null);
 
   const handleServiceTypeChange = (value: string | null) => {
-    console.log('Selected value:', value); // For debugging
+    console.log('Selected value:', value); 
     setLocalServiceType(value);
-    setServiceType(value); // Update the parent component's state
+    setServiceType(value); 
   };
 
-  console.log('Current serviceType:', serviceType); // For debugging
+  console.log('Current serviceType:', serviceType); 
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Other components */}
+      {}
       <View style={{ paddingHorizontal: 5, paddingTop: 5 }}>
         <Picker
           selectedValue={serviceType}
@@ -31,7 +31,7 @@ const ServiceTypePicker: React.FC<ServiceTypePickerProps> = ({ setServiceType })
           <Picker.Item label="Group" value="group" />
         </Picker>
       </View>
-      {/* Other components */}
+      {}
     </View>
   );
 };

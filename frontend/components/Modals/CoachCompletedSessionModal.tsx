@@ -21,9 +21,6 @@ interface SessionModalProps {
 const CompletedModal: React.FC<SessionModalProps> = ({ visible, session, toggleOverlay }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
-
-  
-
   const navigateToChat = () => {
     navigation.navigate('CoachChatListsPage');
   };

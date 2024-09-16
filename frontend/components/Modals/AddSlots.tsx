@@ -37,13 +37,6 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
   const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
   const [upcomingSlots, setUpcomingSlots] = useState<Slot[]>([]);
 
-  
-
-  
-
-
-
-
   const showStartDatePicker = () => {
     setStartDatePickerVisibility(true);
   };
@@ -84,12 +77,11 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
 
     
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const useFetchCoachByUserID = (userID: any) => {
       const [coachResult] = useQuery({
-          query: FindCoachByIdDocument, // Use the Coachee query document
+          query: FindCoachByIdDocument, 
           variables: {
-              userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
+              userId: parseInt(userID),
           },
       });
 
@@ -101,14 +93,13 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
   
 
   const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     data: coachData,
   } = useFetchCoachByUserID(userToken);
 
   const [result] = useQuery({
     query: FindOneToOneServiceSlotsByCoachIdDocument,
     variables: {
-      coachId: userToken? parseInt(userToken) : 0, // Provide a default value of 0 when userToken is null
+      coachId: userToken? parseInt(userToken) : 0, 
     },
     requestPolicy: 'network-only',
   });
@@ -128,12 +119,11 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
 
     const handleSave = () => {
       if (startDate && endDate && selectedDate) {
-        // Format the new slot's start and end times
+
         const newStartTime = format(startDate, "hh:mm a");
         const newEndTime = format(endDate, "hh:mm a");
         const newDate = format(selectedDate, "yyyy-MM-dd");
     
-        // Check for overlapping slots
         const isOverlap = upcomingSlots.some(slot => {
           const slotStartTime = new Date(slot.startTime);
           const slotEndTime = new Date(slot.endTime);
@@ -143,7 +133,6 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
           const slotStartTimeFormatted = format(slotStartTime, "hh:mm a");
           const slotEndTimeFormatted = format(slotEndTime, "hh:mm a");
     
-          // Check if the new slot's start time overlaps with the existing slot's timeframe
           const dateOverlap = slotDateFormatted === newDate;
           const timeOverlap =
             (newStartTime >= slotStartTimeFormatted && newStartTime < slotEndTimeFormatted) ||
@@ -159,7 +148,7 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
             format(endDate, "hh:mm a"),
             format(selectedDate, "EEEE, do MMMM"),
           );
-          // Reset state values after saving
+      
           setStartDate(null);
           setEndDate(null);
           setSelectedDate(null);
@@ -167,7 +156,7 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
           setDateError('');
           setIsSaveDisabled(false);
         } else {
-          // Set error message if there's an overlap
+       
           setIsSaveDisabled(true);
           alert('A one-to-one session has already been reserved for this timeslot');
         }
@@ -196,7 +185,7 @@ const AddSlotModal: React.FC<AddSlotModalProps> = ({ visible, onClose, onAddSlot
   };
 
   const handleClose = () => {
-    onClose(); // Close the modal
+    onClose(); 
   };
 
 
@@ -289,8 +278,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 30,
-    width: (screenWidth * 0.9), // Adjust the percentage as needed
-    height: (screenHeight * 0.6), // Adjust the percentage as needed
+    width: (screenWidth * 0.9), 
+    height: (screenHeight * 0.6), 
     alignItems: 'flex-start',
   },
   header:{

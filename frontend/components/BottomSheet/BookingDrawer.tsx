@@ -34,8 +34,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { ActivityIndicator } from 'react-native';
 import  dayjs from "dayjs"
 
-
-
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 const { width } = Dimensions.get('window');
 
@@ -52,17 +50,10 @@ interface BookingDrawerProps {
   coachId: string
 }
 
-
-
-
 const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClose }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const route = useRoute();
   
- 
-
-
-
   const [userToken, setUserToken] = useState<string | null>(null);
   const [selectedStartTime, setSelectedStartTime] = useState<Date | null>(null);
   const [selectedEndTime, setSelectedEndTime] = useState<Date | null>(null);
@@ -126,8 +117,8 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
         slotsInput: [
           {
             date: date || new Date(),
-            endTime: selectedEndTime?.toISOString(), // Convert endTime to ISO string
-            startTime: selectedStartTime?.toISOString(), // Convert startTime to ISO string
+            endTime: selectedEndTime?.toISOString(), 
+            startTime: selectedStartTime?.toISOString(), 
           },
         
         ],
@@ -139,16 +130,15 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
         console.error('Error:', error);
       } else {
         if (createBookingData?.createBooking?.id) {
-          // Booking was created successfully, and booking ID is available in createBookingData.
           const bookingId = createBookingData.createBooking.id;
           console.log('Booking Sent Successfully. Booking ID:', bookingId);
           setSuccessMessage('Booking Sent Successfully');
           toggleModal();
-          setDate(null); // Reset selectedDate
+          setDate(null); 
           setServiceType('');
           setAddNotes('');
-          setSelectedStartTime(null); // Reset selectedStartTime
-          setSelectedEndTime(null); // Reset selectedEndTime
+          setSelectedStartTime(null); 
+          setSelectedEndTime(null); 
         } else {
           console.error('Booking creation failed. Data:', createBookingData);
         }
@@ -157,7 +147,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     } catch (error) {
       console.error('Error Submitting Booking:');
     } finally {
-      setIsLoading(false); // Reset loading state regardless of success or failure
+      setIsLoading(false) ;
     }
   };
 
@@ -168,7 +158,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   const onConfirmSingle = React.useCallback((params) => {
     setOpen(false);
     
-    // Check if the selected date is before the current date
     if (params.date < currentDate) {
       setErrorModalVisible(true);
       setErrorMessage('Please select date that is not before current date.');
@@ -197,11 +186,10 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     if (isSelectingStartTime) {
       setSelectedStartTime(time);
     } else {
-      // Ensure end time is not earlier than start time
       if (time && selectedStartTime && time <= selectedStartTime) {
         setErrorModalVisible(true);
         setErrorMessage('End time must be later than start time.');
-        setSelectedEndTime(null); // Clear the end time
+        setSelectedEndTime(null); 
       } else {
         console.log('Selected End Time:', formatTimeWithoutSeconds(time))
         setSelectedEndTime(time);
@@ -211,11 +199,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   };
 
   const handleTextInputPress = (selectingStartTime: boolean) => {
-    // if (selectingStartTime) {
-    //   setSelectedStartTime(null);
-    // } else {
-    //   setSelectedEndTime(null);
-    // }
+
     showTimePicker(selectingStartTime);
     console.log(selectedEndTime)
 
@@ -224,8 +208,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   const formatTimeWithoutSeconds = (time: Date | null) => {
     return time ? dayjs(time).format('h:mm A'): '';
   };
-
- 
 
   useEffect(() => {
     const fetchUserToken = async () => {
@@ -261,9 +243,6 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
     setSelectedClient(route.params?.coachee || null)
   }, [route.params])
 
- 
-
-  
 
   const animatedValue = useRef(new Animated.Value(0)).current;
   const lastGestureDy = useRef(0);
@@ -318,7 +297,7 @@ const BookingDrawer: React.FC<BookingDrawerProps> = ({ coacheeId, coachId, onClo
   const overlayAnimation = {
     opacity: animatedValue.interpolate({
       inputRange: [MAX_UPWARD_TRANSLATE_Y, MAX_DOWNWARD_TRANSLATE_Y],
-      outputRange: [0.5, 0.1], // Updated outputRange to fade out completely
+      outputRange: [0.5, 0.1], 
       extrapolate: 'clamp',
     }),
     zIndex: -1
@@ -655,7 +634,7 @@ successText: {
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: '#915bc7', // Change the font color to light green
+    color: '#915bc7', 
 },
 errorText: {
     fontFamily: 'Roboto',
@@ -663,10 +642,10 @@ errorText: {
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
-    color: 'red', // Change the font color to red
+    color: 'red',
 },
 modalButton: {
-    backgroundColor: '#A378F2', // Change the background color to purple
+    backgroundColor: '#A378F2', 
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',

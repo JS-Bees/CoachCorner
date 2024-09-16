@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// Define the type for the props
 interface ChatInputProps {
  message: string;
  setMessage: (text: string) => void;

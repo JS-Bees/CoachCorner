@@ -30,8 +30,8 @@ const ReviewTile: React.FC<ReviewTileProps> = ({ review }) => {
                  <StarRating gainedStars={review.stars} starColor="#FECB2E" />
             <Text
                 style={styles.reviewText}
-                numberOfLines={isExpanded ? undefined : 3} // Adjust the maximum number of lines when collapsed
-                ellipsizeMode="tail" // Controls how text is truncated
+                numberOfLines={isExpanded ? undefined : 3} 
+                ellipsizeMode="tail" 
             >
                 {review.reviewText}
             </Text>
@@ -44,14 +44,14 @@ const styles = StyleSheet.create({
     reviewTile: {
         padding: 10,
         alignItems: 'flex-start',
-        justifyContent: 'flex-start', // Align content at the top
+        justifyContent: 'flex-start', 
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
     userInfo: {
         flexDirection: 'row',
-        alignItems: 'center', // Align profile image and name horizontally
-        marginBottom: 5, // Add spacing between user info and review content
+        alignItems: 'center', 
+        marginBottom: 5, 
     },
     profileImage: {
         width: 40,

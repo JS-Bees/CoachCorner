@@ -17,9 +17,6 @@ interface SessionModalProps {
   toggleOverlay: (session: Session | null) => void;
 }
 
-//make a component for custom start and end time 
-//make another component for multiple dates 
-
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -48,7 +45,7 @@ const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
         input: { status: 'CANCELLED' }
       };
       updateBookingStatus(variables).then(() => {
-        toggleOverlay(null); // Close the modal
+        toggleOverlay(null); 
         navigateToReSched();
         setLoading(false);
       });
@@ -63,13 +60,9 @@ const PendingModal: React.FC<SessionModalProps> = ({ visible, session, toggleOve
       console.error('Error updating booking status:', result.error.message);
     } else if (result.data) {
       console.log('Booking status updated successfully:', result.data.updateBookingStatus);
-      // Optionally, you can perform actions based on the result, such as updating local state or displaying a success message
+      
     }
   }, [result]);
-
-  // console.log("Session in modal:", session)
-
-  
 
   return (
     <Overlay isVisible={visible} onBackdropPress={() => toggleOverlay(null)} 
@@ -237,7 +230,7 @@ const styles = StyleSheet.create({
   },
   awaitingText: {
     top: "35%",
-    backgroundColor: 'transparent', // Set the background color for the cancel button
+    backgroundColor: 'transparent', 
     borderRadius:  15,
     alignItems: 'center',
     justifyContent: 'center', 
