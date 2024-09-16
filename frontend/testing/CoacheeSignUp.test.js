@@ -1,8 +1,8 @@
-// __tests__/SignUpForCoachee.test.js
+
 
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import SignUpForCoachee from '../path/to/SignUpForCoachee'; // Adjust the import path
+import SignUpForCoachee from '../path/to/SignUpForCoachee'; 
 import { useNavigation } from '@react-navigation/native';
 import { useMutation } from 'urql';
 

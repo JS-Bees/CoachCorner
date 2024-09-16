@@ -35,7 +35,7 @@ const BOTTOM_SHEET_MAX_HEIGHT = WINDOW_HEIGHT * 1;
 const BOTTOM_SHEET_MIN_HEIGHT = WINDOW_HEIGHT * 1;
 
 const MAX_UPWARD_TRANSLATE_Y =
-    BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; // negative number;
+    BOTTOM_SHEET_MIN_HEIGHT - BOTTOM_SHEET_MAX_HEIGHT; 
 const MAX_DOWNWARD_TRANSLATE_Y = 0;
 const DRAG_THRESHOLD = height * 0.05;
 
@@ -55,8 +55,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
     const [isModalVisible, setModalVisible] = useState(false);
     const [isSecondModalVisible, setSecondModalVisible] = useState(false);
     const [isDraggable, setIsDraggable] = useState(true);
-    const [isAnimatedViewVisible, setAnimatedViewVisible] = useState(true); // New state
-
+    const [isAnimatedViewVisible, setAnimatedViewVisible] = useState(true); 
     const [, createCoachingRelationship] = useMutation(
         CreateCoachingRelationshipDocument,
     );
@@ -78,13 +77,13 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
             if (coacheeId) {
                 if (!rating) {
                     setRatingError('Please enter rating');
-                    return; // Don't proceed with the submission
+                    return; 
                 }
 
-                // Reset the rating error if it was previously set
+              
                 setRatingError(null);
 
-                setIsLoading(true); // Start loading
+                setIsLoading(true); 
 
                 const variables = {
                     coachId: coachData.id,
@@ -174,7 +173,7 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
         } catch (error) {
             console.error('Error adding coach:', error);
         } finally {
-            setIsAddingCoach(false); // Stop adding coach
+            setIsAddingCoach(false); 
 
             onClose();
         }
@@ -198,13 +197,13 @@ const DraggableBottomSheet: React.FC<DraggableBottomSheetProps> = ({
     const onOpenSecondModalPressed = () => {
         setSecondModalVisible(true);
         setIsDraggable(false);
-        setAnimatedViewVisible(false); // Hide the Animated.View
+        setAnimatedViewVisible(false); 
     };
 
     const closeSecondModal = () => {
         setSecondModalVisible(false);
         setIsDraggable(true);
-        setAnimatedViewVisible(true); // Re-enable the Animated.View
+        setAnimatedViewVisible(true); 
     };
 
     const resetReviewAndRating = () => {
@@ -623,8 +622,8 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     reviewCommentContainer: {
-        height: 60, // Set a fixed height
-        overflow: 'hidden', // Hide overflow content
+        height: 60, 
+        overflow: 'hidden', 
     },
     reviewComment: {
         fontSize: 16,

@@ -61,15 +61,12 @@ import IntroSplash from './screens/Authentication/IntroSplash';
 import { StatusBar } from 'react-native';
 import SeeAll from './screens/seeAll';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';//For buttom nav bar just change "RootStack to = createNativeStackNavigator();"
 
-// for urql
 import {
     Client,
     Provider as UrqlProvider,
     cacheExchange,
     fetchExchange,
-    // dedupExchange,
     subscriptionExchange,
 } from 'urql';
 
@@ -479,8 +476,8 @@ function TabNavigator() {
                         />
                     ) : null;
                 },
-                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
-                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+                tabBarActiveTintColor: '#7E3FF0', 
+                tabBarInactiveTintColor: '#CEC2DA', 
             })}
         >
             <Tab.Screen
@@ -543,8 +540,8 @@ function NewCoachTabNavigator() {
                         />
                     ) : null;
                 },
-                tabBarActiveTintColor: '#7E3FF0', // Color for the active tab
-                tabBarInactiveTintColor: '#CEC2DA', // Color for the inactive tabs
+                tabBarActiveTintColor: '#7E3FF0', 
+                tabBarInactiveTintColor: '#CEC2DA', 
             })}
         >
             <CoachTab.Screen

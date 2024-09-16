@@ -20,7 +20,7 @@ const ChooseHobbies = ({route}) => {
         Gardening: false,  
         
     });
-    const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee /* Add other data */ } = route.params;
+    const { firstName, lastName, email, password, workplaceAddress, birthday, coachOrCoachee  } = route.params;
     const { selectedSports } = route.params;
 
     const handleCheckboxChange = (MusicGenre: Music) => {
@@ -29,10 +29,10 @@ const ChooseHobbies = ({route}) => {
         const checkedCount = Object.values(newCheckedHobby).filter((value) => value).length;
   
         if (checkedCount === 4 && !newCheckedHobby[MusicGenre]) {
-          // If trying to check more than 4, uncheck the current checkbox
+
           newCheckedHobby[MusicGenre] = false;
         } else {
-          // Toggle the state of the clicked checkbox
+
           newCheckedHobby[MusicGenre] = !newCheckedHobby[MusicGenre];
         }
   
@@ -48,14 +48,14 @@ const ChooseHobbies = ({route}) => {
     };
 
 const handleButtonPress = () => {
-  // Filter out the selected hobbies
+
   const selectedHobbies = Object.keys(checkedHobby)
       .filter(MusicGenre => checkedHobby[MusicGenre])
       .map(MusicGenre => ({
         MusicGenre
       }));
   
-  // Log the selected hobbies data
+
   console.log(selectedHobbies);
   console.log(selectedSports)
   console.log(firstName)

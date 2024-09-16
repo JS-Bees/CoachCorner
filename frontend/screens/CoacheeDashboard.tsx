@@ -42,10 +42,10 @@ const initialStates = () => ({
 });
 
 const CoacheeDashboard = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    // const isFocused = useIsFocused();
+
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
@@ -70,7 +70,7 @@ const CoacheeDashboard = () => {
     };
 
     useEffect(() => {
-        // Start the animation loop
+  
         Animated.loop(
             Animated.sequence([
                 Animated.timing(animation, {
@@ -92,7 +92,7 @@ const CoacheeDashboard = () => {
             {
                 translateY: animation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -10], // Moves the icon up and down
+                    outputRange: [0, -10], 
                 }),
             },
         ],
@@ -127,7 +127,7 @@ const CoacheeDashboard = () => {
     
           const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
     
-          // Cleanup function
+    
           return () => {
             backHandler.remove();
           };
@@ -152,7 +152,7 @@ const CoacheeDashboard = () => {
 
     const handleSportSelection = (sport: string) => {
         setSelectedSport(sport);
-        setSportsVisible(false); // Hide the sports selection
+        setSportsVisible(false); 
         navigation.navigate('AllCoachesPage', { selectedSport: sport });
     };
 
@@ -169,10 +169,10 @@ const CoacheeDashboard = () => {
         fetchUserToken();
     }, []);
 
-    // function to fetch coachee data by userID (token)
+
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
-            query: FindCoacheeByIdDocument, // Use the Coachee query document
+            query: FindCoacheeByIdDocument, 
             variables: {
                 userId: parseInt(userID),
             },
@@ -187,10 +187,10 @@ const CoacheeDashboard = () => {
         error: coacheeError,
     } = useFetchCoacheeByUserID(userToken);
 
-    // function to fetch coach data by userID (token)
+
     const useFetchCoach = (userID: any) => {
         const [coachResult] = useQuery({
-            query: GetSortedCoachesDocument, // Use the Coachee query document
+            query: GetSortedCoachesDocument, 
         });
 
         return coachResult;
@@ -205,54 +205,13 @@ const CoacheeDashboard = () => {
         return null;
     }
 
-    //     const coacheeInterests = coacheeData?.findCoacheeByID?.interests || [];
-    //     const coaches = coachData?.coaches || [];
-    // /
-
-    // const sportType = coacheeData?.findCoacheeByID?.sport
-    // // const sportType = "Soccer";
-    // const genreTypes = ['MovieGenre', 'BookGenre', 'MusicGenre'];
-
-    // // Filter coaches based on the specified sport type (Basketball)
-    // const filteredCoaches = coaches.filter(coach =>
-    //     coach.sports?.some(sport => sport.type === sportType)
-    // );
-
-    // const findMatchingInterestsCount = (coacheeInterests, coachInterests) => {
-    //   return genreTypes.reduce((count, genreType) => {
-    //     const coacheeInterest = coacheeInterests.find(interest => interest.type === genreType);
-    //     const coachInterest = coachInterests.find(interest => interest.type === genreType);
-    //     return count + (coacheeInterest && coachInterest && coacheeInterest.name === coachInterest.name ? 1 : 0);
-    //   }, 0);
-    // };
-
-    // const matchedCoaches = filteredCoaches
-    //   .map(coach => {
-    //     const matchingInterestCount = findMatchingInterestsCount(coacheeInterests, coach.interests);
-    //     return { coach, matchingInterestCount };
-    //   })
-    //   .filter(coach => coach !== null)
-    //   .sort((a, b) => b.matchingInterestCount - a.matchingInterestCount);
-
-    // if (matchedCoaches.length === 0) {
-    //   const randomIndex = Math.floor(Math.random() * filteredCoaches.length);
-    //   const randomCoach = filteredCoaches[randomIndex];
-    //   matchedCoaches.push({ coach: randomCoach, matchingInterestCount: 0 });
-    // }
-
-    // // Log matched coaches
-    // console.log('Matched Coaches:', matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`));
-    // const matchedCoachesNames = matchedCoaches.map(match => `${match?.coach?.firstName ?? 'N/A'} ${match?.coach?.lastName ?? 'N/A'}`);
-
-    // const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png')
-
-    // Compute the total star rating for each coach and then select the top two with the highest star ratings
+   
     const topCoachesByStarRating = (coaches) => {
         if (!coaches || coaches.length === 0) {
             return [];
         }
 
-        // Compute total star rating for each coach
+
         const coachesWithTotalStarRatings = coaches.map((coach) => {
             const totalStarRating = coach.reviews.reduce(
                 (acc, review) => acc + (review.starRating ?? 0),
@@ -265,19 +224,19 @@ const CoacheeDashboard = () => {
             };
         });
 
-        // Sort coaches by total star rating in descending order
+
         const sortedCoachesByStarRating = coachesWithTotalStarRatings.sort(
             (a, b) => b.totalStarRating - a.totalStarRating,
         );
 
-        // Return the top 2 coaches with the highest star ratings
+ 
         return sortedCoachesByStarRating.slice(0, 2);
     };
 
-    // Get the top two coaches with the highest star ratings
+ 
     const topCoaches = topCoachesByStarRating(coachData?.coaches);
 
-    // Create Profile objects for top coaches to maintain consistent structure
+
     const displayTopCoaches: Profile[] = topCoaches.map((coach) => {
         const isProfilePictureDefault =
             !coach.profilePicture ||
@@ -290,7 +249,7 @@ const CoacheeDashboard = () => {
             id: coach.id,
             name: `${coach.firstName} ${coach.lastName}`,
             imageSource: profileImage,
-            gainedStars: coach.totalStarRating, // Use computed total star rating
+            gainedStars: coach.totalStarRating, 
             mainSport: coach.sports?.[0]?.type ?? 'Unknown',
             about: coach.bio,
             workplaceAddress: coach.address,
@@ -299,7 +258,7 @@ const CoacheeDashboard = () => {
 
     const recommendedCoaches = (userID: any) => {
         const [coacheeResult] = useQuery({
-            query: FindRecommendedCoachesDocument, // Use the Coachee query document
+            query: FindRecommendedCoachesDocument, 
             variables: {
                 coacheeId: userID,
             },
@@ -308,15 +267,15 @@ const CoacheeDashboard = () => {
         return coacheeResult;
     };
 
-    // Example names array if needed
+
     const matchedCoaches = data?.findRecommendedCoaches || [];
 
-    // Generate names for matched coaches
+
     const matchedCoachesNames = matchedCoaches.map(
         (coach) => `${coach.firstName} ${coach.lastName}`,
     );
 
-    // Map the data to the required format
+
     const RecommendedCoaches = matchedCoaches
         .slice(0, 4)
         .map((coach, index) => ({
@@ -339,17 +298,17 @@ const CoacheeDashboard = () => {
             workplaceAddress: coach.address || '',
         }));
 
-    // If no coaches are found, you can handle it by displaying a message or showing a placeholder
+    
     if (RecommendedCoaches.length === 0) {
-        // Add a placeholder or handle the absence of coaches here
+  
         console.log('No recommended coaches available.');
     }
 
     const scrollY = new Animated.Value(0);
 
     const opacity = scrollY.interpolate({
-        inputRange: [0, 200], // Adjust this range based on your needs
-        outputRange: [1, -1.2], // Opacity goes from 1 to 0
+        inputRange: [0, 200], 
+        outputRange: [1, -1.2], 
         extrapolate: 'clamp',
     });
 
@@ -368,7 +327,7 @@ const CoacheeDashboard = () => {
                     <Image
                         source={{
                             uri: coacheeData?.findCoacheeByID.profilePicture,
-                        }} // Add your profile image source here
+                        }} 
                         style={{
                             width: 40,
                             height: 40,
@@ -524,11 +483,6 @@ const CoacheeDashboard = () => {
                             {' '}
                             Recommend for you{' '}
                         </Text>
-                        {/* <TouchableOpacity onPress={handleSeeAllPress}>
-                            <Text style={CoacheeDashboardStyle.seeAll}>
-                                See All
-                            </Text>
-                        </TouchableOpacity> */}
                     </View>
                     <View style={CoacheeDashboardStyle.profileTiles}>
                         <CoachProfiles profiles={RecommendedCoaches} />
@@ -546,12 +500,12 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
 
     nameAndGreetingsContainer: {
@@ -559,8 +513,6 @@ const CoacheeDashboardStyle = StyleSheet.create({
         marginLeft: '25%',
         flexDirection: 'row',
         borderBlockColor: '#461a96',
-        // borderWidth: 1,
-        // width: '200%'
     },
 
     topCoachesContainer: {
@@ -605,15 +557,15 @@ const CoacheeDashboardStyle = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -641,24 +593,23 @@ const CoacheeDashboardStyle = StyleSheet.create({
         backgroundColor: 'white',
     },
     searchContainer: {
-        borderWidth: 3, // Add a border
+        borderWidth: 3, 
         width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
+        borderColor: '#7E3FF0', 
+        borderRadius: 15, 
         marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
+        marginLeft: 'auto', 
+        marginRight: 'auto',
         paddingHorizontal: '2.6%',
     },
 
     searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
+        width: 300, 
+        height: 40, 
     },
 
     searchBarInputContainer: {
-        height: '100%', // Match the height of the container
+        height: '100%',
     },
 
     frameContainer: {
@@ -707,8 +658,8 @@ const CoacheeDashboardStyle = StyleSheet.create({
     buttonContainer2: {
         backgroundColor: 'white',
         borderRadius: 6,
-        paddingVertical: 6, // Add vertical padding
-        paddingHorizontal: 6, // Add horizontal padding
+        paddingVertical: 6, 
+        paddingHorizontal: 6, 
         left: '-32%',
         marginTop: -40,
         alignSelf: 'center',
@@ -728,23 +679,23 @@ const CoacheeDashboardStyle = StyleSheet.create({
         width: '100%',
     },
     sportsContainer: {
-        flexDirection: 'row', // Render items horizontally
-        flexWrap: 'wrap', // Allow items to wrap to the next line if space is not enough
-        alignItems: 'center', // Center items vertically
-        justifyContent: 'center', // Center items horizontally
-        paddingHorizontal: 10, // Add padding to the container
+        flexDirection: 'row', 
+        flexWrap: 'wrap', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        paddingHorizontal: 10, 
     },
     rows: {
         flexDirection: 'row',
         position: 'relative',
-        paddingHorizontal: -20, // Adjusted horizontal padding to create less space between buttons
+        paddingHorizontal: -20, 
     },
     radioButton: {
-        marginLeft: -17, // Adjusted margin to reduce the space between radio buttons and labels
-        borderColor: '#7E3FF0', // Add the desired border color for the radio buttons
+        marginLeft: -17, 
+        borderColor: '#7E3FF0', 
     },
     radioButtonLabel: {
-        fontSize: 12, // Adjust the font size of the label
+        fontSize: 12, 
         color: '#7E3FF0',
     },
     profileTiles: {

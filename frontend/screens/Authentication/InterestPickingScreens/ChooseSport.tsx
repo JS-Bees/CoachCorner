@@ -137,15 +137,15 @@ const styles = StyleSheet.create({
     left: "10%"
   },
   radioButtonItem: {
-    flexDirection: 'row-reverse', // Reverse the direction to swap positions
+    flexDirection: 'row-reverse',
     alignItems: 'center',
-    justifyContent: 'space-between', // Center align button and label
-    width: '50%', // Fixed width for each RadioButton.Item
+    justifyContent: 'space-between', 
+    width: '50%', 
   },
   radioButtonLabel: {
-    fontSize: 16, // Adjust the font size as needed
-    marginRight: 10, // Adjust the margin to position the label closer to the radio button
-    textAlign: 'left', // Ensure label text alignment
+    fontSize: 16, 
+    marginRight: 10, 
+    textAlign: 'left', 
   },
   button: {
     marginTop: '5%',

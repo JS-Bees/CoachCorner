@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import ClientBookingDrawer from '../path/to/ClientBookingDrawer'; // Adjust the import path accordingly
+import ClientBookingDrawer from '../path/to/ClientBookingDrawer'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { useQuery } from 'urql';
 
-// Mock necessary modules and components
+
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
   useRoute: jest.fn(),
@@ -107,7 +107,7 @@ describe('ClientBookingDrawer', () => {
         data: {
           findCoacheeByID: {
             bookings: [
-              { coachId: '2', status: 'Pending' }, // Different coachId to simulate no pending bookings for the current coach
+              { coachId: '2', status: 'Pending' }, 
             ],
           },
         },

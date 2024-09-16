@@ -25,8 +25,8 @@ interface Session {
     selectedSlots: [{slotsId:number; startTime: string; endTime: string; date: string, status: string }];
     coacheeId: string;
     coacheeName: string;
-    serviceType: string; // Add this line
-    additionalNotes: string; // Add this line if you also need to access additionalNotes
+    serviceType: string; 
+    additionalNotes: string; 
     bookingId: number;
 }
 
@@ -56,7 +56,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
         status: string; startTime: string; endTime: string; date: string; slotsId: number}[]>([]);
         const [serviceType, setServiceType] = useState<string | null>(null);
     const [additionalNotes, setAdditionalNotes] = useState(session.additionalNotes || ''); 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isBookingProcessing, setIsBookingProcessing] = useState(false);
     const [, updateBookingStatus] = useMutation(UpdateBookingStatusDocument);
@@ -77,12 +77,10 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
 
     
     const handleAddSlot = (startTime: string, endTime: string, date: string) => {
-        // Check if the number of selected slots is less than 3
         if (selectedSlots.length < 3) {
             const newSlot = { startTime, endTime, date };
             setSelectedSlots([...selectedSlots, newSlot]);
         } else {
-            // Alert the user or provide some feedback that they can't add more slots
             console.log('You can only select up to 3 slots.');
         }
         handleToggleAddSlotModal();
@@ -92,15 +90,15 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
         setIsBookingProcessing(true);
     
         try {
-            // Cancel the previous booking
+
             await updateBookingStatus({ updateBookingStatusId: session.bookingId, input: { status: 'CANCELLED' } });
     
-            // Create the new booking
+
             const input = {
-                coacheeId: parseInt(session.coacheeId), // Use session.coacheeId directly
-                coachId: parseInt(userToken), // Ensure this is the correct field and value
-                serviceType: serviceType, // Use the state directly
-                additionalNotes: additionalNotes, // Use the state directly
+                coacheeId: parseInt(session.coacheeId), 
+                coachId: parseInt(userToken), 
+                serviceType: serviceType, 
+                additionalNotes: additionalNotes, 
                 status: "PENDING"
             };
     
@@ -117,7 +115,7 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
                 };
             });
     
-            // Execute the mutation to create the new booking
+
             const response = await createBookingMutation({
                 input: input, 
                 slotsInput: slotsInput
@@ -125,15 +123,15 @@ const ReschedulePage: React.FC<ReschedulePageProps> = ({ route }) => {
     
             if (response.error) {
                 console.error('Error creating new booking:', response.error.message);
-                // Handle error
+      
             } else {
                 console.log('New booking created successfully:', response?.data?.createBooking);
                 navigation.goBack();
-                // Optionally, you can show a success message or perform other actions
+
             }
         } catch (error) {
             console.error('Error cancelling previous booking:', error);
-            // Handle error
+
         }
     
         setIsBookingProcessing(false);

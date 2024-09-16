@@ -31,7 +31,7 @@ const UpcomingDashboard: React.FC<UpcomingSessionsProp> = ({ upcoming }) => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
     if (upcoming.length === 0) {
-        return null; // Or return a placeholder view
+        return null; 
     }
 
     const firstTwoSessions = upcoming.slice(0, 2);
@@ -41,7 +41,7 @@ const UpcomingDashboard: React.FC<UpcomingSessionsProp> = ({ upcoming }) => {
             {firstTwoSessions.map((session, index) => (
                 <TouchableOpacity
                     key={index}
-                    onPress={() => navigation.navigate('Appointments')} // Navigate to the Sessions page
+                    onPress={() => navigation.navigate('Appointments')} 
                 >
                     <View style={session.isHighlighted ? style.highlightedTile : style.normalTile}>
                         <View style={style.sessionContent}>
@@ -73,12 +73,12 @@ const style = StyleSheet.create({
         marginTop: '4%',
         marginLeft: '8%',
         bottom: '-1%',
-        backgroundColor: '#9765f3', // Grey color for highlighted tile
+        backgroundColor: '#9765f3', 
         borderRadius: 10,
         borderColor: '#7E3FF0',
         borderWidth: 1,
-        width: screenWidth * 0.85, // Adjust the percentage as needed
-        height: screenHeight * 0.11, // Adjust the percentage as needed
+        width: screenWidth * 0.85, 
+        height: screenHeight * 0.11, 
     },
     normalTile: {
         marginTop: '4%',
@@ -88,14 +88,14 @@ const style = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#7E3FF0',
         borderWidth: 1,
-        width: screenWidth * 0.85, // Adjust the percentage as needed
-        height: screenHeight * 0.11, // Adjust the percentage as needed
+        width: screenWidth * 0.85, 
+        height: screenHeight * 0.11, 
     },
     sessionContent: {
         marginTop: '3.5%',
         flexDirection: 'row',
-        alignItems: 'center', // Align items vertically in the center
-        justifyContent: 'space-between', // Space out items horizontally
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
         paddingHorizontal: '2%',
         marginRight: '35%',
         marginLeft: '3%',
@@ -106,8 +106,8 @@ const style = StyleSheet.create({
         borderRadius: 20,
     },
     textContainer: {
-        flex: 1, // Take up the remaining space
-        marginLeft: 10, // Add some space between the image and the text
+        flex: 1, 
+        marginLeft: 10, 
     },
     nameText: {
         color: 'black',
@@ -116,7 +116,7 @@ const style = StyleSheet.create({
     subtitleText: {
         color: 'black',
         fontSize: 13,
-        paddingTop: 5, // Add some space between the name and the time
+        paddingTop: 5, 
     },
 });
 

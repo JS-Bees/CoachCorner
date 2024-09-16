@@ -28,7 +28,7 @@ import { SearchBar } from '@rneui/themed';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { KeyboardAvoidingView, TouchableOpacity,} from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { Calendar } from 'react-native-calendars'; // Import the calendari
+import { Calendar } from 'react-native-calendars'; 
 import { Modal } from 'react-native';
 import TourModal from '../components/TourForCoach';
 import { Divider } from 'react-native-elements';
@@ -53,7 +53,6 @@ interface Booking {
 
 
 const NewCoachDashboard = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
    
@@ -63,13 +62,13 @@ const NewCoachDashboard = () => {
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [searchText, setSearchText] = useState('');
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [isTourVisible, setTourVisible] = useState(false);
     const [slotsForSelectedDate, setSlotsForSelectedDate] = React.useState([]);
-    const [animation] = useState(new Animated.Value(0)); // Create animated value
+    const [animation] = useState(new Animated.Value(0)); 
 
     const handleTour = () => {
         setTourVisible(true);
@@ -80,7 +79,6 @@ const NewCoachDashboard = () => {
       };
 
       useEffect(() => {
-        // Start the animation loop
         Animated.loop(
             Animated.sequence([
                 Animated.timing(animation, {
@@ -102,7 +100,7 @@ const NewCoachDashboard = () => {
             {
                 translateY: animation.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -10], // Moves the icon up and down
+                    outputRange: [0, -10], 
                 }),
             },
         ],
@@ -112,9 +110,9 @@ const NewCoachDashboard = () => {
 
     useFocusEffect(
         React.useCallback(() => {
-          // When the screen is focused, add a back button event listener
+
           const onBackPress = () => {
-            // Optionally, you can show a confirmation dialog
+
             Alert.alert(
               'Exit App',
               'Are you sure you want to exit the app?',
@@ -132,13 +130,13 @@ const NewCoachDashboard = () => {
               { cancelable: true }
             );
     
-            // Return true to indicate that we've handled the back button press
+
             return true;
           };
     
           const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
     
-          // Cleanup function
+
           return () => {
             backHandler.remove();
           };
@@ -159,13 +157,12 @@ const NewCoachDashboard = () => {
         fetchUserToken();
     }, []);
 
-    // Define a function to fetch coachee data by userID (token)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const useFetchCoachByUserID = (userID: any) => {
         const [coachResult] = useQuery({
-            query: FindCoachByIdDocument, // Use the Coachee query document
+            query: FindCoachByIdDocument, 
             variables: {
-                userId: parseInt(userID), // Parse the userID (token) to an integer with base 10
+                userId: parseInt(userID), 
             },
         });
 
@@ -175,13 +172,13 @@ const NewCoachDashboard = () => {
     const [{ data: bookingsData, fetching: bookingsFetching, error: bookingsError }] = useQuery({
         query: FindBookingsOfCoachDocument,
         variables: {
-            userId: parseInt(userToken ?? '0'), // Use userToken instead of userID
+            userId: parseInt(userToken ?? '0'), 
         },
     });
 
     if (bookingsError) {
         console.error('Error fetching bookings:', bookingsError);
-        return null; // or an error message
+        return null; 
     }
 
     const upcomingBookings = bookingsData?.findCoachByID.bookings.filter((booking: Booking) => booking.status === 'UPCOMING');
@@ -192,8 +189,7 @@ const NewCoachDashboard = () => {
         setSearchText(text);
     };
 
-    // Example usage of the query function
-    // Replace 'yourToken' with the actual token or userID you want to fetch
+
     const {
         data: coachData,
         loading: coachLoading,
@@ -210,9 +206,8 @@ const NewCoachDashboard = () => {
     };
 
     const filteredBookings = searchText.trim() === '' 
-    ? upcomingBookings // If search text is empty, show all bookings
+    ? upcomingBookings 
     : upcomingBookings?.filter(booking => {
-        // Filter bookings whose trainee name includes the search text (case insensitive)
         const traineeName = `${booking.coachee.firstName} ${booking.coachee.lastName}`.toLowerCase();
         return traineeName.includes(searchText.toLowerCase());
     });
@@ -241,14 +236,14 @@ const NewCoachDashboard = () => {
         const selectedDate = day.dateString;
         setSelectedDate(selectedDate);
         
-        // Find all bookings for the selected date
+
         const selectedBookings = upcomingBookings?.filter(booking => 
             booking.bookingSlots.some(slot => 
                 format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
             )
         );
     
-        // Extract slots for the selected date
+
         const filteredSlots = selectedBookings?.flatMap(booking =>
             booking.bookingSlots.filter(slot =>
                 format(new Date(slot.date), 'yyyy-MM-dd') === selectedDate
@@ -390,12 +385,12 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
 
 
@@ -446,15 +441,15 @@ const CoacheeDashboardStyle = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -476,26 +471,25 @@ const CoacheeDashboardStyle = StyleSheet.create({
         height: 65,
     },
     searchContainer: {
-        borderWidth: 3, // Add a border
+        borderWidth: 3, 
         width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
+        borderColor: '#7E3FF0', 
+        borderRadius: 15, 
         marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
+        marginLeft: 'auto', 
+        marginRight: 'auto', 
         paddingHorizontal: '2.6%',
     },
     searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
+        width: 300, 
+        height: 40, 
     },
 
     searchBarInputContainer: {
-        height: '100%', // Match the height of the container
+        height: '100%', 
     },
     upcomingSessionContainer: {
-        marginTop:  20, // Adjust this value as needed
+        marginTop:  20, 
     },
     topRatedContainer: {
         bottom: "-1%"
@@ -507,14 +501,14 @@ const CoacheeDashboardStyle = StyleSheet.create({
     },
     calendarButton: {
         backgroundColor: '#7E3FF0',
-        padding: 5, // Reduce the padding to make the button smaller
-        borderRadius: 10, // Reduce the border radius for a smaller appearance
+        padding: 5, 
+        borderRadius: 10, 
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10, // Reduce marginBottom
-        marginTop: 5, // Reduce marginTop
-        width: '40%', // Set a fixed width for the button
-        alignSelf: 'center', // Center the button horizontally
+        marginBottom: 10, 
+        marginTop: 5, 
+        width: '40%', 
+        alignSelf: 'center', 
     },
     calendarButtonText: {
         color: 'white',
@@ -524,7 +518,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
         borderRadius: 15,
         height: "75%",
         width: "85%",
-        backgroundColor: '#FFFFFF', // Set background color to white
+        backgroundColor: '#FFFFFF', 
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -536,22 +530,22 @@ const CoacheeDashboardStyle = StyleSheet.create({
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'absolute', // Absolute positioning within the modalContent
-        bottom: 20, // Adjust as needed
-        right: 20, // Adjust as needed
+        position: 'absolute', 
+        bottom: 20, 
+        right: 20, 
     },
     closeButtonText: {
         color: '#7E3FF0',
         fontSize: 16,
     },
         highlightedTile: {
-        backgroundColor: '#7E3FF0', // Highlight color
+        backgroundColor: '#7E3FF0', 
         borderRadius: 10,
         padding: 10,
         marginBottom: 10,
     },
         normalTile: {
-        backgroundColor: '#ffffff', // Normal background color
+        backgroundColor: '#ffffff', 
         borderRadius: 10,
         padding: 10,
         marginBottom: 10,
@@ -578,7 +572,7 @@ const CoacheeDashboardStyle = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', 
     },
     modalText: {
         color: 'black',
@@ -597,14 +591,14 @@ const CoacheeDashboardStyle = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
         padding: 20,
-        elevation: 5, // adds shadow for Android
-        shadowColor: '#000', // adds shadow for iOS
+        elevation: 5, 
+        shadowColor: '#000', 
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
     },
     scrollContainer: {
-        flex: 1, // Allows ScrollView to expand and take available space
+        flex: 1, 
     },
    
     

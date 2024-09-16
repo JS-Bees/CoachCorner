@@ -47,14 +47,14 @@ const NewCoacheeProfile = () => {
     const drawer = useRef<DrawerLayoutAndroid>(null);
     const [drawerPosition] = useState<'left' | 'right'>('right');
     const [activeTab, setActiveTab] = useState(0);
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
 
     const [{ data: coacheeData, fetching, error }] = useQuery({
-        query: FindCoacheeByIdDocument, // Use the Coachee query document
+        query: FindCoacheeByIdDocument,
         variables: {
-            userId: parseInt(userToken), // Parse the userID (token) to an integer with base 10
+            userId: parseInt(userToken), 
         },
-        requestPolicy: 'cache-and-network', // THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+        requestPolicy: 'cache-and-network', 
     });
 
     useEffect(() => {
@@ -109,11 +109,9 @@ const NewCoacheeProfile = () => {
                 coacheeData?.findCoacheeByID.firstName +
                 ' ' +
                 coacheeData?.findCoacheeByID.lastName.split(' ')[0],
-            // mainSport: "Basketball",
             imageSource: coacheeData?.findCoacheeByID.profilePicture,
             about: coacheeData?.findCoacheeByID.bio,
             achievements: 'None at the moment',
-            // address: coacheeData?.findCoacheeByID.address.split('|')[0], // Extract address before |
             address: coacheeData?.findCoacheeByID.address,
             age: 19,
             interests: coacheeData?.findCoacheeByID.interests.reduce(
@@ -136,7 +134,6 @@ const NewCoacheeProfile = () => {
         },
     ];
     const navigationView = () => (
-        // onPress={() => setIsEditMode(prevMode => !prevMode)}
         <View style={styles.drawerContainer}>
             <TouchableOpacity
                 style={styles.drawerButton}
@@ -312,7 +309,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 3,
         borderRadius: 10,
-        overflow: 'hidden', // Clip the shadow to the borderRadius
+        overflow: 'hidden', 
     },
     profileImage: {
         width: '140%',
@@ -364,7 +361,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     achievementsText: {
-        //for no achievements or affliates at the moment
         color: '#838086',
         justifyContent: 'center',
         left: '30%',
@@ -378,9 +374,9 @@ const styles = StyleSheet.create({
         left: '5%',
     },
     subcontentContainer: {
-        flexDirection: 'column', // Stack items vertically
-        paddingHorizontal: 20, // Add some padding to the sides
-        marginBottom: 10, // Add spacing between each section
+        flexDirection: 'column', 
+        paddingHorizontal: 20, 
+        marginBottom: 10, 
     },
     subHeader: {
         fontWeight: '400',
@@ -390,7 +386,7 @@ const styles = StyleSheet.create({
     contentText: {
         paddingTop: '1%',
         textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
+        lineHeight: 20, 
         fontFamily: 'Roboto',
         fontWeight: '200',
         color: '#908D93',
@@ -400,7 +396,7 @@ const styles = StyleSheet.create({
     subontentText: {
         paddingTop: '1%',
         textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
+        lineHeight: 20, 
         fontFamily: 'Roboto',
         fontWeight: '200',
         color: '#908D93',
@@ -408,13 +404,13 @@ const styles = StyleSheet.create({
         marginLeft: '10%',
     },
     circleImage: {
-        width: 80, // Adjust width as needed
-        height: 80, // Adjust height as needed
+        width: 80, 
+        height: 80, 
         position: 'absolute',
-        bottom: '100%', // Adjusted to center vertically
-        left: '50%', // Adjusted to center horizontally
-        marginLeft: -50, // Half of the width
-        marginBottom: -80, // Half of the height
+        bottom: '100%', 
+        left: '50%', 
+        marginLeft: -50, 
+        marginBottom: -80, 
         borderRadius: 10,
     },
     drawerButton: {
@@ -463,13 +459,13 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1,
-        marginBottom: 20, // Add margin to the bottom to ensure space for multiple images
+        marginBottom: 20, 
     },
     inputContainer: {
-        marginTop: 90, // Adjust as needed to create space between the image and text inputs
+        marginTop: 90, 
     },
     subContentTextIndented: {
-        paddingLeft: 20, // Indent the text
+        paddingLeft: 20, 
         fontSize: 15,
         color: '#908D93',
         fontFamily: 'Roboto',

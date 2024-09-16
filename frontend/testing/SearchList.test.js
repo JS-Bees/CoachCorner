@@ -73,8 +73,8 @@ describe('SearchList', () => {
     const { getByText } = render(<SearchList />);
 
     await waitFor(() => fireEvent.press(getByText('Coach A')));
-    expect(getByText('Coach A')).toBeTruthy(); // Ensure that Coach A data is passed to the bottom sheet
+    expect(getByText('Coach A')).toBeTruthy(); 
 
-    // You can add more assertions here to check if the bottom sheet is visible
+
   });
 });

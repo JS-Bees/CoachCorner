@@ -31,7 +31,7 @@ const SearchList = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
 
-  const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+  const [userToken, setUserToken] = useState<string | null>(null); 
 
   useEffect(() => {
       const fetchUserToken = async () => {
@@ -50,20 +50,18 @@ const SearchList = () => {
   const [filteredCoaches, setFilteredCoaches] = useState([]);
   const [showClearButton, setShowClearButton] = useState(false);
 
-  // Replace with your GraphQL query execution
+
   const [result] = useQuery({
     query: FindUnaddedCoachesBySportDocument,
     variables: { sport: searchQuery , coacheeID: parseInt(userToken)},
     requestPolicy: 'cache-and-network'
-    // query: FindCoachesBySportDocument,
-    // variables: { sport: searchQuery },
+
   });
 
   const { data, fetching, error } = result;
 
   useEffect(() => {
     if (!fetching && !error && data) {
-      // Ensure that the response structure matches your data shape
       setFilteredCoaches(data.findUnaddedCoachesBySport);
     }
   }, [fetching, error, data, searchQuery]);
@@ -73,7 +71,7 @@ const SearchList = () => {
   };
 
   const handleSearch = (text) => {
-    const trimmedText = text.trim(); // Remove leading and trailing white spaces
+    const trimmedText = text.trim(); 
     const uppercaseText = trimmedText.toUpperCase();
     setSearchQuery(uppercaseText);
     setShowClearButton(uppercaseText !== '');
@@ -82,7 +80,7 @@ const SearchList = () => {
 
   const handleKeyPress = (e) => {
     if (e.nativeEvent.key === 'Backspace') {
-      setSearchQuery(''); // Clear the search query
+      setSearchQuery(''); 
       setFilteredCoaches([]);
       setShowClearButton(false);
     }
@@ -117,7 +115,7 @@ const SearchList = () => {
           autoCorrect={false}
           onChangeText={handleSearch}
           value={searchQuery}
-          onKeyPress={handleKeyPress} // Handle backspace key
+          onKeyPress={handleKeyPress} 
         />
         {showClearButton && (
           <TouchableOpacity style={style.clearButton} onPress={clearSearch}>
@@ -180,7 +178,7 @@ const style = StyleSheet.create({
         width: 310,
     },
     searchContainer: {
-        flexDirection: 'row', // Add this line to align the clear button horizontally
+        flexDirection: 'row', 
         alignItems: 'center',
         marginTop: '10%',
     },

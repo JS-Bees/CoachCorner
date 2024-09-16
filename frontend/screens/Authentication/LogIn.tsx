@@ -133,9 +133,9 @@ const LogIn = () => {
                 });
                 console.log(coachData);
                 if (coachData.data) {
-                    await storeToken(coachData.data.coachLogin.id.toString()); // Store token
-                    await storeJwtToken(coachData.data.coachLogin?.token.toString()); // Store token
-                    navigation.navigate('NewCoachDashboard'); // Navigate to coach dashboard
+                    await storeToken(coachData.data.coachLogin.id.toString()); 
+                    await storeJwtToken(coachData.data.coachLogin?.token.toString()); 
+                    navigation.navigate('NewCoachDashboard'); 
                 } else if (coachData.error) {
                     console.log('Coach error message is being ran');
                     setEmailPasswordError('Invalid Email or Password');
@@ -148,9 +148,9 @@ const LogIn = () => {
                 });
                 console.log(coacheeData);
                 if (coacheeData.data) {
-                    await storeToken(coacheeData.data.coacheeLogin.id.toString()); // Store token
-                    await storeJwtToken(coacheeData.data.coacheeLogin?.token.toString()); // Store token
-                    navigation.navigate('CoacheeDashboard'); // Navigate to coachee dashboard
+                    await storeToken(coacheeData.data.coacheeLogin.id.toString()); 
+                    await storeJwtToken(coacheeData.data.coacheeLogin?.token.toString());
+                    navigation.navigate('CoacheeDashboard'); 
                 } else if (coacheeData.error) {
                     console.log('Coach error message is being ran');
                     setEmailPasswordError('Invalid Email or Password');
@@ -164,7 +164,7 @@ const LogIn = () => {
 
             setEmailPasswordError('Invalid Email or Password');
         } finally {
-            setLoading(false); // Ensure loading stops
+            setLoading(false);
         }
 
     };

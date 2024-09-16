@@ -27,7 +27,7 @@ import {
 } from '../generated-gql/graphql';
 import { RouteProp } from '@react-navigation/native';
 
-// Assuming your navigation stack is named 'Root'
+
 type ChatScreenNavigationProp = NativeStackNavigationProp<
     RootStackParams,
     'ChatPage'
@@ -40,29 +40,22 @@ type Props = {
 
 const ChatPage: React.FC<Props> = ({ route }) => {
     const { chatMessage } = route.params;
-    // Console logs
-    // console.log('Sender Name:', chatMessage.sender);
-    // console.log('image url', chatMessage.imageUrl.uri);
-    // console.log('Contact ID', chatMessage.id);
-    // console.log('Type of Contact ID', typeof chatMessage.id);
-    console.log('Contacted Status', chatMessage.contactedStatus);
+
 
     const imageSource = chatMessage.imageUrl;
 
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    // const [message, setMessage] = useState('');
+
     const [isFocused, setIsFocused] = useState(false);
 
     const [messages, setMessages] = useState<string[]>([]);
 
-    // const [messages, setMessages] = useState<string[]>(
-    //     Array.from({ length: 20 }, (_, i) => `Message ${i + 1}`),
-    // );
+
 
     const [currentMessage, setCurrentMessage] = useState('');
 
-    // Use the FindFilteredMessagesByContactId query to fetch the initial 50 messages
+
     const [initialMessagesResult] = useQuery({
         query: FindfilteredMessagesByContactIdDocument,
         variables: { contactId: chatMessage.id, numberOfMessages: 50 },
@@ -72,7 +65,6 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     const [result] = useSubscription<NewMessageSubscriptionVariables>({
         query: NewMessageDocument,
         variables: { channelName: `ChannelofContact${chatMessage.id}` },
-        // variables: { channelName: `ChannelofContact1` },
     });
 
     const [createMessage, setCreateMessage] = useMutation(
@@ -85,33 +77,26 @@ const ChatPage: React.FC<Props> = ({ route }) => {
 
     useEffect(() => {
         if (initialMessagesResult.data) {
-            // Assuming the data structure matches your expectations
+
             const fetchedMessages =
                 initialMessagesResult.data.findfilteredMessagesByContactId.map(
                     (message) => message.content,
                 );
-            setMessages(fetchedMessages.slice().reverse()); // Directly update the messages state with the initial messages
+            setMessages(fetchedMessages.slice().reverse()); 
         }
     }, [initialMessagesResult.data]);
 
     useEffect(() => {
-        console.log('use effect ran');
-        console.log('result data', result);
-        console.log('result error', result.error?.networkError);
-        // The data received from the useEffect should also be added to the messages array here
+
         if (result.data) {
-            // Assuming createMessage.data has the structure { createMessage: { content: 'message content' } }
+
             const newMessageContent = result.data.newMessage.content;
-            console.log('New message content', newMessageContent);
+
             setMessages((prevMessages) => [...prevMessages, newMessageContent]);
-            console.log('Message added to messages:', newMessageContent);
+
         }
 
-        // // Log each message to the console
-        console.log('chat page messages', messages);
-        // messages.forEach((message) => {
-        //     console.log(message);
-        // });
+
     }, [result.data]);
 
     const handleNavigateBack = () => {
@@ -122,11 +107,10 @@ const ChatPage: React.FC<Props> = ({ route }) => {
         navigation.navigate('Appointments');
     };
     const handleSendMessage = async (content: string) => {
-        // Check if the message content is not empty
+
         if (content.trim() === '') {
-            console.log(chatMessage.id)
-            console.log('Cannot send an empty message.');
-            return; // Exit the function if the message is empty
+
+            return; 
         }
     
         try {
@@ -138,20 +122,17 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     content,
                 },
             });
-            console.log('Message created:', response.data);
         } catch (error) {
             console.log(error);
         }
     };
     
 
-    // if (result.fetching) return <Text>Loading... Why</Text>;
-    // if (result.error) return <Text>Error</Text>;
-    // if (!result.data) return <Text>No data received yet.</Text>;
 
-    // Render each message item
+
+
     const renderMessageItem = ({ item }: { item: string }) => {
-        const isLeftAligned = item.endsWith(',;,');  // Determines alignment
+        const isLeftAligned = item.endsWith(',;,');  
         const messageContent = isLeftAligned ? item.slice(0, -3) : item;
     
         return (
@@ -176,7 +157,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
             <View
                 style={{
                     ...styles.header,
-                    // backgroundColor: 'yellow'
+              
                 }}
             >
                 <TouchableOpacity onPress={handleNavigateBack}>
@@ -203,7 +184,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
             <View
                 style={{
                     ...styles.messageContainer,
-                    // backgroundColor: 'brown',
+   
                 }}
             >
                 <FlatList
@@ -211,16 +192,13 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                     data={messages.slice().reverse()}
                     renderItem={renderMessageItem}
                     keyExtractor={(item, index) => index.toString()}
-                    inverted // This will render the list in reverse, starting from the bottom
-                    // contentContainerStyle={styles.chatItems}
-                    // contentContainerStyle={styles.messageContainer}
-                    // ListFooterComponent={<View style={{ height: 20 }} />}
+                    inverted 
                 />
             </View>
             <View
                 style={{
                     ...styles.inputArea,
-                    // backgroundColor: 'violet',
+
                 }}
             >
                 <View style={styles.safeArea}>
@@ -230,8 +208,8 @@ const ChatPage: React.FC<Props> = ({ route }) => {
                             isFocused ? styles.focusedInput : null,
                         ]}
                         placeholder="Type a message..."
-                        onChangeText={setCurrentMessage} // Update currentMessage instead of messages
-                        value={currentMessage} // Use currentMessage for the value
+                        onChangeText={setCurrentMessage} 
+                        value={currentMessage} 
                         multiline={true}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
@@ -252,8 +230,7 @@ const ChatPage: React.FC<Props> = ({ route }) => {
     );
 };
 
-// Get the screen height
-// const screenHeight = Dimensions.get('window').height;
+
 
 const styles = StyleSheet.create({
     container: {
@@ -261,9 +238,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     header: {
-        // added the flex and height
+   
         flex: 1,
-        // height: screenHeight * 0.1, // 10% of the screen height
+ 
         flexDirection: 'row',
         alignItems: 'center',
         top: '15%',
@@ -296,22 +273,20 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     messageContainer: {
-        // height: screenHeight * 0.4,
+  
         top: '10%',
         bottom: '50%',
         flex: 4,
-        // justifyContent: 'flex-end',
-        // backgroundColor: 'red',
+
     },
     safeArea: {
-        // backgroundColor: 'green', // change this back to white
+     
         flexDirection: 'row',
     },
     inputArea: {
         flex: 2,
         justifyContent: 'flex-end',
-        // height: screenHeight * 0.5,
-        // backgroundColor: 'violet',
+
     },
     input: {
         height: 55,
@@ -321,12 +296,12 @@ const styles = StyleSheet.create({
         borderColor: '#D4C5ED',
         borderWidth: 1.5,
         borderRadius: 15,
-        // marginBottom: 10,
+    
         paddingLeft: 10,
         paddingRight: 10,
     },
     focusedInput: {
-        borderColor: '#7E3FF0', // Change the border color to your desired color
+        borderColor: '#7E3FF0', 
     },
 chatBubbleRight: {
     backgroundColor: '#7E3FF0',
@@ -334,8 +309,8 @@ chatBubbleRight: {
     padding: 10,
     marginBottom: 10,
     alignSelf: 'flex-end',
-    maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
-    overflow: 'visible', // Ensure text can overflow the container
+    maxWidth: '80%', 
+    overflow: 'visible', 
 },
 chatBubbleLeft: {
     backgroundColor: 'lightgray',
@@ -343,8 +318,8 @@ chatBubbleLeft: {
     padding: 10,
     marginBottom: 10,
     alignSelf: 'flex-start',
-    maxWidth: '80%', // Adjust as needed, but ensure it's not too restrictive
-    overflow: 'visible', // Ensure text can overflow the container
+    maxWidth: '80%', 
+    overflow: 'visible', 
 },
     messageTextRight: {
         color: 'white',

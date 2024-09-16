@@ -45,7 +45,7 @@ interface ChatMessage {
 }
 
 const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const [isFavorite, setIsFavorite] = useState(false);
     const [, createContact] = useMutation(CreateContactDocument);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -58,10 +58,10 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
 
     const navigation =  useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
-    // function to fetch coachee data by userID (token)
+
         const useFetchCoacheeByUserID = (userID: any) => {
             const [coacheeResult] = useQuery({
-                query: FindCoacheeByIdDocument, // Use the Coachee query document
+                query: FindCoacheeByIdDocument, 
                 variables: {
                     userId: parseInt(userID),
                 },
@@ -101,7 +101,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ route }) => {
             console.log('Profile ID:', profile.id);
             console.log('Contacts:', contacts);
     
-            // Check if any contact.coach.id matches profile.id
+
             const isProfileInContacts = contacts.some((contact) => {
               console.log('Contact Coach ID:', contact.coach.id);
               return parseInt(profile.id) ===(contact.coach.id);

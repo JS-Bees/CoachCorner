@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ImageRequireSource, TouchableOpacity } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
-import { RouteProp } from '@react-navigation/native'; // Import RouteProp
+import { RouteProp } from '@react-navigation/native'; 
 
 import { StackNavigationProp } from '@react-navigation/stack'
 import { RootStackParams } from "../../../App"
@@ -17,7 +17,7 @@ interface SlideItem {
 }
 
 interface IntroInterestsProps {
-    route: RouteProp<RootStackParams, keyof RootStackParams>; // Type the route prop
+    route: RouteProp<RootStackParams, keyof RootStackParams>; 
     navigation: StackNavigationProp<RootStackParams, keyof RootStackParams>;
 }
 
@@ -39,8 +39,7 @@ const IntroInterests: React.FC<IntroInterestsProps> = ({ navigation, route }) =>
 
 
   const _renderItem = ({ item, index }: { item: SlideItem; index: number }) => {
-    // Change text color for the middle slide
-    const textColor = index === 1 ? '#7E3FF0' : 'white'; // Middle slide index is 1
+    const textColor = index === 1 ? '#7E3FF0' : 'white'; 
     return (
       <View style={[styles.slide, { backgroundColor: item.backgroundColor }]}>
         <Text style={[styles.title, { color: textColor }]}>{item.title}</Text>
@@ -77,7 +76,7 @@ const IntroInterests: React.FC<IntroInterestsProps> = ({ navigation, route }) =>
             renderItem={_renderItem}
             data={slides}
             renderDoneButton={_renderDoneButton}
-            bottomButton={false} // Disable default bottom button
+            bottomButton={false} 
         />
     );
   

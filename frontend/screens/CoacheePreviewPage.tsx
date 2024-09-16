@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     },
     content: {
         position: 'absolute',
-        bottom: '36%', // Adjust this value to move the name up or down
+        bottom: '36%', 
         alignItems: 'center',
         left: '5%',
     },
@@ -181,14 +181,14 @@ const styles = StyleSheet.create({
     },
     aboutContainer:{
         position: 'absolute',
-        bottom: "38%", // Adjust this value to move the address text up or down
+        bottom: "38%", 
         left: "6%",
         width: "85%"
       },
       about: {
         position: "absolute",
         textAlign: "justify",
-        lineHeight: 20, // Adjust line height as needed
+        lineHeight: 20, 
         fontFamily: "Roboto",
         fontWeight: '200',
         color: '#908D93',
@@ -211,14 +211,14 @@ const styles = StyleSheet.create({
     },
     affliationsContainer: {
         position: 'absolute',
-        bottom: '20%', // Adjust this value to move the title up or down
+        bottom: '20%', 
         alignItems: 'center',
         left: '5%',
     },
     affliationsText: {
         position: 'absolute',
         textAlign: 'justify',
-        lineHeight: 20, // Adjust line height as needed
+        lineHeight: 20, 
         fontFamily: 'Roboto',
         fontWeight: '200',
         left: '15%',

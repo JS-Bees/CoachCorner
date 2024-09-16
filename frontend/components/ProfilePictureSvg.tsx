@@ -3,7 +3,6 @@ import Svg, { Path } from "react-native-svg"
 import { G, Rect, ClipPath, Defs} from 'react-native-svg';
 import {Filter} from 'react-native-svg';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ProfilePicture(props: any) {
     return(
         <Svg 
@@ -26,7 +25,7 @@ function ProfilePicture(props: any) {
                 <feGaussianBlur stdDeviation="10"/>
                 <feColorMatrix type="matrix" values="0 0 0 0 0.395833 0 0 0 0 0.395833 0 0 0 0 0.395833 0 0 0 0.15 0"/>
                 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_62_958"/>
-                feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_62_958" result="shape"/>
+               
 
                 </Filter>
             </Defs>      

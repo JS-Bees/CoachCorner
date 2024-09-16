@@ -14,7 +14,6 @@ export const CreateCoacheeInput = inputObjectType({
         t.field(gqlTypes.Coachee.bio);
         t.field(gqlTypes.Coachee.sport);
 
-        // Handle the generation of the sport and interest objects in the mutations
     },
 });
 
@@ -152,7 +151,7 @@ export const CreateNewCoacheeInterestInput = inputObjectType({
     },
 });
 
-// UPDATE INPUT TYPES
+
 
 export const UpdateBookingStatusInput = inputObjectType({
     name: 'UpdateBookingStatusInput',

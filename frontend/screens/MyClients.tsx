@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from 'urql';
 import { FindCoachByIdDocument } from '../generated-gql/graphql';
-import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons
+import { Ionicons } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons';
 
 const MyCoaches = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const [page, setPage] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [userID, setUserID] = useState<number>(Number); // Initialize userID state
+  const [userID, setUserID] = useState<number>(Number); 
 
   const navigateToCoachBookingPage = (item) => {
     navigation.navigate('CoachBookingDrawer', { coachee: item.coachee, coacheeId: item.coacheeId, coachId: item.coachId, coacheeFirstName: item.coachee.firstName, coacheeLastName: item.coachee.lastName});
@@ -35,7 +35,7 @@ const MyCoaches = () => {
 
   const itemsPerPage = 10;
 
-  // Fetch userID from AsyncStorage
+
   const fetchUserIDFromStorage = async () => {
     try {
       const storedUserID = await AsyncStorage.getItem('userToken');
@@ -49,32 +49,29 @@ const MyCoaches = () => {
 
   useEffect(() => {
     setPage(0);
-    fetchUserIDFromStorage(); // Fetch userID when the component mounts
-  }, []);
+    fetchUserIDFromStorage();
 
-  // Use the fetched userID to query coaching relationships
+
   const [{ data, fetching, error }] = useQuery({
     query: FindCoachByIdDocument,
     variables: { userID },
-    requestPolicy: 'cache-and-network',// THIS IS THE LINE I ADDED TO REFETCH DATA WHENEVER A NEW ACCOUNT IS MADE
+    requestPolicy: 'cache-and-network',
   });
   
 
   if (fetching) {
-    // Handle loading state here
     return <Text>Loading...</Text>;
   }
 
   if (error) {
-    // Handle error state here
     return <Text>Error: {error.message}</Text>;
   }
 
-  // Assuming data.findCoachByID returns an object with a coachingRelationships field
+
   const coachingRelationships = data?.findCoachByID?.coachingRelationships || [];
 
 
-  // Filter items based on the search query
+
   const filteredItems = coachingRelationships.filter((item) =>
     `${item.coachee.firstName} ${item.coachee.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -92,7 +89,6 @@ const MyCoaches = () => {
         </TouchableOpacity>
         <Text style={MyCoachStyle.appointmentLabel}>My Clients</Text>
       </View>
-      {/* Searchbar */}
       <View style={MyCoachStyle.searchBarContainer}>
         <Searchbar
           placeholder="Search"
@@ -115,16 +111,14 @@ const MyCoaches = () => {
             <Text>{item.coachee.firstName} {item.coachee.lastName} {" "}</Text>
           </DataTable.Cell>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                {/* Replace "View Appointments" button with chat and appointment icons */}
+
                 <TouchableOpacity onPress={() => navigateToCoachBookingPage(item)}>
                 <Ionicons name="chatbubble-ellipses-outline" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigateToCoachBookingPage(item)}>
                 <AntDesign name="book" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={() => handleRemoveClick(item.id)}>
-                  <Ionicons name="trash-outline" size={24} color="red" />
-                  </TouchableOpacity> */}
+
           </View>
         </DataTable.Row>
           </TouchableOpacity>
@@ -162,8 +156,8 @@ const MyCoachStyle = StyleSheet.create({
     backgroundColor: 'white',
   },
   labelContainer: {
-    marginTop: '15%', // Adjust the margin as needed
-    alignItems: 'center', // Center the label horizontally
+    marginTop: '15%',
+    alignItems: 'center', 
   },
   icon: {
     left: '-40%',
@@ -202,17 +196,17 @@ const MyCoachStyle = StyleSheet.create({
     elevation: 5,
   },
   searchBarContainer: {
-    marginTop: 10, // Adjust the margin as needed
-    marginHorizontal: 16, // Add horizontal margin for spacing
+    marginTop: 10, 
+    marginHorizontal: 16, 
   },
-  // Style for the Searchbar component
+
   searchBar: {
-    backgroundColor: '#F3F3F3', // Background color
-    borderRadius: 10, // Border radius for rounded corners
+    backgroundColor: '#F3F3F3', 
+    borderRadius: 10, 
   },
-  // Style for the input field of the Searchbar
+
   searchBarInput: {
-    fontSize: 16, // Font size
+    fontSize: 16, 
   },
 });
 

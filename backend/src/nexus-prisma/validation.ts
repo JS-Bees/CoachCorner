@@ -104,7 +104,7 @@ export const bookingSchema = yup.object().shape({
 
 export const bookingSlotSchema = yup.object().shape({
     date: yup.date().required('Date is required.'),
-    startTime: yup.date().required('Start time is required.'), // might cause issues
+    startTime: yup.date().required('Start time is required.'), 
     endTime: yup.date().required('End time is required.'),
     status: yup
         .string()

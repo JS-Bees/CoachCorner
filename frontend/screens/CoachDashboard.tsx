@@ -16,7 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useQuery } from 'urql';
-// import { FindCoachByIdDocument } from '../generated-gql/graphql';
+
 import { BackHandler } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
@@ -25,19 +25,19 @@ const { width, height } = Dimensions.get('window');
 const CoachDashboard = () => {
     const navigation =
         useNavigation<NativeStackNavigationProp<RootStackParams>>();
-    // const isFocused = useIsFocused();
+
 
     const [fontsloaded] = useFonts({
         'Blinker-SemiBold': require('./../assets/fonts/Blinker-SemiBold.ttf'),
         'Blinker-Light': require('./../assets/fonts/Blinker-Light.ttf'),
     });
 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
 
     useEffect(() => {
         const backAction = () => {
             if (useIsFocused()) {
-                // Prevent navigating back when the screen is focused
+      
                 return true;
             }
             return false;
@@ -66,18 +66,7 @@ const CoachDashboard = () => {
         fetchUserToken();
     }, []);
 
-    // // Example usage of the query function
-    // // Replace 'yourToken' with the actual token or userID you want to fetch
-    // const {
-    //     data: coachData,
-    //     loading: coacheeLoading,
-    //     error: coacheeError,
-    // } = useFetchCoachByUserID(userToken);
-
-    // if (!fontsloaded) {
-    //     return null;
-    // }
-
+ 
     return (
         <View style={CoachDashboardStyle.container}>
             <View style={CoachDashboardStyle.backgroundContainer}></View>
@@ -88,7 +77,7 @@ const CoachDashboard = () => {
                             source={{
                                 uri: coacheeData?.findCoacheeByID
                                     .profilePicture,
-                            }} // Add your profile image source here
+                            }} 
                             style={{
                                 width: 40,
                                 height: 40,
@@ -103,7 +92,6 @@ const CoachDashboard = () => {
                             Welcome Back!
                         </Text>
                         <Text style={CoachDashboardStyle.name}>
-                            {/* {coachData?.findCoachByID?.firstName} */}
                         </Text>
                     </View>
                 </View>
@@ -198,33 +186,33 @@ const CoachDashboardStyle = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 140,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
     topContainer: {
-        borderRadius: 20, // Adjust the value for the desired curve
-        backgroundColor: '#B69AF0', // Purple background color
-        height: `${20}%`, // Responsive height
+        borderRadius: 20, 
+        backgroundColor: '#B69AF0', 
+        height: `${20}%`, 
         justifyContent: 'center',
         alignItems: 'center',
-        position: 'absolute', // Position the top container absolutely
-        top: 0, // Place it at the top of the screen
+        position: 'absolute', 
+        top: 0, 
         left: 0,
         right: 0,
-        zIndex: 1, // Set a higher z-index to put it in front
-        marginTop: Platform.OS === 'ios' ? 10 : -30, // Adjust the marginTop based on the platform
-        flexDirection: 'row', // To align items horizontally
+        zIndex: 1, 
+        marginTop: Platform.OS === 'ios' ? 10 : -30, 
+        flexDirection: 'row', 
     },
     topMiniContainer: {
-        borderRadius: (width * 0.3) / 2, // Half of the screen width
-        width: width * 0.3, // 40% of screen width
-        height: width * 0.3, // 40% of screen width (to create a circle)
-        marginEnd: '70%', // Add some space between the topMiniContainer and other content
-        marginTop: '32%', // 5% margin top (adjust this value as needed)
+        borderRadius: (width * 0.3) / 2, 
+        width: width * 0.3, 
+        height: width * 0.3, 
+        marginEnd: '70%', 
+        marginTop: '32%', 
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',
@@ -232,18 +220,18 @@ const CoachDashboardStyle = StyleSheet.create({
     profileImageContainer: {
         width: '100%',
         height: '100%',
-        borderRadius: (width * 0.3) / 2, // Make the container circular
-        overflow: 'hidden', // Clip the content to the circle
+        borderRadius: (width * 0.3) / 2, 
+        overflow: 'hidden', 
         alignItems: 'center',
     },
     nameAndGreetingsContainer: {
-        width: width * 0.42, // Adjust the width as needed
+        width: width * 0.42, 
         height: width * 0.35,
-        overflow: 'hidden', // Clip the content to the circle
+        overflow: 'hidden', 
         alignItems: 'center',
-        flexDirection: 'column', // Stack children vertically
-        justifyContent: 'center', // Center content horizontally
-        marginTop: '-30%', // 5% margin top (adjust this value as needed)
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        marginTop: '-30%', 
     },
     greetings: {
         fontFamily: 'Blinker-SemiBold',
@@ -270,15 +258,15 @@ const CoachDashboardStyle = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -302,18 +290,6 @@ const CoachDashboardStyle = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
     },
-    // svgContainer: {
-    //     position: 'absolute',
-    //     bottom: 0,
-    //     left: 0,
-    //     right: 0,
-    //     alignItems: 'center',
-    //     zIndex: -1, // Set a lower z-index to put it behind mini-containers
-    //     width: '100%', // Expand to full width
-    //     height: '35%', // Set the height as a percentage of the screen height
-    //     padding: 0,
-    //     margin: 0,
-    // },
     bottomSVG: {
         justifyContent: 'flex-end',
         position: 'absolute',

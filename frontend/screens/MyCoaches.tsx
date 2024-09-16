@@ -8,7 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery, useMutation } from 'urql';
 import { FindCoacheeByIdDocument } from '../generated-gql/graphql';
 import { UpdateCoachingRelationshipActiveStatusDocument } from '../generated-gql/graphql';
-import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons
+import { Ionicons } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons';
 
 const MyCoaches = () => {
@@ -40,7 +40,7 @@ const MyCoaches = () => {
     try {
       const storedUserID = await AsyncStorage.getItem('userToken');
       if (storedUserID) {
-        setUserID(parseInt(storedUserID, 10)); // Parse the storedUserID as an integer
+        setUserID(parseInt(storedUserID, 10)); 
       }
     } catch (error) {
       console.error('Error fetching userID from AsyncStorage:', error);
@@ -62,43 +62,38 @@ const MyCoaches = () => {
 
   const [, executeMutation] = useMutation(UpdateCoachingRelationshipActiveStatusDocument);
 
-  // Function to handle the "Remove" button click
+
   const handleRemoveClick = async (relationshipId: number) => {
     try {
       console.log(relationshipId);
       console.log('Before executing mutation');
 
-      // Execute the mutation to update the active status to false
+
       const response = await executeMutation({
         id: relationshipId,
         active: false,
       });
 
-      // Log the response data
+
       console.log('Mutation response:', response);
 
-      // Reexecute the query to fetch updated data
       reexecuteQuery();
       console.log('After reexecuting query');
 
-      // Optionally, you can display a success message or perform other actions here
     } catch (error) {
-      // Handle any errors that occur during the mutation
       console.error('Error removing coach:', error);
     }
   };
 
   if (fetching) {
-    // Handle loading state here
     return <Text>Loading...</Text>;
   }
 
   if (error) {
-    // Handle error state here
     return <Text>Error: {error.message}</Text>;
   }
 
-  // Filter items based on the search query
+
   const filteredItems = coachingRelationships.filter((item) =>
     `${item.coach.firstName} ${item.coach.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -133,7 +128,6 @@ const MyCoaches = () => {
               <Text>{item.coach.firstName} {item.coach.lastName} </Text>
             </DataTable.Cell>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                {/* Replace "View Appointments" button with chat and appointment icons */}
                 <TouchableOpacity onPress={() => navigateToClientBookingPage(item)}>
                 <Ionicons name="chatbubble-ellipses-outline" size={24} color="#915BC7" style={{ marginRight: 10 }}/>
                 </TouchableOpacity>
@@ -182,8 +176,8 @@ const MyCoachStyle = StyleSheet.create({
     backgroundColor: 'white',
   },
   labelContainer: {
-    marginTop: '15%', // Adjust the margin as needed
-    alignItems: 'center', // Center the label horizontally
+    marginTop: '15%', 
+    alignItems: 'center', 
   },
   icon: {
     left: '-40%',
@@ -222,17 +216,17 @@ const MyCoachStyle = StyleSheet.create({
     elevation: 5,
   },
   searchBarContainer: {
-    marginTop: 10, // Adjust the margin as needed
-    marginHorizontal: 16, // Add horizontal margin for spacing
+    marginTop: 10, 
+    marginHorizontal: 16, 
   },
-  // Style for the Searchbar component
+
   searchBar: {
-    backgroundColor: '#F3F3F3', // Background color
-    borderRadius: 10, // Border radius for rounded corners
+    backgroundColor: '#F3F3F3', 
+    borderRadius: 10, 
   },
-  // Style for the input field of the Searchbar
+
   searchBarInput: {
-    fontSize: 16, // Font size
+    fontSize: 16, 
   },
   
 });

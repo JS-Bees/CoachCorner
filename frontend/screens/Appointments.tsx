@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import SvgComponent from '../components/SVGs/BackgroundSvg';
 import { DataTable, Button, IconButton } from 'react-native-paper';
-import { Octicons } from '@expo/vector-icons'; // Import FontAwesome icons
+import { Octicons } from '@expo/vector-icons'; 
 import { Ionicons } from '@expo/vector-icons';
 import { RootStackParams } from '../App';
 import { useNavigation } from '@react-navigation/core';
@@ -49,7 +49,7 @@ const Appointments = () => {
         },
     ]);
 
-    // Sample finished appointments
+
     const [finishedAppointments] = useState([
         {
             key: 5,
@@ -71,10 +71,10 @@ const Appointments = () => {
         setPage(0);
     }, []);
 
-    // Function to format a timestamp into a readable date string
+
     const formatTimestampToDateString = (timestamp: string | number | Date) => {
         const date = new Date(timestamp);
-        return date.toLocaleDateString(); // Adjust formatting as needed
+        return date.toLocaleDateString(); 
     };
 
     const [isModalVisible, setModalVisible] = useState(false);
@@ -103,8 +103,8 @@ const Appointments = () => {
                             name={
                                 showFinishedAppointments ? 'tasklist' : 'circle'
                             }
-                            size={24} // Adjust size as needed
-                            color={showFinishedAppointments ? 'green' : 'gray'} // Change color as desired
+                            size={24} 
+                            color={showFinishedAppointments ? 'green' : 'gray'} 
                             onPress={() => {
                                 setShowFinishedAppointments(!showFinishedAppointments);
                                 setAppointmentLabel(
@@ -120,7 +120,7 @@ const Appointments = () => {
 
             {showFinishedAppointments ? (
                 <DataTable>
-                    {/* Finished Appointments Table Header */}
+   
                     <DataTable.Header>
                         <DataTable.Title>Name</DataTable.Title>
                         <DataTable.Title numeric>Date</DataTable.Title>
@@ -155,7 +155,7 @@ const Appointments = () => {
                 </DataTable>
             ) : (
                 <DataTable>
-                    {/* Upcoming Appointments Table Header */}
+           
                     <DataTable.Header>
                         <DataTable.Title>Name</DataTable.Title>
                         <DataTable.Title numeric>Date</DataTable.Title>
@@ -190,7 +190,7 @@ const Appointments = () => {
                 </DataTable>
             )}
 
-            {/* Modal for Appointment Details */}
+
             <Modal
                 visible={isModalVisible}
                 transparent={true}
@@ -238,7 +238,7 @@ const CoachAppointmentStyle = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 10,
         marginTop: '15%',
-        paddingHorizontal: 20, // Added paddingHorizontal to center the labels
+        paddingHorizontal: 20, 
     },
     icon: {
         top: '-30%',

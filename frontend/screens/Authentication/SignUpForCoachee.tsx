@@ -50,11 +50,11 @@ const SignUpForCoachee = ({route}) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
-        // Handle back button press
+ 
         useEffect(() => {
             const backAction = () => {
-                navigation.navigate('LogIn'); // Navigate back to the login page
-                return true; // Return true to prevent the default back button behavior
+                navigation.navigate('LogIn'); 
+                return true; 
             };
     
             const backHandler = BackHandler.addEventListener(
@@ -62,7 +62,7 @@ const SignUpForCoachee = ({route}) => {
                 backAction
             );
     
-            return () => backHandler.remove(); // Cleanup the event listener when the component unmounts
+            return () => backHandler.remove(); 
         }, [navigation]);
     
     const toggleDatePicker = () => {
@@ -82,11 +82,11 @@ const SignUpForCoachee = ({route}) => {
         if (type === 'set') {
             const currentDate = selectedDate;
             const minDate = new Date();
-            minDate.setFullYear(minDate.getFullYear() - 70); // Minimum allowed date (70 years ago)
+            minDate.setFullYear(minDate.getFullYear() - 70); 
             const maxDate = new Date();
-            maxDate.setFullYear(maxDate.getFullYear() - 10); // Maximum allowed date (10 years ago)
+            maxDate.setFullYear(maxDate.getFullYear() - 10); 
     
-            // Check if the selected date is within the allowed range
+
             if (currentDate >= minDate && currentDate <= maxDate) {
                 setdate(currentDate);
                 if (Platform.OS === 'android') {
@@ -94,10 +94,10 @@ const SignUpForCoachee = ({route}) => {
                     setDateofBirth(currentDate.toDateString());
                 }
             } else {
-                // Close the date picker
+
                 toggleDatePicker();
     
-                // Show an alert if the selected date is outside the allowed range
+       
                 Alert.alert(
                     'Invalid Date',
                     `Please select a valid date between ${minDate.getFullYear()} and ${maxDate.getFullYear()}`,
@@ -111,7 +111,7 @@ const SignUpForCoachee = ({route}) => {
 
 
 
-    // Function to toggle checkboxes for games, hobbies, and movie genres
+
     const toggleCheckbox = (item: any, state: any, setState: any) => {
         if (state.includes(item)) {
             setState(state.filter((selectedItem: any) => selectedItem !== item));
@@ -126,7 +126,7 @@ const SignUpForCoachee = ({route}) => {
     }
 
     const onNext = async () => {
-            // Validate the input fields
+       
             if (
                 First_Name.trim() === '' ||
                 Last_Name.trim() === '' ||
@@ -140,33 +140,33 @@ const SignUpForCoachee = ({route}) => {
                 
                 
             ) {
-                // Display an error message for incomplete fields
+  
                 setErrorMessage('Please fill in all the required fields.');
                 setErrorModalVisible(true);
                 setIsLoading(false);
-                return; // Return early to prevent further execution
+                return; 
             }
 
             
-            // Check for integers in First_Name and Last_Name
+    
             if (containsInteger(First_Name, Last_Name)) {
                 setErrorMessage('First Name and Last Name cannot contain integers.');
                 setErrorModalVisible(true);
                 setIsLoading(false);
-                return; // Return early if validation fails
+                return; 
             }
     
     
-            // Check if email has at least 5 characters before "@"
+
             const emailParts = Email.split('@');
             if (emailParts.length !== 2 || emailParts[0].length < 5) {
                 setErrorMessage('Email must have at least 5 characters before the "@" symbol.');
                 setErrorModalVisible(true);
                 setIsLoading(false);
-                return; // Return early if email validation fails
+                return; 
             }
 
-            // Log the data before making the API call
+     
             console.log("Signing up with data:", {
                 firstName: First_Name,
                 lastName: Last_Name,
@@ -208,13 +208,13 @@ const SignUpForCoachee = ({route}) => {
                         placeholder="Full Name"
                         value={First_Name}
                         checkForInteger
-                        setValue={value => setFirst_Name(value.substring(0, 15))} // Limit to 9 characters
+                        setValue={value => setFirst_Name(value.substring(0, 15))} 
                     />
                     <InputSignUpPages
                         placeholder="Last Name"
                         value={Last_Name}
                         checkForInteger
-                        setValue={value => setLast_Name(value.substring(0, 15))} // Limit to 9 characters
+                        setValue={value => setLast_Name(value.substring(0, 15))} 
                     />
                     <InputSignUpPages
                         placeholder="johnsmith@gmail.com"
@@ -261,7 +261,7 @@ const SignUpForCoachee = ({route}) => {
                                 placeholder="Sat Aug 24 2000"
                                 onFocus={toggleDatePicker}
                                 onBlur={() => {}} 
-                                editable={false} // Read-only
+                                editable={false} 
                               />
                             </Pressable>)
                     }
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
         color: '#7E3FF0',
         textAlign: 'center',
     },
-    // Modal styles
+
     modal: {
         flex: 1,
         justifyContent: 'center',
@@ -433,17 +433,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
         textAlign: 'center',
-        color: '#915bc7', // Change the font color to light green
+        color: '#915bc7', 
     },
     errorText: {
         fontFamily: 'Roboto',
         fontSize: 15,
         marginBottom: 10,
         textAlign: 'center',
-        color: 'red', // Change the font color to red
+        color: 'red', 
     },
     modalButton: {
-        backgroundColor: '#A378F2', // Change the background color to purple
+        backgroundColor: '#A378F2', 
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',

@@ -42,7 +42,7 @@ const ChatListPage: React.FC = () => {
         navigation.navigate('ChatPage', { chatMessage: item });
     };
 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
+    const [userToken, setUserToken] = useState<string | null>(null); 
     const pollingInterval = 1000;
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     useEffect(() => {
@@ -81,19 +81,13 @@ const ChatListPage: React.FC = () => {
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-          refetch(); // Manually trigger the query
+          refetch(); 
         }, pollingInterval);
-        // console.log('Refetching data at', new Date().toLocaleTimeString());
-        // console.log("this is the refetched data:", coacheeChatListMessageData)
         return () => clearInterval(intervalId);
     }, []);
 
 
 
-    // console.log(
-    //     'chat list messages',
-    //     coacheeChatListMessageData?.findMessagesForCoachList,
-    // );
 
     const useFetchCoacheeByUserID = (userID: any) => {
         const [coacheeResult] = useQuery({
@@ -115,27 +109,24 @@ const ChatListPage: React.FC = () => {
 
    
     useEffect(() => {
-        // console.log('coacheeData:', coacheeData);
+
         const contacts = coacheeData?.findCoacheeByID.contacts;
 
-        // Log all contacts
-        // console.log(JSON.stringify(contacts, null, 2));
-        // console.log('contacts');
+
 
         const messages = coacheeChatListMessageData?.findMessagesForCoachList;
 
-        // Map over contacts and set chatMessages
+
         if (contacts) {
             const chatMessages = contacts.map((contact) => {
                 const sender = `${contact.coach.firstName} ${contact.coach.lastName}`;
                 let imageUrl;
                 const coacheeID = contact.coach.id;
 
-                // Check if the profilePicture URL starts with 'https:'
+              
                 if (contact.coach.profilePicture.startsWith('https:')) {
                     imageUrl = { uri: contact.coach.profilePicture };
                 } else {
-                    // Use the fallback image if the URL does not start with 'https:'
                     imageUrl = require('../assets/User.png');
                 }
 
@@ -149,8 +140,6 @@ const ChatListPage: React.FC = () => {
                     : 'No messages yet';
 
                 return {
-                    
-                    // make it pass coachId here
                     id: contact.id,
                     message: messageContent,
                     sender: sender,

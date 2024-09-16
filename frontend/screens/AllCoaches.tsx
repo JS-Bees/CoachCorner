@@ -25,17 +25,16 @@ const { width, height } = Dimensions.get('window');
 
 
 const AllCoaches = ({route}) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const navigation = useNavigation<StackNavigationProp<RootStackParams, keyof RootStackParams>>();
     const [searchText, setSearchText] = useState(''); 
-    const [userToken, setUserToken] = useState<string | null>(null); // State to store the user token
-    const [activeButton, setActiveButton] = useState('All'); // 'All' or 'Favorite'
+    const [userToken, setUserToken] = useState<string | null>(null); 
+    const [activeButton, setActiveButton] = useState('All'); 
     const [displayCount, setDisplayCount] = useState(4);
     
     const { selectedSport } = route.params;
 
-    // Now you can use the selectedSport value in your component logic
-    console.log('Selected Sport:', selectedSport);
+
 
 
     const handleSearchChange = (text: string) => {
@@ -43,8 +42,8 @@ const AllCoaches = ({route}) => {
     };
     
     const [result] = useQuery({
-        query: FindCoachesBySportDocument, // Pass the FindCoachesBySportDocument query
-        variables: { sportType: selectedSport }, // Pass the selectedSport as a variable
+        query: FindCoachesBySportDocument, 
+        variables: { sportType: selectedSport }, 
     });
 
     const { fetching, data, error } = result;
@@ -65,7 +64,7 @@ const AllCoaches = ({route}) => {
 
         const useFetchCoacheeByUserID = (userID: any) => {
             const [coacheeResult] = useQuery({
-                query: FindCoacheeByIdDocument, // Use the Coachee query document
+                query: FindCoacheeByIdDocument, 
                 variables: {
                     userId: parseInt(userID),
                 },
@@ -84,14 +83,14 @@ const AllCoaches = ({route}) => {
     if (fetching) return <SplashScreen navigation={navigation} />;
     if (error) return <Text>Error: {error.message}</Text>;
 
-    // Extract coaches data from the GraphQL response
+
     
     const coaches = data.findCoachesBySport;
     const DEFAULT_PROFILE_PICTURE = require('../assets/default_User.png');
 
     
 
-        // Map over the coaches array to create a new array of Profile objects
+
         const AllCoaches: Profile[] = coaches.map(coach => {
             const totalStars = coach.reviews.reduce((acc, review) => acc + review.starRating, 0);
             const averageStars = coach.reviews.length > 0 ? totalStars / coach.reviews.length : 0;
@@ -102,8 +101,8 @@ const AllCoaches = ({route}) => {
                 imageSource: coach.profilePicture?.startsWith("https://res.cloudinary.com")
                     ? { uri: coach.profilePicture }
                     : DEFAULT_PROFILE_PICTURE,
-                gainedStars: averageStars, // Use the calculated average stars
-                mainSport: selectedSport, // Assuming mainSport is the selected sport
+                gainedStars: averageStars, 
+                mainSport: selectedSport, 
                 about: coach.bio,
                 workplaceAddress: coach.address,
             };
@@ -141,7 +140,7 @@ const AllCoaches = ({route}) => {
                     {displayCount < AllCoaches.length && (
                         <TouchableOpacity
                             style={MyCoaches.seeMoreButton}
-                            onPress={() => setDisplayCount(displayCount + 4)} // Increment by 4 each time
+                            onPress={() => setDisplayCount(displayCount + 4)} 
                         >
                             <Text style={MyCoaches.seeMoreText}>See More</Text>
                         </TouchableOpacity>
@@ -163,12 +162,12 @@ const MyCoaches = StyleSheet.create({
     },
     backgroundContainer: {
         paddingTop: 130,
-        borderRadius: 35, // Adjust the value for the desired curve
+        borderRadius: 35, 
         position: 'absolute',
-        backgroundColor: '#DED2EA', // Color for the background container
-        height: height * 0.16, // Adjust the height as a percentage of the screen height
+        backgroundColor: '#DED2EA', 
+        height: height * 0.16, 
         width: '100%',
-        zIndex: 0, // Set a lower z-index to put it behind topContainer
+        zIndex: 0, 
     },
 
 
@@ -190,15 +189,15 @@ const MyCoaches = StyleSheet.create({
         flexDirection: 'row',
     },
     miniContainer: {
-        borderRadius: 25, // Adjust the value for the desired curve
-        width: width * 0.35, // 40% of screen width
-        height: height * 0.19, // 20% of screen height
+        borderRadius: 25, 
+        width: width * 0.35, 
+        height: height * 0.19, 
         margin: 8,
     },
     nestedMiniContainer: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 25, // Adjust the value for the desired curve
+        borderRadius: 25, 
         margin: 11,
         justifyContent: 'center',
         alignItems: 'center',
@@ -220,24 +219,24 @@ const MyCoaches = StyleSheet.create({
         height: 65,
     },
     searchContainer: {
-        borderWidth: 3, // Add a border
+        borderWidth: 3, 
         width: '90%',
-        borderColor: '#7E3FF0', // Set the border color
-        borderRadius: 15, // Add border radius to make it rounded
+        borderColor: '#7E3FF0', 
+        borderRadius: 15, 
         marginTop: '10%',
-        marginLeft: 'auto', // Set left margin to auto
-        marginRight: 'auto', // Set right margin to auto
+        marginLeft: 'auto', 
+        marginRight: 'auto', 
         paddingHorizontal: '2.6%',
     },
     searchBarContainer: {
-        // Set the dimensions of the SearchBar container
-        width: 300, // Adjust the width as needed
-        height: 40, // Adjust the height as needed
+  
+        width: 300, 
+        height: 40, 
     },
 
     searchBarInputContainer: {
 
-        height: '100%', // Match the height of the container
+        height: '100%', 
     },
 
     frameContainer: {
@@ -251,14 +250,14 @@ const MyCoaches = StyleSheet.create({
     },
   
     AllCoachesButton: {
-        width: 110, // Adjust the width to make it square
-        height: 50, // Adjust the height to make it square
+        width: 110, 
+        height: 50, 
         marginTop: '5%',
         marginLeft: '8%',
         backgroundColor: '#e1d1fa',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10, // Adjust the border radius for rounded corners (optional)
+        borderRadius: 10, 
     },
     buttonText: {
         color: 'white',

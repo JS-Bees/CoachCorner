@@ -1,6 +1,6 @@
 import {
     PrismaClient,
-    // Sport,
+ 
 } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -8,19 +8,19 @@ const db = new PrismaClient();
 
 async function seedDatabase() {
     try {
-        const hashedPassword = await bcrypt.hash('password', 10); // Hash the password
+        const hashedPassword = await bcrypt.hash('password', 10); 
 
-        // Coach data
+     
         await db.coach.createMany({
             data: [
                 {
                     email: 'coach1@example.com',
                     firstName: 'Michael',
                     lastName: 'Jordan',
-                    password: hashedPassword, // Use hashed password
+                    password: hashedPassword, 
                     address: 'address 1',
                     birthday: new Date(),
-                    // add sport and 3 interests
+               
                     bio: 'Enter bio here',
                     profilePicture: 'profile picture',
                 },
@@ -67,7 +67,7 @@ async function seedDatabase() {
             ],
         });
 
-        // Coachee data
+   
         await db.coachee.createMany({
             data: [
                 {
@@ -128,39 +128,39 @@ async function seedDatabase() {
             ],
         });
 
-        // Contacts
+   
         await db.contact.createMany({
             data: [
                 {
-                    coachId: 2, // Coach with ID  2
-                    coacheeId: 1, // Coachee with ID  1
+                    coachId: 2,
+                    coacheeId: 1, 
                     contactedStatus: true,
                 },
                 {
-                    coachId: 2, // Coach with ID  2
-                    coacheeId: 2, // Coachee with ID  2
+                    coachId: 2,
+                    coacheeId: 2, 
                     contactedStatus: true,
                 },
                 {
-                    coachId: 3, // Coach with ID  3
-                    coacheeId: 5, // Coachee with ID  5
+                    coachId: 3, 
+                    coacheeId: 5, 
                     contactedStatus: true,
                 },
-                // not contacted
+            
                 {
-                    coachId: 4, // Coach with ID  4
-                    coacheeId: 1, // Coachee with ID  1
+                    coachId: 4, 
+                    coacheeId: 1, 
                     contactedStatus: false,
                 },
                 {
-                    coachId: 5, // Coach with ID  5
-                    coacheeId: 1, // Coachee with ID  1
+                    coachId: 5, 
+                    coacheeId: 1, 
                     contactedStatus: false,
                 },
             ],
         });
 
-        // Sports
+
         await db.sport.createMany({
             data: [
                 {
@@ -186,7 +186,7 @@ async function seedDatabase() {
             ],
         });
 
-        // Sports Credentials
+     
         await db.sportsCredential.createMany({
             data: [
                 {
@@ -212,9 +212,7 @@ async function seedDatabase() {
             ],
         });
 
-        // ^Connect/update these all later since it was edited (see booking and booking slots)
 
-        // Coach Tasks
         await db.coachTask.createMany({
             data: [
                 {
@@ -236,7 +234,7 @@ async function seedDatabase() {
             ],
         });
 
-        // Coachee Tasks
+
         await db.coacheeTask.createMany({
             data: [
                 {
@@ -258,7 +256,7 @@ async function seedDatabase() {
             ],
         });
 
-        // Coach Interests
+
         await db.coachInterest.createMany({
             data: [
                 {
@@ -309,7 +307,7 @@ async function seedDatabase() {
             ],
         });
 
-        // Coachee Interests
+   
         await db.coacheeInterest.createMany({
             data: [
                 {
@@ -360,33 +358,33 @@ async function seedDatabase() {
             ],
         });
 
-        // Bookings (before booking slots)
+ 
         await db.booking.createMany({
             data: [
                 {
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 1, // Coachee with ID 1
+                    coachId: 2, 
+                    coacheeId: 1, 
                     serviceType: 'Volleyball Coaching',
                     status: 'COMPLETED',
                     additionalNotes: 'Bring equipment',
                 },
                 {
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 2, // Coachee with ID 2
+                    coachId: 2, 
+                    coacheeId: 2, 
                     serviceType: 'Volleyball Coaching',
                     status: 'CANCELLED',
                     additionalNotes: 'Bring equipment',
                 },
                 {
-                    coachId: 3, // Coach with ID 3
-                    coacheeId: 5, // Coachee with ID 5
+                    coachId: 3, 
+                    coacheeId: 5, 
                     serviceType: 'Soccer Coaching',
                     status: 'PENDING',
                     additionalNotes: 'Bring equipment',
                 },
                 {
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 1, // Coachee with ID 1
+                    coachId: 2, 
+                    coacheeId: 1, 
                     serviceType: 'Volleyball Coaching Again',
                     status: 'UPCOMING',
                     additionalNotes: 'Bring equipment',
@@ -394,81 +392,81 @@ async function seedDatabase() {
             ],
         });
 
-        // Create booking slots
+     
         await db.bookingSlot.createMany({
             data: [
                 {
-                    bookingId: 1, // Booking with ID 1
+                    bookingId: 1, 
                     date: new Date('2023-08-01'),
                     startTime: new Date('2023-08-01T14:00:00'),
                     endTime: new Date('2023-08-01T15:00:00'),
                     status: 'UPCOMING',
                 },
                 {
-                    bookingId: 1, // Booking with ID 1
+                    bookingId: 1, 
                     date: new Date('2023-08-03'),
                     startTime: new Date('2023-08-03T15:00:00'),
                     endTime: new Date('2023-08-03T16:00:00'),
                     status: 'COMPLETED',
                 },
                 {
-                    bookingId: 1, // Booking with ID 1
+                    bookingId: 1, 
                     date: new Date('2023-08-05'),
                     startTime: new Date('2023-08-05T14:00:00'),
                     endTime: new Date('2023-08-05T15:00:00'),
                     status: 'CANCELLED',
                 },
                 {
-                    bookingId: 2, // Booking with ID 2
+                    bookingId: 2, 
                     date: new Date('2023-09-06'),
                     startTime: new Date('2023-09-06T15:00:00'),
                     endTime: new Date('2023-09-06T16:00:00'),
                     status: 'CANCELLED',
                 },
                 {
-                    bookingId: 2, // Booking with ID 2
+                    bookingId: 2,
                     date: new Date('2023-09-10'),
                     startTime: new Date('2023-09-10T14:00:00'),
                     endTime: new Date('2023-09-10T15:00:00'),
                     status: 'UPCOMING',
                 },
                 {
-                    bookingId: 2, // Booking with ID 2
+                    bookingId: 2, 
                     date: new Date('2023-09-11'),
                     startTime: new Date('2023-09-11T15:00:00'),
                     endTime: new Date('2023-09-11T16:00:00'),
                     status: 'CANCELLED',
                 },
                 {
-                    bookingId: 3, // Booking with ID 3
+                    bookingId: 3, 
                     date: new Date('2023-10-16'),
                     startTime: new Date('2023-10-16T15:00:00'),
                     endTime: new Date('2023-10-16T16:00:00'),
                     status: 'UPCOMING',
                 },
                 {
-                    bookingId: 3, // Booking with ID 3
+                    bookingId: 3, 
                     date: new Date('2023-10-20'),
                     startTime: new Date('2023-10-20T14:00:00'),
                     endTime: new Date('2023-10-20T15:00:00'),
                     status: 'COMPLETED',
                 },
                 {
-                    bookingId: 3, // Booking with ID 3
+                    bookingId: 3, 
                     date: new Date('2023-10-21'),
                     startTime: new Date('2023-10-21T15:00:00'),
                     endTime: new Date('2023-10-21T16:00:00'),
                     status: 'COMPLETED',
                 },
                 {
-                    bookingId: 4, // Booking with ID 4
+                    bookingId: 4, 
                     date: new Date('2023-11-04'),
                     startTime: new Date('2023-11-04T13:00:00'),
                     endTime: new Date('2023-11-04T14:00:00'),
                     status: 'CANCELLED',
                 },
                 {
-                    bookingId: 4, // Booking with ID 4
+                    bookingId: 4, 
                     date: new Date('2023-11-05'),
                     startTime: new Date('2023-11-05T16:00:00'),
                     endTime: new Date('2023-11-05T17:00:00'),
@@ -477,47 +475,44 @@ async function seedDatabase() {
             ],
         });
 
-        // Create reviews
+
         await db.review.createMany({
             data: [
                 {
                     starRating: 5,
                     comment: 'Great coaching!',
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 1, // Coachee with ID 1
+                    coachId: 2, 
+                    coacheeId: 1, 
                 },
                 {
                     starRating: 4,
                     comment: 'Good experience.',
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 2, // Coachee with ID 2
+                    coachId: 2,
+                    coacheeId: 2, 
                 },
                 {
                     starRating: 5,
                     comment: 'Looking forward to more sessions.',
-                    coachId: 3, // Coach with ID 3
-                    coacheeId: 5, // Coachee with ID 5
+                    coachId: 3, 
+                    coacheeId: 5, 
                 },
                 {
                     starRating: 4,
                     comment: 'Enjoyed the second coaching session.',
-                    coachId: 2, // Coach with ID 2
-                    coacheeId: 1, // Coachee with ID 1
+                    coachId: 2, 
+                    coacheeId: 1, 
                 },
             ],
         });
 
-        // ----- CONNECTING/UPDATING -----
-
-        // Connect bookings to booking slots
         await db.booking.update({
-            where: { id: 1 }, // Specify the booking you want to update
+            where: { id: 1 },
             data: {
                 bookingSlots: {
                     connect: [
-                        { id: 1 }, // Booking Slot with ID 1
-                        { id: 2 }, // Booking Slot with ID 2
-                        { id: 3 }, // Booking Slot with ID 3
+                        { id: 1 }, 
+                        { id: 2 }, 
+                        { id: 3 }, 
                     ],
                 },
             },
@@ -528,9 +523,9 @@ async function seedDatabase() {
             data: {
                 bookingSlots: {
                     connect: [
-                        { id: 4 }, // Booking Slot with ID 4
-                        { id: 5 }, // Booking Slot with ID 5
-                        { id: 6 }, // Booking Slot with ID 6
+                        { id: 4 }, 
+                        { id: 5 }, 
+                        { id: 6 }, 
                     ],
                 },
             },
@@ -541,9 +536,9 @@ async function seedDatabase() {
             data: {
                 bookingSlots: {
                     connect: [
-                        { id: 7 }, // Booking Slot with ID 7
-                        { id: 8 }, // Booking Slot with ID 8
-                        { id: 9 }, // Booking Slot with ID 9
+                        { id: 7 }, 
+                        { id: 8 }, 
+                        { id: 9 }, 
                     ],
                 },
             },
@@ -554,78 +549,78 @@ async function seedDatabase() {
             data: {
                 bookingSlots: {
                     connect: [
-                        { id: 10 }, // Booking Slot with ID 10
-                        { id: 11 }, // Booking Slot with ID 11
+                        { id: 10 }, 
+                        { id: 11 }, 
                     ],
                 },
             },
         });
 
-        // Connect bookings to coaches
-        await db.coach.update({
-            where: { id: 2 }, // Coach with ID 2
-            data: {
-                bookings: {
-                    connect: [
-                        { id: 1 }, // Booking with ID 1
-                        { id: 2 }, // Booking with ID 2
-                        { id: 4 }, // Booking with ID 4
-                    ],
-                },
-            },
-        });
 
         await db.coach.update({
-            where: { id: 3 }, // Coach with ID 3
+            where: { id: 2 }, 
             data: {
                 bookings: {
                     connect: [
-                        { id: 3 }, // Booking with ID 3
+                        { id: 1 }, 
+                        { id: 2 }, 
+                        { id: 4 }, 
                     ],
                 },
             },
         });
 
-        // Connect bookings to coachees
-        await db.coachee.update({
-            where: { id: 1 }, // Coachee with ID 1
+        await db.coach.update({
+            where: { id: 3 }, 
             data: {
                 bookings: {
                     connect: [
-                        { id: 1 }, // Booking with ID 1
+                        { id: 3 }, 
                     ],
                 },
             },
         });
 
+     
         await db.coachee.update({
-            where: { id: 2 }, // Coachee with ID 2
+            where: { id: 1 }, 
             data: {
                 bookings: {
                     connect: [
-                        { id: 2 }, // Booking with ID 2
-                    ],
-                },
-            },
-        });
-
-        await db.coachee.update({
-            where: { id: 5 }, // Coachee with ID 5
-            data: {
-                bookings: {
-                    connect: [
-                        { id: 3 }, // Booking with ID 3
+                        { id: 1 }, 
                     ],
                 },
             },
         });
 
         await db.coachee.update({
-            where: { id: 1 }, // Coachee with ID 1
+            where: { id: 2 }, 
             data: {
                 bookings: {
                     connect: [
-                        { id: 4 }, // Booking with ID 4
+                        { id: 2 }, 
+                    ],
+                },
+            },
+        });
+
+        await db.coachee.update({
+            where: { id: 5 }, 
+            data: {
+                bookings: {
+                    connect: [
+                        { id: 3 }, 
+                    ],
+                },
+            },
+        });
+
+        await db.coachee.update({
+            where: { id: 1 }, 
+            data: {
+                bookings: {
+                    connect: [
+                        { id: 4 }, 
                     ],
                 },
             },
@@ -635,7 +630,7 @@ async function seedDatabase() {
     } catch (error) {
         console.error('Error seeding the database:', error);
     } finally {
-        await db.$disconnect(); // Disconnect Prisma Client
+        await db.$disconnect(); 
     }
 }
 
