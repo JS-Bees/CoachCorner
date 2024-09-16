@@ -41,17 +41,17 @@ query FindCoacheeByID($userId: Int!) {
             coach {
                 firstName
                 lastName
-            }             
+            }
             id
             status
-            }  
+        }
         contacts {
-        coach {
-            id
+            coach {
+                id
             }
             contactedStatus
             id
-        }  
+        }
         interests {
             id
             type
@@ -87,13 +87,13 @@ query FindCoachByID($userId: Int!) {
         sports {
             id
             type
-        }  
+        }
         sports {
             sportsCredentials {
-            id
-            credentialPicture
+                id
+                credentialPicture
+            }
         }
-        } 
         interests {
             id
             type
@@ -322,9 +322,23 @@ query FindMessagesForCoacheeList($coachId: Int!) {
 }
 
 query FindOneToOneServiceSlotsByCoachId($coachId: Int!) {
-  findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
-  startTime
-  endTime
-  date
-  }
+    findOneToOneServiceSlotsByCoachId(coachId: $coachId) {
+        startTime
+        endTime
+        date
+    }
+}
+
+query FindRecommendedCoaches($coacheeId: Int!) {
+    findRecommendedCoaches(coacheeId: $coacheeId) {
+        id
+        firstName
+        lastName
+        profilePicture
+        bio
+        address
+        sports {
+            type
+        }
+    }
 }
